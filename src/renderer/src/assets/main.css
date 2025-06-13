@@ -125,9 +125,7 @@ code {
 }
 
 .versions {
-  position: absolute;
-  bottom: 30px;
-  margin: 0 auto;
+  margin: 16px auto;
   padding: 15px 0;
   font-family: 'Menlo', 'Lucida Console', monospace;
   display: inline-flex;

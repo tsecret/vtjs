@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import * as utils from './utils'
 
 function createWindow(): void {
   // Create the browser window.
@@ -49,8 +50,8 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.handle('tracker:init', initTracker)
 
   createWindow()
 
@@ -72,3 +73,6 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+function initTracker() {
+  return utils.parseLockFile(utils.readLockfile())
+}
