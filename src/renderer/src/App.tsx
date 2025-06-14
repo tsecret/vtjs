@@ -1,22 +1,33 @@
-import { useEffect, useState } from 'react'
 import Versions from './components/Versions'
-import { Debug } from './components'
 
 function App(): React.JSX.Element {
-  const [config, setConfig] = useState<any>([])
+
+  window.tracker.onMessage((message) => {
+    console.log('message from tracker', message)
+  })
 
   const onInit = async () => {
-    const config = await window.electronAPI.trackerinit()
-    setConfig(config)
+     const response = await window.tracker.init()
+     console.log('response', response)
   }
 
-  useEffect(() => {
-    onInit()
-  }, [])
+  const loadPlayer = async () => {
+     const response = await window.tracker.loadPlayer()
+     console.log('player', response)
+  }
+
+  const help = async () => {
+     const response = await window.tracker.help()
+     console.log('help', response)
+  }
 
   return (
     <>
-      <Debug config={config} />
+      <button onClick={onInit}>Start</button>
+      <button onClick={loadPlayer}>Load Player</button>
+      <button onClick={help}>Help</button>
+      {/* <div>{player?.game_name}</div> */}
+      {/* <Debug config={config} /> */}
       <Versions></Versions>
     </>
   )

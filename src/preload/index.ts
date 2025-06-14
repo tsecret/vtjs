@@ -4,9 +4,15 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {}
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  trackerinit: () => ipcRenderer.invoke('tracker:init')
+contextBridge.exposeInMainWorld('tracker', {
+  init: () => ipcRenderer.invoke('tracker:init'),
+  loadPlayer: () => ipcRenderer.invoke('tracker:loadPlayer'),
+  help: () => ipcRenderer.invoke('tracker:help'),
+
+  onMessage: (callback) => ipcRenderer.on('tracker:message', (_event, value) => callback(value))
 })
+
+
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

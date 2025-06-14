@@ -8,6 +8,7 @@ describe('api', () => {
   let localapi: LocalAPI
 
   beforeAll(() => {
+    global.navigator = { platform: "MAC" } as any
 
     const [_, port, password] = utils.parseLockFile(utils.readLockfile())
     localapi = new LocalAPI({ hostname: 'https://192.168.31.197', port, lockfilePassword: password } as Config)
