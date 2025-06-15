@@ -1,31 +1,22 @@
-import { BaseDirectory, exists } from '@tauri-apps/plugin-fs';
 import { localDataDir } from '@tauri-apps/api/path';
-import { hostname } from '@tauri-apps/plugin-os';
+import { readTextFile } from '@tauri-apps/plugin-fs';
+import lockfile from '../../lockfile.json'
+import base64 from 'base-64'
+
 export const isMac = () => navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
 export const readLockfile = async (): Promise<string> => {
-  // C:\\Users\\${os.userInfo().username}\\AppData\\Local\\Riot Games\\Riot Client\\Config\\lockfile
-
-
-  const currentPlatform = await hostname();
-  console.log('hostname', currentPlatform);
-
-  const path = await localDataDir()
-  console.log('path', path)
-
-  const exist = await exists(path + '\\Riot Games\\Riot Client\\Config\\lockfile')
-  console.log('exists', exist)
-
-  // const file = await readFile('\\Local\\Riot Games\\Riot Client\\Config\\lockfile', { baseDir: BaseDirectory.AppData })
-  // return file.toString()
-
-  return ''
+  if (isMac()){
+    return lockfile
+  } else {
+    const path = await localDataDir()
+    const file = await readTextFile(path + '\\Riot Games\\Riot Client\\Config\\lockfile')
+    return file.toString()
+  }
 }
 
-export const parseLockFile = (content: string): [string, string] => {
+export const parseLockFile = (content: string): { port: string, password: string } => {
   const [_, __, port, password, ___] =  content.split(':')
 
-  // return [port, Buffer.from(`riot:${password}`).toString('base64')]
-
-  return [port, password]
+  return { port, password: base64.encode(`riot:${password}`) }
 }

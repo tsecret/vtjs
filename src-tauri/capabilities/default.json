@@ -10,10 +10,22 @@
     "opener:default",
     "fs:default",
     {
-      "identifier": "fs:allow-exists",
-      "allow": [{ "path": "$LOCALDATA/**" }]
+      "identifier": "fs:allow-read-text-file",
+      "allow": [
+        {
+          "path": "$LOCALDATA/**"
+        },
+        {
+          "path": "$EXE/**"
+        }
+      ]
     },
     "os:default",
-    "os:allow-hostname"
+    "os:allow-hostname",
+    "websocket:default",
+    {
+      "identifier": "http:default",
+      "allow": [{ "url": "https://192.168.31.197:*" }, { "url": "https://glz-eu-1.eu.a.pvp.net:*" }]
+    }
   ]
 }
