@@ -11,7 +11,7 @@
     "fs:default",
     {
       "identifier": "fs:allow-exists",
-      "allow": [{ "path": "$APPDATA/*" }, { "path": "$LOCALDATA/*" }]
+      "allow": [{ "path": "$LOCALDATA/**" }]
     },
     "os:default",
     "os:allow-hostname"
