@@ -17,6 +17,9 @@ importers:
       '@tauri-apps/plugin-opener':
         specifier: ~2
         version: 2.2.7
+      '@tauri-apps/plugin-os':
+        specifier: ~2.2.1
+        version: 2.2.1
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -478,6 +481,9 @@ packages:
 
   '@tauri-apps/plugin-opener@2.2.7':
     resolution: {integrity: sha512-uduEyvOdjpPOEeDRrhwlCspG/f9EQalHumWBtLBnp3fRp++fKGLqDOyUhSIn7PzX45b/rKep//ZQSAQoIxobLA==}
+
+  '@tauri-apps/plugin-os@2.2.1':
+    resolution: {integrity: sha512-cNYpNri2CCc6BaNeB6G/mOtLvg8dFyFQyCUdf2y0K8PIAKGEWdEcu8DECkydU2B+oj4OJihDPD2de5K6cbVl9A==}
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -1021,6 +1027,10 @@ snapshots:
       '@tauri-apps/api': 2.5.0
 
   '@tauri-apps/plugin-opener@2.2.7':
+    dependencies:
+      '@tauri-apps/api': 2.5.0
+
+  '@tauri-apps/plugin-os@2.2.1':
     dependencies:
       '@tauri-apps/api': 2.5.0
 

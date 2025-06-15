@@ -8,11 +8,12 @@
   "permissions": [
     "core:default",
     "opener:default",
-    "opener:default",
     "fs:default",
     {
-      "identifier": "fs:read-all",
-      "allow": [{ "path": "$HOME/**" }]
-    }
+      "identifier": "fs:allow-exists",
+      "allow": [{ "path": "$APPDATA/*" }, { "path": "$LOCALDATA/*" }]
+    },
+    "os:default",
+    "os:allow-hostname"
   ]
 }
