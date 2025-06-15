@@ -1,59 +1,27 @@
 {
-  "name": "my",
-  "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
-  "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "name": "vtjs",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "format": "prettier --write .",
-    "lint": "eslint --cache .",
-    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
-    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
-    "typecheck": "npm run typecheck:node && npm run typecheck:web",
-    "start": "electron-vite preview",
-    "dev": "electron-vite dev",
-    "build": "npm run typecheck && electron-vite build",
-    "postinstall": "electron-builder install-app-deps",
-    "build:unpack": "npm run build && electron-builder --dir",
-    "build:win": "npm run build && electron-builder --win",
-    "build:mac": "electron-vite build && electron-builder --mac",
-    "build:linux": "electron-vite build && electron-builder --linux",
-    "test": "vitest"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri"
   },
   "dependencies": {
-    "@electron-toolkit/preload": "^3.0.1",
-    "@electron-toolkit/utils": "^4.0.0",
-    "axios": "^1.9.0",
-    "ws": "^8.18.2"
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-fs": "~2.3.0",
+    "@tauri-apps/plugin-opener": "~2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@electron-toolkit/eslint-config-prettier": "^3.0.0",
-    "@electron-toolkit/eslint-config-ts": "^3.0.0",
-    "@electron-toolkit/tsconfig": "^1.0.1",
-    "@types/node": "^22.14.1",
-    "@types/react": "^19.1.1",
-    "@types/react-dom": "^19.1.2",
-    "@types/ws": "^8.18.1",
+    "@tauri-apps/cli": "^2",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "electron": "^35.1.5",
-    "electron-builder": "^25.1.8",
-    "electron-vite": "^3.1.0",
-    "eslint": "^9.24.0",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
-    "prettier": "^3.5.3",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "typescript": "^5.8.3",
-    "vite": "^6.2.6",
-    "vitest": "^3.2.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "electron",
-      "esbuild"
-    ]
+    "typescript": "~5.6.2",
+    "vite": "^6.0.3"
   }
 }
