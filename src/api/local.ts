@@ -1,4 +1,4 @@
-import { Lockfile, EntitlementsTokenResponse, PlayerAccount } from '../interface'
+import { Lockfile, EntitlementsTokenResponse, PlayerAccount, HelpResponse } from '../interface'
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 
 export class LocalAPI {
@@ -28,7 +28,7 @@ export class LocalAPI {
     return this.fetch('/player-account/aliases/v1/active')
   }
 
-  async help(): Promise<any> {
+  async help(): Promise<HelpResponse> {
     return this.fetch('/help')
   }
 

@@ -12,6 +12,9 @@ export interface EntitlementsTokenResponse {
   subject: string
 }
 
+export interface HelpResponse {
+  events: { [key: string]: string }
+}
 
 // Shared
 
