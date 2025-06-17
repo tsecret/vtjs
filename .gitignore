@@ -17,6 +17,9 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
+.eslintcache
+*.log*
+src-tauri/target/
 *.suo
 *.ntvs*
 *.njsproj
