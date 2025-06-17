@@ -25,13 +25,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: setup node
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'pnpm' # Set this to npm, yarn or pnpm.
 
-      - name: install Rust stable
+      - name: Install pnpm
+        run: npm i -g pnpm
+
+      - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable # Set this to dtolnay/rust-toolchain@nightly
         with:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
@@ -42,7 +44,7 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
-      - name: install frontend dependencies
+      - name: Install frontend dependencies
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
         run: pnpm install # change this to npm or pnpm depending on which one you use.
 
