@@ -5,6 +5,9 @@ import { CurrentGameMatchResponse, Match, PlayerAccount, ResultStats } from "./i
 import * as utils from './utils';
 import "./App.css";
 import clsx from "clsx";
+import { check } from '@tauri-apps/plugin-updater';
+// import { relaunch } from '@tauri-apps/plugin-process';
+
 
 function App() {
   const [lockfile, setLockfile] = useState<any>();
@@ -17,6 +20,12 @@ function App() {
   const [_, setMatch] = useState<CurrentGameMatchResponse>()
   const [stats, setStats] = useState<ResultStats[]>([])
 
+  async function checkForUpdate(){
+    const update = await check();
+    console.log('update', update)
+  }
+
+  //@ts-ignore
   async function init(){
     const lockfile = await utils.readLockfile()
     const parsedLockFile = utils.parseLockFile(lockfile)
@@ -86,12 +95,15 @@ function App() {
   }
 
   useEffect(() => {
-    init()
+    checkForUpdate();
+    // init();
   }, [])
 
   return (
     <main className="p-8 flex flex-col">
       { error && <div className="alert alert-error my-4">{error}</div> }
+
+      <h1>VERSION 1</h1>
 
       <div className="overflow-x-auto max-w-1/2 mx-auto my-4">
         <table className="table table-xs">
