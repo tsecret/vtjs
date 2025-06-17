@@ -33,6 +33,9 @@ jobs:
       - name: Install pnpm
         run: npm i -g pnpm
 
+      - name: Create lockfile
+        run: echo "text" > lockfile.json
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable # Set this to dtolnay/rust-toolchain@nightly
         with:
@@ -47,6 +50,7 @@ jobs:
       - name: Install frontend dependencies
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
         run: pnpm install # change this to npm or pnpm depending on which one you use.
+
 
       - uses: tauri-apps/tauri-action@v0
         env:
