@@ -14,7 +14,7 @@ function App() {
   const [puuid, setpuuid] = useState<string>()
   const [error, setError] = useState<string|null>()
 
-  const [match, setMatch] = useState<CurrentGameMatchResponse>()
+  const [_, setMatch] = useState<CurrentGameMatchResponse>()
   const [stats, setStats] = useState<ResultStats[]>([])
 
   async function init(){
