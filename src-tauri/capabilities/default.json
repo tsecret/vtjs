@@ -30,6 +30,9 @@
         { "url": "https://glz-eu-1.eu.a.pvp.net:*" },
         { "url": "https://pd.eu.a.pvp.net:*" }
       ]
-    }
+    },
+    "updater:default",
+    "updater:allow-check",
+    "updater:allow-download-and-install"
   ]
 }
