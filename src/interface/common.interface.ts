@@ -1,6 +1,29 @@
 
-export interface Config {
-  hostname: string
+export interface Lockfile {
   port: string
-  lockfilePassword: string
+  password: string
+}
+
+export interface Match {
+  MatchID: string
+  State: 'IN_PROGRESS'
+  Players: Player[]
+}
+
+export interface Player {
+  Subject: string
+  TeamID: string
+  CharacterID: string
+}
+
+export interface ResultStats {
+  name: string
+  tag: string
+  puuid: string
+  kd: number
+  agentName: string
+  agentId: string
+  agentImage: string
+  lastGameWon: boolean | string
+  lastGameScore: string
 }

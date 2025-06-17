@@ -1,0 +1,35 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "fs:default",
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [
+        {
+          "path": "$LOCALDATA/**"
+        },
+        {
+          "path": "$EXE/**"
+        }
+      ]
+    },
+    "os:default",
+    "os:allow-hostname",
+    "websocket:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        { "url": "https://192.168.31.197:*" },
+        { "url": "https://glz-eu-1.eu.a.pvp.net:*" },
+        { "url": "https://pd.eu.a.pvp.net:*" }
+      ]
+    }
+  ]
+}
