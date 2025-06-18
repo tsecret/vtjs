@@ -67,7 +67,7 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      - name: Deploy
+      - name: Update Gist
         uses: exuanbo/actions-deploy-gist@v1
         with:
           token: ${{ secrets.TOKEN }}

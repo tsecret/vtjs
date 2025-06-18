@@ -29,3 +29,4 @@ lockfile.json
 notes
 tests/fixtures/
 updator.key
+.env

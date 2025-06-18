@@ -1,6 +1,6 @@
 [package]
 name = "vtjs"
-version = "0.0.3"
+version = "0.0.2"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
@@ -26,6 +26,7 @@ tauri-plugin-fs = "2"
 tauri-plugin-os = "2"
 tauri-plugin-websocket = "2"
 tauri-plugin-http = { version = "2", features = ["dangerous-settings"] }
+tauri-plugin-process = "2"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-updater = "2"
