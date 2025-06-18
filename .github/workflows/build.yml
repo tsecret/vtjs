@@ -22,6 +22,8 @@ jobs:
             args: ''
 
     runs-on: ${{ matrix.platform }}
+    outputs:
+      OUTPUT_LATEST: ${{ steps.publish.outputs.latest }}
     steps:
       - uses: actions/checkout@v4
 
@@ -67,17 +69,15 @@ jobs:
 
       - name: Read latest.json content
         id: latest_json
-        run: |
-          echo "content<<EOF" >> $GITHUB_OUTPUT
-          cat ./latest.json >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+        run: cat latest.json >> "$GITHUB_OUTPUT"
 
       - name: Update version gist
         uses: gorgbus/gist-actions@main
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          OUTPUT_LATEST: ${{ needs.publish.outputs.latest }}
         with:
           action: "update"
           gist_id: "0b5f7094000f4063d72276c5e05824aa"
           file_name: "latest.json"
-          content: ${{ steps.latest_json.outputs.content }}
+          content: ${{ steps.publish.outputs.latest }}
