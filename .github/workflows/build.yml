@@ -71,7 +71,7 @@ jobs:
       - name: Update version gist
         uses: gorgbus/gist-actions@main
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           action: "update"
           gist_id: "0b5f7094000f4063d72276c5e05824aa"
