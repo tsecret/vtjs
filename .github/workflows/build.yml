@@ -67,6 +67,7 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
+
       - uses: danielmcconville/gist-sync-file-action@v2.0.0
         with:
           # Personal access token with read/write access for Gist
