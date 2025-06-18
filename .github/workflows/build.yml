@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  publish-tauri:
+  publish:
     permissions:
       contents: write
     strategy:
@@ -64,3 +64,14 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      - name: Update version gist
+        uses: gorgbus/gist-actions@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          action: "update"
+          gist_id: "0b5f7094000f4063d72276c5e05824aa"
+          file_name: "latest.json"
+          run: ls
+          content: ./latest.json

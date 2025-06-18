@@ -5,8 +5,9 @@ import { CurrentGameMatchResponse, Match, PlayerAccount, ResultStats } from "./i
 import * as utils from './utils';
 import "./App.css";
 import clsx from "clsx";
-import { check } from '@tauri-apps/plugin-updater';
+import { check, Update } from '@tauri-apps/plugin-updater';
 // import { relaunch } from '@tauri-apps/plugin-process';
+import { Splash } from './components'
 
 
 function App() {
@@ -16,17 +17,23 @@ function App() {
   const [sharedapi, setSharedapi] = useState<SharedAPI>()
   const [puuid, setpuuid] = useState<string>()
   const [error, setError] = useState<string|null>()
+  const [update, setUpdate] = useState<Update|null>()
 
   const [_, setMatch] = useState<CurrentGameMatchResponse>()
   const [stats, setStats] = useState<ResultStats[]>([])
 
   async function checkForUpdate(){
     const update = await check();
-    console.log('update', update)
+    if (update) setUpdate(update)
+
+    await utils.sleep()
   }
 
   //@ts-ignore
   async function init(){
+    await checkForUpdate()
+    utils.sleep()
+
     const lockfile = await utils.readLockfile()
     const parsedLockFile = utils.parseLockFile(lockfile)
     console.log('parsedLockFile.password', parsedLockFile.password)
@@ -95,50 +102,64 @@ function App() {
   }
 
   useEffect(() => {
-    checkForUpdate();
-    // init();
+      init()
   }, [])
 
   return (
-    <main className="p-8 flex flex-col">
-      { error && <div className="alert alert-error my-4">{error}</div> }
+    <main className="p-2 flex flex-col">
 
-      <h1>VERSION 1</h1>
+      { !lockfile ? <Splash /> : <>
 
-      <div className="overflow-x-auto max-w-1/2 mx-auto my-4">
-        <table className="table table-xs">
+        { error && <div className="alert alert-error my-4">{error}</div> }
 
-          <thead>
-            <tr>
-              <th>Agent</th>
-              <th>Player</th>
-              <th>K/D</th>
-              <th>Last Game</th>
-            </tr>
-          </thead>
+        {
+          update && <div className="alert alert-info cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="h-6 w-6 shrink-0 stroke-current">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Update available. Click to update
+            </div>
+        }
 
-          <tbody>
-            { stats.map((player) => (
-              <tr className={player.puuid === puuid ? "bg-base-100" : ""}>
-                <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' /> {player.agentName}</td>
-                <th><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span> </th>
-                <td>{player.kd}</td>
-                <td><span className={clsx(player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
+        <div className="overflow-x-auto max-w-1/2 mx-auto my-4">
+          <table className="table table-xs">
+
+            <thead>
+              <tr>
+                <th>Agent</th>
+                <th>Player</th>
+                <th>K/D</th>
+                <th>Last Game</th>
               </tr>
-            )) }
-          </tbody>
+            </thead>
 
-        </table>
-      </div>
+            <tbody>
+              { stats.map((player) => (
+                <tr className={player.puuid === puuid ? "bg-base-100" : ""}>
+                  <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' /> {player.agentName}</td>
+                  <th><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span> </th>
+                  <td>{player.kd}</td>
+                  <td><span className={clsx(player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
+                </tr>
+              )) }
+            </tbody>
 
-      { localapi && sharedapi && puuid && <button className="btn btn-primary btn-wide mx-auto" onClick={onCheck}>Check current game</button> }
+          </table>
+        </div>
 
-      {/* debug */}
-      <section className="my-4 opacity-50 flex flex-col">
-        { player && <span>Logged in as {player?.game_name}#{player?.tag_line}</span> }
-        <span>{lockfile?.port} {lockfile?.password}</span>
-        { puuid && <span>User ID: {puuid}</span> }
-      </section>
+        { localapi && sharedapi && puuid && <button className="btn btn-primary btn-wide mx-auto" onClick={onCheck}>Check current game</button> }
+
+        {/* debug */}
+        <section className="flex flex-row absolute bottom-2 rounded-xl bg-base-100 p-4 text-sm">
+            <span>Logged in as {player?.game_name}#{player?.tag_line}</span>
+            <div className="divider divider-horizontal" />
+            <span>Riot Client Port: {lockfile?.port}</span>
+            <div className="divider divider-horizontal" />
+            <span>Lockfile Password: {lockfile?.password}</span>
+        </section>
+
+      </> }
+
     </main>
   );
 }
