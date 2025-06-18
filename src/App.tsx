@@ -18,6 +18,7 @@ function App() {
   const [puuid, setpuuid] = useState<string>()
   const [error, setError] = useState<string|null>()
   const [update, setUpdate] = useState<Update|null>()
+  const [progress, setProgress] = useState<{ step: number, steps: number }>({ step: 0, steps: 0 })
 
   const [_, setMatch] = useState<CurrentGameMatchResponse>()
   const [stats, setStats] = useState<ResultStats[]>()
@@ -92,6 +93,7 @@ function App() {
 
     for (const player of players){
       console.log('Checking player', player.GameName, player.Subject)
+      setProgress(prevState => ({ step: prevState.step + 1, steps: players.length }))
       const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject)
 
       const promises = matchHistory.map(match => sharedapi.getMatchdetails(match.MatchID))
@@ -116,6 +118,7 @@ function App() {
 
     setStats(result)
     setMatch(match)
+    setProgress({ step: 0, steps: 0 })
   }
 
   useEffect(() => {
@@ -130,6 +133,8 @@ function App() {
         { error && <div className="alert alert-error my-4">{error}</div> }
 
         { update && <button className="btn btn-soft btn-primary absolute right-2" onClick={onUpdate}>Update available</button> }
+
+        { progress.steps > 1 && <progress className="progress progress-primary w-56 m-auto" value={progress.step} max={progress.steps}></progress> }
 
         {/* table */}
         {
@@ -160,7 +165,6 @@ function App() {
             </table>
           </section>
         }
-
 
         { localapi && sharedapi && puuid && <button className="btn btn-primary btn-wide mx-auto" onClick={onCheck}>Check current game</button> }
 
