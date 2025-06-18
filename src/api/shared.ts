@@ -1,10 +1,14 @@
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
+import { load, Store } from '@tauri-apps/plugin-store';
 import { CurrentGameMatchResponse, CurrentGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerNamesReponse } from '../interface';
 
 export class SharedAPI {
   private HOSTNAME: string = `https://glz-eu-1.eu.a.pvp.net`
   private HEADERS = {};
   private queue = 'competitive'
+
+  // @ts-ignore
+  private store: Store
 
   constructor({ entToken, accessToken }: { entToken: string, accessToken: string }){
     this.HEADERS = {
@@ -13,9 +17,10 @@ export class SharedAPI {
         'X-Riot-Entitlements-JWT': entToken,
         'Authorization': `Bearer ${accessToken}`
     }
+
   }
 
-  private delay(ms: number = 2000){
+  private delay(ms: number = 5000){
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
@@ -23,6 +28,17 @@ export class SharedAPI {
     endpoint: string,
     options: { hostname?: string | null, body?: any, method?: 'GET' | 'PUT', try?: number } = { hostname: null, body: null, method: 'GET', try: 1 },
   ): Promise<any>{
+
+    if (!this.store)
+      this.store = await load('requests.json', { autoSave: false })
+
+    if (this.store){
+      const response = await this.store.get<any>(`request:shared:${endpoint}`)
+      if (response){
+        return response
+      }
+    }
+
     const res = await httpfetch(
       (options?.hostname || this.HOSTNAME) + endpoint,
       {
@@ -33,8 +49,11 @@ export class SharedAPI {
       }
     )
 
-    if (res.status === 200)
-      return res.json()
+    if (res.status === 200){
+      const response = await res.json()
+      await this.store.set(`request:shared:${endpoint}`, response)
+      return response
+    }
 
     if (!options.try) options.try = 1
 

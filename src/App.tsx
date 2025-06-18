@@ -112,8 +112,6 @@ function App() {
         lastGameWon,
         lastGameScore
       })
-
-      await utils.sleep()
     }
 
     setStats(result)
@@ -150,7 +148,7 @@ function App() {
 
               <tbody>
                 { stats.map((player) => (
-                  <tr className={player.puuid === puuid ? "bg-base-100" : ""}>
+                  <tr key={player.puuid} className={player.puuid === puuid ? "bg-base-100" : ""}>
                     <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' /> {player.agentName}</td>
                     <th><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span> </th>
                     <td>{player.kd}</td>
@@ -167,7 +165,7 @@ function App() {
         { localapi && sharedapi && puuid && <button className="btn btn-primary btn-wide mx-auto" onClick={onCheck}>Check current game</button> }
 
         {/* debug */}
-        <section className="flex flex-row absolute bottom-2 rounded-xl bg-base-100 p-4 text-sm">
+        <section className="flex flex-row rounded-xl bg-base-100 p-4 text-sm mt-8">
             <span>Logged in as {player?.game_name}#{player?.tag_line}</span>
             <div className="divider divider-horizontal" />
             <span>Riot Client Port: {lockfile?.port}</span>
