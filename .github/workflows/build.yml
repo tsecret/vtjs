@@ -65,6 +65,9 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
+      - name: ls
+        run: ls
+
       - name: Update version gist
         uses: gorgbus/gist-actions@main
         env:
@@ -73,5 +76,4 @@ jobs:
           action: "update"
           gist_id: "0b5f7094000f4063d72276c5e05824aa"
           file_name: "latest.json"
-          run: ls
           content: ./latest.json
