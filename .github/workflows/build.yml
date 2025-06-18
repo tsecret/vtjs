@@ -67,17 +67,9 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-
-      - uses: danielmcconville/gist-sync-file-action@v2.0.0
+      - name: Deploy
+        uses: exuanbo/actions-deploy-gist@v1
         with:
-          # Personal access token with read/write access for Gist
-          gistPat: ${{ secrets.TOKEN }}
-
-          # id of the gist - only required for delete, update and download
-          gistId: 0b5f7094000f4063d72276c5e05824aa
-
-          # Action to perform, either "create", "delete", "update" or "download"
-          action: 'update'
-
-          # name of the file containing the content to upload or download
-          filename: './latest.json'
+          token: ${{ secrets.TOKEN }}
+          gist_id: 0b5f7094000f4063d72276c5e05824aa
+          file_path: ./latest.json
