@@ -65,8 +65,12 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      - name: ls
-        run: ls
+      - name: Read latest.json content
+        id: latest_json
+        run: |
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          cat ./latest.json >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Update version gist
         uses: gorgbus/gist-actions@main
@@ -76,4 +80,4 @@ jobs:
           action: "update"
           gist_id: "0b5f7094000f4063d72276c5e05824aa"
           file_name: "latest.json"
-          content: ./latest.json
+          content: ${{ steps.latest_json.outputs.content }}
