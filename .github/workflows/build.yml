@@ -71,7 +71,7 @@ jobs:
       - uses: danielmcconville/gist-sync-file-action@v2.0.0
         with:
           # Personal access token with read/write access for Gist
-          gistPat: ${{ secrets.TOKEN }
+          gistPat: ${{ secrets.TOKEN }}
 
           # id of the gist - only required for delete, update and download
           gistId: 0b5f7094000f4063d72276c5e05824aa
