@@ -1,4 +1,5 @@
 import { beforeAll, vi } from "vitest";
+import { mockIPC } from '@tauri-apps/api/mocks'
 import * as utils from '../src/utils'
 
 // Local
@@ -61,6 +62,29 @@ beforeAll(async () => {
       })
   }));
 
-  vi.spyOn(utils, 'readLockfile').mockImplementation(async () => "Riot Test Client:1111:12345:test-password:https"
-)
+  vi.spyOn(utils, 'readLockfile').mockImplementation(async () => "Riot Test Client:1111:12345:test-password:https")
+
+
+  const mockStoreData: Record<string, any> = {}
+
+  mockIPC((cmd, payload) => {
+    if (cmd === 'plugin:store|load'){
+      return mockStoreData
+    }
+
+    if (cmd === 'plugin:store|get'){
+      // @ts-ignore
+      if (payload.key in mockStoreData)
+        // @ts-ignore
+        return [mockStoreData[payload.key], true]
+
+      return [null, false]
+    }
+
+    if (cmd === 'plugin:store|set'){
+      // @ts-ignore
+      mockStoreData[payload.key] = payload.value
+    }
+
+  })
 })

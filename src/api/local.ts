@@ -6,7 +6,7 @@ export class LocalAPI {
   private HEADERS = {};
 
   constructor({ port, password }: Lockfile){
-    this.HOSTNAME = `https://192.168.31.197:${port}`
+    this.HOSTNAME = `https://${import.meta.env.DEV ? '192.168.31.197' : 'localhost'}:${port}`
     this.HEADERS= { 'Authorization': `Basic ${password}` }
   }
 

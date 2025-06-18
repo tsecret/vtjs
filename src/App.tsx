@@ -6,7 +6,7 @@ import * as utils from './utils';
 import "./App.css";
 import clsx from "clsx";
 import { check, Update } from '@tauri-apps/plugin-updater';
-// import { relaunch } from '@tauri-apps/plugin-process';
+import { relaunch } from '@tauri-apps/plugin-process';
 import { Splash } from './components'
 
 
@@ -20,19 +20,38 @@ function App() {
   const [update, setUpdate] = useState<Update|null>()
 
   const [_, setMatch] = useState<CurrentGameMatchResponse>()
-  const [stats, setStats] = useState<ResultStats[]>([])
+  const [stats, setStats] = useState<ResultStats[]>()
 
   async function checkForUpdate(){
     const update = await check();
     if (update) setUpdate(update)
-
-    await utils.sleep()
   }
 
-  //@ts-ignore
+  async function onUpdate(){
+    let downloaded = 0;
+    let contentLength = 0;
+
+    await update?.downloadAndInstall(event => {
+      switch (event.event) {
+        case 'Started':
+          contentLength = event.data.contentLength as number;
+          console.log(`started downloading ${event.data.contentLength} bytes`);
+          break;
+        case 'Progress':
+          downloaded += event.data.chunkLength;
+          console.log(`downloaded ${downloaded} from ${contentLength}`);
+          break;
+        case 'Finished':
+          console.log('download finished');
+          break;
+      }
+    })
+
+    await relaunch()
+  }
+
   async function init(){
-    await checkForUpdate()
-    utils.sleep()
+    checkForUpdate()
 
     const lockfile = await utils.readLockfile()
     const parsedLockFile = utils.parseLockFile(lockfile)
@@ -93,8 +112,6 @@ function App() {
         lastGameWon,
         lastGameScore
       })
-
-      await utils.sleep()
     }
 
     setStats(result)
@@ -112,45 +129,43 @@ function App() {
 
         { error && <div className="alert alert-error my-4">{error}</div> }
 
+        { update && <button className="btn btn-soft btn-primary absolute right-2" onClick={onUpdate}>Update available</button> }
+
+        {/* table */}
         {
-          update && <div className="alert alert-info cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="h-6 w-6 shrink-0 stroke-current">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            Update available. Click to update
-            </div>
+          stats &&
+          <section className="overflow-x-auto max-w-1/2 mx-auto my-4">
+            <table className="table table-xs">
+
+              <thead>
+                <tr>
+                  <th>Agent</th>
+                  <th>Player</th>
+                  <th>K/D</th>
+                  <th>Last Game</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                { stats.map((player) => (
+                  <tr key={player.puuid} className={player.puuid === puuid ? "bg-base-100" : ""}>
+                    <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' /> {player.agentName}</td>
+                    <th><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span> </th>
+                    <td>{player.kd}</td>
+                    <td><span className={clsx(player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
+                  </tr>
+                )) }
+              </tbody>
+
+            </table>
+          </section>
         }
 
-        <div className="overflow-x-auto max-w-1/2 mx-auto my-4">
-          <table className="table table-xs">
-
-            <thead>
-              <tr>
-                <th>Agent</th>
-                <th>Player</th>
-                <th>K/D</th>
-                <th>Last Game</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              { stats.map((player) => (
-                <tr className={player.puuid === puuid ? "bg-base-100" : ""}>
-                  <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' /> {player.agentName}</td>
-                  <th><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span> </th>
-                  <td>{player.kd}</td>
-                  <td><span className={clsx(player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
-                </tr>
-              )) }
-            </tbody>
-
-          </table>
-        </div>
 
         { localapi && sharedapi && puuid && <button className="btn btn-primary btn-wide mx-auto" onClick={onCheck}>Check current game</button> }
 
         {/* debug */}
-        <section className="flex flex-row absolute bottom-2 rounded-xl bg-base-100 p-4 text-sm">
+        <section className="flex flex-row rounded-xl bg-base-100 p-4 text-sm mt-8">
             <span>Logged in as {player?.game_name}#{player?.tag_line}</span>
             <div className="divider divider-horizontal" />
             <span>Riot Client Port: {lockfile?.port}</span>

@@ -27,12 +27,15 @@
       "identifier": "http:default",
       "allow": [
         { "url": "https://192.168.31.197:*" },
+        { "url": "https://localhost:*" },
         { "url": "https://glz-eu-1.eu.a.pvp.net:*" },
         { "url": "https://pd.eu.a.pvp.net:*" }
       ]
     },
     "updater:default",
     "updater:allow-check",
-    "updater:allow-download-and-install"
+    "updater:allow-download-and-install",
+    "process:allow-restart",
+    "store:default"
   ]
 }
