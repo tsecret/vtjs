@@ -2,8 +2,9 @@ import { localDataDir } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
 import lockfile from '../../lockfile.json';
-import { Match, MatchDetailsResponse } from '../interface';
+import { CompetitiveUpdatesResponse, Match, MatchDetailsResponse } from '../interface';
 import agents from '../assets/agents.json'
+import ranks from '../assets/ranks.json'
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -51,7 +52,22 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
   }
 }
 
+export const calculateCompetitiveUpdates = (matches: CompetitiveUpdatesResponse['Matches']): { currentRank: number, currentRR: number } =>  {
+  if (!matches.length)
+    return { currentRank: 0, currentRR: 0 }
+
+  return {
+    currentRank: matches[0].TierAfterUpdate,
+    currentRR: matches[0].RankedRatingAfterUpdate
+  }
+}
+
 export const getAgent = (uuid: string) => {
   const agent = agents.find(agent => agent.uuid === uuid)
   return { uuid, name: agent?.displayName, img: agent?.killfeedPortrait }
+}
+
+export const getRank = (rank: number): { rankName: string, rankColor: string } => {
+  const _rank = ranks.find(_rank => _rank.tier === rank)
+  return { rankName: _rank?.tierName as string, rankColor: _rank?.color as string }
 }

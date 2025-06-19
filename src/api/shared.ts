@@ -1,6 +1,6 @@
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 import { load, Store } from '@tauri-apps/plugin-store';
-import { CurrentGameMatchResponse, CurrentGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerNamesReponse } from '../interface';
+import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerNamesReponse } from '../interface';
 
 export class SharedAPI {
   private HOSTNAME: string = `https://glz-eu-1.eu.a.pvp.net`
@@ -83,8 +83,11 @@ export class SharedAPI {
   }
 
   async getMatchdetails(matchId: string): Promise<MatchDetailsResponse>{
-    const res = await this.fetch(`/match-details/v1/matches/${matchId}`, { hostname: 'https://pd.eu.a.pvp.net' })
-    return res
+    return this.fetch(`/match-details/v1/matches/${matchId}`, { hostname: 'https://pd.eu.a.pvp.net' })
+  }
+
+  async getCompetitiveUpdates(puuid: string): Promise<CompetitiveUpdatesResponse> {
+    return this.fetch(`/mmr/v1/players/${puuid}/competitiveupdates?queue=competitive`, { hostname: 'https://pd.eu.a.pvp.net' })
   }
 
 }

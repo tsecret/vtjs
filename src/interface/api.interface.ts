@@ -63,3 +63,13 @@ export interface MatchDetailsResponse {
     roundsPlayed: number
   }[]
 }
+
+export interface CompetitiveUpdatesResponse {
+  Matches: {
+    MatchID: string
+    MapID: string
+    SeasonID: string
+    TierAfterUpdate: number
+    RankedRatingAfterUpdate: number
+  }[]
+}
