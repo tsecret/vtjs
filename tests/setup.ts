@@ -46,7 +46,12 @@ const getResponseFromUrl = (url: string) => {
     }
 
     if (url.includes('/match-history/v1/history/')){
-      return playerMatchHistory
+      const [_, params] = url.split('?')
+      const [startIndexStr, endIndexStr] = params.split('&')
+      const startIndex = parseInt(startIndexStr.split('=')[1])
+      const endIndex = parseInt(endIndexStr.split('=')[1])
+
+      return { ...playerMatchHistory, History: playerMatchHistory.History.slice(startIndex, endIndex) }
     }
 
     if (url.includes('/match-details/v1/matches/')){

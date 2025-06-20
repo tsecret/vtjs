@@ -35,6 +35,7 @@ export interface PlayerNamesReponse {
 
 export interface PlayerMatchHistoryResponse {
   Subject: string
+  Total: number
   History: {
     MatchID: string
     QueueID: string
@@ -49,6 +50,8 @@ export interface MatchDetailsResponse {
   players: {
     subject: string
     teamId: 'Red' | 'Blue'
+    competitiveTier: number
+    accountLevel: number
     stats: {
       score: number
       kills: number
@@ -72,4 +75,21 @@ export interface CompetitiveUpdatesResponse {
     TierAfterUpdate: number
     RankedRatingAfterUpdate: number
   }[]
+}
+
+export interface PlayerMMRResponse {
+  LatestCompetitiveUpdate: {
+    TierAfterUpdate: number
+    RankedRatingAfterUpdate: number
+  }
+  QueueSkills: {
+    competitive: {
+      SeasonalInfoBySeasonID: {
+        [key: string]: {
+          SeasonID: string
+          Rank: number
+        }
+      }
+    }
+  }
 }

@@ -29,4 +29,7 @@ export interface ResultStats {
   currentRank: string
   currentRankColor: string
   currentRR: number
+  rankPeak: string
+  rankPeakColor: string
+  accountLevel: number
 }

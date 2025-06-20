@@ -2,7 +2,7 @@ import { localDataDir } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
 import lockfile from '../../lockfile.json';
-import { CompetitiveUpdatesResponse, Match, MatchDetailsResponse } from '../interface';
+import { CompetitiveUpdatesResponse, Match, MatchDetailsResponse, PlayerMMRResponse } from '../interface';
 import agents from '../assets/agents.json'
 import ranks from '../assets/ranks.json'
 
@@ -33,13 +33,14 @@ export const extractPlayers = (match: Match): string[] => {
 export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]) => {
 
   let kds: number[] = []
+  let accountLevel: number = 0
 
   for (const match of matches){
     const player = match.players.find(player => player.subject === puuid)
     if (!player) continue
 
     kds.push(player.stats.kills / player.stats.deaths)
-
+    accountLevel = Math.max(accountLevel, player.accountLevel)
   }
 
   // Last Game Won and Score
@@ -49,16 +50,15 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
     kd: kds.length ? parseFloat((kds.reduce((a, b) => a + b) / kds.length).toFixed(2)) : 0,
     lastGameWon: typeof team === 'undefined' ? 'N/A' : team.won,
     lastGameScore: typeof team === 'undefined' ? 'N/A' : `${team.roundsWon}:${team.roundsPlayed - team.roundsWon}`,
+    accountLevel
   }
 }
 
-export const calculateCompetitiveUpdates = (matches: CompetitiveUpdatesResponse['Matches']): { currentRank: number, currentRR: number } =>  {
-  if (!matches.length)
-    return { currentRank: 0, currentRR: 0 }
-
+export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: number, currentRR: number, peakRank: number } =>  {
   return {
-    currentRank: matches[0].TierAfterUpdate,
-    currentRR: matches[0].RankedRatingAfterUpdate
+    currentRank: playerMMR.LatestCompetitiveUpdate?.TierAfterUpdate || 0,
+    currentRR: playerMMR.LatestCompetitiveUpdate?.RankedRatingAfterUpdate || 0,
+    peakRank: Math.max(...Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?? [ { Rank: 0 } ]).map(season => season.Rank))
   }
 }
 

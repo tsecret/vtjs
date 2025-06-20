@@ -92,18 +92,23 @@ function App() {
     const players = await sharedapi.getPlayerNames(puuids)
 
     for (const player of players){
+      console.log('Checking player', player.Subject)
       setProgress(prevState => ({ step: prevState.step + 1, steps: players.length }))
 
-      const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject)
-      const { Matches: competitiveUpdates } = await sharedapi.getCompetitiveUpdates(player.Subject)
-      const { currentRank, currentRR } = utils.calculateCompetitiveUpdates(competitiveUpdates)
+      // Current and Peak Rank
+      const mmr = await sharedapi.getPlayerMMR(player.Subject)
+      const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
       const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank)
+      const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank)
 
-      const promises = matchHistory.map(match => sharedapi.getMatchdetails(match.MatchID))
+      // Match history and stats
+      const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject)
+      const promises = matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID))
       const matchStats = await Promise.all(promises)
 
-      const { kd, lastGameWon, lastGameScore } = utils.calculateStatsForPlayer(player.Subject, matchStats)
+      const { kd, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matchStats)
       const { uuid: agentId, name: agentName, img: agentImage } = utils.getAgent(match.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as Match['Players'][0]['CharacterID'])
+
 
       result.push({
         name: player.GameName,
@@ -117,7 +122,10 @@ function App() {
         lastGameScore,
         currentRank: currentRankName,
         currentRankColor,
-        currentRR
+        currentRR,
+        rankPeak: rankPeakName,
+        rankPeakColor: rankPeakColor,
+        accountLevel
       })
     }
 
@@ -152,6 +160,8 @@ function App() {
                   <th>Agent</th>
                   <th>Player</th>
                   <th>Rank</th>
+                  <th>Peak Rank</th>
+                  <th>LVL</th>
                   <th>K/D</th>
                   <th>Last Game</th>
                 </tr>
@@ -163,8 +173,10 @@ function App() {
                     <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' /> {player.agentName}</td>
                     <th><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span> </th>
                     <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
+                    <th><span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span></th>
+                    <th>{player.accountLevel}</th>
                     <td>{player.kd}</td>
-                    <td><span className={clsx(player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
+                    <td><span className={clsx(player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
                   </tr>
                 )) }
               </tbody>
