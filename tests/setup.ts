@@ -1,4 +1,4 @@
-import { beforeAll, vi } from "vitest";
+import { beforeAll, beforeEach, vi } from "vitest";
 import { mockIPC } from '@tauri-apps/api/mocks'
 import * as utils from '../src/utils'
 
@@ -14,6 +14,8 @@ import playerNames from './fixtures/shared/player-names.json'
 import playerMatchHistory from './fixtures/shared/match-history.json'
 import matchDetails from './fixtures/shared/match-details.json'
 import competitiveUpdates from './fixtures/shared/competitive-updates.json'
+
+globalThis.requestCache = {}
 
 const getResponseFromUrl = (url: string) => {
 
@@ -73,27 +75,43 @@ beforeAll(async () => {
 
   vi.spyOn(utils, 'readLockfile').mockImplementation(async () => "Riot Test Client:1111:12345:test-password:https")
 
-
-  const mockStoreData: Record<string, any> = {}
-
   mockIPC((cmd, payload) => {
     if (cmd === 'plugin:store|load'){
-      return mockStoreData
+      return globalThis.requestCache
     }
 
     if (cmd === 'plugin:store|get'){
       // @ts-ignore
-      if (payload.key in mockStoreData)
+      if (payload.key in globalThis.requestCache)
         // @ts-ignore
-        return [mockStoreData[payload.key], true]
+        return [globalThis.requestCache[payload.key], true]
 
       return [null, false]
     }
 
     if (cmd === 'plugin:store|set'){
       // @ts-ignore
-      mockStoreData[payload.key] = payload.value
+      globalThis.requestCache[payload.key] = payload.value
+    }
+
+    if (cmd === 'plugin:store|delete'){
+      // @ts-ignore
+      delete globalThis.requestCache[payload.key];
+    }
+
+    if (cmd === 'plugin:store|clear'){
+      for (const prop of Object.getOwnPropertyNames(globalThis.requestCache)) {
+        delete globalThis.requestCache[prop];
+      }
+    }
+
+    if (cmd === 'plugin:store|keys'){
+      return Object.keys(globalThis.requestCache)
     }
 
   })
+})
+
+beforeEach(() => {
+  globalThis.requestCache = {}
 })
