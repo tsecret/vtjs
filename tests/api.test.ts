@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Match } from '../src/interface'
 import * as utils from '../src/utils'
 import { SharedAPI } from '../src/api/shared'
@@ -60,13 +60,34 @@ describe('request caching', () => {
 
   beforeEach(() => {
     sharedapi = new SharedAPI({ entToken: 'test-ent-token', accessToken: 'test-access-token' })
+    vi.useFakeTimers()
+  })
+
+  afterEach(async () => {
+    vi.useRealTimers()
   })
 
   it('sends the request and checks for cache', async () => {
     const spy = vi.spyOn((window as any).__TAURI_INTERNALS__, "invoke");
-    await sharedapi.getCurrentGamePlayer(puuid)
-    await sharedapi.getCurrentGamePlayer(puuid)
-    expect(spy).toHaveBeenCalledTimes(3)
+    await sharedapi.getMatchDetails('')
+    expect(Object.keys(globalThis.requestCache).length).toEqual(1)
+  })
+
+  it('checks cache after 30 mins', async () => {
+    const timestampBefore = +new Date(2025, 1, 1, 13, 0, 0)
+    vi.setSystemTime(new Date(2025, 1, 1, 13, 0, 0))
+
+    const spy = vi.spyOn((window as any).__TAURI_INTERNALS__, "invoke");
+    await sharedapi.getMatchDetails('')
+    expect(Object.keys(globalThis.requestCache).length).toEqual(1)
+    expect(Object.values(globalThis.requestCache)[0].ttl).toEqual(timestampBefore + sharedapi.cacheTTL)
+
+    const timestampAfter = +new Date(2025, 1, 1, 13, 30, 1)
+    vi.setSystemTime(new Date(2025, 1, 1, 13, 30, 1))
+
+    await sharedapi.getMatchDetails('')
+    expect(Object.keys(globalThis.requestCache).length).toEqual(1)
+    expect(Object.values(globalThis.requestCache)[0].ttl).toEqual(timestampAfter + sharedapi.cacheTTL)
   })
 
 })

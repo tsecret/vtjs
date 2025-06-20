@@ -8,7 +8,8 @@ export class SharedAPI {
   private queue = 'competitive'
 
   // @ts-ignore
-  private store: Store
+  private requestCache: Store
+  public cacheTTL = 30 * 60 * 1000
 
   constructor({ entToken, accessToken }: { entToken: string, accessToken: string }){
     this.HEADERS = {
@@ -17,13 +18,16 @@ export class SharedAPI {
         'X-Riot-Entitlements-JWT': entToken,
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
-
     }
-
   }
 
   private delay(ms: number = 5000){
     return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
+  async clearCache(){
+    if (this.requestCache)
+    await this.requestCache.clear()
   }
 
   private async fetch(
@@ -33,18 +37,21 @@ export class SharedAPI {
       body?: any,
       method?: 'GET' | 'PUT',
       try?: number,
-      cache?: boolean
-    } = { hostname: null, body: null, method: 'GET', try: 1, cache: true },
+      noCache?: boolean
+    } = { hostname: null, body: null, method: 'GET', try: 1 },
   ): Promise<any>{
 
-    if (!this.store)
-      this.store = await load('requests.json', { autoSave: false })
+    if (!this.requestCache)
+      this.requestCache = await load('requests.json', { autoSave: false })
 
-    if (options.cache && this.store){
-      const response = await this.store.get<any>(`request:shared:${endpoint}`)
-      if (response){
-        return response
-      }
+    if (!options.noCache && this.requestCache){
+      const response = await this.requestCache.get<{ value: any, ttl: number }>(`request:shared:${endpoint}`)
+
+      if (response && response.value && response.ttl > +new Date())
+        return response.value
+
+      if (response === undefined || response.ttl < +new Date())
+        await this.requestCache.delete(`request:shared:${endpoint}`)
     }
 
     const res = await httpfetch(
@@ -59,7 +66,7 @@ export class SharedAPI {
 
     if (res.status === 200){
       const response = await res.json()
-      await this.store.set(`request:shared:${endpoint}`, response)
+      if (!options.noCache) await this.requestCache.set(`request:shared:${endpoint}`, { value: response, ttl: +new Date() + this.cacheTTL })
       return response
     }
 
