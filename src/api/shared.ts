@@ -28,13 +28,19 @@ export class SharedAPI {
 
   private async fetch(
     endpoint: string,
-    options: { hostname?: string | null, body?: any, method?: 'GET' | 'PUT', try?: number } = { hostname: null, body: null, method: 'GET', try: 1 },
+    options: {
+      hostname?: string | null,
+      body?: any,
+      method?: 'GET' | 'PUT',
+      try?: number,
+      cache?: boolean
+    } = { hostname: null, body: null, method: 'GET', try: 1, cache: true },
   ): Promise<any>{
 
     if (!this.store)
       this.store = await load('requests.json', { autoSave: false })
 
-    if (this.store){
+    if (options.cache && this.store){
       const response = await this.store.get<any>(`request:shared:${endpoint}`)
       if (response){
         return response
@@ -70,7 +76,7 @@ export class SharedAPI {
   }
 
   async getCurrentGamePlayer(puuid: string): Promise<CurrentGamePlayerResponse> {
-    return this.fetch(`/core-game/v1/players/${puuid}`)
+    return this.fetch(`/core-game/v1/players/${puuid}`, { cache: false })
   }
 
   async getCurrentGameMatch(matchId: string): Promise<CurrentGameMatchResponse> {
