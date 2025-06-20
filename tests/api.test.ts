@@ -66,7 +66,7 @@ describe('request caching', () => {
     const spy = vi.spyOn((window as any).__TAURI_INTERNALS__, "invoke");
     await sharedapi.getCurrentGamePlayer(puuid)
     await sharedapi.getCurrentGamePlayer(puuid)
-    expect(spy).toHaveBeenCalledTimes(4)
+    expect(spy).toHaveBeenCalledTimes(3)
   })
 
 })
