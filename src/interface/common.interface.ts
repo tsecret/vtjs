@@ -26,4 +26,10 @@ export interface ResultStats {
   agentImage: string
   lastGameWon: boolean | string
   lastGameScore: string
+  currentRank: string
+  currentRankColor: string
+  currentRR: number
+  rankPeak: string
+  rankPeakColor: string
+  accountLevel: number
 }

@@ -13,7 +13,7 @@ import currentGameMatch from './fixtures/shared/current-game-match.json'
 import playerNames from './fixtures/shared/player-names.json'
 import playerMatchHistory from './fixtures/shared/match-history.json'
 import matchDetails from './fixtures/shared/match-details.json'
-
+import competitiveUpdates from './fixtures/shared/competitive-updates.json'
 
 const getResponseFromUrl = (url: string) => {
 
@@ -46,11 +46,20 @@ const getResponseFromUrl = (url: string) => {
     }
 
     if (url.includes('/match-history/v1/history/')){
-      return playerMatchHistory
+      const [_, params] = url.split('?')
+      const [startIndexStr, endIndexStr] = params.split('&')
+      const startIndex = parseInt(startIndexStr.split('=')[1])
+      const endIndex = parseInt(endIndexStr.split('=')[1])
+
+      return { ...playerMatchHistory, History: playerMatchHistory.History.slice(startIndex, endIndex) }
     }
 
     if (url.includes('/match-details/v1/matches/')){
       return matchDetails
+    }
+
+    if (url.includes('/competitiveupdates')){
+      return competitiveUpdates
     }
 }
 

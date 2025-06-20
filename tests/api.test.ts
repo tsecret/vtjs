@@ -6,6 +6,9 @@ import { load, Store } from '@tauri-apps/plugin-store';
 
 import currentGameMatch from './fixtures/shared/current-game-match.json'
 import matchDetails from './fixtures/shared/match-details.json'
+import competitiveUpdates from './fixtures/shared/competitive-updates.json'
+import matchHistory from './fixtures/shared/match-history.json'
+import playerMMR from './fixtures/shared/player-mmr.json'
 
 describe('utils', () => {
 
@@ -21,8 +24,31 @@ describe('utils', () => {
   })
 
   it('calculateStatsForPlayer', () => {
-    const expected = { kd: 1.56, lastGameWon: false, lastGameScore: '8:13' }
+    const expected = { kd: 1.56, lastGameWon: false, lastGameScore: '8:13', accountLevel: 89 }
     expect(utils.calculateStatsForPlayer('test-player-1-puuid', [matchDetails] as any)).toEqual(expected)
+  })
+
+  it('calculateCompetitiveUpdates', () => {
+    expect(utils.calculateRanking(playerMMR)).toEqual({ currentRank: 20, currentRR: 28, peakRank: 20 })
+  })
+
+})
+
+describe('api', () => {
+
+  let sharedapi: SharedAPI;
+
+  beforeEach(() => {
+    sharedapi = new SharedAPI({ entToken: '', accessToken: '' })
+  })
+
+  describe('shared', () => {
+
+    it('getPlayerMatchHistory default', async () => {
+      const { History } = await sharedapi.getPlayerMatchHistory('')
+      expect(History.length).toEqual(20)
+    })
+
   })
 
 })
