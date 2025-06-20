@@ -83,7 +83,7 @@ export class SharedAPI {
   }
 
   async getCurrentGamePlayer(puuid: string): Promise<CurrentGamePlayerResponse> {
-    return this.fetch(`/core-game/v1/players/${puuid}`, { cache: false })
+    return this.fetch(`/core-game/v1/players/${puuid}`, { noCache: true })
   }
 
   async getCurrentGameMatch(matchId: string): Promise<CurrentGameMatchResponse> {
