@@ -48,10 +48,10 @@ export const Header = () => {
       <>
         <span className="font-bold">Valorant+</span>
 
-        <div className="space-x-4">
+        { update && <div className="space-x-4">
           { !update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16} /> Update available</button> }
           <button className="btn btn-soft btn-sm btn-primary btn-circle" onClick={() => setPage(Pages.SETTINGS)}><Settings size={20} /></button>
-        </div>
+        </div> }
       </>
       : page === Pages.SETTINGS ?
       <>
