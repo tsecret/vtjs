@@ -7,8 +7,8 @@ import atoms from '../utils/atoms'
 import { Pages } from '../interface/Pages.enum';
 
 export const Header = () => {
-    const [update, setUpdate] = useState<Update|null>()
-    const [page, setPage] = useAtom(atoms.page)
+  const [update, setUpdate] = useState<Update|null>()
+  const [page, setPage] = useAtom(atoms.page)
 
   async function checkForUpdate(){
     const update = await check();
@@ -48,10 +48,9 @@ export const Header = () => {
       <>
         <span className="font-bold">Valorant+</span>
 
-        <div className="space-x-4">
-          { !update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16} /> Update available</button> }
-          <button className="btn btn-soft btn-sm btn-primary btn-circle" onClick={() => setPage(Pages.SETTINGS)}><Settings size={20} /></button>
-        </div>
+        { update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16} /> Update available</button> }
+
+        <button className="btn btn-soft btn-sm btn-primary btn-circle" onClick={() => setPage(Pages.SETTINGS)}><Settings size={20} /></button>
       </>
       : page === Pages.SETTINGS ?
       <>
