@@ -1,13 +1,13 @@
-name: 'publish'
+name: 'test'
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - test
 
 jobs:
-  publish:
+  test:
     permissions:
       contents: write
     strategy:
@@ -21,9 +21,9 @@ jobs:
           - platform: 'windows-latest'
             args: ''
 
-    runs-on: ${{ matrix.platform }}
+    runs-on: self-hosted
     outputs:
-      OUTPUT_LATEST: ${{ steps.publish.outputs.latest }}
+      OUTPUT_LATEST: ${{ steps.test.outputs.latest }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,22 +53,5 @@ jobs:
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
         run: pnpm install # change this to npm or pnpm depending on which one you use.
 
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-        with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
-          releaseName: 'VTJS v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
-          prerelease: false
-          args: ${{ matrix.args }}
-
-      - name: Update Gist
-        uses: exuanbo/actions-deploy-gist@v1
-        with:
-          token: ${{ secrets.TOKEN }}
-          gist_id: 0b5f7094000f4063d72276c5e05824aa
-          file_path: ./latest.json
+      - name: Run Tests
+        run: pnpm test --run
