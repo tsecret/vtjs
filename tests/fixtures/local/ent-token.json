@@ -1,0 +1,7 @@
+{
+    "accessToken": "fake-access-token",
+    "entitlements": [],
+    "issuer": "https://entitlements.auth.riotgames.com",
+    "subject": "test-player-1-puuid",
+    "token": "fake-ent-token"
+}

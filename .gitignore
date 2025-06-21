@@ -27,6 +27,5 @@ src-tauri/target/
 *.sw?
 lockfile.json
 notes
-tests/fixtures/
 updator.key
 .env
