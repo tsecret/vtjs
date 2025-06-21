@@ -90,7 +90,7 @@ export class SharedAPI {
     return this.fetch(`/core-game/v1/matches/${matchId}`)
   }
 
-  async getPlayerNames(puuids: string[]): Promise<PlayerNamesReponse[]>{
+  async getPlayerNames(puuids: string[]): Promise<PlayerNamesReponse[]> {
     // TODO make this a separate service
     return this.fetch('/name-service/v2/players', { hostname: 'https://pd.eu.a.pvp.net', body: JSON.stringify(puuids), method: "PUT" })
   }
@@ -101,7 +101,7 @@ export class SharedAPI {
     return this.fetch(`/match-history/v1/history/${puuid}?startIndex=${startIndex}&endIndex=${endIndex}&queue=${this.queue}`, { hostname: 'https://pd.eu.a.pvp.net' })
   }
 
-  async getMatchDetails(matchId: string): Promise<MatchDetailsResponse>{
+  async getMatchDetails(matchId: string): Promise<MatchDetailsResponse> {
     return this.fetch(`/match-details/v1/matches/${matchId}`, { hostname: 'https://pd.eu.a.pvp.net' })
   }
 
