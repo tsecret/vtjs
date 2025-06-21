@@ -11,7 +11,7 @@ import atoms from "../utils/atoms";
 
 export const Main = () => {
     const [error, setError] = useState<string|null>()
-    const [progress, setProgress] = useState<{ step: number, steps: number }>({ step: 0, steps: 0 })
+    const [progress, setProgress] = useState<{ step: number, steps: number, player: string | null }>({ step: 0, steps: 0, player: null })
     const [, setMatch] = useState<CurrentGameMatchResponse>()
     const [stats, setStats] = useState<ResultStats[]>()
 
@@ -39,7 +39,7 @@ export const Main = () => {
 
       for (const player of players){
         console.log('Checking player', player.Subject)
-        setProgress(prevState => ({ step: prevState.step + 1, steps: players.length }))
+        setProgress(prevState => ({ step: prevState.step + 1, steps: players.length, player: player.GameName }))
 
         // Current and Peak Rank
         const mmr = await sharedapi.getPlayerMMR(player.Subject)
@@ -77,14 +77,25 @@ export const Main = () => {
 
       setStats(result)
       setMatch(match)
-      setProgress({ step: 0, steps: 0 })
+      setProgress({ step: 0, steps: 0, player: null })
     }
 
     return (
       <div className="p-2 flex flex-col">
         { error && <div className="alert alert-error my-4">{error}</div> }
 
-        { progress.steps > 1 && <progress className="progress progress-primary w-56 m-auto my-4" value={progress.step} max={progress.steps}></progress> }
+        { progress.steps > 1 &&
+
+          <div className="flex flex-col m-auto my-4 space-y-4">
+            <progress className="progress progress-primary w-56 " value={progress.step} max={progress.steps}></progress>
+            <div className="flex flex-row items-center space-x-4">
+              <span className="loading loading-spinner loading-xs"></span>
+              <span className="w-full">Checking {progress.player}</span>
+            </div>
+          </div>
+
+        }
+
 
         {/* table */}
         {
