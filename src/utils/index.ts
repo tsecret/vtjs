@@ -2,9 +2,9 @@ import { localDataDir } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
 import lockfile from '../../lockfile.json';
-import { CompetitiveUpdatesResponse, Match, MatchDetailsResponse, PlayerMMRResponse } from '../interface';
-import agents from '../assets/agents.json'
-import ranks from '../assets/ranks.json'
+import agents from '../assets/agents.json';
+import ranks from '../assets/ranks.json';
+import { Match, MatchDetailsResponse, PlayerMMRResponse } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
