@@ -10,10 +10,14 @@ export class LocalAPI {
     this.HEADERS= { 'Authorization': `Basic ${password}` }
   }
 
-  private async fetch(endpoint: string){
+   private async fetch(endpoint: string){
     const res = await httpfetch(
       this.HOSTNAME + endpoint,
-      { headers: this.HEADERS, method: "GET", danger: { acceptInvalidCerts: true, acceptInvalidHostnames: true } }
+      {
+        headers: this.HEADERS,
+        method: "GET",
+        danger: { acceptInvalidCerts: true, acceptInvalidHostnames: true }
+      }
     )
 
     if (res.status === 200)

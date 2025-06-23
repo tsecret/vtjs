@@ -31,5 +31,7 @@ export interface PlayerRow {
   currentRR?: number
   rankPeak?: string
   rankPeakColor?: string
+  rankPeakDate?: string
   accountLevel?: number
+  enemy: boolean
 }
