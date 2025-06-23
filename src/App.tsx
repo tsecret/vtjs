@@ -11,6 +11,8 @@ import * as utils from './utils';
 import atoms from './utils/atoms';
 import { MATCHES_CACHE_NAME, REQUEST_CACHE_NAME } from "./utils/constants";
 import { Header } from "./components/Header";
+import { TestLocalAPI } from "./api/local.dev";
+import { TestSharedAPI } from "./api/shared.dev";
 
 
 function App() {
@@ -28,11 +30,12 @@ function App() {
     setRequestsCache(await load(REQUEST_CACHE_NAME, { autoSave: false }))
     setMatchesCache(await load(MATCHES_CACHE_NAME, { autoSave: true }))
 
-    const localapi = new LocalAPI(utils.parseLockFile(await utils.readLockfile()))
+
+    const localapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestLocalAPI({ port: '', password: '' }) :  new LocalAPI(utils.parseLockFile(await utils.readLockfile()))
     const player = await localapi.getPlayerAccount()
 
     const { accessToken, token: entToken, subject: puuid } = await localapi.getEntitlementToken()
-    const sharedapi = new SharedAPI({ entToken, accessToken })
+    const sharedapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestSharedAPI({ entToken, accessToken }) : new SharedAPI({ entToken, accessToken })
 
     setPlayer(player)
     setpuuid(puuid)

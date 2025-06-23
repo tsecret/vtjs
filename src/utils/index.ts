@@ -1,10 +1,10 @@
 import { localDataDir } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
+import { Match, MatchDetailsResponse, PlayerMMRResponse } from '../interface';
 import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
 import ranks from '../assets/ranks.json';
-import { Match, MatchDetailsResponse, PlayerMMRResponse } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -58,7 +58,7 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
   return {
     currentRank: playerMMR.LatestCompetitiveUpdate?.TierAfterUpdate || 0,
     currentRR: playerMMR.LatestCompetitiveUpdate?.RankedRatingAfterUpdate || 0,
-    peakRank: Math.max(...Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?? [ { Rank: 0 } ]).map(season => season.Rank))
+    peakRank: Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.Rank - a.Rank)[0].Rank
   }
 }
 

@@ -12,7 +12,7 @@ import atoms from "../utils/atoms";
 export const Main = () => {
     const [error, setError] = useState<string|null>()
     const [progress, setProgress] = useState<{ step: number, steps: number, player: string | null }>({ step: 0, steps: 0, player: null })
-    const [, setMatch] = useState<CurrentGameMatchResponse>()
+    const [currentMatch, setMatch] = useState<CurrentGameMatchResponse | null>()
     const [table, setTable] = useState<{ [key: PlayerRow['puuid']]: PlayerRow }>({})
 
     const [puuid] = useAtom(atoms.puuid)
@@ -26,6 +26,11 @@ export const Main = () => {
 
       const playerInfo = await sharedapi?.getCurrentGamePlayer(puuid)
 
+      if (playerInfo.MatchID !== currentMatch?.MatchID) {
+        setTable({})
+        setMatch(null)
+      }
+
       if (!playerInfo) {
         setError("No current game found")
         return
@@ -34,8 +39,9 @@ export const Main = () => {
       const match = await sharedapi?.getCurrentGameMatch(playerInfo.MatchID)
       const puuids = utils.extractPlayers(match)
       const players = await sharedapi.getPlayerNames(puuids)
+      const playerTeamId = match.Players.find(player => player.Subject === puuid)?.TeamID as 'RED' | 'BLUE'
 
-      players.forEach(player => { table[player.Subject] = {} as any });
+      match.Players.forEach(player => { table[player.Subject] = {} as any });
 
       for (const player of players){
         console.log('Checking player', player.Subject)
@@ -60,6 +66,7 @@ export const Main = () => {
           currentRR,
           rankPeak: rankPeakName,
           rankPeakColor: rankPeakColor,
+          enemy: match.Players.find(_player => _player.Subject === player.Subject)?.TeamID !== playerTeamId,
         }
       }
 
@@ -90,12 +97,24 @@ export const Main = () => {
       setProgress({ step: 0, steps: 0, player: null })
     }
 
+    const Row = ({ player }: { player: PlayerRow }) => {
+      return <tr key={player.puuid}>
+        <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' /> {player.agentName}</td>
+        <th>{ player.puuid === puuid ? <span>You</span> : <><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span></>}</th>
+        <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
+        <th><span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span></th>
+        <th><span>{player.accountLevel}</span></th>
+        <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-green-400' : 'text-red-400')}>{player.kd}</span></td>
+        <td><span className={clsx(player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
+      </tr>
+    }
+
     return (
       <div className="p-2 flex flex-col">
         { error && <div className="alert alert-error my-4">{error}</div> }
 
-        { progress.steps > 1 &&
-
+        {
+          progress.steps > 1 &&
           <div className="flex flex-col m-auto my-4 space-y-4">
             <progress className="progress progress-primary w-56 " value={progress.step} max={progress.steps}></progress>
             <div className="flex flex-row items-center space-x-4">
@@ -103,9 +122,7 @@ export const Main = () => {
               <span className="w-full">Checking {progress.player}</span>
             </div>
           </div>
-
         }
-
 
         {/* table */}
         {
@@ -126,17 +143,25 @@ export const Main = () => {
               </thead>
 
               <tbody>
-                { Object.values(table).map((player) => (
-                  <tr key={player.puuid} className={player.puuid === puuid ? "bg-base-100" : ""}>
-                    <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' /> {player.agentName}</td>
-                    <th><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span> </th>
-                    <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
-                    <th><span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span></th>
-                    <th><span>{player.accountLevel}</span></th>
-                    <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-green-400' : 'text-red-400')}>{player.kd}</span></td>
-                    <td><span className={clsx(player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
-                  </tr>
-                )) }
+                {
+                  Object.values(table)
+                  .filter(player => !player.enemy)
+                  .sort((a, b) => (b.kd || 1) - (a.kd || 0))
+                  .map((player) => <Row player={player} /> )
+                }
+              </tbody>
+
+
+              <tbody><tr><td></td></tr></tbody>
+
+              <tbody>
+                {
+                  Object.values(table)
+                  .filter(player => player.enemy)
+                  .sort((a, b) => (b.kd || 1) - (a.kd || 0))
+                  .map((player) => <Row player={player} /> )
+                }
+
               </tbody>
 
             </table>

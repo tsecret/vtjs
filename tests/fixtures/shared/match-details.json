@@ -299,7 +299,7 @@
             ]
         },
         {
-            "subject": "fc362af8-3b62-5d90-9868-8af026d1ec54",
+            "subject": "test-player-2-puuid",
             "gameName": "KILL EVERYBODY",
             "tagLine": "BORZ",
             "platformInfo": {
@@ -587,7 +587,7 @@
             ]
         },
         {
-            "subject": "86a19e85-7b0f-58c4-9c5d-c818078d411a",
+            "subject": "test-player-3-puuid",
             "gameName": "kraize",
             "tagLine": "SSS",
             "platformInfo": {
@@ -809,7 +809,7 @@
             ]
         },
         {
-            "subject": "c0bdaf57-2a00-5427-91b5-8f7bb0aedb01",
+            "subject": "test-player-4-puuid",
             "gameName": "Axel",
             "tagLine": "3458",
             "platformInfo": {
@@ -1032,7 +1032,7 @@
             ]
         },
         {
-            "subject": "eb62cbdd-17f6-505c-880a-784b7f43ce21",
+            "subject": "test-player-5-puuid",
             "gameName": "Tsuki",
             "tagLine": "sabi",
             "platformInfo": {
@@ -1230,7 +1230,7 @@
             ]
         },
         {
-            "subject": "884a2d79-1826-55d2-9f6e-1fc637d706fb",
+            "subject": "test-player-6-puuid",
             "gameName": "Freysev",
             "tagLine": "2148",
             "platformInfo": {
@@ -1448,7 +1448,7 @@
             ]
         },
         {
-            "subject": "436a2b88-04f8-57b5-9e50-4eb3a2d37e50",
+            "subject": "test-player-7-puuid",
             "gameName": "LeXecutor",
             "tagLine": "9992",
             "platformInfo": {
@@ -1710,7 +1710,7 @@
             ]
         },
         {
-            "subject": "f9c567df-49da-5700-bd7e-9a03a157ad08",
+            "subject": "test-player-8-puuid",
             "gameName": "stan",
             "tagLine": "dog",
             "platformInfo": {
@@ -1913,7 +1913,7 @@
             ]
         },
         {
-            "subject": "a61be7fe-4716-50ef-84e6-04abc89f31b7",
+            "subject": "test-player-9-puuid",
             "gameName": "JOPA tigra",
             "tagLine": "JOpa",
             "platformInfo": {
@@ -2141,7 +2141,7 @@
             ]
         },
         {
-            "subject": "ad4224ba-ab5f-5813-a3e6-fba86f791f97",
+            "subject": "test-player-10-puuid",
             "gameName": "K1nGebet",
             "tagLine": "3743",
             "platformInfo": {

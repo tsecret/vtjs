@@ -58,17 +58,5 @@
         "Subject": "test-player-10-puuid",
         "GameName": "Player10",
         "TagLine": "test"
-    },
-    {
-        "DisplayName": "",
-        "Subject": "test-player-11-puuid",
-        "GameName": "Player11",
-        "TagLine": "test"
-    },
-    {
-        "DisplayName": "",
-        "Subject": "test-player--puuid",
-        "GameName": "Player12",
-        "TagLine": "test"
     }
 ]
