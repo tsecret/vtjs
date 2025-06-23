@@ -5,7 +5,6 @@ import { Match, MatchDetailsResponse, PlayerMMRResponse } from '../interface';
 import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
 import ranks from '../assets/ranks.json';
-import seasons from '../assets/seasons.json'
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 

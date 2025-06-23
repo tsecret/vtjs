@@ -151,7 +151,8 @@ export const Main = () => {
                 }
               </tbody>
 
-              <th />
+
+              <tbody><tr><td></td></tr></tbody>
 
               <tbody>
                 {
@@ -160,6 +161,7 @@ export const Main = () => {
                   .sort((a, b) => (b.kd || 1) - (a.kd || 0))
                   .map((player) => <Row player={player} /> )
                 }
+
               </tbody>
 
             </table>
