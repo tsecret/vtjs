@@ -42,15 +42,15 @@ export const Header = () => {
     checkForUpdate()
   })
 
-  return <div className="w-full p-2 flex flex-row items-center justify-between">
+  return <div className="w-full p-2 flex flex-row items-center space-x-4">
     {
       page === Pages.MAIN ?
       <>
         <span className="font-bold">Valorant+</span>
+        <div className="badge badge-dash badge-primary">Beta</div>
 
-        { update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16} /> Update available</button> }
-
-        <button className="btn btn-soft btn-sm btn-primary btn-circle" onClick={() => setPage(Pages.SETTINGS)}><Settings size={20} /></button>
+        { update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16}/> Update available</button> }
+        <button className="btn btn-soft btn-sm btn-primary btn-circle ml-auto" onClick={() => setPage(Pages.SETTINGS)}><Settings size={20} /></button>
       </>
       : page === Pages.SETTINGS ?
       <>

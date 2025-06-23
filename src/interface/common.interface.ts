@@ -16,20 +16,20 @@ export interface Player {
   CharacterID: string
 }
 
-export interface ResultStats {
+export interface PlayerRow {
   name: string
   tag: string
   puuid: string
-  kd: number
+  kd?: number
   agentName: string
   agentId: string
   agentImage: string
-  lastGameWon: boolean | string
-  lastGameScore: string
-  currentRank: string
-  currentRankColor: string
-  currentRR: number
-  rankPeak: string
-  rankPeakColor: string
-  accountLevel: number
+  lastGameWon?: boolean | string
+  lastGameScore?: string
+  currentRank?: string
+  currentRankColor?: string
+  currentRR?: number
+  rankPeak?: string
+  rankPeakColor?: string
+  accountLevel?: number
 }

@@ -2,7 +2,7 @@
 import clsx from "clsx";
 import { useState } from "react";
 
-import { CurrentGameMatchResponse, Match, ResultStats } from "../interface";
+import { CurrentGameMatchResponse, Match, PlayerRow } from "../interface";
 import * as utils from '../utils';
 
 import { useAtom } from "jotai";
@@ -13,7 +13,7 @@ export const Main = () => {
     const [error, setError] = useState<string|null>()
     const [progress, setProgress] = useState<{ step: number, steps: number, player: string | null }>({ step: 0, steps: 0, player: null })
     const [, setMatch] = useState<CurrentGameMatchResponse>()
-    const [stats, setStats] = useState<ResultStats[]>()
+    const [table, setTable] = useState<{ [key: PlayerRow['puuid']]: PlayerRow }>({})
 
     const [puuid] = useAtom(atoms.puuid)
     const [player] = useAtom(atoms.player)
@@ -23,8 +23,6 @@ export const Main = () => {
     async function onCheck(){
       setError(null)
       if (!puuid || !localapi || !sharedapi) return
-
-      let result: ResultStats[] = []
 
       const playerInfo = await sharedapi?.getCurrentGamePlayer(puuid)
 
@@ -37,9 +35,10 @@ export const Main = () => {
       const puuids = utils.extractPlayers(match)
       const players = await sharedapi.getPlayerNames(puuids)
 
+      players.forEach(player => { table[player.Subject] = {} as any });
+
       for (const player of players){
         console.log('Checking player', player.Subject)
-        setProgress(prevState => ({ step: prevState.step + 1, steps: players.length, player: player.GameName }))
 
         // Current and Peak Rank
         const mmr = await sharedapi.getPlayerMMR(player.Subject)
@@ -47,35 +46,46 @@ export const Main = () => {
         const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank)
         const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank)
 
+        const { uuid: agentId, name: agentName, img: agentImage } = utils.getAgent(match.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as Match['Players'][0]['CharacterID'])
+
+        table[player.Subject] = {
+          name: player.GameName,
+          tag: player.TagLine,
+          puuid: player.Subject,
+          agentId: agentId || 'N/A',
+          agentName: agentName || 'N/A',
+          agentImage: agentImage || 'N/A',
+          currentRank: currentRankName,
+          currentRankColor,
+          currentRR,
+          rankPeak: rankPeakName,
+          rankPeakColor: rankPeakColor,
+        }
+      }
+
+      setTable(table)
+
+      for (const player of players){
+        console.log('Checking player', player.Subject)
+        setProgress(prevState => ({ step: prevState.step + 1, steps: players.length, player: player.GameName }))
+
         // Match history and stats
         const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject)
         const promises = matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID))
         const matchStats = await Promise.all(promises)
 
         const { kd, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matchStats)
-        const { uuid: agentId, name: agentName, img: agentImage } = utils.getAgent(match.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as Match['Players'][0]['CharacterID'])
 
-
-        result.push({
-          name: player.GameName,
-          tag: player.TagLine,
-          puuid: player.Subject,
+        table[player.Subject] = {
+          ...table[player.Subject],
           kd,
-          agentId: agentId || 'N/A',
-          agentName: agentName || 'N/A',
-          agentImage: agentImage || 'N/A',
           lastGameWon,
           lastGameScore,
-          currentRank: currentRankName,
-          currentRankColor,
-          currentRR,
-          rankPeak: rankPeakName,
-          rankPeakColor: rankPeakColor,
           accountLevel
-        })
+        }
       }
 
-      setStats(result)
+      setTable(table)
       setMatch(match)
       setProgress({ step: 0, steps: 0, player: null })
     }
@@ -99,7 +109,7 @@ export const Main = () => {
 
         {/* table */}
         {
-          stats &&
+          table &&
           <section className="overflow-x-auto mx-auto my-4">
             <table className="table table-xs">
 
@@ -116,14 +126,14 @@ export const Main = () => {
               </thead>
 
               <tbody>
-                { stats.map((player) => (
+                { Object.values(table).map((player) => (
                   <tr key={player.puuid} className={player.puuid === puuid ? "bg-base-100" : ""}>
                     <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' /> {player.agentName}</td>
                     <th><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span> </th>
                     <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
                     <th><span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span></th>
-                    <th>{player.accountLevel}</th>
-                    <td><span className={clsx(player.kd === 0? null : player.kd >= 1 ? 'text-green-400' : 'text-red-400')}>{player.kd}</span></td>
+                    <th><span>{player.accountLevel}</span></th>
+                    <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-green-400' : 'text-red-400')}>{player.kd}</span></td>
                     <td><span className={clsx(player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
                   </tr>
                 )) }
