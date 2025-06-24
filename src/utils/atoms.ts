@@ -1,10 +1,8 @@
-import { atom } from 'jotai'
-import { Pages } from '../interface/Pages.enum'
 import { Store } from '@tauri-apps/plugin-store'
+import { atom } from 'jotai'
 import { LocalAPI, SharedAPI } from '../api'
 import { PlayerAccount } from '../interface'
 
-const page = atom<Pages>(Pages.SPLASH)
 const requestsCache = atom<Store>()
 const matchesCache= atom<Store>()
 
@@ -15,7 +13,6 @@ const player = atom<PlayerAccount>()
 
 
 export default {
-  page,
   requestsCache,
   matchesCache,
 

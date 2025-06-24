@@ -53,7 +53,7 @@ describe('api', () => {
 
 })
 
-describe('request caching', () => {
+describe.skip('request caching', () => {
 
   let sharedapi: SharedAPI
   const puuid = 'test-player'

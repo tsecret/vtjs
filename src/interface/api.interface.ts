@@ -46,10 +46,13 @@ export interface PlayerMatchHistoryResponse {
 export interface MatchDetailsResponse {
   matchInfo: {
     matchId: string
+    gameStartMillis: number
+    mapId: string
   }
   players: {
     subject: string
     teamId: 'Red' | 'Blue'
+    characterId: string
     competitiveTier: number
     accountLevel: number
     stats: {
@@ -89,7 +92,7 @@ export interface PlayerMMRResponse {
           SeasonID: string
           Rank: number
         }
-      }
+      } | null
     }
   }
 }

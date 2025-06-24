@@ -6,8 +6,9 @@ import { CurrentGameMatchResponse, Match, PlayerRow } from "../interface";
 import * as utils from '../utils';
 
 import { useAtom } from "jotai";
-import { User } from "lucide-react";
+import { ExternalLink, User } from "lucide-react";
 import atoms from "../utils/atoms";
+import { useNavigate } from "react-router";
 
 export const Main = () => {
     const [error, setError] = useState<string|null>()
@@ -20,20 +21,22 @@ export const Main = () => {
     const [localapi] = useAtom(atoms.localapi)
     const [sharedapi] = useAtom(atoms.sharedapi)
 
+    const navigate = useNavigate()
+
     async function onCheck(){
       setError(null)
       if (!puuid || !localapi || !sharedapi) return
 
       const playerInfo = await sharedapi?.getCurrentGamePlayer(puuid)
 
-      if (playerInfo.MatchID !== currentMatch?.MatchID) {
-        setTable({})
-        setMatch(null)
-      }
-
       if (!playerInfo) {
         setError("No current game found")
         return
+      }
+
+      if (playerInfo.MatchID !== currentMatch?.MatchID) {
+        setTable({})
+        setMatch(null)
       }
 
       const match = await sharedapi?.getCurrentGameMatch(playerInfo.MatchID)
@@ -88,7 +91,7 @@ export const Main = () => {
           kd,
           lastGameWon,
           lastGameScore,
-          accountLevel
+          accountLevel,
         }
       }
 
@@ -106,6 +109,8 @@ export const Main = () => {
         <th><span>{player.accountLevel}</span></th>
         <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-green-400' : 'text-red-400')}>{player.kd}</span></td>
         <td><span className={clsx(player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
+        <td>{ utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }</td>
+        <td><ExternalLink className="cursor-pointer" size={16} onClick={() => navigate('/player/' + player.puuid)}/></td>
       </tr>
     }
 
@@ -139,6 +144,8 @@ export const Main = () => {
                   <th>LVL</th>
                   <th>K/D</th>
                   <th>Last Game</th>
+                  <th>Note</th>
+                  <th></th>
                 </tr>
               </thead>
 
@@ -150,7 +157,6 @@ export const Main = () => {
                   .map((player) => <Row player={player} /> )
                 }
               </tbody>
-
 
               <tbody><tr><td></td></tr></tbody>
 

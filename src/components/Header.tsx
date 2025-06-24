@@ -1,14 +1,13 @@
 import { relaunch } from '@tauri-apps/plugin-process';
 import { check, Update } from '@tauri-apps/plugin-updater';
+import { ChevronLeft, Download, Settings } from 'lucide-react';
 import { useEffect, useState } from "react";
-import { ChevronLeft, Download, Settings } from 'lucide-react'
-import { useAtom } from 'jotai';
-import atoms from '../utils/atoms'
-import { Pages } from '../interface/Pages.enum';
+import { useLocation, useNavigate } from 'react-router';
 
 export const Header = () => {
   const [update, setUpdate] = useState<Update|null>()
-  const [page, setPage] = useAtom(atoms.page)
+  const location = useLocation()
+  const navigate = useNavigate()
 
   async function checkForUpdate(){
     const update = await check();
@@ -42,19 +41,19 @@ export const Header = () => {
     checkForUpdate()
   })
 
-  return <div className="w-full p-2 flex flex-row items-center space-x-4">
+  return <div className="w-full p-2 flex flex-row items-center space-x-4 px-4">
     {
-      page === Pages.MAIN ?
+      location.pathname === '/dashboard' ?
       <>
         <span className="font-bold">Valorant+</span>
         <div className="badge badge-dash badge-primary">Beta</div>
 
         { update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16}/> Update available</button> }
-        <button className="btn btn-soft btn-sm btn-primary btn-circle ml-auto" onClick={() => setPage(Pages.SETTINGS)}><Settings size={20} /></button>
+        <button className="btn btn-soft btn-sm btn-primary btn-circle ml-auto" onClick={() => navigate('/settings')}><Settings size={20} /></button>
       </>
-      : page === Pages.SETTINGS ?
+      : location.pathname === '/settings' ?
       <>
-        <button className="btn btn-primary btn-sm" onClick={(() => setPage(Pages.MAIN))}><ChevronLeft /></button>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate('/dashboard'))}><ChevronLeft /></button>
 
         <span className="font-bold">Settings</span>
       </>
