@@ -1,5 +1,5 @@
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
-import { load, Store } from '@tauri-apps/plugin-store';
+import { LazyStore } from '@tauri-apps/plugin-store';
 import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
 
 export class SharedAPI {
@@ -8,7 +8,7 @@ export class SharedAPI {
   private queue = 'competitive'
 
   // @ts-ignore
-  private requestCache: Store
+  private requestCache: LazyStore
   public cacheTTL = 30 * 60 * 1000
 
   constructor({ entToken, accessToken }: { entToken: string, accessToken: string }){
@@ -42,7 +42,7 @@ export class SharedAPI {
   ): Promise<any>{
 
     if (!this.requestCache)
-      this.requestCache = await load('requests.json', { autoSave: false })
+      this.requestCache = new LazyStore('requests.json')
 
     if (!options.noCache && this.requestCache){
       const response = await this.requestCache.get<{ value: any, ttl: number }>(`request:shared:${endpoint}`)
@@ -73,16 +73,16 @@ export class SharedAPI {
     if (!options.try) options.try = 1
 
     if (res.status === 429){
-      console.log('Rate limit hit, waiting for', options.try * 5000)
-      await this.delay(options.try * 5000)
+      console.log('Rate limit hit, waiting for', options.try * 10_000)
+      await this.delay(options.try * 10_000)
       return this.fetch(endpoint, { ...options, try: options.try + 1 })
     }
 
-    console.log('res.status', res.status)
+    return null
 
   }
 
-  async getCurrentGamePlayer(puuid: string): Promise<CurrentGamePlayerResponse> {
+  async getCurrentGamePlayer(puuid: string): Promise<CurrentGamePlayerResponse|null> {
     return this.fetch(`/core-game/v1/players/${puuid}`, { noCache: true })
   }
 
@@ -92,13 +92,13 @@ export class SharedAPI {
 
   async getPlayerNames(puuids: string[]): Promise<PlayerNamesReponse[]> {
     // TODO make this a separate service
-    return this.fetch('/name-service/v2/players', { hostname: 'https://pd.eu.a.pvp.net', body: JSON.stringify(puuids), method: "PUT" })
+    return this.fetch('/name-service/v2/players', { hostname: 'https://pd.eu.a.pvp.net', body: JSON.stringify(puuids), method: "PUT", noCache: true })
   }
 
   async getPlayerMatchHistory(puuid: string): Promise<PlayerMatchHistoryResponse> {
     const startIndex = 0
     const endIndex = 20
-    return this.fetch(`/match-history/v1/history/${puuid}?startIndex=${startIndex}&endIndex=${endIndex}&queue=${this.queue}`, { hostname: 'https://pd.eu.a.pvp.net' })
+    return this.fetch(`/match-history/v1/history/${puuid}?startIndex=${startIndex}&endIndex=${endIndex}&queue=${this.queue}`, { hostname: 'https://pd.eu.a.pvp.net', noCache: true })
   }
 
   async getMatchDetails(matchId: string): Promise<MatchDetailsResponse> {

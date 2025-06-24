@@ -5,6 +5,7 @@ import { Match, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../in
 import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
 import ranks from '../assets/ranks.json';
+import maps from '../assets/maps.json';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -58,13 +59,15 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
   return {
     currentRank: playerMMR.LatestCompetitiveUpdate?.TierAfterUpdate || 0,
     currentRR: playerMMR.LatestCompetitiveUpdate?.RankedRatingAfterUpdate || 0,
-    peakRank: Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.Rank - a.Rank)[0].Rank
+    peakRank: playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?
+      Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.Rank - a.Rank)[0].Rank
+      : 0
   }
 }
 
 export const getAgent = (uuid: string) => {
-  const agent = agents.find(agent => agent.uuid === uuid)
-  return { uuid, name: agent?.displayName, img: agent?.killfeedPortrait }
+  const agent = agents.find(agent => agent.uuid === uuid)!
+  return { uuid, name: agent.displayName, img: agent.killfeedPortrait }
 }
 
 export const getRank = (rank: number): { rankName: string, rankColor: string } => {
@@ -72,12 +75,16 @@ export const getRank = (rank: number): { rankName: string, rankColor: string } =
   return { rankName: _rank?.tierName as string, rankColor: _rank?.color as string }
 }
 
+export const getMap = (uuid: string) => {
+  return maps.find(map => map.mapUrl === uuid)!
+}
+
 export const playerHasWon = (puuid: string, match: MatchDetailsResponse) => {
-  return match.teams.find(team => team.teamId === match.players.find(player => player.subject === puuid)?.teamId)?.won
+  return match.teams.find(team => team.teamId === match.players.find(player => player.subject === puuid)?.teamId)?.won ?? false
 }
 
 export const isSmurf = (player: PlayerRow) => {
   return (player.accountLevel && player.accountLevel < 100)
     && (player.kd && player.kd > 1.2)
-    && (player.currentRank == player.rankPeak)
+    && (player.currentRank == player.rankPeak) ? true : false
 }
