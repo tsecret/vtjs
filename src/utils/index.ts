@@ -1,7 +1,7 @@
 import { localDataDir } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
-import { Match, MatchDetailsResponse, PlayerMMRResponse } from '../interface';
+import { Match, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
 import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
 import ranks from '../assets/ranks.json';
@@ -45,12 +45,12 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
 
   // Last Game Won and Score
   const team = matches.length ? matches[0].teams.find(team => team.teamId === matches[0].players.find(player => player.subject === puuid)?.teamId) : undefined
-
+ 
   return {
     kd: kds.length ? parseFloat((kds.reduce((a, b) => a + b) / kds.length).toFixed(2)) : 0,
     lastGameWon: typeof team === 'undefined' ? 'N/A' : team.won,
     lastGameScore: typeof team === 'undefined' ? 'N/A' : `${team.roundsWon}:${team.roundsPlayed - team.roundsWon}`,
-    accountLevel
+    accountLevel,
   }
 }
 
@@ -70,4 +70,14 @@ export const getAgent = (uuid: string) => {
 export const getRank = (rank: number): { rankName: string, rankColor: string } => {
   const _rank = ranks.find(_rank => _rank.tier === rank)
   return { rankName: _rank?.tierName as string, rankColor: _rank?.color as string }
+}
+
+export const playerHasWon = (puuid: string, match: MatchDetailsResponse) => {
+  return match.teams.find(team => team.teamId === match.players.find(player => player.subject === puuid)?.teamId)?.won
+}
+
+export const isSmurf = (player: PlayerRow) => {
+  return (player.accountLevel && player.accountLevel < 100)
+    && (player.kd && player.kd > 1.2)
+    && (player.currentRank == player.rankPeak)
 }

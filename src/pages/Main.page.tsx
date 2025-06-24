@@ -88,7 +88,7 @@ export const Main = () => {
           kd,
           lastGameWon,
           lastGameScore,
-          accountLevel
+          accountLevel,
         }
       }
 
@@ -106,6 +106,9 @@ export const Main = () => {
         <th><span>{player.accountLevel}</span></th>
         <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-green-400' : 'text-red-400')}>{player.kd}</span></td>
         <td><span className={clsx(player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
+        <td>
+          { utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }
+        </td>
       </tr>
     }
 
@@ -139,6 +142,7 @@ export const Main = () => {
                   <th>LVL</th>
                   <th>K/D</th>
                   <th>Last Game</th>
+                  <th>Note</th>
                 </tr>
               </thead>
 
@@ -150,7 +154,6 @@ export const Main = () => {
                   .map((player) => <Row player={player} /> )
                 }
               </tbody>
-
 
               <tbody><tr><td></td></tr></tbody>
 
