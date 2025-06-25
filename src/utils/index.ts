@@ -40,13 +40,17 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
     const player = match.players.find(player => player.subject === puuid)
     if (!player) continue
 
-    kds.push(player.stats.kills / player.stats.deaths)
+    if (player.stats.deaths == 0)
+      player.stats.deaths = 1
+
+    kds.push(player.stats.kills / player.stats.deaths )
     accountLevel = Math.max(accountLevel, player.accountLevel)
   }
 
   // Last Game Won and Score
   const team = matches.length ? matches[0].teams.find(team => team.teamId === matches[0].players.find(player => player.subject === puuid)?.teamId) : undefined
  
+
   return {
     kd: kds.length ? parseFloat((kds.reduce((a, b) => a + b) / kds.length).toFixed(2)) : 0,
     lastGameWon: typeof team === 'undefined' ? 'N/A' : team.won,
@@ -66,7 +70,7 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
 }
 
 export const getAgent = (uuid: string) => {
-  const agent = agents.find(agent => agent.uuid === uuid)!
+  const agent = agents.find(agent => agent.uuid === uuid.toLowerCase())!
   return { uuid, name: agent.displayName, img: agent.killfeedPortrait }
 }
 
