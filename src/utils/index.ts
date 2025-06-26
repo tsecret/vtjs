@@ -34,27 +34,26 @@ export const extractPlayers = (match: Match): string[] => {
 export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]) => {
 
   let kds: number[] = []
-  let accountLevel: number = 0
+  let accountLevel = 0
 
   for (const match of matches){
-    const player = match.players.find(player => player.subject === puuid)
-    if (!player) continue
+    const player = match.players.find(player => player.subject === puuid)!
 
     if (player.stats.deaths == 0)
       player.stats.deaths = 1
 
-    kds.push(player.stats.kills / player.stats.deaths )
+    kds.push(player.stats.kills / player.stats.deaths)
     accountLevel = Math.max(accountLevel, player.accountLevel)
   }
 
   // Last Game Won and Score
-  const team = matches.length ? matches[0].teams.find(team => team.teamId === matches[0].players.find(player => player.subject === puuid)?.teamId) : undefined
+  const team = matches.length ? matches[0].teams.find(team => team.teamId === matches[0].players.find(player => player.subject === puuid)!.teamId)! : undefined
  
 
   return {
     kd: kds.length ? parseFloat((kds.reduce((a, b) => a + b) / kds.length).toFixed(2)) : 0,
-    lastGameWon: typeof team === 'undefined' ? 'N/A' : team.won,
-    lastGameScore: typeof team === 'undefined' ? 'N/A' : `${team.roundsWon}:${team.roundsPlayed - team.roundsWon}`,
+    lastGameWon: team ? team.won : 'N/A',
+    lastGameScore: team ? `${team.roundsWon}:${team.roundsPlayed - team.roundsWon}` : 'N/A',
     accountLevel,
   }
 }

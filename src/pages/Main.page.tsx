@@ -154,7 +154,7 @@ export const Main = () => {
                   Object.values(table)
                   .filter(player => !player.enemy)
                   .sort((a, b) => (b.kd || 1) - (a.kd || 0))
-                  .map((player) => <Row player={player} /> )
+                  .map((player) => <Row player={player} key={player.puuid} /> )
                 }
               </tbody>
 
@@ -165,7 +165,7 @@ export const Main = () => {
                   Object.values(table)
                   .filter(player => player.enemy)
                   .sort((a, b) => (b.kd || 1) - (a.kd || 0))
-                  .map((player) => <Row player={player} /> )
+                  .map((player) => <Row player={player} key={player.puuid} /> )
                 }
 
               </tbody>

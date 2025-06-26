@@ -1,10 +1,9 @@
-import { Store } from '@tauri-apps/plugin-store'
+import Database from '@tauri-apps/plugin-sql'
 import { atom } from 'jotai'
 import { LocalAPI, SharedAPI } from '../api'
 import { PlayerAccount } from '../interface'
 
-const requestsCache = atom<Store>()
-const matchesCache= atom<Store>()
+const cache = atom<Database>()
 
 const localapi = atom<LocalAPI>()
 const sharedapi = atom<SharedAPI>()
@@ -13,8 +12,7 @@ const player = atom<PlayerAccount>()
 
 
 export default {
-  requestsCache,
-  matchesCache,
+  cache,
 
   localapi,
   sharedapi,
