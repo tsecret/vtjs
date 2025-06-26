@@ -25,7 +25,116 @@ export interface CurrentGamePlayerResponse {
   MatchID: string
 }
 
+export interface CurrentPreGamePlayerResponse extends CurrentGamePlayerResponse {}
+
 export interface CurrentGameMatchResponse extends Match {}
+
+export interface CurrentPreGameMatchResponse {
+    ID: string;
+    Teams: {
+        TeamID: ("Blue" | "Red") | string;
+        Players: {
+            /** Player UUID */
+            Subject: string;
+            /** Character ID */
+            CharacterID: string;
+            CharacterSelectionState: "" | "selected" | "locked";
+            PregamePlayerState: "joined";
+            CompetitiveTier: number;
+            PlayerIdentity: {
+                /** Player UUID */
+                Subject: string;
+                /** Card ID */
+                PlayerCardID: string;
+                /** Title ID */
+                PlayerTitleID: string;
+                AccountLevel: number;
+                /** Preferred Level Border ID */
+                PreferredLevelBorderID: string | "";
+                Incognito: boolean;
+                HideAccountLevel: boolean;
+            };
+            SeasonalBadgeInfo: {
+                /** Season ID */
+                SeasonID: string | "";
+                NumberOfWins: number;
+                WinsByTier: null;
+                Rank: number;
+                LeaderboardRank: number;
+            };
+            IsCaptain: boolean;
+        }[];
+    }[];
+    AllyTeam: {
+        TeamID: ("Blue" | "Red") | string;
+        Players: {
+            /** Player UUID */
+            Subject: string;
+            /** Character ID */
+            CharacterID: string;
+            CharacterSelectionState: "" | "selected" | "locked";
+            PregamePlayerState: "joined";
+            CompetitiveTier: number;
+            PlayerIdentity: {
+                /** Player UUID */
+                Subject: string;
+                /** Card ID */
+                PlayerCardID: string;
+                /** Title ID */
+                PlayerTitleID: string;
+                AccountLevel: number;
+                /** Preferred Level Border ID */
+                PreferredLevelBorderID: string | "";
+                Incognito: boolean;
+                HideAccountLevel: boolean;
+            };
+            SeasonalBadgeInfo: {
+                /** Season ID */
+                SeasonID: string | "";
+                NumberOfWins: number;
+                WinsByTier: null;
+                Rank: number;
+                LeaderboardRank: number;
+            };
+            IsCaptain: boolean;
+        }[];
+    } | null;
+    EnemyTeam: {
+        TeamID: ("Blue" | "Red") | string;
+        Players: {
+            /** Player UUID */
+            Subject: string;
+            /** Character ID */
+            CharacterID: string;
+            CharacterSelectionState: "" | "selected" | "locked";
+            PregamePlayerState: "joined";
+            CompetitiveTier: number;
+            PlayerIdentity: {
+                /** Player UUID */
+                Subject: string;
+                /** Card ID */
+                PlayerCardID: string;
+                /** Title ID */
+                PlayerTitleID: string;
+                AccountLevel: number;
+                /** Preferred Level Border ID */
+                PreferredLevelBorderID: string | "";
+                Incognito: boolean;
+                HideAccountLevel: boolean;
+            };
+            SeasonalBadgeInfo: {
+                /** Season ID */
+                SeasonID: string | "";
+                NumberOfWins: number;
+                WinsByTier: null;
+                Rank: number;
+                LeaderboardRank: number;
+            };
+            IsCaptain: boolean;
+        }[];
+    } | null;
+    MapID: string;
+}
 
 export interface PlayerNamesReponse {
   Subject: string

@@ -1,6 +1,6 @@
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 import { LazyStore } from '@tauri-apps/plugin-store';
-import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
+import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
 import { CACHE_NAME, REQUEST_CACHE_NAME } from '../utils/constants';
 import Database from '@tauri-apps/plugin-sql';
 
@@ -84,8 +84,16 @@ export class SharedAPI {
     return this.fetch(`/core-game/v1/players/${puuid}`, { noCache: true })
   }
 
+  async getCurrentPreGamePlayer(puuid: string): Promise<CurrentPreGamePlayerResponse|null> {
+    return this.fetch(`/pregame/v1/players/${puuid}`, { noCache: true })
+  }
+
   async getCurrentGameMatch(matchId: string): Promise<CurrentGameMatchResponse> {
     return this.fetch(`/core-game/v1/matches/${matchId}`)
+  }
+
+  async getCurrentPreGameMatch(matchId: string): Promise<CurrentPreGameMatchResponse> {
+    return this.fetch(`/pregame/v1/matches/${matchId}`)
   }
 
   async getPlayerNames(puuids: string[]): Promise<PlayerNamesReponse[]> {

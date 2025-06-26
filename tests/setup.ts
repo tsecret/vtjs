@@ -9,7 +9,9 @@ import playerAliasResponse from './fixtures/local/player-alias.json'
 
 // Shared
 import currentGamePlayer from './fixtures/shared/current-game-player.json'
+import currentPreGamePlayer from './fixtures/shared/current-pregame-player.json'
 import currentGameMatch from './fixtures/shared/current-game-match.json'
+import currentPreGameMatch from './fixtures/shared/current-pregame-match.json'
 import playerNames from './fixtures/shared/player-names.json'
 import playerMatchHistory from './fixtures/shared/match-history.json'
 import matchDetails from './fixtures/shared/match-details.json'
@@ -40,7 +42,15 @@ const getResponseFromUrl = (url: string) => {
       return currentGamePlayer
     }
 
+    if (url.includes('/pregame/v1/players/')){
+      return currentPreGamePlayer
+    }
+
     if (url.includes('/core-game/v1/matches/')){
+      return currentPreGameMatch
+    }
+
+    if (url.includes('/pregame/v1/matches/')){
       return currentGameMatch
     }
 

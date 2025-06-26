@@ -1,7 +1,7 @@
 import { localDataDir } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
-import { Match, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, Match, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
 import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
 import ranks from '../assets/ranks.json';

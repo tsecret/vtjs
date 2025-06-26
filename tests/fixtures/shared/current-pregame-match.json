@@ -1,0 +1,303 @@
+{
+    "ID": "test-match-id-0",
+    "Version": 1750935919769,
+    "Teams": [
+        {
+            "TeamID": "Blue",
+            "Players": [
+                {
+                    "Subject": "82617232-13f4-5cb6-b1d1-73bb117d23eb",
+                    "CharacterID": "",
+                    "CharacterSelectionState": "",
+                    "PregamePlayerState": "joined",
+                    "CompetitiveTier": 0,
+                    "PlayerIdentity": {
+                        "Subject": "82617232-13f4-5cb6-b1d1-73bb117d23eb",
+                        "PlayerCardID": "806eb134-4e86-52a1-ba65-39987c4a7abd",
+                        "PlayerTitleID": "025b0aaf-4bc6-522c-faae-a484779c5d03",
+                        "AccountLevel": 84,
+                        "PreferredLevelBorderID": "5156a90d-4d65-58d0-f6a8-48a0c003878a",
+                        "Incognito": false,
+                        "HideAccountLevel": false
+                    },
+                    "SeasonalBadgeInfo": {
+                        "SeasonID": "",
+                        "NumberOfWins": 0,
+                        "WinsByTier": null,
+                        "Rank": 0,
+                        "LeaderboardRank": 0
+                    },
+                    "IsCaptain": true,
+                    "PlatformType": "pc",
+                    "PremierPrestige": {}
+                },
+                {
+                    "Subject": "5e15b5d3-00bc-57ca-a03c-4a62351faa89",
+                    "CharacterID": "",
+                    "CharacterSelectionState": "",
+                    "PregamePlayerState": "joined",
+                    "CompetitiveTier": 0,
+                    "PlayerIdentity": {
+                        "Subject": "5e15b5d3-00bc-57ca-a03c-4a62351faa89",
+                        "PlayerCardID": "5a6961da-4936-f39a-539a-b8b8f151b73a",
+                        "PlayerTitleID": "899e7754-4c86-8c16-a94e-f2bb6c0d808f",
+                        "AccountLevel": 101,
+                        "PreferredLevelBorderID": "e6238102-425c-a647-6685-e6af7f8982d9",
+                        "Incognito": false,
+                        "HideAccountLevel": false
+                    },
+                    "SeasonalBadgeInfo": {
+                        "SeasonID": "",
+                        "NumberOfWins": 0,
+                        "WinsByTier": null,
+                        "Rank": 0,
+                        "LeaderboardRank": 0
+                    },
+                    "IsCaptain": true,
+                    "PlatformType": "pc",
+                    "PremierPrestige": {}
+                },
+                {
+                    "Subject": "da8baa6f-f67c-58a5-b24f-6d0bb0f31216",
+                    "CharacterID": "",
+                    "CharacterSelectionState": "",
+                    "PregamePlayerState": "joined",
+                    "CompetitiveTier": 0,
+                    "PlayerIdentity": {
+                        "Subject": "da8baa6f-f67c-58a5-b24f-6d0bb0f31216",
+                        "PlayerCardID": "9fb348bc-41a0-91ad-8a3e-818035c4e561",
+                        "PlayerTitleID": "d13e579c-435e-44d4-cec2-6eae5a3c5ed4",
+                        "AccountLevel": 91,
+                        "PreferredLevelBorderID": "e6238102-425c-a647-6685-e6af7f8982d9",
+                        "Incognito": false,
+                        "HideAccountLevel": false
+                    },
+                    "SeasonalBadgeInfo": {
+                        "SeasonID": "",
+                        "NumberOfWins": 0,
+                        "WinsByTier": null,
+                        "Rank": 0,
+                        "LeaderboardRank": 0
+                    },
+                    "IsCaptain": true,
+                    "PlatformType": "pc",
+                    "PremierPrestige": {}
+                },
+                {
+                    "Subject": "b92d8a45-2577-5ebc-8aea-75f9de54274d",
+                    "CharacterID": "601dbbe7-43ce-be57-2a40-4abd24953621",
+                    "CharacterSelectionState": "selected",
+                    "PregamePlayerState": "joined",
+                    "CompetitiveTier": 0,
+                    "PlayerIdentity": {
+                        "Subject": "b92d8a45-2577-5ebc-8aea-75f9de54274d",
+                        "PlayerCardID": "7b75be16-4190-34d5-667c-3589418fc7c5",
+                        "PlayerTitleID": "566b6a77-4f72-af35-6d17-43be14e73cb7",
+                        "AccountLevel": 77,
+                        "PreferredLevelBorderID": "e6238102-425c-a647-6685-e6af7f8982d9",
+                        "Incognito": false,
+                        "HideAccountLevel": false
+                    },
+                    "SeasonalBadgeInfo": {
+                        "SeasonID": "",
+                        "NumberOfWins": 0,
+                        "WinsByTier": null,
+                        "Rank": 0,
+                        "LeaderboardRank": 0
+                    },
+                    "IsCaptain": true,
+                    "PlatformType": "pc",
+                    "PremierPrestige": {}
+                },
+                {
+                    "Subject": "fb1149dc-261e-5e2f-a9dd-d8315edce85a",
+                    "CharacterID": "320b2a48-4d9b-a075-30f1-1f93a9b638fa",
+                    "CharacterSelectionState": "locked",
+                    "PregamePlayerState": "joined",
+                    "CompetitiveTier": 0,
+                    "PlayerIdentity": {
+                        "Subject": "fb1149dc-261e-5e2f-a9dd-d8315edce85a",
+                        "PlayerCardID": "9fb348bc-41a0-91ad-8a3e-818035c4e561",
+                        "PlayerTitleID": "d13e579c-435e-44d4-cec2-6eae5a3c5ed4",
+                        "AccountLevel": 2,
+                        "PreferredLevelBorderID": "00000000-0000-0000-0000-000000000000",
+                        "Incognito": false,
+                        "HideAccountLevel": false
+                    },
+                    "SeasonalBadgeInfo": {
+                        "SeasonID": "",
+                        "NumberOfWins": 0,
+                        "WinsByTier": null,
+                        "Rank": 0,
+                        "LeaderboardRank": 0
+                    },
+                    "IsCaptain": true,
+                    "PlatformType": "pc",
+                    "PremierPrestige": {}
+                }
+            ]
+        }
+    ],
+    "AllyTeam": {
+        "TeamID": "Blue",
+        "Players": [
+            {
+                "Subject": "82617232-13f4-5cb6-b1d1-73bb117d23eb",
+                "CharacterID": "",
+                "CharacterSelectionState": "",
+                "PregamePlayerState": "joined",
+                "CompetitiveTier": 0,
+                "PlayerIdentity": {
+                    "Subject": "82617232-13f4-5cb6-b1d1-73bb117d23eb",
+                    "PlayerCardID": "806eb134-4e86-52a1-ba65-39987c4a7abd",
+                    "PlayerTitleID": "025b0aaf-4bc6-522c-faae-a484779c5d03",
+                    "AccountLevel": 84,
+                    "PreferredLevelBorderID": "5156a90d-4d65-58d0-f6a8-48a0c003878a",
+                    "Incognito": false,
+                    "HideAccountLevel": false
+                },
+                "SeasonalBadgeInfo": {
+                    "SeasonID": "",
+                    "NumberOfWins": 0,
+                    "WinsByTier": null,
+                    "Rank": 0,
+                    "LeaderboardRank": 0
+                },
+                "IsCaptain": true,
+                "PlatformType": "pc",
+                "PremierPrestige": {}
+            },
+            {
+                "Subject": "5e15b5d3-00bc-57ca-a03c-4a62351faa89",
+                "CharacterID": "",
+                "CharacterSelectionState": "",
+                "PregamePlayerState": "joined",
+                "CompetitiveTier": 0,
+                "PlayerIdentity": {
+                    "Subject": "5e15b5d3-00bc-57ca-a03c-4a62351faa89",
+                    "PlayerCardID": "5a6961da-4936-f39a-539a-b8b8f151b73a",
+                    "PlayerTitleID": "899e7754-4c86-8c16-a94e-f2bb6c0d808f",
+                    "AccountLevel": 101,
+                    "PreferredLevelBorderID": "e6238102-425c-a647-6685-e6af7f8982d9",
+                    "Incognito": false,
+                    "HideAccountLevel": false
+                },
+                "SeasonalBadgeInfo": {
+                    "SeasonID": "",
+                    "NumberOfWins": 0,
+                    "WinsByTier": null,
+                    "Rank": 0,
+                    "LeaderboardRank": 0
+                },
+                "IsCaptain": true,
+                "PlatformType": "pc",
+                "PremierPrestige": {}
+            },
+            {
+                "Subject": "da8baa6f-f67c-58a5-b24f-6d0bb0f31216",
+                "CharacterID": "",
+                "CharacterSelectionState": "",
+                "PregamePlayerState": "joined",
+                "CompetitiveTier": 0,
+                "PlayerIdentity": {
+                    "Subject": "da8baa6f-f67c-58a5-b24f-6d0bb0f31216",
+                    "PlayerCardID": "9fb348bc-41a0-91ad-8a3e-818035c4e561",
+                    "PlayerTitleID": "d13e579c-435e-44d4-cec2-6eae5a3c5ed4",
+                    "AccountLevel": 91,
+                    "PreferredLevelBorderID": "e6238102-425c-a647-6685-e6af7f8982d9",
+                    "Incognito": false,
+                    "HideAccountLevel": false
+                },
+                "SeasonalBadgeInfo": {
+                    "SeasonID": "",
+                    "NumberOfWins": 0,
+                    "WinsByTier": null,
+                    "Rank": 0,
+                    "LeaderboardRank": 0
+                },
+                "IsCaptain": true,
+                "PlatformType": "pc",
+                "PremierPrestige": {}
+            },
+            {
+                "Subject": "b92d8a45-2577-5ebc-8aea-75f9de54274d",
+                "CharacterID": "601dbbe7-43ce-be57-2a40-4abd24953621",
+                "CharacterSelectionState": "selected",
+                "PregamePlayerState": "joined",
+                "CompetitiveTier": 0,
+                "PlayerIdentity": {
+                    "Subject": "b92d8a45-2577-5ebc-8aea-75f9de54274d",
+                    "PlayerCardID": "7b75be16-4190-34d5-667c-3589418fc7c5",
+                    "PlayerTitleID": "566b6a77-4f72-af35-6d17-43be14e73cb7",
+                    "AccountLevel": 77,
+                    "PreferredLevelBorderID": "e6238102-425c-a647-6685-e6af7f8982d9",
+                    "Incognito": false,
+                    "HideAccountLevel": false
+                },
+                "SeasonalBadgeInfo": {
+                    "SeasonID": "",
+                    "NumberOfWins": 0,
+                    "WinsByTier": null,
+                    "Rank": 0,
+                    "LeaderboardRank": 0
+                },
+                "IsCaptain": true,
+                "PlatformType": "pc",
+                "PremierPrestige": {}
+            },
+            {
+                "Subject": "fb1149dc-261e-5e2f-a9dd-d8315edce85a",
+                "CharacterID": "320b2a48-4d9b-a075-30f1-1f93a9b638fa",
+                "CharacterSelectionState": "locked",
+                "PregamePlayerState": "joined",
+                "CompetitiveTier": 0,
+                "PlayerIdentity": {
+                    "Subject": "fb1149dc-261e-5e2f-a9dd-d8315edce85a",
+                    "PlayerCardID": "9fb348bc-41a0-91ad-8a3e-818035c4e561",
+                    "PlayerTitleID": "d13e579c-435e-44d4-cec2-6eae5a3c5ed4",
+                    "AccountLevel": 2,
+                    "PreferredLevelBorderID": "00000000-0000-0000-0000-000000000000",
+                    "Incognito": false,
+                    "HideAccountLevel": false
+                },
+                "SeasonalBadgeInfo": {
+                    "SeasonID": "",
+                    "NumberOfWins": 0,
+                    "WinsByTier": null,
+                    "Rank": 0,
+                    "LeaderboardRank": 0
+                },
+                "IsCaptain": true,
+                "PlatformType": "pc",
+                "PremierPrestige": {}
+            }
+        ]
+    },
+    "EnemyTeam": null,
+    "ObserverSubjects": [],
+    "MatchCoaches": [],
+    "EnemyTeamSize": 5,
+    "EnemyTeamLockCount": 1,
+    "PregameState": "character_select_active",
+    "LastUpdated": "0001-01-01T00:00:00Z",
+    "MapID": "/Game/Maps/Foxtrot/Foxtrot",
+    "MapSelectPool": [],
+    "BannedMapIDs": [],
+    "CastedVotes": {},
+    "MapSelectSteps": [],
+    "MapSelectStep": 0,
+    "Team1": "Blue",
+    "GamePodID": "aresriot.aws-euc1-prod.eu-gp-frankfurt-1",
+    "Mode": "/Game/GameModes/QuickBomb/QuickBombGameMode.QuickBombGameMode_C",
+    "VoiceSessionID": "test-match-id-0-tm1",
+    "MUCName": "test-match-id-0-1@ares-pregame.eu2.pvp.net",
+    "TeamMatchToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImFyZXNxYS1yZXBvcnQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3BkLmV1LmEucHZwLm5ldC9yZXN0cmljdGlvbnMiLCJzdWIiOiIxYjcyMGI5NC02M2QyLTQ3YjYtODYxMS1jZTFhZmM1MGU0NzkiLCJleHAiOjE3NTA5NDMwOTYsImlhdCI6MTc1MDkzNTg5NiwianRpIjoiNzA4Y2NiMmYtODEzNS00YWM0LTg5MjEtZjEwY2M3M2M4OGFiIiwicHJvZHVjdCI6ImFyZXMiLCJyZWdpb24iOiJldS1nbHotZXUtMSIsInBhcnRpY2lwYW50UHV1aWRzIjpbIjgyNjE3MjMyLTEzZjQtNWNiNi1iMWQxLTczYmIxMTdkMjNlYiIsIjVlMTViNWQzLTAwYmMtNTdjYS1hMDNjLTRhNjIzNTFmYWE4OSIsImRhOGJhYTZmLWY2N2MtNThhNS1iMjRmLTZkMGJiMGYzMTIxNiIsImI5MmQ4YTQ1LTI1NzctNWViYy04YWVhLTc1ZjlkZTU0Mjc0ZCIsImZiMTE0OWRjLTI2MWUtNWUyZi1hOWRkLWQ4MzE1ZWRjZTg1YSJdfQ.fdFD2-1oQpqQyB-1-A7kFtE6rYoQRDKPH9M8oQVzC-oWVOUsETOmeMNSGVxbrLN8bpx7FoV-4xmMgKHwsrSc7Sn90ROND1MsFBTNvSYv7ldSrKYR0ZIg9nLXkuvW3WykC8LR8Xj-RKBFMVSz0YVeSUpdpdj2woSvggRR6PDk8nXlbRwktNEnNFXXUUuNAaW3Iueb8yZsPGwTZj6JVINpQN5EHy5XWn6TTlqcKgaHkrHdyJm0QvMcpUajHbZtlQZky32AlJi8VuHH3QcTTYnMNpoTXW6j56sGBJFt4ss33nyrR6VPTGkD4ZsqVr2dR1wAyc80ONX0iwznFM_ITUHDhQ",
+    "QueueID": "spikerush",
+    "ProvisioningFlowID": "Matchmaking",
+    "IsRanked": false,
+    "PhaseTimeRemainingNS": 67251583409,
+    "StepTimeRemainingNS": 0,
+    "altModesFlagADA": false,
+    "TournamentMetadata": null,
+    "RosterMetadata": null
+}

@@ -1,25 +1,23 @@
 
 import clsx from "clsx";
-import { useState } from "react";
-
-import { CurrentGameMatchResponse, Match, PlayerRow } from "../interface";
-import * as utils from '../utils';
-
 import { useAtom } from "jotai";
 import { ExternalLink, User } from "lucide-react";
-import atoms from "../utils/atoms";
+import { useState } from "react";
 import { useNavigate } from "react-router";
+import { CurrentGameMatchResponse, Match, PlayerRow } from "../interface";
+import * as utils from '../utils';
+import atoms from "../utils/atoms";
 
 export const Main = () => {
     const [error, setError] = useState<string|null>()
     const [progress, setProgress] = useState<{ step: number, steps: number, player: string | null }>({ step: 0, steps: 0, player: null })
     const [currentMatch, setMatch] = useState<CurrentGameMatchResponse | null>()
-    const [table, setTable] = useState<{ [key: PlayerRow['puuid']]: PlayerRow }>({})
 
     const [puuid] = useAtom(atoms.puuid)
     const [player] = useAtom(atoms.player)
     const [localapi] = useAtom(atoms.localapi)
     const [sharedapi] = useAtom(atoms.sharedapi)
+    const [table, setTable] = useAtom(atoms.table)
 
     const navigate = useNavigate()
 
@@ -27,24 +25,25 @@ export const Main = () => {
       setError(null)
       if (!puuid || !localapi || !sharedapi) return
 
-      const playerInfo = await sharedapi?.getCurrentGamePlayer(puuid)
+      const currentPlayer = await sharedapi.getCurrentGamePlayer(puuid)
 
-      if (!playerInfo) {
+      if (!currentPlayer){
         setError("No current game found")
         return
       }
 
-      if (playerInfo.MatchID !== currentMatch?.MatchID) {
+      if (currentPlayer.MatchID !== currentMatch?.MatchID) {
         setTable({})
         setMatch(null)
       }
 
-      const match = await sharedapi?.getCurrentGameMatch(playerInfo.MatchID)
+      const match = await sharedapi?.getCurrentGameMatch(currentPlayer.MatchID)
       const puuids = utils.extractPlayers(match)
       const players = await sharedapi.getPlayerNames(puuids)
       const playerTeamId = match.Players.find(player => player.Subject === puuid)?.TeamID as 'RED' | 'BLUE'
 
       match.Players.forEach(player => { table[player.Subject] = {} as any });
+
 
       for (const player of players){
         console.log('Checking player', player.Subject)

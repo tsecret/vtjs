@@ -33,7 +33,9 @@ function App() {
     setcache(db)
 
     const localapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestLocalAPI({ port: '', password: '' }) :  new LocalAPI(utils.parseLockFile(await utils.readLockfile()))
+    console.log('localapi', localapi)
     const player = await localapi.getPlayerAccount()
+    console.log('player', player)
 
     const { accessToken, token: entToken, subject: puuid } = await localapi.getEntitlementToken()
     const sharedapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestSharedAPI({ entToken, accessToken }) : new SharedAPI({ entToken, accessToken })

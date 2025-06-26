@@ -45,7 +45,7 @@ export const Header = () => {
     {
       location.pathname === '/dashboard' ?
       <>
-        <span className="font-bold">Valorant+</span>
+        <span className="font-bold">VTJS</span>
         <div className="badge badge-dash badge-primary">Beta</div>
 
         { update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16}/> Update available</button> }
