@@ -86,7 +86,7 @@ export const PlayerDetails = () => {
               <th>{match.date.toLocaleString()}</th>
               <th><img src={match.agentImage} className="max-h-6"/></th>
               <th>{match.mapName}</th>
-              <td>{match.kills} / {match.assists} /   {match.deaths}</td>
+              <td>{match.kills} / {match.deaths} /   {match.assists}</td>
               <td className={match.won ? 'text-success' : 'text-error'}>{match.won ? 'Win' : 'Loss'}</td>
               <td className={match.won ? 'text-success' : 'text-error'}>{match.score}</td>
             </tr>

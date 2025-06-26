@@ -9,12 +9,15 @@ import playerAliasResponse from './fixtures/local/player-alias.json'
 
 // Shared
 import currentGamePlayer from './fixtures/shared/current-game-player.json'
+import currentPreGamePlayer from './fixtures/shared/current-pregame-player.json'
 import currentGameMatch from './fixtures/shared/current-game-match.json'
+import currentPreGameMatch from './fixtures/shared/current-pregame-match.json'
 import playerNames from './fixtures/shared/player-names.json'
 import playerMatchHistory from './fixtures/shared/match-history.json'
 import matchDetails from './fixtures/shared/match-details.json'
 import competitiveUpdates from './fixtures/shared/competitive-updates.json'
 
+globalThis.cache = {} as { [key: string]: [string, number, any] }
 globalThis.requestCache = {}
 
 const getResponseFromUrl = (url: string) => {
@@ -39,7 +42,15 @@ const getResponseFromUrl = (url: string) => {
       return currentGamePlayer
     }
 
+    if (url.includes('/pregame/v1/players/')){
+      return currentPreGamePlayer
+    }
+
     if (url.includes('/core-game/v1/matches/')){
+      return currentPreGameMatch
+    }
+
+    if (url.includes('/pregame/v1/matches/')){
       return currentGameMatch
     }
 
@@ -75,7 +86,10 @@ beforeAll(async () => {
 
   vi.spyOn(utils, 'readLockfile').mockImplementation(async () => "Riot Test Client:1111:12345:test-password:https")
 
-  mockIPC((cmd, payload) => {
+  mockIPC((cmd, pld) => {
+
+    // Store
+
     if (cmd === 'plugin:store|load'){
       return globalThis.requestCache
     }
@@ -109,9 +123,44 @@ beforeAll(async () => {
       return Object.keys(globalThis.requestCache)
     }
 
+    // SQL
+
+    if (cmd.startsWith('plugin:sql')){
+      const payload: { query: string, values: any[] } = pld as any
+
+      if (cmd === 'plugin:sql|load'){
+        return {}
+      }
+
+      if (cmd === 'plugin:sql|select'){
+        if (payload.values[0] in globalThis.requestCache)
+          return [globalThis.requestCache[payload.values[0]]]
+
+        return []
+      }
+
+      if (cmd === 'plugin:sql|execute'){
+
+        if (payload.query.startsWith('INSERT')){
+          globalThis.cache[payload.values[0]] = payload.values
+          return [1, payload.values[0]]
+        }
+
+        if (payload.query.startsWith('DELETE')){
+          Object.values(globalThis.cache as { [key: string]: any }).forEach(cache => {
+            if (cache[1] === payload.values[0]){}
+              delete globalThis.cache[cache[0]]
+
+          })
+          return [1, 1]
+        }
+
+
+      }
+    }
   })
 })
 
 beforeEach(() => {
-  globalThis.requestCache = {}
+  globalThis.cache = {}
 })

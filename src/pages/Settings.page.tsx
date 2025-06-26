@@ -1,37 +1,17 @@
 import { useAtom } from "jotai"
 import { useEffect, useState } from "react"
 import atoms from "../utils/atoms"
-import { Trash2 } from "lucide-react"
-import { Store } from "@tauri-apps/plugin-store"
 
 export const Settings = () => {
-  const [requestsCache] = useAtom(atoms.requestsCache)
-  const [matchesCache] = useAtom(atoms.matchesCache)
+  const [cache] = useAtom(atoms.cache)
 
-  const [savedRequests, setSavedRequests] = useState<any[]>()
-  const [savedMatches, setSavedMatches] = useState<any[]>()
-
-  const clearCache = async (key: 'requests' | 'matches') => {
-    const c: { [key: string]: Store | undefined } = {
-      'requests': requestsCache,
-      'matches': matchesCache
-    }
-
-    const f: { [key: string]: any } = {
-      'requests': setSavedRequests,
-      'matches': setSavedMatches
-    }
-
-    await c[key]?.clear()
-
-    f[key](await c[key]?.keys())
-  }
+  const [savedRequests, setSavedRequests] = useState<number>()
 
   useEffect(() => {
 
     const loadCache = async () => {
-      setSavedRequests(await requestsCache?.keys())
-      setSavedMatches(await matchesCache?.keys())
+      const res: any = await cache?.select('SELECT COUNT(*) from requests')
+      setSavedRequests(res[0]['COUNT(*)'])
     }
 
     loadCache()
@@ -44,8 +24,7 @@ export const Settings = () => {
     <section className="flex flex-col space-y-4">
       <label>Cache</label>
 
-      <div className="flex flex-row items-center space-x-2"><span>Saved Requests: {savedRequests?.length}</span> <Trash2 className="cursor-pointer" size={16} onClick={() => clearCache('requests')}/></div>
-      <div className="flex flex-row items-center space-x-2"><span>Saved matches: {savedMatches?.length}</span> <Trash2 className="cursor-pointer" size={16} onClick={() => clearCache('matches')} /></div>
+      <div className="flex flex-row items-center space-x-2"><span>Saved Requests: {savedRequests}</span></div>
 
       {/* <button className="btn">Clear Cache</button> */}
     </section>
