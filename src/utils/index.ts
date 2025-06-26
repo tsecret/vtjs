@@ -1,11 +1,11 @@
 import { localDataDir } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
-import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, Match, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
 import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
-import ranks from '../assets/ranks.json';
 import maps from '../assets/maps.json';
+import ranks from '../assets/ranks.json';
+import { Match, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 

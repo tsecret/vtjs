@@ -1,8 +1,7 @@
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
-import { LazyStore } from '@tauri-apps/plugin-store';
-import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
-import { CACHE_NAME, REQUEST_CACHE_NAME } from '../utils/constants';
 import Database from '@tauri-apps/plugin-sql';
+import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
+import { CACHE_NAME } from '../utils/constants';
 
 export class SharedAPI {
   private HOSTNAME: string = `https://glz-eu-1.eu.a.pvp.net`
