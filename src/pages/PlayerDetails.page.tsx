@@ -1,6 +1,6 @@
 import { useAtom } from "jotai"
 import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router"
+import { useParams } from "react-router"
 import atoms from "../utils/atoms"
 import * as utils from '../utils'
 import { MatchDetailsResponse } from "../interface"
@@ -24,7 +24,6 @@ export const PlayerDetails = () => {
   const [table, setTable] = useState<Row[]>([])
 
   const { puuid } = useParams()
-  const navigate = useNavigate()
 
   useEffect(() => {
 
@@ -65,11 +64,36 @@ export const PlayerDetails = () => {
 
   return <div className="flex flex-col items-center">
 
-    <button className="btn btn-primary" onClick={() => navigate('/dashboard')}>Back</button>
+    <section id="stats" className="space-x-2">
 
-    {/* table */}
-    <div className="overflow-x-auto">
+      <div className="stats shadow">
+        <div className="stat">
+          <div className="stat-title">Total Matches</div>
+          <div className="stat-value">{table.length}</div>
+        </div>
+      </div>
+
+      <div className="stats shadow">
+        <div className="stat">
+          <div className="stat-title">Wins / Loss</div>
+          <div className="stat-value">{table.filter(match => match.won).length} / {table.filter(match => !match.won).length}</div>
+        </div>
+      </div>
+
+      <div className="stats shadow">
+        <div className="stat">
+          <div className="stat-title">Winrate %</div>
+          <div className="stat-value">{(table.filter(match => match.won).length / table.length * 100).toFixed(0)}%</div>
+        </div>
+      </div>
+
+    </section>
+
+    <section className="overflow-x-auto flex flex-col items-center">
+      <span className="font-bold my-4">Player Match History</span>
+
       <table className="table table-xs">
+
         <thead>
           <tr>
             <th>Date</th>
@@ -78,8 +102,10 @@ export const PlayerDetails = () => {
             <th>Score</th>
             <th>Result</th>
             <th>Score</th>
+            <th>-+</th>
           </tr>
         </thead>
+
         <tbody>
           {table.map(match => (
             <tr key={match.matchId}>
@@ -89,11 +115,13 @@ export const PlayerDetails = () => {
               <td>{match.kills} / {match.deaths} /   {match.assists}</td>
               <td className={match.won ? 'text-success' : 'text-error'}>{match.won ? 'Win' : 'Loss'}</td>
               <td className={match.won ? 'text-success' : 'text-error'}>{match.score}</td>
+              <td className={match.kills - match.deaths > 1 ? 'text-success' : 'text-error'}>{match.kills - match.deaths > 1 ? '+' : null}{match.kills - match.deaths}</td>
             </tr>
           ))}
         </tbody>
+
       </table>
-    </div>
+    </section>
 
   </div>
 }
