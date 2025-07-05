@@ -8,6 +8,7 @@ export const Settings = () => {
   const [cache] = useAtom(atoms.cache)
   const [store] = useAtom(atoms.store)
   const [allowAnalytics, setAllowAnalytics] = useAtom(atoms.allowAnalytics)
+  const [firstTimeUser, setFirstTimeUser] = useAtom(atoms.firstTimeUser)
 
   const [savedRequests, setSavedRequests] = useState<number>()
 
@@ -33,7 +34,7 @@ export const Settings = () => {
   return <div className="flex flex-col space-y-4 p-4">
 
     <div className="badge badge-soft badge-primary">App version {version}</div>
-
+    <div className="badge badge-soft badge-primary cursor-pointer" onClick={() => { store?.set('firstTimeUser', true); setFirstTimeUser(true) }}>First time user {firstTimeUser ? 'true' : 'false'}</div>
 
     <section id="cache" className="flex flex-col space-y-4">
       <label>Cache</label>

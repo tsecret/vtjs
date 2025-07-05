@@ -12,7 +12,7 @@ export const WelcomePage = () => {
 
   async function onStart(){
     setFirstTimeUser(false)
-    await store?.set('setFirstTimeUser', false)
+    await store?.set('firstTimeUser', false)
     navigate('/dashboard')
   }
 
@@ -31,7 +31,7 @@ export const WelcomePage = () => {
           <button className="btn btn-primary my-4" onClick={onStart}>Get Started</button>
 
           <div id='analytics-prompt' className="alert my-10">
-            <span><span className="text-primary font-bold">Enable analytics?</span>This helps us improve the app and provide better experience</span>
+            <span><span className="text-primary font-bold">Enable analytics?</span> This helps us improve the app and provide better experience</span>
             {
               allowAnalytics ?
               <button className="btn btn-success btn-sm btn-soft"><Heart size={16} /> Enabled</button> :

@@ -47,8 +47,9 @@ function App() {
     const allowAnalytics = await store.get('allowAnalytics')
     setAllowAnalytics(allowAnalytics ? true : false)
 
-    const firstTimeUser = await store.get('firstTimeUser')
-    setFirstTimeUser(firstTimeUser ? true : false)
+    const firstTimeUserKey = await store.get<boolean | undefined>('firstTimeUser')
+    const firstTimeUser = firstTimeUserKey || firstTimeUserKey == undefined ? true : false
+    setFirstTimeUser(firstTimeUser)
     //
 
     if (allowAnalytics)
