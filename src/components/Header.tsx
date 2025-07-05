@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router';
 
 export const Header = () => {
   const [update, setUpdate] = useState<Update|null>()
+
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -56,6 +57,12 @@ export const Header = () => {
         <button className="btn btn-primary btn-sm" onClick={(() => navigate('/dashboard'))}><ChevronLeft /></button>
 
         <span className="font-bold">Settings</span>
+      </>
+      : location.pathname.startsWith('/player/') ?
+      <>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate('/dashboard'))}><ChevronLeft /></button>
+
+        <span className="font-bold">Player Details</span>
       </>
       : null
 

@@ -1,6 +1,9 @@
 
-export const Splash = () => {
+export const Splash = ({ status }: { status: string }) => {
   return <div className="h-screen w-screen flex flex-col items-center">
-      <p className="m-auto text-6xl font-bold">Valorant Plus</p>
+      <section className="m-auto text-center">
+        <p className="text-8xl font-bold text-primary">VTJS</p>
+        <p className="text-xl"><span className="loading loading-spinner mr-4" ></span>{status ?? 'Loading'}</p>
+      </section>
   </div>
 }

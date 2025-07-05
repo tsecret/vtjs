@@ -1,10 +1,9 @@
-
-import clsx from "clsx";
+import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
-import { ExternalLink, User } from "lucide-react";
+import { User } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
-import { CurrentGameMatchResponse, Match, PlayerRow } from "../interface";
+import { PlayersTable } from "../components/PlayersTable";
+import { CurrentGameMatchResponse, Match } from "../interface";
 import * as utils from '../utils';
 import atoms from "../utils/atoms";
 
@@ -18,17 +17,22 @@ export const Main = () => {
     const [localapi] = useAtom(atoms.localapi)
     const [sharedapi] = useAtom(atoms.sharedapi)
     const [table, setTable] = useAtom(atoms.table)
+    const [allowAnalytics] = useAtom(atoms.allowAnalytics)
 
-    const navigate = useNavigate()
+    const { trackEvent } = useAptabase();
 
     async function onCheck(){
       setError(null)
       if (!puuid || !localapi || !sharedapi) return
 
+      if (allowAnalytics)
+        await trackEvent('check_start')
+
       const currentPlayer = await sharedapi.getCurrentGamePlayer(puuid)
 
       if (!currentPlayer){
         setError("No current game found")
+        await trackEvent('check_nogame')
         return
       }
 
@@ -43,7 +47,6 @@ export const Main = () => {
       const playerTeamId = match.Players.find(player => player.Subject === puuid)?.TeamID as 'RED' | 'BLUE'
 
       match.Players.forEach(player => { table[player.Subject] = {} as any });
-
 
       for (const player of players){
         console.log('Checking player', player.Subject)
@@ -97,20 +100,9 @@ export const Main = () => {
       setTable(table)
       setMatch(match)
       setProgress({ step: 0, steps: 0, player: null })
-    }
 
-    const Row = ({ player }: { player: PlayerRow }) => {
-      return <tr key={player.puuid}>
-        <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' /> {player.agentName}</td>
-        <th>{ player.puuid === puuid ? <span>You</span> : <><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span></>}</th>
-        <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
-        <th><span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span></th>
-        <th><span>{player.accountLevel}</span></th>
-        <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-green-400' : 'text-red-400')}>{player.kd}</span></td>
-        <td><span className={clsx(player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
-        <td>{ utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }</td>
-        <td><ExternalLink className="cursor-pointer" size={16} onClick={() => navigate('/player/' + player.puuid)}/></td>
-      </tr>
+      if (allowAnalytics)
+        await trackEvent('check_finish')
     }
 
     return (
@@ -129,49 +121,7 @@ export const Main = () => {
         }
 
         {/* table */}
-        {
-          table &&
-          <section className="overflow-x-auto mx-auto my-4">
-            <table className="table table-xs">
-
-              <thead>
-                <tr>
-                  <th>Agent</th>
-                  <th>Player</th>
-                  <th>Rank</th>
-                  <th>Peak Rank</th>
-                  <th>LVL</th>
-                  <th>K/D</th>
-                  <th>Last Game</th>
-                  <th>Note</th>
-                  <th></th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {
-                  Object.values(table)
-                  .filter(player => !player.enemy)
-                  .sort((a, b) => (b.kd || 1) - (a.kd || 0))
-                  .map((player) => <Row player={player} key={player.puuid} /> )
-                }
-              </tbody>
-
-              <tbody><tr><td></td></tr></tbody>
-
-              <tbody>
-                {
-                  Object.values(table)
-                  .filter(player => player.enemy)
-                  .sort((a, b) => (b.kd || 1) - (a.kd || 0))
-                  .map((player) => <Row player={player} key={player.puuid} /> )
-                }
-
-              </tbody>
-
-            </table>
-          </section>
-        }
+        <PlayersTable table={table} puuid={puuid as string} />
 
         { player && <button className="btn btn-primary btn-wide mx-auto" onClick={onCheck}>Check current game</button> }
 

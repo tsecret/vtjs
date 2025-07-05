@@ -9,6 +9,7 @@ import matchHistory from '../../tests/fixtures/shared/match-history.json'
 import matchDetails from '../../tests/fixtures/shared/match-details.json'
 import competitiveUpdates from '../../tests/fixtures/shared/competitive-updates.json'
 import playerMMR from '../../tests/fixtures/shared/player-mmr.json'
+import { sleep } from "../utils";
 
 export class TestSharedAPI extends SharedAPI {
 
@@ -30,6 +31,7 @@ export class TestSharedAPI extends SharedAPI {
 
   // @ts-ignore
   async getPlayerMatchHistory(puuid: string): Promise<PlayerMatchHistoryResponse> {
+    await sleep(500)
     // @ts-ignore
     return matchHistory
   }
