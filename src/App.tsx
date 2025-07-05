@@ -1,4 +1,5 @@
 import { useAptabase } from '@aptabase/react';
+import { getVersion } from '@tauri-apps/api/app';
 import Database from '@tauri-apps/plugin-sql';
 import { load } from '@tauri-apps/plugin-store';
 import { useAtom } from "jotai";
@@ -17,10 +18,9 @@ import { WelcomePage } from './pages/Welcome.page';
 import * as utils from './utils';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
-import { getVersion } from '@tauri-apps/api/app';
 
 function App() {
-  const [version, setVersion] = useAtom(atoms.version)
+  const [, setVersion] = useAtom(atoms.version)
   const [, setPlayer] = useAtom(atoms.player)
   const [, setLocalapi] = useAtom(atoms.localapi)
   const [, setSharedapi] = useAtom(atoms.sharedapi)
