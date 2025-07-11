@@ -4,6 +4,7 @@ export const Splash = ({ status }: { status: string }) => {
       <section className="m-auto text-center">
         <p className="text-8xl font-bold text-primary">VTJS</p>
         <p className="text-xl"><span className="loading loading-spinner mr-4" ></span>{status ?? 'Loading'}</p>
+        <p className="mt-10">Make sure Riot Client is running</p>
       </section>
   </div>
 }
