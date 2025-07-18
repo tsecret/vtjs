@@ -1,4 +1,3 @@
-
 export const Splash = ({ status }: { status: string }) => {
   return <div className="h-screen w-screen flex flex-col items-center">
       <section className="m-auto text-center">

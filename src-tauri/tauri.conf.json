@@ -12,14 +12,18 @@
   "app": {
     "windows": [
       {
-        "title": "vtjs",
+        "title": "VTJS",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "shadow": true,
+        "minimizable": true,
+        "decorations": true
       }
     ],
     "security": {
       "csp": null
-    }
+    },
+    "macOSPrivateApi": true
   },
   "bundle": {
     "active": true,
