@@ -1,6 +1,5 @@
 import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
-import { User } from "lucide-react";
 import { useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
 import { CurrentGamePlayerResponse, CurrentPreGamePlayerResponse } from "../interface";
@@ -178,7 +177,7 @@ export const Main = () => {
 
     return (
       <div className="p-2 flex flex-col">
-        { error && <div className="alert alert-error my-4">{error}</div> }
+        { error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div> }
 
         {
           progress.steps > 1 &&
@@ -195,12 +194,6 @@ export const Main = () => {
         <PlayersTable table={table} puuid={puuid as string} />
 
         { player && <button className="btn btn-primary btn-wide mx-auto" onClick={onCheck}>Check current game</button> }
-
-        {/* debug */}
-        <section className="flex flex-row rounded-xl bg-base-100 p-4 text-sm mt-8">
-            <div className="flex flex-row items-center space-x-2"><User size={16} /> <span>{player?.game_name}#{player?.tag_line}</span></div>
-            <div className="divider divider-horizontal" />
-        </section>
 
       </div>
     );

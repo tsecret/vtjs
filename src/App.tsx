@@ -83,7 +83,7 @@ function App() {
     init()
   }, [])
 
-  return <main className="relative">
+  return <main className="relative select-none cursor-default">
     <Header />
     <Routes>
       <Route path="/" element={<Splash status={initStatus} />} />
