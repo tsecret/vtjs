@@ -4,26 +4,14 @@ export interface Lockfile {
   password: string
 }
 
-export interface Match {
-  MatchID: string
-  State: 'IN_PROGRESS'
-  Players: Player[]
-}
-
-export interface Player {
-  Subject: string
-  TeamID: string
-  CharacterID: string
-}
-
 export interface PlayerRow {
   name: string
   tag: string
   puuid: string
   kd?: number
-  agentName: string
-  agentId: string
-  agentImage: string
+  agentName: string | null
+  agentId: string | null
+  agentImage: string | null
   lastGameWon?: boolean | string
   lastGameScore?: string
   gameHistory?: string[]

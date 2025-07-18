@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SharedAPI } from '../src/api/shared';
-import { Match, PlayerMMRResponse } from '../src/interface';
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, Match, PlayerMMRResponse, PreGameMatch } from '../src/interface';
 import * as utils from '../src/utils';
 
 import currentGameMatch from './fixtures/shared/current-game-match.json';
+import currentPreGameMatch from './fixtures/shared/current-pregame-match.json';
 import matchDetails from './fixtures/shared/match-details.json';
 import playerMMR from './fixtures/shared/player-mmr.json';
 
@@ -16,8 +17,14 @@ describe('utils', () => {
     expect(password).toEqual('cmlvdDp0ZXN0LXBhc3N3b3Jk')
   })
 
-  it('extractPlayers', () => {
-    expect(utils.extractPlayers(currentGameMatch as Match)).toStrictEqual(currentGameMatch.Players.map(player => player.Subject))
+  describe('extractPlayers', () => {
+    it('extractPlayers from pre-game match', () => {
+      expect(utils.extractPlayers(currentPreGameMatch as CurrentPreGameMatchResponse)).toStrictEqual(currentPreGameMatch.AllyTeam.Players.map(player => player.Subject))
+    })
+
+    it('extractPlayers from game match', () => {
+      expect(utils.extractPlayers(currentGameMatch as CurrentGameMatchResponse)).toStrictEqual(currentGameMatch.Players.map(player => player.Subject))
+    })
   })
 
   describe('calculateStatsForPlayer', () => {
@@ -108,7 +115,7 @@ describe('request caching', () => {
 
   it('sends the request and checks for cache', async () => {
     await sharedapi.getMatchDetails('test-match-id')
-    expect(Object.keys(globalThis.cache).length).toEqual(1)
+    expect(Object.keys(globalThis.requestCache).length).toEqual(1)
   })
 
   it('checks cache after 30 mins', async () => {
@@ -116,13 +123,14 @@ describe('request caching', () => {
     vi.setSystemTime(new Date(2025, 1, 1, 13, 0, 0))
 
     await sharedapi.getMatchDetails('')
-    expect(Object.keys(globalThis.cache).length).toEqual(1)
-    expect(Object.values(globalThis.cache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampBefore + sharedapi.cacheTTL)
+    expect(Object.keys(globalThis.requestCache).length).toEqual(1)
+    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampBefore + sharedapi.cacheTTL)
 
-    vi.setSystemTime(new Date(2025, 1, 1, 13, 30, 1))
+    const timestampAfter = +new Date(2025, 1, 1, 13, 30, 1)
+    vi.setSystemTime(+new Date(2025, 1, 1, 13, 30, 1))
 
-    await sharedapi.cleanCache()
-    expect(Object.keys(globalThis.cache).length).toEqual(0)
+    await sharedapi.getMatchDetails('')
+    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampAfter + sharedapi.cacheTTL)
   })
 
 })

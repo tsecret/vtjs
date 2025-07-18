@@ -44,11 +44,16 @@ export class SharedAPI {
     if (!this.cache)
       this.cache = await Database.load(CACHE_NAME)
 
+
     if (!options.noCache && this.cache){
+
       const [response] = await this.cache.select<[{ endpoint: string, ttl: number, data: any }]>('SELECT * FROM requests WHERE endpoint=$1 LIMIT 1', [endpoint])
 
-      if (response && response.data)
-        return JSON.parse(response.data)
+      if (response && response.data){
+        if (+new Date() < response.ttl){
+          return JSON.parse(response.data)
+        }
+      }
     }
 
     const res = await httpfetch(
@@ -63,7 +68,7 @@ export class SharedAPI {
 
     if (res.status === 200){
       const response = await res.json()
-      if (!options.noCache) await this.cache.execute('INSERT into requests (endpoint, ttl, data) VALUES ($1, $2, $3)', [endpoint, +new Date() + this.cacheTTL, response])
+      if (!options.noCache) await this.cache.execute('INSERT or REPLACE into requests (endpoint, ttl, data) VALUES ($1, $2, $3)', [endpoint, +new Date() + this.cacheTTL, response])
       return response
     }
 
@@ -79,20 +84,20 @@ export class SharedAPI {
 
   }
 
-  async getCurrentGamePlayer(puuid: string): Promise<CurrentGamePlayerResponse|null> {
-    return this.fetch(`/core-game/v1/players/${puuid}`, { noCache: true })
-  }
-
   async getCurrentPreGamePlayer(puuid: string): Promise<CurrentPreGamePlayerResponse|null> {
     return this.fetch(`/pregame/v1/players/${puuid}`, { noCache: true })
   }
 
-  async getCurrentGameMatch(matchId: string): Promise<CurrentGameMatchResponse> {
-    return this.fetch(`/core-game/v1/matches/${matchId}`)
+  async getCurrentGamePlayer(puuid: string): Promise<CurrentGamePlayerResponse|null> {
+    return this.fetch(`/core-game/v1/players/${puuid}`, { noCache: true })
   }
 
   async getCurrentPreGameMatch(matchId: string): Promise<CurrentPreGameMatchResponse> {
-    return this.fetch(`/pregame/v1/matches/${matchId}`)
+    return this.fetch(`/pregame/v1/matches/${matchId}`, { noCache: true })
+  }
+
+  async getCurrentGameMatch(matchId: string): Promise<CurrentGameMatchResponse> {
+    return this.fetch(`/core-game/v1/matches/${matchId}`, { noCache: true })
   }
 
   async getPlayerNames(puuids: string[]): Promise<PlayerNamesReponse[]> {

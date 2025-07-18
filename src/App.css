@@ -7,3 +7,11 @@
     background-color: #2f2f2f;
   }
 }
+
+@layer components {
+
+  h2 {
+    @apply font-bold text-xl
+  }
+
+}

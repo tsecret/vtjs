@@ -9,8 +9,8 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
   const navigate = useNavigate()
 
   const Row = ({ player }: { player: PlayerRow }) => {
-      return <tr key={player.puuid} className='select-none'>
-        <td className="flex flex-row items-center"><img src={player.agentImage} className='max-h-6 mr-4' draggable={false} /> {player.agentName}</td>
+      return <tr key={player.puuid}>
+        <td className="flex flex-row items-center"><img src={player.agentImage || undefined} className='h-6 mr-4' draggable={false} /> {player.agentName}</td>
         <th>{ player.puuid === puuid ? <span>You</span> : <><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span></>}</th>
         <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
         <th><span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span></th>
@@ -21,6 +21,9 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
         <td><ExternalLink className="cursor-pointer" size={16} onClick={() => navigate('/player/' + player.puuid)}/></td>
       </tr>
     }
+
+    if (!Object.keys(table).length)
+      return null
 
   return <section className="overflow-x-auto mx-auto my-4">
       <table className="table table-xs">

@@ -14,9 +14,9 @@ interface Row {
   date: Date,
   won: boolean
   score: string
-  agentId: string
-  agentName: string
-  agentImage: string
+  agentId: string | null
+  agentName: string | null
+  agentImage: string | null
 }
 
 export const PlayerDetails = () => {
@@ -83,7 +83,7 @@ export const PlayerDetails = () => {
       <div className="stats shadow">
         <div className="stat">
           <div className="stat-title">Winrate %</div>
-          <div className="stat-value">{(table.filter(match => match.won).length / table.length * 100).toFixed(0)}%</div>
+          <div className="stat-value">{table.length ? (table.filter(match => match.won).length / table.length * 100).toFixed(0) : 0}%</div>
         </div>
       </div>
 
@@ -110,9 +110,9 @@ export const PlayerDetails = () => {
           {table.map(match => (
             <tr key={match.matchId}>
               <th>{match.date.toLocaleString()}</th>
-              <th><img src={match.agentImage} className="max-h-6"/></th>
+              <th><img src={match.agentImage || undefined} className="max-h-6"/></th>
               <th>{match.mapName}</th>
-              <td>{match.kills} / {match.deaths} /   {match.assists}</td>
+              <td>{match.kills} / {match.deaths} / {match.assists}</td>
               <td className={match.won ? 'text-success' : 'text-error'}>{match.won ? 'Win' : 'Loss'}</td>
               <td className={match.won ? 'text-success' : 'text-error'}>{match.score}</td>
               <td className={match.kills - match.deaths > 1 ? 'text-success' : 'text-error'}>{match.kills - match.deaths > 1 ? '+' : null}{match.kills - match.deaths}</td>
