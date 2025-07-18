@@ -18,7 +18,6 @@ import { WelcomePage } from './pages/Welcome.page';
 import * as utils from './utils';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
-import { ShortcutHandler } from './components/ShortcutHandler';
 
 function App() {
   const [, setVersion] = useAtom(atoms.version)
@@ -86,7 +85,6 @@ function App() {
 
   return <main className="relative">
     <Header />
-    <ShortcutHandler />
     <Routes>
       <Route path="/" element={<Splash status={initStatus} />} />
       <Route path="/welcome" element={<WelcomePage />} />

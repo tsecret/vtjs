@@ -1,54 +1,57 @@
-import { SharedAPI } from "./shared";
-import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
-
-
-import currentGame from '../../tests/fixtures/shared/current-game-player.json'
-import currentMatch from '../../tests/fixtures/shared/current-game-match.json'
-import playerNames from '../../tests/fixtures/shared/player-names.json'
-import matchHistory from '../../tests/fixtures/shared/match-history.json'
-import matchDetails from '../../tests/fixtures/shared/match-details.json'
-import competitiveUpdates from '../../tests/fixtures/shared/competitive-updates.json'
-import playerMMR from '../../tests/fixtures/shared/player-mmr.json'
+import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
 import { sleep } from "../utils";
+import { SharedAPI } from "./shared";
+
+import competitiveUpdates from '../../tests/fixtures/shared/competitive-updates.json';
+import currentMatch from '../../tests/fixtures/shared/current-game-match.json';
+import currentGamePlayer from '../../tests/fixtures/shared/current-game-player.json';
+import currentPreGameMatch from '../../tests/fixtures/shared/current-pregame-match.json';
+import currentPreGamePlayer from '../../tests/fixtures/shared/current-pregame-player.json';
+import matchDetails from '../../tests/fixtures/shared/match-details.json';
+import matchHistory from '../../tests/fixtures/shared/match-history.json';
+import playerMMR from '../../tests/fixtures/shared/player-mmr.json';
+import playerNames from '../../tests/fixtures/shared/player-names.json';
 
 export class TestSharedAPI extends SharedAPI {
 
-  // @ts-ignore
-  async getCurrentGamePlayer(puuid: string): Promise<CurrentGamePlayerResponse> {
-    return currentGame
+  async getCurrentGamePlayer(_puuid: string): Promise<CurrentGamePlayerResponse> {
+    return currentGamePlayer
   }
 
-  // @ts-ignore
-  async getCurrentGameMatch(matchId: string): Promise<CurrentGameMatchResponse> {
+  async getCurrentPreGamePlayer(_puuid: string): Promise<CurrentPreGamePlayerResponse> {
+    return currentPreGamePlayer
+  }
+
+  async getCurrentGameMatch(_matchId: string): Promise<CurrentGameMatchResponse> {
     // @ts-ignore
     return currentMatch
   }
 
-  // @ts-ignore
-  async getPlayerNames(puuids: string[]): Promise<PlayerNamesReponse[]> {
-    return playerNames
+  async getCurrentPreGameMatch(_matchId: string): Promise<CurrentPreGameMatchResponse> {
+    // @ts-ignore
+    return currentPreGameMatch
   }
 
-  // @ts-ignore
-  async getPlayerMatchHistory(puuid: string): Promise<PlayerMatchHistoryResponse> {
+  async getPlayerNames(puuids: string[]): Promise<PlayerNamesReponse[]> {
+    return playerNames.slice(0, puuids.length)
+  }
+
+  async getPlayerMatchHistory(_puuid: string): Promise<PlayerMatchHistoryResponse> {
     await sleep(500)
     // @ts-ignore
     return matchHistory
   }
 
-  // @ts-ignore
-  async getMatchDetails(matchId: string): Promise<MatchDetailsResponse> {
+  async getMatchDetails(_matchId: string): Promise<MatchDetailsResponse> {
     // @ts-ignore
     return matchDetails
   }
 
-  // @ts-ignore
-  async getCompetitiveUpdates(puuid: string): Promise<CompetitiveUpdatesResponse> {
+  async getCompetitiveUpdates(_puuid: string): Promise<CompetitiveUpdatesResponse> {
     return competitiveUpdates
   }
 
-  // @ts-ignore
-  async getPlayerMMR(puuid: string): Promise<PlayerMMRResponse> {
+  async getPlayerMMR(_puuid: string): Promise<PlayerMMRResponse> {
     return playerMMR
   }
 

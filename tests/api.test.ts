@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SharedAPI } from '../src/api/shared';
-import { Match, PlayerMMRResponse } from '../src/interface';
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, Match, PlayerMMRResponse, PreGameMatch } from '../src/interface';
 import * as utils from '../src/utils';
 
 import currentGameMatch from './fixtures/shared/current-game-match.json';
+import currentPreGameMatch from './fixtures/shared/current-pregame-match.json';
 import matchDetails from './fixtures/shared/match-details.json';
 import playerMMR from './fixtures/shared/player-mmr.json';
 
@@ -16,8 +17,14 @@ describe('utils', () => {
     expect(password).toEqual('cmlvdDp0ZXN0LXBhc3N3b3Jk')
   })
 
-  it('extractPlayers', () => {
-    expect(utils.extractPlayers(currentGameMatch as Match)).toStrictEqual(currentGameMatch.Players.map(player => player.Subject))
+  describe('extractPlayers', () => {
+    it('extractPlayers from pre-game match', () => {
+      expect(utils.extractPlayers(currentPreGameMatch as CurrentPreGameMatchResponse)).toStrictEqual(currentPreGameMatch.AllyTeam.Players.map(player => player.Subject))
+    })
+
+    it('extractPlayers from game match', () => {
+      expect(utils.extractPlayers(currentGameMatch as CurrentGameMatchResponse)).toStrictEqual(currentGameMatch.Players.map(player => player.Subject))
+    })
   })
 
   describe('calculateStatsForPlayer', () => {

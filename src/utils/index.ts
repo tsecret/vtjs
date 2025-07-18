@@ -5,7 +5,7 @@ import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
 import maps from '../assets/maps.json';
 import ranks from '../assets/ranks.json';
-import { Match, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -27,7 +27,10 @@ export const parseLockFile = (content: string): { port: string, password: string
   return { port, password: base64.encode(`riot:${password}`) }
 }
 
-export const extractPlayers = (match: Match): string[] => {
+export const extractPlayers = (match: CurrentPreGameMatchResponse | CurrentGameMatchResponse): string[] => {
+  if ('AllyTeam' in match)
+    return match.AllyTeam?.Players.map(player => player.Subject) || []
+
   return match.Players.map(player => player.Subject)
 }
 
@@ -69,6 +72,9 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
 }
 
 export const getAgent = (uuid: string) => {
+  if (!uuid)
+    return { uuid, name: null, img: null }
+
   const agent = agents.find(agent => agent.uuid === uuid.toLowerCase())!
   return { uuid, name: agent.displayName, img: agent.killfeedPortrait }
 }

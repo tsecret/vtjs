@@ -3,14 +3,14 @@ import { useAtom } from "jotai";
 import { User } from "lucide-react";
 import { useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
-import { CurrentGameMatchResponse, Match } from "../interface";
+import { CurrentGamePlayerResponse, CurrentPreGamePlayerResponse } from "../interface";
 import * as utils from '../utils';
 import atoms from "../utils/atoms";
 
 export const Main = () => {
     const [error, setError] = useState<string|null>()
     const [progress, setProgress] = useState<{ step: number, steps: number, player: string | null }>({ step: 0, steps: 0, player: null })
-    const [currentMatch, setMatch] = useState<CurrentGameMatchResponse | null>()
+    const [currentMatchId, setCurrentMatchId] = useState<string | null>()
 
     const [puuid] = useAtom(atoms.puuid)
     const [player] = useAtom(atoms.player)
@@ -21,35 +21,19 @@ export const Main = () => {
 
     const { trackEvent } = useAptabase();
 
-    async function onCheck(){
-      setError(null)
-      if (!puuid || !localapi || !sharedapi) return
+    async function handlePreGameMatch(currentPreGamePlayer: CurrentPreGamePlayerResponse){
+      if (!sharedapi) return
 
-      if (allowAnalytics)
-        await trackEvent('check_start')
+      if (currentPreGamePlayer.MatchID !== currentMatchId)
+        Object.keys(table).forEach(key => { delete table[key] })
 
-      const currentPlayer = await sharedapi.getCurrentGamePlayer(puuid)
-
-      if (!currentPlayer){
-        setError("No current game found")
-        await trackEvent('check_nogame')
-        return
-      }
-
-      if (currentPlayer.MatchID !== currentMatch?.MatchID) {
-        setTable({})
-        setMatch(null)
-      }
-
-      const match = await sharedapi?.getCurrentGameMatch(currentPlayer.MatchID)
+      const match = await sharedapi.getCurrentPreGameMatch(currentPreGamePlayer.MatchID)
       const puuids = utils.extractPlayers(match)
       const players = await sharedapi.getPlayerNames(puuids)
-      const playerTeamId = match.Players.find(player => player.Subject === puuid)?.TeamID as 'RED' | 'BLUE'
 
-      match.Players.forEach(player => { table[player.Subject] = {} as any });
+      match.AllyTeam?.Players.forEach(player => { table[player.Subject] = {} as any });
 
       for (const player of players){
-        console.log('Checking player', player.Subject)
 
         // Current and Peak Rank
         const mmr = await sharedapi.getPlayerMMR(player.Subject)
@@ -57,28 +41,27 @@ export const Main = () => {
         const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank)
         const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank)
 
-        const { uuid: agentId, name: agentName, img: agentImage } = utils.getAgent(match.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as Match['Players'][0]['CharacterID'])
+        const { uuid: agentId, name: agentName, img: agentImage } = utils.getAgent(match.AllyTeam?.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as string)
 
         table[player.Subject] = {
           name: player.GameName,
           tag: player.TagLine,
           puuid: player.Subject,
-          agentId: agentId || 'N/A',
-          agentName: agentName || 'N/A',
-          agentImage: agentImage || 'N/A',
+          agentId: agentId,
+          agentName: agentName,
+          agentImage: agentImage,
           currentRank: currentRankName,
           currentRankColor,
           currentRR,
           rankPeak: rankPeakName,
           rankPeakColor: rankPeakColor,
-          enemy: match.Players.find(_player => _player.Subject === player.Subject)?.TeamID !== playerTeamId,
+          enemy: false
         }
       }
 
       setTable(table)
 
-      for (const player of players){
-        console.log('Checking player', player.Subject)
+      for (const player of players) {
         setProgress(prevState => ({ step: prevState.step + 1, steps: players.length, player: player.GameName }))
 
         // Match history and stats
@@ -98,7 +81,95 @@ export const Main = () => {
       }
 
       setTable(table)
-      setMatch(match)
+      setCurrentMatchId(match.ID)
+    }
+
+    async function handleGameMatch(currentGamePlayer: CurrentGamePlayerResponse) {
+      if (!sharedapi) return
+
+      if (currentGamePlayer.MatchID !== currentMatchId)
+        Object.keys(table).forEach(key => { delete table[key] })
+
+      const match = await sharedapi.getCurrentGameMatch(currentGamePlayer.MatchID)
+      const puuids = utils.extractPlayers(match)
+      const players = await sharedapi.getPlayerNames(puuids)
+      const playerTeamId = match.Players.find(player => player.Subject === puuid)?.TeamID as 'RED' | 'BLUE'
+
+      match.Players.forEach(player => { table[player.Subject] = {} as any });
+
+      for (const player of players){
+
+        // Current and Peak Rank
+        const mmr = await sharedapi.getPlayerMMR(player.Subject)
+        const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
+        const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank)
+        const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank)
+
+        const { uuid: agentId, name: agentName, img: agentImage } = utils.getAgent(match.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as string)
+
+        table[player.Subject] = {
+          name: player.GameName,
+          tag: player.TagLine,
+          puuid: player.Subject,
+          agentId: agentId,
+          agentName: agentName,
+          agentImage: agentImage,
+          currentRank: currentRankName,
+          currentRankColor,
+          currentRR,
+          rankPeak: rankPeakName,
+          rankPeakColor: rankPeakColor,
+          enemy: match.Players.find(_player => _player.Subject === player.Subject)?.TeamID !== playerTeamId,
+        }
+      }
+
+      setTable(table)
+
+      for (const player of players) {
+        setProgress(prevState => ({ step: prevState.step + 1, steps: players.length, player: player.GameName }))
+
+        // Match history and stats
+        const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject)
+        const promises = matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID))
+        const matchStats = await Promise.all(promises)
+
+        const { kd, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matchStats)
+
+        table[player.Subject] = {
+          ...table[player.Subject],
+          kd,
+          lastGameWon,
+          lastGameScore,
+          accountLevel,
+        }
+      }
+
+      setTable(table)
+      setCurrentMatchId(match.MatchID)
+    }
+
+    async function onCheck() {
+      setError(null)
+      if (!puuid || !localapi || !sharedapi) return
+
+      if (allowAnalytics)
+        await trackEvent('check_start')
+
+      const currentPreGamePlayer = await sharedapi.getCurrentPreGamePlayer(puuid)
+      const currentGamePlayer = currentPreGamePlayer ? null : await sharedapi.getCurrentGamePlayer(puuid)
+
+      if (!currentPreGamePlayer && !currentGamePlayer){
+        setError("No current game found")
+        await trackEvent('check_nogame')
+        return
+      }
+
+      if (currentPreGamePlayer)
+        await handlePreGameMatch(currentPreGamePlayer)
+
+      if (currentGamePlayer)
+        await handleGameMatch(currentGamePlayer)
+
       setProgress({ step: 0, steps: 0, player: null })
 
       if (allowAnalytics)
