@@ -108,7 +108,7 @@ describe('request caching', () => {
 
   it('sends the request and checks for cache', async () => {
     await sharedapi.getMatchDetails('test-match-id')
-    expect(Object.keys(globalThis.cache).length).toEqual(1)
+    expect(Object.keys(globalThis.requestCache).length).toEqual(1)
   })
 
   it('checks cache after 30 mins', async () => {
@@ -116,13 +116,14 @@ describe('request caching', () => {
     vi.setSystemTime(new Date(2025, 1, 1, 13, 0, 0))
 
     await sharedapi.getMatchDetails('')
-    expect(Object.keys(globalThis.cache).length).toEqual(1)
-    expect(Object.values(globalThis.cache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampBefore + sharedapi.cacheTTL)
+    expect(Object.keys(globalThis.requestCache).length).toEqual(1)
+    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampBefore + sharedapi.cacheTTL)
 
-    vi.setSystemTime(new Date(2025, 1, 1, 13, 30, 1))
+    const timestampAfter = +new Date(2025, 1, 1, 13, 30, 1)
+    vi.setSystemTime(+new Date(2025, 1, 1, 13, 30, 1))
 
-    await sharedapi.cleanCache()
-    expect(Object.keys(globalThis.cache).length).toEqual(0)
+    await sharedapi.getMatchDetails('')
+    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampAfter + sharedapi.cacheTTL)
   })
 
 })

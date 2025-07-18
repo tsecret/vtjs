@@ -44,11 +44,16 @@ export class SharedAPI {
     if (!this.cache)
       this.cache = await Database.load(CACHE_NAME)
 
+
     if (!options.noCache && this.cache){
+
       const [response] = await this.cache.select<[{ endpoint: string, ttl: number, data: any }]>('SELECT * FROM requests WHERE endpoint=$1 LIMIT 1', [endpoint])
 
-      if (response && response.data)
-        return JSON.parse(response.data)
+      if (response && response.data){
+        if (+new Date() < response.ttl){
+          return JSON.parse(response.data)
+        }
+      }
     }
 
     const res = await httpfetch(

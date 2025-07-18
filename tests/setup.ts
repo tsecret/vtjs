@@ -87,7 +87,6 @@ beforeAll(async () => {
   vi.spyOn(utils, 'readLockfile').mockImplementation(async () => "Riot Test Client:1111:12345:test-password:https")
 
   mockIPC((cmd, pld) => {
-
     // Store
 
     if (cmd === 'plugin:store|load'){
@@ -142,14 +141,14 @@ beforeAll(async () => {
       if (cmd === 'plugin:sql|execute'){
 
         if (payload.query.startsWith('INSERT')){
-          globalThis.cache[payload.values[0]] = payload.values
+          globalThis.requestCache[payload.values[0]] = payload.values
           return [1, payload.values[0]]
         }
 
         if (payload.query.startsWith('DELETE')){
-          Object.values(globalThis.cache as { [key: string]: any }).forEach(cache => {
+          Object.values(globalThis.requestCache as { [key: string]: any }).forEach(cache => {
             if (cache[1] === payload.values[0]){}
-              delete globalThis.cache[cache[0]]
+              delete globalThis.requestCache[cache[0]]
 
           })
           return [1, 1]
@@ -162,5 +161,5 @@ beforeAll(async () => {
 })
 
 beforeEach(() => {
-  globalThis.cache = {}
+  globalThis.requestCache = {}
 })
