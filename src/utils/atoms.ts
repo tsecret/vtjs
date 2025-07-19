@@ -5,7 +5,7 @@ import { LocalAPI, SharedAPI } from '../api'
 import { PlayerAccount, PlayerRow } from '../interface'
 
 
-const version = atom<string>()
+const appInfo = atom<{ version: string, tauriVersion: string, identifier: string }>()
 const cache = atom<Database>()
 
 const localapi = atom<LocalAPI>()
@@ -20,7 +20,7 @@ const allowAnalytics = atom<boolean>(false)
 const firstTimeUser = atom<boolean>(true)
 
 export default {
-  version,
+  appInfo,
   cache,
   localapi,
   sharedapi,
