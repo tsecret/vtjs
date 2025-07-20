@@ -37,7 +37,7 @@ export const PlayerDetails = () => {
 
       for (const match of matches){
         const player = match.players.find(player => player.subject === puuid) as MatchDetailsResponse['players'][0]
-        const { uuid: agentId, name: agentName, img: agentImage } = utils.getAgent(player.characterId)
+        const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
         const team = match.teams.find(team => team.teamId === player.teamId)!
 
 
@@ -61,6 +61,12 @@ export const PlayerDetails = () => {
 
     load()
   }, [])
+
+  if (!table.length)
+    return <div className='flex flex-row justify-center space-x-4'>
+      <span className="loading loading-spinner loading-xs"></span>
+      <p>Loading matches</p>
+    </div>
 
   return <div className="flex flex-col items-center">
 
@@ -87,6 +93,7 @@ export const PlayerDetails = () => {
         </div>
       </div>
 
+
     </section>
 
     <section className="overflow-x-auto flex flex-col items-center">
@@ -101,7 +108,7 @@ export const PlayerDetails = () => {
             <th>Map</th>
             <th>Score</th>
             <th>Result</th>
-            <th>Score</th>
+            <th>K / D / A</th>
             <th>-+</th>
           </tr>
         </thead>

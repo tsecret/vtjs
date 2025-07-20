@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SharedAPI } from '../src/api/shared';
-import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, Match, PlayerMMRResponse, PreGameMatch } from '../src/interface';
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PlayerMMRResponse } from '../src/interface';
 import * as utils from '../src/utils';
 
+import maps from '../src/assets/maps.json'
+import playerNames from './fixtures/shared/player-names.json'
 import currentGameMatch from './fixtures/shared/current-game-match.json';
 import currentPreGameMatch from './fixtures/shared/current-pregame-match.json';
 import matchDetails from './fixtures/shared/match-details.json';
@@ -77,6 +79,20 @@ describe('utils', () => {
       expect(utils.calculateRanking(playerMMR)).toEqual({ currentRank: 20, currentRR: 28, peakRank: 20 })
     })
 
+  })
+
+  describe('getBestAgents', () => {
+    const puuid = playerNames[0].Subject
+    const mapUrl = '/Game/Maps/Jam/Jam'
+    const expected = [{ agentId: 'cc8b64c8-4b25-4ff9-6e7f-37b4da43d235', avgDeaths: 16, avgKills: 25, avgKd: 1.56, games: 1, agentUrl: 'https://media.valorant-api.com/agents/cc8b64c8-4b25-4ff9-6e7f-37b4da43d235/displayicon.png' }]
+
+    it('1 game', () => {
+      expect(utils.getPlayerBestAgent(puuid, [matchDetails] as MatchDetailsResponse[], mapUrl)).toStrictEqual(expected)
+    })
+
+    it('2 games', () => {
+      expect(utils.getPlayerBestAgent(puuid, [matchDetails, matchDetails] as MatchDetailsResponse[], mapUrl)).toStrictEqual([{ ...expected[0], games: 2 }])
+    })
   })
 })
 

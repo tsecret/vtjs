@@ -5,7 +5,7 @@ import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
 import maps from '../assets/maps.json';
 import ranks from '../assets/ranks.json';
-import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
+import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -71,12 +71,11 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
   }
 }
 
-export const getAgent = (uuid: string) => {
+export const getAgent = (uuid: string): Agent => {
   if (!uuid)
-    return { uuid, name: null, img: null }
+    return { uuid, displayIcon: null, displayName: null, killfeedPortrait: null }
 
-  const agent = agents.find(agent => agent.uuid === uuid.toLowerCase())!
-  return { uuid, name: agent.displayName, img: agent.killfeedPortrait }
+  return agents.find(agent => agent.uuid === uuid.toLowerCase())!
 }
 
 export const getRank = (rank: number): { rankName: string, rankColor: string } => {
@@ -96,4 +95,40 @@ export const isSmurf = (player: PlayerRow) => {
   return (player.accountLevel && player.accountLevel < 100)
     && (player.kd && player.kd > 1.2)
     && (player.currentRank == player.rankPeak) ? true : false
+}
+
+export const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[], mapUrl: string): AgentStats[] => {
+  matches = matches.filter(match => match.matchInfo.mapId === mapUrl)
+
+  const agents: { [key: string]: { k: number, d: number, kd: number, games: number } }  = {}
+
+  for (const match of matches){
+    const player = match.players.find(player => player.subject === puuid)!
+    const { kills, deaths } = player?.stats
+
+    if (!(player.characterId in agents)){
+      agents[player.characterId] = { k: kills, d: deaths, kd: 0, games: 1 }
+      continue
+    }
+
+    agents[player.characterId].k += kills
+    agents[player.characterId].d += deaths
+    agents[player.characterId].games += 1
+
+  }
+
+  for (const characterId in agents){
+      agents[characterId].k = Math.round(agents[characterId].k / agents[characterId].games)
+      agents[characterId].d = Math.round(agents[characterId].d / agents[characterId].games)
+      agents[characterId].kd = parseFloat((agents[characterId].k / agents[characterId].d).toFixed(2))
+  }
+
+  return Object.keys(agents).map(characterId => ({
+    agentId: characterId,
+    agentUrl: getAgent(characterId).displayIcon!,
+    avgKills: agents[characterId].k,
+    avgDeaths: agents[characterId].d,
+    avgKd: agents[characterId].kd,
+    games: agents[characterId].games,
+  })).sort((a, b) => b.avgKd - a.avgKd)
 }

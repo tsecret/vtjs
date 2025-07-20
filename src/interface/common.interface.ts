@@ -4,6 +4,15 @@ export interface Lockfile {
   password: string
 }
 
+export type AgentStats = {
+  agentId: string
+  agentUrl: string
+  avgKills: number
+  avgDeaths: number
+  avgKd: number
+  games: number
+}
+
 export interface PlayerRow {
   name: string
   tag: string
@@ -23,4 +32,5 @@ export interface PlayerRow {
   rankPeakDate?: string
   accountLevel?: number
   enemy: boolean
+  bestAgents?: AgentStats[]
 }

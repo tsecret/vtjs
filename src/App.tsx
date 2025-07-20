@@ -1,5 +1,5 @@
 import { useAptabase } from '@aptabase/react';
-import { getVersion } from '@tauri-apps/api/app';
+import { getIdentifier, getTauriVersion, getVersion } from '@tauri-apps/api/app';
 import Database from '@tauri-apps/plugin-sql';
 import { load } from '@tauri-apps/plugin-store';
 import { useAtom } from "jotai";
@@ -20,7 +20,7 @@ import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
 
 function App() {
-  const [, setVersion] = useAtom(atoms.version)
+  const [, setAppInfo] = useAtom(atoms.appInfo)
   const [, setPlayer] = useAtom(atoms.player)
   const [, setLocalapi] = useAtom(atoms.localapi)
   const [, setSharedapi] = useAtom(atoms.sharedapi)
@@ -37,8 +37,12 @@ function App() {
 
   async function init(){
 
-    // App version
-    setVersion(await getVersion())
+    // App info
+    setAppInfo({
+      version: await getVersion(),
+      tauriVersion: await getTauriVersion(),
+      identifier: await getIdentifier()
+    })
 
     // Settings
     const store = await load('settings.json', { autoSave: true });
