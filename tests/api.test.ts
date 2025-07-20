@@ -84,7 +84,7 @@ describe('utils', () => {
   describe('getBestAgents', () => {
     const puuid = playerNames[0].Subject
     const mapUrl = '/Game/Maps/Jam/Jam'
-    const expected = [{ agentId: 'cc8b64c8-4b25-4ff9-6e7f-37b4da43d235', avgDeaths: 16, avgKills: 25, avgKd: 1.56, games: 1 }]
+    const expected = [{ agentId: 'cc8b64c8-4b25-4ff9-6e7f-37b4da43d235', avgDeaths: 16, avgKills: 25, avgKd: 1.56, games: 1, agentUrl: 'https://media.valorant-api.com/agents/cc8b64c8-4b25-4ff9-6e7f-37b4da43d235/displayicon.png' }]
 
     it('1 game', () => {
       expect(utils.getPlayerBestAgent(puuid, [matchDetails] as MatchDetailsResponse[], mapUrl)).toStrictEqual(expected)
