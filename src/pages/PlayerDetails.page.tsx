@@ -62,6 +62,12 @@ export const PlayerDetails = () => {
     load()
   }, [])
 
+  if (!table.length)
+    return <div className='flex flex-row justify-center space-x-4'>
+      <span className="loading loading-spinner loading-xs"></span>
+      <p>Loading matches</p>
+    </div>
+
   return <div className="flex flex-col items-center">
 
     <section id="stats" className="space-x-2">
@@ -86,6 +92,7 @@ export const PlayerDetails = () => {
           <div className="stat-value">{table.length ? (table.filter(match => match.won).length / table.length * 100).toFixed(0) : 0}%</div>
         </div>
       </div>
+
 
     </section>
 

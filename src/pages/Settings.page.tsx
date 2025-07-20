@@ -23,7 +23,7 @@ export const Settings = () => {
   async function clearCache(){
     const response = await cache?.execute('DELETE FROM requests WHERE ttl <= $1', [+new Date()])
     if (savedRequests && response)
-      setSavedRequests(savedRequests + response.rowsAffected)
+      setSavedRequests(savedRequests - response.rowsAffected)
   }
 
   useEffect(() => {

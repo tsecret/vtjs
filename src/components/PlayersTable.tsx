@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { ExternalLink } from "lucide-react"
+import { CircleEllipsis } from "lucide-react"
 import { useNavigate } from "react-router"
 import { PlayerRow } from "../interface"
 import * as utils from '../utils'
@@ -38,7 +38,7 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
           </div>
         </td>
         <td>{ utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }</td>
-        <td><ExternalLink className="cursor-pointer" size={16} onClick={() => navigate('/player/' + player.puuid)}/></td>
+        <td><CircleEllipsis className="cursor-pointer" size={20} onClick={() => navigate('/player/' + player.puuid)}/></td>
       </tr>
     }
 
