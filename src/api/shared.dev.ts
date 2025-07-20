@@ -18,7 +18,8 @@ export class TestSharedAPI extends SharedAPI {
     return currentGamePlayer
   }
 
-  async getCurrentPreGamePlayer(_puuid: string): Promise<CurrentPreGamePlayerResponse> {
+  async getCurrentPreGamePlayer(_puuid: string): Promise<CurrentPreGamePlayerResponse | null> {
+    return null
     return currentPreGamePlayer
   }
 

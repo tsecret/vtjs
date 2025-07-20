@@ -40,7 +40,7 @@ export const Main = () => {
         const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank)
         const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank)
 
-        const { uuid: agentId, name: agentName, img: agentImage } = utils.getAgent(match.AllyTeam?.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as string)
+        const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(match.AllyTeam?.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as string)
 
         table[player.Subject] = {
           name: player.GameName,
@@ -66,9 +66,9 @@ export const Main = () => {
         // Match history and stats
         const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject)
         const promises = matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID))
-        const matchStats = await Promise.all(promises)
+        const matches = await Promise.all(promises)
 
-        const { kd, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matchStats)
+        const { kd, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matches)
 
         table[player.Subject] = {
           ...table[player.Subject],
@@ -104,7 +104,7 @@ export const Main = () => {
         const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank)
         const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank)
 
-        const { uuid: agentId, name: agentName, img: agentImage } = utils.getAgent(match.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as string)
+        const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(match.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as string)
 
         table[player.Subject] = {
           name: player.GameName,
@@ -130,9 +130,10 @@ export const Main = () => {
         // Match history and stats
         const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject)
         const promises = matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID))
-        const matchStats = await Promise.all(promises)
+        const matches = await Promise.all(promises)
 
-        const { kd, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matchStats)
+        const { kd, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matches)
+        const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID)
 
         table[player.Subject] = {
           ...table[player.Subject],
@@ -140,6 +141,7 @@ export const Main = () => {
           lastGameWon,
           lastGameScore,
           accountLevel,
+          bestAgents,
         }
       }
 
