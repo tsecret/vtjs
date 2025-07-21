@@ -1,7 +1,7 @@
 import { relaunch } from '@tauri-apps/plugin-process';
 import { check, Update } from '@tauri-apps/plugin-updater';
 import { useAtom } from 'jotai';
-import { ChevronLeft, Download, Settings, User } from 'lucide-react';
+import { ChevronLeft, Download, Settings, Store } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router';
 import atoms from '../utils/atoms';
@@ -54,7 +54,8 @@ export const Header = () => {
 
         <div className="ml-auto flex flex-row items-center space-x-4">
           { update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16}/> Update available</button> }
-          <div className="badge badge-soft badge-primary badge-lg flex flex-row items-center space-x-2"><User size={16} /> <span>{player?.game_name}#{player?.tag_line}</span></div>
+          <span>{player?.game_name}#{player?.tag_line}</span>
+          <button className="btn btn-soft btn-sm btn-primary rounded-md ml-auto" onClick={() => navigate('/store')}><Store size={20} /> Store</button>
           <button className="btn btn-soft btn-sm btn-primary btn-circle ml-auto" onClick={() => navigate('/settings')}><Settings size={20} /></button>
         </div>
       </>
@@ -69,6 +70,12 @@ export const Header = () => {
         <button className="btn btn-primary btn-sm" onClick={(() => navigate('/dashboard'))}><ChevronLeft /></button>
 
         <span className="font-bold">Player Details</span>
+      </>
+      : location.pathname.startsWith('/store') ?
+      <>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate('/dashboard'))}><ChevronLeft /></button>
+
+        <span className="font-bold">Store</span>
       </>
       : null
 

@@ -18,12 +18,15 @@ import { WelcomePage } from './pages/Welcome.page';
 import * as utils from './utils';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
+import { StorePage } from './pages/Store.page';
+import { StoreAPI } from './api/store';
 
 function App() {
   const [, setAppInfo] = useAtom(atoms.appInfo)
   const [, setPlayer] = useAtom(atoms.player)
   const [, setLocalapi] = useAtom(atoms.localapi)
   const [, setSharedapi] = useAtom(atoms.sharedapi)
+  const [, setStoreapi] = useAtom(atoms.storeapi)
   const [, setpuuid] = useAtom(atoms.puuid)
   const [, setcache] = useAtom(atoms.cache)
   const [, setstore] = useAtom(atoms.store)
@@ -67,18 +70,22 @@ function App() {
 
     setInitStatus('Loading Lockfile')
     const localapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestLocalAPI({ port: '', password: '' }) :  new LocalAPI(utils.parseLockFile(await utils.readLockfile()))
-    console.log('localapi', localapi)
     const player = await localapi.getPlayerAccount()
-    console.log('player', player)
 
     setInitStatus('Loading Player')
     const { accessToken, token: entToken, subject: puuid } = await localapi.getEntitlementToken()
     const sharedapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestSharedAPI({ entToken, accessToken }) : new SharedAPI({ entToken, accessToken })
 
+    const storeapi = new StoreAPI({ entToken, accessToken })
+
     setPlayer(player)
     setpuuid(puuid)
     setLocalapi(localapi)
     setSharedapi(sharedapi)
+    setStoreapi(storeapi)
+
+    console.log('localapi', localapi)
+    console.log('player', player)
 
     navigate(firstTimeUser ? '/welcome' : '/dashboard')
   }
@@ -94,6 +101,7 @@ function App() {
       <Route path="/welcome" element={<WelcomePage />} />
       <Route path="/dashboard" element={<Main />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/store" element={<StorePage />} />
       <Route path="/player/:puuid" element={<PlayerDetails />} />
     </Routes>
   </main>
