@@ -91,7 +91,7 @@ function App() {
     console.log('player', player)
 
     invoke('start_ws', {
-      wsUrl: `wss://192.168.31.197:${port}`,
+      wsUrl: `wss://${import.meta.env.VITE_DEV === 'true' ? '192.168.31.197' : 'localhost'}:${port}`,
       headers: {
         Authorization: `Basic ${password}`,
       },

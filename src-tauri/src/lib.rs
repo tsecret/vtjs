@@ -7,7 +7,6 @@ use tungstenite::{Message};
 use url::Url;
 use native_tls::TlsConnector;
 use base64;
-use tungstenite::http::Request;
 use tungstenite::client::IntoClientRequest;
 use tungstenite::http::header::{HeaderName, HeaderValue};
 use once_cell::sync::Lazy;
