@@ -1,5 +1,6 @@
 import { useAptabase } from '@aptabase/react';
 import { getIdentifier, getTauriVersion, getVersion } from '@tauri-apps/api/app';
+import { invoke } from '@tauri-apps/api/core';
 import Database from '@tauri-apps/plugin-sql';
 import { load } from '@tauri-apps/plugin-store';
 import { useAtom } from "jotai";
@@ -8,22 +9,26 @@ import { Route, Routes, useNavigate } from "react-router";
 import { LocalAPI, SharedAPI } from "./api";
 import { TestLocalAPI } from "./api/local.dev";
 import { TestSharedAPI } from "./api/shared.dev";
+import { StoreAPI } from './api/store';
 import "./App.css";
 import { Splash } from "./components";
 import { Header } from "./components/Header";
 import { Main } from "./pages/Main.page";
 import { PlayerDetails } from "./pages/PlayerDetails.page";
 import { Settings } from "./pages/Settings.page";
+import { StorePage } from './pages/Store.page';
 import { WelcomePage } from './pages/Welcome.page';
 import * as utils from './utils';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
+import { SocketListener } from './components/SocketListener';
 
 function App() {
   const [, setAppInfo] = useAtom(atoms.appInfo)
   const [, setPlayer] = useAtom(atoms.player)
   const [, setLocalapi] = useAtom(atoms.localapi)
   const [, setSharedapi] = useAtom(atoms.sharedapi)
+  const [, setStoreapi] = useAtom(atoms.storeapi)
   const [, setpuuid] = useAtom(atoms.puuid)
   const [, setcache] = useAtom(atoms.cache)
   const [, setstore] = useAtom(atoms.store)
@@ -66,19 +71,31 @@ function App() {
     setcache(db)
 
     setInitStatus('Loading Lockfile')
-    const localapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestLocalAPI({ port: '', password: '' }) :  new LocalAPI(utils.parseLockFile(await utils.readLockfile()))
-    console.log('localapi', localapi)
+    const { port, password } = utils.parseLockFile(await utils.readLockfile())
+    const localapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestLocalAPI({ port: '', password: '' }) :  new LocalAPI({ port, password })
     const player = await localapi.getPlayerAccount()
-    console.log('player', player)
 
     setInitStatus('Loading Player')
     const { accessToken, token: entToken, subject: puuid } = await localapi.getEntitlementToken()
     const sharedapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestSharedAPI({ entToken, accessToken }) : new SharedAPI({ entToken, accessToken })
 
+    const storeapi = new StoreAPI({ entToken, accessToken })
+
     setPlayer(player)
     setpuuid(puuid)
     setLocalapi(localapi)
     setSharedapi(sharedapi)
+    setStoreapi(storeapi)
+
+    console.log('localapi', localapi)
+    console.log('player', player)
+
+    invoke('start_ws', {
+      wsUrl: `wss://192.168.31.197:${port}`,
+      headers: {
+        Authorization: `Basic ${password}`,
+      },
+    });
 
     navigate(firstTimeUser ? '/welcome' : '/dashboard')
   }
@@ -89,11 +106,13 @@ function App() {
 
   return <main className="relative select-none cursor-default">
     <Header />
+    <SocketListener />
     <Routes>
       <Route path="/" element={<Splash status={initStatus} />} />
       <Route path="/welcome" element={<WelcomePage />} />
       <Route path="/dashboard" element={<Main />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/store" element={<StorePage />} />
       <Route path="/player/:puuid" element={<PlayerDetails />} />
     </Routes>
   </main>

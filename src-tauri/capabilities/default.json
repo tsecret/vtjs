@@ -43,6 +43,9 @@
         },
         {
           "url": "https://pd.eu.a.pvp.net:*"
+        },
+        {
+          "url": "https://valorant-api.com:*"
         }
       ]
     },

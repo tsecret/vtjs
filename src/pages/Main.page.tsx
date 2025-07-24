@@ -1,6 +1,6 @@
 import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
 import { CurrentGamePlayerResponse, CurrentPreGamePlayerResponse } from "../interface";
 import * as utils from '../utils';
@@ -17,16 +17,22 @@ export const Main = () => {
     const [sharedapi] = useAtom(atoms.sharedapi)
     const [table, setTable] = useAtom(atoms.table)
     const [allowAnalytics] = useAtom(atoms.allowAnalytics)
+    const [gameState] = useAtom(atoms.gameState)
 
     const { trackEvent } = useAptabase();
 
     async function handlePreGameMatch(currentPreGamePlayer: CurrentPreGamePlayerResponse){
       if (!sharedapi) return
 
+      if (allowAnalytics)
+        await trackEvent('check_pregame')
+
       if (currentPreGamePlayer.MatchID !== currentMatchId)
         Object.keys(table).forEach(key => { delete table[key] })
 
       const match = await sharedapi.getCurrentPreGameMatch(currentPreGamePlayer.MatchID)
+      console.log('match', match)
+
       const puuids = utils.extractPlayers(match)
       const players = await sharedapi.getPlayerNames(puuids)
 
@@ -69,6 +75,7 @@ export const Main = () => {
         const matches = await Promise.all(promises)
 
         const { kd, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matches)
+        const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID)
 
         table[player.Subject] = {
           ...table[player.Subject],
@@ -76,15 +83,23 @@ export const Main = () => {
           lastGameWon,
           lastGameScore,
           accountLevel,
+          bestAgents
         }
       }
 
+      if (allowAnalytics)
+        await trackEvent('check_finish')
+
       setTable(table)
       setCurrentMatchId(match.ID)
+      setProgress({ step: 0, steps: 0, player: null })
     }
 
     async function handleGameMatch(currentGamePlayer: CurrentGamePlayerResponse) {
       if (!sharedapi) return
+
+      if (allowAnalytics)
+        await trackEvent('check_game')
 
       if (currentGamePlayer.MatchID !== currentMatchId)
         Object.keys(table).forEach(key => { delete table[key] })
@@ -96,19 +111,21 @@ export const Main = () => {
 
       match.Players.forEach(player => { table[player.Subject] = {} as any });
 
-      for (const player of players){
+      match.Players.sort((a, b) => { return a.TeamID < b.TeamID ? -1 : a.TeamID < b.TeamID ? 1 : 0 })
 
+      for (const player of match.Players){
         // Current and Peak Rank
         const mmr = await sharedapi.getPlayerMMR(player.Subject)
         const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
         const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank)
         const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank)
+        const { GameName, TagLine } = players.find(_player => _player.Subject === player.Subject)!
 
         const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(match.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as string)
 
         table[player.Subject] = {
-          name: player.GameName,
-          tag: player.TagLine,
+          name: GameName,
+          tag: TagLine,
           puuid: player.Subject,
           agentId: agentId,
           agentName: agentName,
@@ -145,16 +162,17 @@ export const Main = () => {
         }
       }
 
+      if (allowAnalytics)
+        await trackEvent('check_finish')
+
       setTable(table)
       setCurrentMatchId(match.MatchID)
+      setProgress({ step: 0, steps: 0, player: null })
     }
 
     async function onCheck() {
       setError(null)
       if (!puuid || !localapi || !sharedapi) return
-
-      if (allowAnalytics)
-        await trackEvent('check_start')
 
       const currentPreGamePlayer = await sharedapi.getCurrentPreGamePlayer(puuid)
       const currentGamePlayer = currentPreGamePlayer ? null : await sharedapi.getCurrentGamePlayer(puuid)
@@ -173,9 +191,19 @@ export const Main = () => {
 
       setProgress({ step: 0, steps: 0, player: null })
 
-      if (allowAnalytics)
-        await trackEvent('check_finish')
     }
+
+    useEffect(() => {
+
+      if (gameState.state == 'PreGame'){
+        handlePreGameMatch({ MatchID: gameState.matchId as string, Subject: '', Version: 0 })
+      }
+
+      if (gameState.state == 'Game'){
+        handleGameMatch({ MatchID: gameState.matchId as string, Subject: '', Version: 0 })
+      }
+
+    }, [gameState])
 
     return (
       <div className="p-2 flex flex-col">
