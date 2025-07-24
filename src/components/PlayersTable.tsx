@@ -25,7 +25,7 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
         <td>
           <div className="flex flex-row space-x-2">
             {player.bestAgents?.map(agent => (
-              <div className="tooltip tooltip-left">
+              <div key={agent.agentId} className="tooltip tooltip-left">
                 <div className="tooltip-content flex flex-col items-start">
                   <span>Avg Kills: {agent.avgKills}</span>
                   <span>Avg Deaths: {agent.avgDeaths}</span>

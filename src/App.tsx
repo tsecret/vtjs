@@ -1,5 +1,6 @@
 import { useAptabase } from '@aptabase/react';
 import { getIdentifier, getTauriVersion, getVersion } from '@tauri-apps/api/app';
+import { invoke } from '@tauri-apps/api/core';
 import Database from '@tauri-apps/plugin-sql';
 import { load } from '@tauri-apps/plugin-store';
 import { useAtom } from "jotai";
@@ -8,18 +9,19 @@ import { Route, Routes, useNavigate } from "react-router";
 import { LocalAPI, SharedAPI } from "./api";
 import { TestLocalAPI } from "./api/local.dev";
 import { TestSharedAPI } from "./api/shared.dev";
+import { StoreAPI } from './api/store';
 import "./App.css";
 import { Splash } from "./components";
 import { Header } from "./components/Header";
 import { Main } from "./pages/Main.page";
 import { PlayerDetails } from "./pages/PlayerDetails.page";
 import { Settings } from "./pages/Settings.page";
+import { StorePage } from './pages/Store.page';
 import { WelcomePage } from './pages/Welcome.page';
 import * as utils from './utils';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
-import { StorePage } from './pages/Store.page';
-import { StoreAPI } from './api/store';
+import { SocketListener } from './components/SocketListener';
 
 function App() {
   const [, setAppInfo] = useAtom(atoms.appInfo)
@@ -69,7 +71,8 @@ function App() {
     setcache(db)
 
     setInitStatus('Loading Lockfile')
-    const localapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestLocalAPI({ port: '', password: '' }) :  new LocalAPI(utils.parseLockFile(await utils.readLockfile()))
+    const { port, password } = utils.parseLockFile(await utils.readLockfile())
+    const localapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestLocalAPI({ port: '', password: '' }) :  new LocalAPI({ port, password })
     const player = await localapi.getPlayerAccount()
 
     setInitStatus('Loading Player')
@@ -87,6 +90,13 @@ function App() {
     console.log('localapi', localapi)
     console.log('player', player)
 
+    invoke('start_ws', {
+      wsUrl: `wss://192.168.31.197:${port}`,
+      headers: {
+        Authorization: `Basic ${password}`,
+      },
+    });
+
     navigate(firstTimeUser ? '/welcome' : '/dashboard')
   }
 
@@ -96,6 +106,7 @@ function App() {
 
   return <main className="relative select-none cursor-default">
     <Header />
+    <SocketListener />
     <Routes>
       <Route path="/" element={<Splash status={initStatus} />} />
       <Route path="/welcome" element={<WelcomePage />} />

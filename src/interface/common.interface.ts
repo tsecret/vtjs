@@ -34,3 +34,15 @@ export interface PlayerRow {
   enemy: boolean
   bestAgents?: AgentStats[]
 }
+
+export type Payload = {
+  data: {
+    phase: 'Idle'
+    version: string
+  }
+  eventType: 'Create' | 'Update',
+  uri: string
+}
+
+
+export type GameState = 'Idle' | 'PreGame' | 'Game'
