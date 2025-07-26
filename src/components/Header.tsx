@@ -54,7 +54,16 @@ export const Header = () => {
 
         <div className="ml-auto flex flex-row items-center space-x-4">
           { update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16}/> Update available</button> }
-          <span>{player?.game_name}#{player?.tag_line}</span>
+          <span>{player?.game_name}{' '}
+            <div className="relative group inline-block">
+              <span className="block group-hover:hidden select-none tracking-widest">
+                ****
+              </span>
+              <span className="hidden group-hover:block select-none">
+                #{player?.tag_line}
+              </span>
+            </div>
+          </span>
           <button className="btn btn-soft btn-sm btn-primary rounded-md ml-auto" onClick={() => navigate('/store')}><Store size={20} /> Store</button>
           <button className="btn btn-soft btn-sm btn-primary btn-circle ml-auto" onClick={() => navigate('/settings')}><Settings size={20} /></button>
         </div>

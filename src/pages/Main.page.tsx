@@ -2,7 +2,7 @@ import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
-import { CurrentGamePlayerResponse, CurrentPreGamePlayerResponse } from "../interface";
+import { CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse } from "../interface";
 import * as utils from '../utils';
 import atoms from "../utils/atoms";
 
@@ -10,6 +10,7 @@ export const Main = () => {
     const [error, setError] = useState<string|null>()
     const [progress, setProgress] = useState<{ step: number, steps: number, player: string | null }>({ step: 0, steps: 0, player: null })
     const [currentMatchId, setCurrentMatchId] = useState<string | null>()
+    const [currentMatch, setCurrentMatch] = useState<CurrentPreGameMatchResponse | CurrentGameMatchResponse>()
 
     const [puuid] = useAtom(atoms.puuid)
     const [player] = useAtom(atoms.player)
@@ -31,7 +32,6 @@ export const Main = () => {
         Object.keys(table).forEach(key => { delete table[key] })
 
       const match = await sharedapi.getCurrentPreGameMatch(currentPreGamePlayer.MatchID)
-      console.log('match', match)
 
       const puuids = utils.extractPlayers(match)
       const players = await sharedapi.getPlayerNames(puuids)
@@ -74,12 +74,14 @@ export const Main = () => {
         const promises = matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID))
         const matches = await Promise.all(promises)
 
-        const { kd, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matches)
+        const { kd, hs, adr, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matches)
         const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID)
 
         table[player.Subject] = {
           ...table[player.Subject],
           kd,
+          hs,
+          adr,
           lastGameWon,
           lastGameScore,
           accountLevel,
@@ -92,6 +94,7 @@ export const Main = () => {
 
       setTable(table)
       setCurrentMatchId(match.ID)
+      setCurrentMatch(match)
       setProgress({ step: 0, steps: 0, player: null })
     }
 
@@ -116,9 +119,9 @@ export const Main = () => {
       for (const player of match.Players){
         // Current and Peak Rank
         const mmr = await sharedapi.getPlayerMMR(player.Subject)
-        const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
+        const { currentRank, currentRR, peakRank, peakRankSeasonId } = utils.calculateRanking(mmr)
         const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank)
-        const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank)
+        const { rankName: rankPeakName, rankColor: rankPeakColor, } = utils.getRank(peakRank)
         const { GameName, TagLine } = players.find(_player => _player.Subject === player.Subject)!
 
         const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(match.Players.find(_player => _player.Subject === player.Subject)?.CharacterID as string)
@@ -135,6 +138,7 @@ export const Main = () => {
           currentRR,
           rankPeak: rankPeakName,
           rankPeakColor: rankPeakColor,
+          rankPeakDate: peakRankSeasonId ? utils.getSeasonDateById(peakRankSeasonId) : null,
           enemy: match.Players.find(_player => _player.Subject === player.Subject)?.TeamID !== playerTeamId,
         }
       }
@@ -149,12 +153,14 @@ export const Main = () => {
         const promises = matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID))
         const matches = await Promise.all(promises)
 
-        const { kd, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matches)
+        const { kd, hs, adr, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matches)
         const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID)
 
         table[player.Subject] = {
           ...table[player.Subject],
           kd,
+          hs,
+          adr,
           lastGameWon,
           lastGameScore,
           accountLevel,
@@ -167,6 +173,7 @@ export const Main = () => {
 
       setTable(table)
       setCurrentMatchId(match.MatchID)
+      setCurrentMatch(match)
       setProgress({ step: 0, steps: 0, player: null })
     }
 
@@ -210,6 +217,14 @@ export const Main = () => {
         { error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div> }
 
         {
+          currentMatch &&
+            <section id='match-info' className="flex flex-row items-center my-10 space-x-4 m-auto">
+              <div className="badge badge-soft badge-primary badge-lg">Server: {currentMatch.GamePodID.split('.')[currentMatch.GamePodID.split('.').length-1]}</div>
+              <div className="badge badge-soft badge-primary badge-lg">Map: {utils.getMap(currentMatch.MapID).displayName}</div>
+            </section>
+        }
+
+        {
           progress.steps > 1 &&
           <div className="flex flex-col m-auto my-4 space-y-4">
             <progress className="progress progress-primary w-56 " value={progress.step} max={progress.steps}></progress>
@@ -223,7 +238,15 @@ export const Main = () => {
         {/* table */}
         <PlayersTable table={table} puuid={puuid as string} />
 
-        { player && <button className="btn btn-primary btn-wide mx-auto" onClick={onCheck}>Check current game</button> }
+        { player && Object.keys(table).length === 0 && <section className="m-auto text-center mt-20">
+          <h2 className="font-bold">Waiting for match</h2>
+          <p className="text-xs text-slate-400">The check should start automatically. It case it didn't, click <button className="underline" onClick={onCheck}>here</button></p>
+          </section>
+        }
+
+        {
+          Object.keys(table).length > 1 && <button className="btn btn-primary m-auto btn-sm" onClick={onCheck}>Recheck</button>
+        }
 
       </div>
     );

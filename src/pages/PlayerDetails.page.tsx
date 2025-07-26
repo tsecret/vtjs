@@ -38,15 +38,15 @@ export const PlayerDetails = () => {
       for (const match of matches){
         const player = match.players.find(player => player.subject === puuid) as MatchDetailsResponse['players'][0]
         const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
-        const team = match.teams.find(team => team.teamId === player.teamId)!
+        const team = match.teams?.find(team => team.teamId === player.teamId)!
 
 
         table.push({
           matchId: match.matchInfo.matchId,
           mapName: utils.getMap(match.matchInfo.mapId).displayName,
-          kills: player.stats.kills,
-          deaths: player.stats.deaths,
-          assists: player.stats.assists,
+          kills: player.stats?.kills ?? 0,
+          deaths: player.stats?.deaths ?? 0,
+          assists: player.stats?.assists ?? 0,
           date: new Date(match.matchInfo.gameStartMillis),
           won: utils.playerHasWon(puuid, match),
           score: `${team.roundsWon}-${team.roundsPlayed-team.roundsWon}`,
@@ -68,7 +68,7 @@ export const PlayerDetails = () => {
       <p>Loading matches</p>
     </div>
 
-  return <div className="flex flex-col items-center">
+  return <div className="flex flex-col items-center p-4">
 
     <section id="stats" className="space-x-2">
 

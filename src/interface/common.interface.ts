@@ -18,6 +18,8 @@ export interface PlayerRow {
   tag: string
   puuid: string
   kd?: number
+  hs?: number
+  adr?: number
   agentName: string | null
   agentId: string | null
   agentImage: string | null
@@ -29,7 +31,7 @@ export interface PlayerRow {
   currentRR?: number
   rankPeak?: string
   rankPeakColor?: string
-  rankPeakDate?: string
+  rankPeakDate?: Date | null
   accountLevel?: number
   enemy: boolean
   bestAgents?: AgentStats[]
