@@ -23,7 +23,6 @@ export class LocalAPI {
     if (res.status === 200)
       return res.json()
 
-    console.log('res.status', res.status)
   }
 
   async getEntitlementToken(): Promise<EntitlementsTokenResponse> {

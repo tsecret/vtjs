@@ -18,9 +18,11 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
         </td>
         <th>{ player.puuid === puuid ? <span>You</span> : <><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span></>}</th>
         <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
-        <th><span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span></th>
+        <th><span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak} {player.rankPeakDate ? <span className="text-[0.6rem] text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span> : null}</span></th>
         <th><span>{player.accountLevel}</span></th>
         <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-green-400' : 'text-red-400')}>{player.kd}</span></td>
+        <td><span className="text-center">{player.hs}%</span></td>
+        <td><span className="text-center">{player.adr}</span></td>
         <td><span className={clsx('text-center', player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
         <td>
           <div className="flex flex-row space-x-2">
@@ -46,7 +48,7 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
       return null
 
   return <section className="overflow-x-auto mx-auto my-4">
-      <table className="table table-sm">
+      <table className="table table-xs">
 
         <thead>
           <tr>
@@ -56,6 +58,8 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
             <th>Peak Rank</th>
             <th>LVL</th>
             <th>K/D</th>
+            <th>HS%</th>
+            <th>ADR</th>
             <th>Last Game</th>
             <th>Top Agents on Current Map</th>
             <th>Note</th>

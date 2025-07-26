@@ -32,7 +32,7 @@ describe('utils', () => {
   describe('calculateStatsForPlayer', () => {
 
     it('no matches', () => {
-      const expected = { kd: 0, accountLevel: 0, lastGameWon: 'N/A', lastGameScore: 'N/A' }
+      const expected = { kd: 0, accountLevel: 0, lastGameWon: 'N/A', lastGameScore: 'N/A', adr: 0, hs: 0 }
       expect(utils.calculateStatsForPlayer('test-player-1-puuid', [] as any)).toEqual(expected)
     })
 
@@ -51,12 +51,12 @@ describe('utils', () => {
         teams: []
       }
 
-      const expected = { kd: 5, accountLevel: 10, lastGameWon: 'N/A', lastGameScore: 'N/A' }
+      const expected = { kd: 5, accountLevel: 10, lastGameWon: 'N/A', lastGameScore: 'N/A', adr: 0, hs: 0 }
       expect(utils.calculateStatsForPlayer('test-player-1-puuid', [input] as any)).toEqual(expected)
     })
 
     it('all good', () => {
-      const expected = { kd: 1.56, accountLevel: 89, lastGameWon: false, lastGameScore: '8:13' }
+      const expected = { kd: 1.56, accountLevel: 89, lastGameWon: false, lastGameScore: '8:13', adr: 124, hs: 19 }
       expect(utils.calculateStatsForPlayer('test-player-1-puuid', [matchDetails] as any)).toEqual(expected)
     })
 
@@ -72,11 +72,11 @@ describe('utils', () => {
           }
         }
       } as Partial<PlayerMMRResponse>
-      expect(utils.calculateRanking(input as PlayerMMRResponse)).toEqual({ currentRank: 0, currentRR: 0, peakRank: 0 })
+      expect(utils.calculateRanking(input as PlayerMMRResponse)).toEqual({ currentRank: 0, currentRR: 0, peakRank: 0, peakRankSeasonId: null })
     })
 
     it('calculateCompetitiveUpdates', () => {
-      expect(utils.calculateRanking(playerMMR)).toEqual({ currentRank: 20, currentRR: 28, peakRank: 20 })
+      expect(utils.calculateRanking(playerMMR)).toEqual({ currentRank: 20, currentRR: 28, peakRank: 20, peakRankSeasonId: '16118998-4705-5813-86dd-0292a2439d90' })
     })
 
   })
