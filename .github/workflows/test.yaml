@@ -11,6 +11,8 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    outputs:
+      OUTPUT_LATEST: ${{ steps.publish.outputs.latest }}
     steps:
       - uses: actions/checkout@v4
 
