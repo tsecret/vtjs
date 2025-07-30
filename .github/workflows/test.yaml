@@ -40,3 +40,6 @@ jobs:
 
       - name: Run Build
         run: pnpm build
+
+      - name: App build
+        run: pnpm tauri build
