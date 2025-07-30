@@ -48,7 +48,7 @@ jobs:
           # Get current version and append timestamp
           CURRENT_VERSION=$(grep '"version"' tauri.conf.json | sed 's/.*"version": "\([^"]*\)".*/\1/')
           NEW_VERSION="${CURRENT_VERSION}.${{ steps.timestamp.outputs.BUILD_TIME }}"
-          sed -i '' "s/\"version\": \"[^\"]*\"/\"version\": \"$NEW_VERSION\"/" tauri.conf.json
+          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"$NEW_VERSION\"/" tauri.conf.json
 
       - uses: tauri-apps/tauri-action@v0
         env:
@@ -61,10 +61,10 @@ jobs:
           releaseName: 'VTJS v__VERSION__'
           releaseBody: |
             Production Release
-            
+
             Build Time: ${{ steps.timestamp.outputs.BUILD_TIME }}
             Channel: Production
-            
+
             See the assets to download this version and install.
           releaseDraft: false
           prerelease: false
