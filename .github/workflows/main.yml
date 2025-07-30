@@ -10,7 +10,7 @@ jobs:
   publish:
     permissions:
       contents: write
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     outputs:
       OUTPUT_LATEST: ${{ steps.publish.outputs.latest }}
     steps:

@@ -10,36 +10,9 @@ jobs:
   test:
     permissions:
       contents: write
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check system dependencies
-        run: |
-          # Check if dependencies are already installed
-          echo "Checking for required dependencies..."
-          
-          if command -v pkg-config >/dev/null 2>&1; then
-            echo "✓ pkg-config found"
-          else
-            echo "✗ pkg-config not found"
-          fi
-          
-          if pkg-config --exists glib-2.0; then
-            echo "✓ glib-2.0 found"
-          else
-            echo "✗ glib-2.0 not found"
-          fi
-          
-          if pkg-config --exists webkit2gtk-4.0; then
-            echo "✓ webkit2gtk-4.0 found"
-          else
-            echo "✗ webkit2gtk-4.0 not found"
-          fi
-          
-          # Set environment variables for the build
-          echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig" >> $GITHUB_ENV
-          echo "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1" >> $GITHUB_ENV
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -62,17 +35,6 @@ jobs:
 
       - name: Install frontend dependencies
         run: pnpm install
-
-      - name: Verify build environment
-        run: |
-          echo "=== Build Environment Verification ==="
-          echo "pkg-config version: $(pkg-config --version)"
-          echo "pkg-config location: $(which pkg-config)"
-          echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
-          echo "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS: $PKG_CONFIG_ALLOW_SYSTEM_CFLAGS"
-          echo "Testing glib-2.0:"
-          pkg-config --libs --cflags glib-2.0 || echo "glib-2.0 not found"
-          echo "=== End Verification ==="
 
       - name: Run Tests
         run: pnpm test --run
