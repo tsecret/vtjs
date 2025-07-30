@@ -14,6 +14,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            pkg-config \
+            libglib2.0-dev \
+            libwebkit2gtk-4.0-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libssl-dev \
+            libdbus-1-dev \
+            libudev-dev \
+            libnotify-dev
+          
+          # Verify pkg-config is available
+          echo "pkg-config version:"
+          pkg-config --version
+          echo "pkg-config location:"
+          which pkg-config
+          echo "PATH: $PATH"
+          
+          # Set environment variables for the build
+          echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig" >> $GITHUB_ENV
+          echo "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1" >> $GITHUB_ENV
+
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -35,6 +61,17 @@ jobs:
 
       - name: Install frontend dependencies
         run: pnpm install
+
+      - name: Verify build environment
+        run: |
+          echo "=== Build Environment Verification ==="
+          echo "pkg-config version: $(pkg-config --version)"
+          echo "pkg-config location: $(which pkg-config)"
+          echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
+          echo "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS: $PKG_CONFIG_ALLOW_SYSTEM_CFLAGS"
+          echo "Testing glib-2.0:"
+          pkg-config --libs --cflags glib-2.0 || echo "glib-2.0 not found"
+          echo "=== End Verification ==="
 
       - name: Run Tests
         run: pnpm test --run
