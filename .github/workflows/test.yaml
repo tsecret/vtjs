@@ -1,4 +1,4 @@
-name: 'test'
+name: 'Test Release'
 
 on:
   workflow_dispatch:
@@ -8,6 +8,8 @@ on:
 
 jobs:
   test:
+    permissions:
+      contents: write
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +26,7 @@ jobs:
         run: echo '"Riot Client:1888:12345:6VCDFORUm1nbDfZ4EReVqw:https"' > lockfile.json
 
       - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@stable # Set this to dtolnay/rust-toolchain@nightly
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
@@ -37,5 +39,50 @@ jobs:
       - name: Run Tests
         run: pnpm test --run
 
-      - name: Run Build
-        run: pnpm run build
+      - name: Generate build timestamp
+        id: timestamp
+        run: echo "BUILD_TIME=$(date -u +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Update version with timestamp for test
+        run: |
+          cd src-tauri
+          # Get current version and append timestamp with test suffix
+          CURRENT_VERSION=$(grep '"version"' tauri.conf.json | sed 's/.*"version": "\([^"]*\)".*/\1/')
+          NEW_VERSION="${CURRENT_VERSION}-test.${{ steps.timestamp.outputs.BUILD_TIME }}"
+          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"$NEW_VERSION\"/" tauri.conf.json
+
+      - name: Update product name for test
+        run: |
+          cd src-tauri
+          sed -i '' 's/"productName": "vtjs"/"productName": "vtjs-test"/' tauri.conf.json
+          sed -i '' 's/"title": "VTJS"/"title": "VTJS Test"/' tauri.conf.json
+          sed -i '' 's/prod.json/test.json/' tauri.conf.json
+          sed -i '' 's/"BUILD_CHANNEL": "production"/"BUILD_CHANNEL": "test"/' tauri.conf.json
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          VITE_APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
+        with:
+          tagName: test-v__VERSION__
+          releaseName: 'VTJS Test v__VERSION__'
+          releaseBody: |
+            Test Release
+            
+            Build Time: ${{ steps.timestamp.outputs.BUILD_TIME }}
+            Channel: Test
+            
+            This is a test version for feature validation.
+            See the assets to download this version and install.
+          releaseDraft: true
+          prerelease: true
+          args: ${{ matrix.args }}
+
+      - name: Update Test Gist
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.TOKEN }}
+          gist_id: 0b5f7094000f4063d72276c5e05824aa
+          file_path: ./test.json

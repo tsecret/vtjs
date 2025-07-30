@@ -44,8 +44,11 @@
       },
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU0RkJBQjVFMzE1NDZBMzEKUldReGFsUXhYcXY3NUJ4SmJjZllNcTMvdC9RRm1iUUtrMmVLVEFiL1VvRHdKU2FlelJaMHR4QVEK",
       "endpoints": [
-        "https://gist.githubusercontent.com/tsecret/0b5f7094000f4063d72276c5e05824aa/raw/latest.json"
+        "https://gist.githubusercontent.com/tsecret/0b5f7094000f4063d72276c5e05824aa/raw/prod.json"
       ]
     }
+  },
+  "env": {
+    "BUILD_CHANNEL": "production"
   }
 }
