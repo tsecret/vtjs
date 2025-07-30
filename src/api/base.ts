@@ -32,7 +32,8 @@ export class BaseAPI {
       method?: 'GET' | 'PUT' | 'POST',
       try?: number,
       noCache?: boolean
-    } = { body: null, headers: null, method: 'GET', try: 1 },
+      ttl?: number
+    } = { body: null, headers: null, method: 'GET', try: 1, ttl: this.cacheTTL },
   ): Promise<any>{
 
     if (!this.cache)
@@ -61,7 +62,12 @@ export class BaseAPI {
 
     if (res.status === 200){
       const response = await res.json()
-      if (!options.noCache) await this.cache.execute('INSERT or REPLACE into requests (endpoint, ttl, data) VALUES ($1, $2, $3)', [endpoint, +new Date() + this.cacheTTL, response])
+      if (!options.noCache && options.ttl !== undefined) {
+        await this.cache.execute(
+          'INSERT or REPLACE into requests (endpoint, ttl, data) VALUES ($1, $2, $3)', 
+          [endpoint, +new Date() + options.ttl, response]
+        )
+      }
       return response
     }
 

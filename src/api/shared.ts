@@ -30,11 +30,11 @@ export class SharedAPI extends BaseAPI {
     const startIndex = 0
     const endIndex = 20
     const queue = 'competitive'
-    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/match-history/v1/history/${puuid}?startIndex=${startIndex}&endIndex=${endIndex}&queue=${queue}`, { noCache: true })
+    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/match-history/v1/history/${puuid}?startIndex=${startIndex}&endIndex=${endIndex}&queue=${queue}`, { ttl: 5 * 60 * 1000 })
   }
 
   async getMatchDetails(matchId: string): Promise<MatchDetailsResponse> {
-    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/match-details/v1/matches/${matchId}`)
+    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/match-details/v1/matches/${matchId}`, { ttl: 30 * 24 * 60 * 60 * 1000 })
   }
 
   async getCompetitiveUpdates(puuid: string): Promise<CompetitiveUpdatesResponse> {

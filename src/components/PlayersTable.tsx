@@ -21,9 +21,9 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
         <th><span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak} {player.rankPeakDate ? <span className="text-[0.6rem] text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span> : null}</span></th>
         <th><span>{player.accountLevel}</span></th>
         <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-green-400' : 'text-red-400')}>{player.kd}</span></td>
-        <td><span className="text-center">{player.hs}%</span></td>
+        <td><span className="text-center">{player.hs}{player.hs ? '%' : null}</span></td>
         <td><span className="text-center">{player.adr}</span></td>
-        <td><span className={clsx('text-center', player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}</span></td>
+        <td><span className={clsx('text-center', player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}{player.lastGameMMRDiff ? ` (${player.lastGameMMRDiff > 0 ? '+'+player.lastGameMMRDiff : player.lastGameMMRDiff})` : null}</span></td>
         <td>
           <div className="flex flex-row space-x-2">
             {player.bestAgents?.map(agent => (

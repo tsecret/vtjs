@@ -66,17 +66,21 @@ describe('utils', () => {
 
     it('SeasonalInfoBySeasonID is null', () => {
       const input = {
+        LatestCompetitiveUpdate: {
+          RankedRatingEarned: 0
+        },
         QueueSkills: {
           competitive: {
             SeasonalInfoBySeasonID: null
           }
         }
-      } as Partial<PlayerMMRResponse>
-      expect(utils.calculateRanking(input as PlayerMMRResponse)).toEqual({ currentRank: 0, currentRR: 0, peakRank: 0, peakRankSeasonId: null })
+      }
+      expect(utils.calculateRanking(input as any)).toEqual({ currentRank: 0, currentRR: 0, peakRank: 0, peakRankSeasonId: null, lastGameMMRDiff: 0 })
     })
 
     it('calculateCompetitiveUpdates', () => {
-      expect(utils.calculateRanking(playerMMR)).toEqual({ currentRank: 20, currentRR: 28, peakRank: 20, peakRankSeasonId: '16118998-4705-5813-86dd-0292a2439d90' })
+      const expected = { currentRank: 20, currentRR: 28, peakRank: 20, peakRankSeasonId: '16118998-4705-5813-86dd-0292a2439d90', lastGameMMRDiff: -13 }
+      expect(utils.calculateRanking(playerMMR as PlayerMMRResponse)).toEqual(expected)
     })
 
   })
@@ -134,19 +138,19 @@ describe('request caching', () => {
     expect(Object.keys(globalThis.requestCache).length).toEqual(1)
   })
 
-  it('checks cache after 30 mins', async () => {
+  it('checks cache after 30 days', async () => {
     const timestampBefore = +new Date(2025, 1, 1, 13, 0, 0)
     vi.setSystemTime(new Date(2025, 1, 1, 13, 0, 0))
 
     await sharedapi.getMatchDetails('')
     expect(Object.keys(globalThis.requestCache).length).toEqual(1)
-    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampBefore + sharedapi.cacheTTL)
+    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampBefore + 30 * 24 * 60 * 60 * 1000)
 
-    const timestampAfter = +new Date(2025, 1, 1, 13, 30, 1)
-    vi.setSystemTime(+new Date(2025, 1, 1, 13, 30, 1))
+    const timestampAfter = +new Date(2025, 1, 30, 13, 30, 1)
+    vi.setSystemTime(+new Date(2025, 1, 30, 13, 30, 1))
 
     await sharedapi.getMatchDetails('')
-    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampAfter + sharedapi.cacheTTL)
+    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampAfter + 30 * 24 * 60 * 60 * 1000)
   })
 
 })

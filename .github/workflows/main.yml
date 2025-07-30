@@ -1,4 +1,4 @@
-name: 'publish'
+name: 'Production Release'
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ jobs:
   publish:
     permissions:
       contents: write
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     outputs:
       OUTPUT_LATEST: ${{ steps.publish.outputs.latest }}
     steps:
@@ -28,10 +28,7 @@ jobs:
         run: echo '"Riot Client:1888:12345:6VCDFORUm1nbDfZ4EReVqw:https"' > lockfile.json
 
       - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@stable # Set this to dtolnay/rust-toolchain@nightly
-        with:
-          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
@@ -39,8 +36,19 @@ jobs:
           workspaces: './src-tauri -> target'
 
       - name: Install frontend dependencies
-        # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
-        run: pnpm install # change this to npm or pnpm depending on which one you use.
+        run: pnpm install
+
+      - name: Generate build timestamp
+        id: timestamp
+        run: echo "BUILD_TIME=$(date -u +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Update version with timestamp
+        run: |
+          cd src-tauri
+          # Get current version and append timestamp
+          CURRENT_VERSION=$(grep '"version"' tauri.conf.json | sed 's/.*"version": "\([^"]*\)".*/\1/')
+          NEW_VERSION="${CURRENT_VERSION}.${{ steps.timestamp.outputs.BUILD_TIME }}"
+          sed -i '' "s/\"version\": \"[^\"]*\"/\"version\": \"$NEW_VERSION\"/" tauri.conf.json
 
       - uses: tauri-apps/tauri-action@v0
         env:
@@ -49,16 +57,22 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           VITE_APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
         with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+          tagName: app-v__VERSION__
           releaseName: 'VTJS v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
+          releaseBody: |
+            Production Release
+            
+            Build Time: ${{ steps.timestamp.outputs.BUILD_TIME }}
+            Channel: Production
+            
+            See the assets to download this version and install.
+          releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
 
-      - name: Update Gist
+      - name: Update Production Gist
         uses: exuanbo/actions-deploy-gist@v1
         with:
           token: ${{ secrets.TOKEN }}
           gist_id: 0b5f7094000f4063d72276c5e05824aa
-          file_path: ./latest.json
+          file_path: ./prod.json

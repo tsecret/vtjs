@@ -90,7 +90,7 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
   }
 }
 
-export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: number, currentRR: number, peakRank: number, peakRankSeasonId: string | null } =>  {
+export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: number, currentRR: number, peakRank: number, peakRankSeasonId: string | null, lastGameMMRDiff: number } =>  {
   return {
     currentRank: playerMMR.LatestCompetitiveUpdate?.TierAfterUpdate || 0,
     currentRR: playerMMR.LatestCompetitiveUpdate?.RankedRatingAfterUpdate || 0,
@@ -99,7 +99,8 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
       : 0,
     peakRankSeasonId: playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?
       Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.Rank - a.Rank)[0].SeasonID
-      : null
+      : null,
+    lastGameMMRDiff: playerMMR.LatestCompetitiveUpdate.RankedRatingEarned
   }
 }
 
@@ -133,7 +134,6 @@ export const playerHasWon = (puuid: string, match: MatchDetailsResponse) => {
 export const isSmurf = (player: PlayerRow) => {
   return (player.accountLevel && player.accountLevel < 100)
     && (player.kd && player.kd > 1.2)
-    && (player.currentRank == player.rankPeak) ? true : false
 }
 
 export const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[], mapUrl: string): AgentStats[] => {
