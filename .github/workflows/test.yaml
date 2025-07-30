@@ -54,11 +54,10 @@ jobs:
       - name: Update product name for test
         run: |
           cd src-tauri
-          ls
-          sed -i '' 's/"productName": "vtjs"/"productName": "vtjs-test"/' tauri.conf.json
-          sed -i '' 's/"title": "VTJS"/"title": "VTJS Test"/' tauri.conf.json
-          sed -i '' 's/prod.json/test.json/' tauri.conf.json
-          sed -i '' 's/"BUILD_CHANNEL": "production"/"BUILD_CHANNEL": "test"/' tauri.conf.json
+          sed -i 's/"productName": "vtjs"/"productName": "vtjs-test"/' tauri.conf.json
+          sed -i 's/"title": "VTJS"/"title": "VTJS Test"/' tauri.conf.json
+          sed -i 's/prod.json/test.json/' tauri.conf.json
+          sed -i 's/"BUILD_CHANNEL": "production"/"BUILD_CHANNEL": "test"/' tauri.conf.json
 
       - uses: tauri-apps/tauri-action@v0
         env:
