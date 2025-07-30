@@ -66,17 +66,21 @@ describe('utils', () => {
 
     it('SeasonalInfoBySeasonID is null', () => {
       const input = {
+        LatestCompetitiveUpdate: {
+          RankedRatingEarned: 0
+        },
         QueueSkills: {
           competitive: {
             SeasonalInfoBySeasonID: null
           }
         }
-      } as Partial<PlayerMMRResponse>
-      expect(utils.calculateRanking(input as PlayerMMRResponse)).toEqual({ currentRank: 0, currentRR: 0, peakRank: 0, peakRankSeasonId: null })
+      }
+      expect(utils.calculateRanking(input as any)).toEqual({ currentRank: 0, currentRR: 0, peakRank: 0, peakRankSeasonId: null, lastGameMMRDiff: 0 })
     })
 
     it('calculateCompetitiveUpdates', () => {
-      expect(utils.calculateRanking(playerMMR)).toEqual({ currentRank: 20, currentRR: 28, peakRank: 20, peakRankSeasonId: '16118998-4705-5813-86dd-0292a2439d90' })
+      const expected = { currentRank: 20, currentRR: 28, peakRank: 20, peakRankSeasonId: '16118998-4705-5813-86dd-0292a2439d90', lastGameMMRDiff: -13 }
+      expect(utils.calculateRanking(playerMMR as PlayerMMRResponse)).toEqual(expected)
     })
 
   })
