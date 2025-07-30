@@ -42,14 +42,6 @@ jobs:
         id: timestamp
         run: echo "BUILD_TIME=$(date -u +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
 
-      - name: Update version with timestamp
-        run: |
-          cd src-tauri
-          # Get current version and append timestamp
-          CURRENT_VERSION=$(grep '"version"' tauri.conf.json | sed 's/.*"version": "\([^"]*\)".*/\1/')
-          NEW_VERSION="${CURRENT_VERSION}.${{ steps.timestamp.outputs.BUILD_TIME }}"
-          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"$NEW_VERSION\"/" tauri.conf.json
-
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
