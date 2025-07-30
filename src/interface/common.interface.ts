@@ -25,6 +25,7 @@ export interface PlayerRow {
   agentImage: string | null
   lastGameWon?: boolean | string
   lastGameScore?: string
+  lastGameMMRDiff?: number
   gameHistory?: string[]
   currentRank?: string
   currentRankColor?: string
