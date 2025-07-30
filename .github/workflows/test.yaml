@@ -11,25 +11,8 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
-    outputs:
-      OUTPUT_LATEST: ${{ steps.publish.outputs.latest }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            pkg-config \
-            libglib2.0-dev \
-            libwebkit2gtk-4.0-dev \
-            libgtk-3-dev \
-            libayatana-appindicator3-dev \
-            librsvg2-dev \
-            libssl-dev \
-            libdbus-1-dev \
-            libudev-dev \
-            libnotify-dev
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -55,53 +38,7 @@ jobs:
 
       - name: Run Tests
         run: pnpm test --run
+      
+      - name: Run Build
+        run: pnpm build
 
-      - name: Generate build timestamp
-        id: timestamp
-        run: echo "BUILD_TIME=$(date -u +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
-
-      - name: Update version with timestamp for test
-        run: |
-          cd src-tauri
-          # Get current version and append timestamp with test suffix
-          CURRENT_VERSION=$(grep '"version"' tauri.conf.json | sed 's/.*"version": "\([^"]*\)".*/\1/')
-          NEW_VERSION="${CURRENT_VERSION}-test.${{ steps.timestamp.outputs.BUILD_TIME }}"
-          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"$NEW_VERSION\"/" tauri.conf.json
-
-      - name: Update product name for test
-        run: |
-          cd src-tauri
-          sed -i 's/"productName": "vtjs"/"productName": "vtjs-test"/' tauri.conf.json
-          sed -i 's/"title": "VTJS"/"title": "VTJS Test"/' tauri.conf.json
-          sed -i 's/prod.json/test.json/' tauri.conf.json
-
-      - name: Set Exports
-        run: export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig
-
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-          VITE_APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
-        with:
-          tagName: test-v__VERSION__
-          releaseName: 'VTJS Test v__VERSION__'
-          releaseBody: |
-            Test Release
-            
-            Build Time: ${{ steps.timestamp.outputs.BUILD_TIME }}
-            Channel: Test
-            
-            This is a test version for feature validation.
-            See the assets to download this version and install.
-          releaseDraft: true
-          prerelease: true
-          args: ${{ matrix.args }}
-
-      - name: Update Test Gist
-        uses: exuanbo/actions-deploy-gist@v1
-        with:
-          token: ${{ secrets.TOKEN }}
-          gist_id: 0b5f7094000f4063d72276c5e05824aa
-          file_path: ./test.json
