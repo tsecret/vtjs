@@ -1,8 +1,7 @@
 name: 'Test Release'
 
 on:
-  workflow_dispatch:
-  push:
+  pull_request:
     branches:
       - test
 
@@ -38,7 +37,6 @@ jobs:
 
       - name: Run Tests
         run: pnpm test --run
-      
+
       - name: Run Build
         run: pnpm build
-
