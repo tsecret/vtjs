@@ -82,11 +82,23 @@ jobs:
           echo "PATH: $PATH"
           echo "=== End Check ==="
 
-      # - name: Run Tests
-      #   run: pnpm test --run
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          VITE_APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
+        with:
+          tagName: app-test-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+          releaseName: 'VTJS Test v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
 
-      # - name: Run Build
-      #   run: pnpm build
-
-      - name: App build
-        run: pnpm tauri build
+      - name: Update Gist
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.TOKEN }}
+          gist_id: 0b5f7094000f4063d72276c5e05824aa
+          file_path: ./test.json
