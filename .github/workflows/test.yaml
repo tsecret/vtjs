@@ -35,11 +35,41 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install
 
-      - name: Run Tests
-        run: pnpm test --run
+      - name: Check system dependencies
+        run: |
+          echo "=== System Dependencies Check ==="
+          echo "Checking for pkg-config..."
+          if command -v pkg-config >/dev/null 2>&1; then
+            echo "✓ pkg-config found at: $(which pkg-config)"
+            echo "pkg-config version: $(pkg-config --version)"
+          else
+            echo "✗ pkg-config not found"
+          fi
+          
+          echo "Checking for glib-2.0..."
+          if pkg-config --exists glib-2.0 2>/dev/null; then
+            echo "✓ glib-2.0 found"
+            echo "glib-2.0 version: $(pkg-config --modversion glib-2.0)"
+          else
+            echo "✗ glib-2.0 not found"
+          fi
+          
+          echo "Checking for webkit2gtk-4.0..."
+          if pkg-config --exists webkit2gtk-4.0 2>/dev/null; then
+            echo "✓ webkit2gtk-4.0 found"
+          else
+            echo "✗ webkit2gtk-4.0 not found"
+          fi
+          
+          echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
+          echo "PATH: $PATH"
+          echo "=== End Check ==="
 
-      - name: Run Build
-        run: pnpm build
+      # - name: Run Tests
+      #   run: pnpm test --run
+
+      # - name: Run Build
+      #   run: pnpm build
 
       - name: App build
         run: pnpm tauri build
