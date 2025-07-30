@@ -53,6 +53,7 @@ export class TestSharedAPI extends SharedAPI {
   }
 
   async getPlayerMMR(_puuid: string): Promise<PlayerMMRResponse> {
+    // @ts-ignore
     return playerMMR
   }
 
