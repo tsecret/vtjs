@@ -60,6 +60,9 @@ jobs:
           sed -i 's/"title": "VTJS"/"title": "VTJS Test"/' tauri.conf.json
           sed -i 's/prod.json/test.json/' tauri.conf.json
 
+      - name: Set Exports
+        run: export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
