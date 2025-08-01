@@ -1,6 +1,6 @@
 import { useAtom } from "jotai"
 import { useEffect, useState } from "react"
-import { PresenceResponse } from "../interface"
+import { FriendsResponse, PresenceResponse } from "../interface"
 import { base64Decode, getMap } from "../utils"
 import atoms from "../utils/atoms"
 import { SquareArrowOutUpRight } from "lucide-react"
@@ -10,15 +10,16 @@ import { useNavigate } from "react-router"
 
 export const FriendsPage = () => {
   const [localapi] = useAtom(atoms.localapi)
-  // const [friends, setFriends] = useState<FriendsResponse['friends']>()
+  const [friends, setFriends] = useState<FriendsResponse['friends']>()
   const [presences, setPresences] = useState<PresenceResponse['presences']>()
 
   const navigate = useNavigate()
 
   useEffect(() => {
     (async () => {
-      // const friends = await localapi?.getFriends()
-      // if (friends) setFriends(friends.friends)
+      const friends = await localapi?.getFriends()
+      console.log('friends', friends)
+      if (friends) setFriends(friends.friends)
 
       const presences = await localapi?.getPresences()
       if (presences) setPresences(presences.presences.filter(p => p.product === 'valorant').map(p => ({...p, presence: p.private ?  JSON.parse(base64Decode(p.private)) : null })))
@@ -32,7 +33,19 @@ export const FriendsPage = () => {
       <ul className="list bg-base-100 rounded-box shadow-md">
         <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Friends in Valorant</li>
 
-        { presences?.map(p => <FriendRow friend={p} onExternalLinkClick={() => navigate('/player/' + p.puuid)} />) }
+        {
+          presences?.length ?
+            presences.map(p => <ValorantFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate('/player/' + p.puuid)} />) :
+            <span className="p-4">No friends online</span>
+        }
+
+        <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Other Friends</li>
+
+        {
+          friends?.length ?
+            friends.map(p => <FriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate('/player/' + p.puuid)} />) :
+            <span className="p-4">No friends online</span>
+        }
 
       </ul>
     </section>
@@ -40,23 +53,24 @@ export const FriendsPage = () => {
   </div>
 }
 
-const FriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResponse['presences'][0], onExternalLinkClick: () => void }) => {
+const ValorantFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResponse['presences'][0], onExternalLinkClick: () => void }) => {
 
   const getDescription = () => {
 
     const queues = {
-      'competitive': "Competitive"
+      'competitive': "Competitive",
+      'deathmatch': 'Deathmatch'
     }
 
     switch (friend.product) {
       case 'valorant':
-        return `${queues[friend.presence?.queueId]} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam} on ${getMap(friend.presence?.matchMap).displayName}`
+        return `${queues[friend.presence?.queueId] || 'Playing'} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam} on ${getMap(friend.presence?.matchMap).displayName}`
       default:
         break;
     }
   }
 
-  return <li className="list-row" key={friend.puuid}>
+  return <li className="list-row">
       <div><img className="size-10 rounded-box" src={`https://media.valorant-api.com/playercards/${friend.presence?.playerCardId}/displayicon.png`}/></div>
 
       <div>
@@ -68,5 +82,22 @@ const FriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResponse['
 
       <button className="btn btn-ghost btn-square" onClick={onExternalLinkClick}><SquareArrowOutUpRight /></button>
 
+  </li>
+}
+
+const FriendRow = ({ friend, onExternalLinkClick }: { friend: FriendsResponse['friends'][0], onExternalLinkClick: () => void }) => {
+  return <li className="list-row">
+     <div className="avatar avatar-placeholder">
+        <div className="bg-neutral size-10 rounded-box">
+          <span>{friend.game_name.slice(0,1).toUpperCase()}</span>
+        </div>
+      </div>
+
+      <div>
+        <span className="font-bold">{friend.game_name} <span className="opacity-25">{friend.game_tag} {friend.note ? <span>({friend.note})</span> : null}</span></span>
+        <div className="text-xs opacity-60">OFFLINE</div>
+      </div>
+
+      <button className="btn btn-ghost btn-square" onClick={onExternalLinkClick}><SquareArrowOutUpRight /></button>
   </li>
 }

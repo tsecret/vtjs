@@ -1,0 +1,69 @@
+{
+    "friends": [
+        {
+            "activePlatform": null,
+            "displayGroup": "**Default",
+            "game_name": "Player 1",
+            "game_tag": "tag",
+            "group": "**Default",
+            "last_online_ts": null,
+            "name": "",
+            "note": "note2",
+            "pid": "124618cd-e379-5f08-b577-2e72032ee186@eu2.pvp.net",
+            "puuid": "test-player-1-puuid",
+            "region": "eu2"
+        },
+        {
+            "activePlatform": null,
+            "displayGroup": "**Default",
+            "game_name": "Player 2",
+            "game_tag": "tag",
+            "group": "**Default",
+            "last_online_ts": 1754004040316,
+            "name": "",
+            "note": "",
+            "pid": "135af4bd-fdf2-52c4-ab0e-9d1c280bf879@jp1.pvp.net",
+            "puuid": "test-player-2-puuid",
+            "region": "jp1"
+        },
+        {
+            "activePlatform": null,
+            "displayGroup": "**Default",
+            "game_name": "Player 3",
+            "game_tag": "tag",
+            "group": "**Default",
+            "last_online_ts": null,
+            "name": "",
+            "note": "",
+            "pid": "2354fec1-9907-5439-a8ca-565b086728dc@eu1.pvp.net",
+            "puuid": "test-player-3-puuid",
+            "region": "eu1"
+        },
+        {
+            "activePlatform": null,
+            "displayGroup": "**Default",
+            "game_name": "Player 4",
+            "game_tag": "tag",
+            "group": "**Default",
+            "last_online_ts": null,
+            "name": "",
+            "note": "note1",
+            "pid": "29af4097-f1be-559f-8829-9f24fda7c4ad@eu1.pvp.net",
+            "puuid": "test-player-4-puuid",
+            "region": "eu1"
+        },
+        {
+            "activePlatform": null,
+            "displayGroup": "**Default",
+            "game_name": "Player 5",
+            "game_tag": "tag",
+            "group": "**Default",
+            "last_online_ts": null,
+            "name": "",
+            "note": "",
+            "pid": "2fa497cf-d10d-539b-9a35-f703f34cb8b8@eu1.pvp.net",
+            "puuid": "test-player-5-puuid",
+            "region": "eu1"
+        }
+    ]
+}
