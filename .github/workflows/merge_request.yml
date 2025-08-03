@@ -1,0 +1,41 @@
+name: 'Install, Test, Build'
+
+on:
+  pull_request:
+    branches:
+      - main
+      - test
+
+jobs:
+  install-build-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install pnpm
+        run: npm i -g pnpm
+
+      - name: Create lockfile
+        run: echo '"Riot Client:1888:12345:6VCDFORUm1nbDfZ4EReVqw:https"' > lockfile.json
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Test
+        run: pnpm test --run
+
+      - name: Build
+        run: pnpm build
