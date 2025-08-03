@@ -33,7 +33,7 @@ export interface PlayerRow {
   rankPeak?: string
   rankPeakColor?: string
   rankPeakDate?: Date | null
-  accountLevel?: number
+  accountLevel?: number | null
   enemy: boolean
   bestAgents?: AgentStats[]
 }

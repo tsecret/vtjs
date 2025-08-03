@@ -38,7 +38,7 @@ export class TestSharedAPI extends SharedAPI {
   }
 
   async getPlayerMatchHistory(_puuid: string): Promise<PlayerMatchHistoryResponse> {
-    await sleep(100)
+    await sleep(500)
     // @ts-ignore
     return matchHistory
   }

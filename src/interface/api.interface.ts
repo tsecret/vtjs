@@ -47,7 +47,7 @@ export type PresenceResponse = {
         platform?: unknown | null;
         private: string | null;
         privateJwt?: string | null;
-        presence?: PresenceJSON | null
+        presence: PresenceJSON | null
         product: "valorant" | "league_of_legends";
         /** Player UUID */
         puuid: string;
