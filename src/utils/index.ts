@@ -13,6 +13,10 @@ export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(re
 
 export const isMac = () => navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
+export const base64Decode = (input: string): string => {
+  return base64.decode(input)
+}
+
 export const readLockfile = async (): Promise<string> => {
   if (isMac()){
     return lockfile

@@ -22,13 +22,15 @@ interface Row {
 export const PlayerDetails = () => {
   const [sharedapi] = useAtom(atoms.sharedapi)
   const [table, setTable] = useState<Row[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
 
   const { puuid } = useParams()
 
   useEffect(() => {
 
-    const load = async () => {
+    (async () => {
       if (!puuid || !sharedapi) return
+      setLoading(true)
 
       const table: Row[] = []
 
@@ -57,12 +59,12 @@ export const PlayerDetails = () => {
       }
 
       setTable(table)
-    }
+      setLoading(false)
+    })()
 
-    load()
   }, [])
 
-  if (!table.length)
+  if (loading)
     return <div className='flex flex-row justify-center space-x-4'>
       <span className="loading loading-spinner loading-xs"></span>
       <p>Loading matches</p>
@@ -102,20 +104,20 @@ export const PlayerDetails = () => {
       <table className="table table-xs">
 
         <thead>
-          <tr>
+          <tr className="text-center">
             <th>Date</th>
             <th>Agent</th>
             <th>Map</th>
-            <th>Score</th>
-            <th>Result</th>
             <th>K / D / A</th>
+            <th>Result</th>
+            <th>Score</th>
             <th>-+</th>
           </tr>
         </thead>
 
         <tbody>
           {table.map(match => (
-            <tr key={match.matchId}>
+            <tr key={match.matchId} className={match.won ? 'bg-success/5' : 'bg-error/5'}>
               <th>{match.date.toLocaleString()}</th>
               <th><img src={match.agentImage || undefined} className="max-h-6"/></th>
               <th>{match.mapName}</th>
