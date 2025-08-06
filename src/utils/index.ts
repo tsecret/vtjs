@@ -1,6 +1,8 @@
 import { localDataDir } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
+import pako from 'pako'
+
 import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
 import maps from '../assets/maps.json';
@@ -15,6 +17,14 @@ export const isMac = () => navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
 export const base64Decode = (input: string): string => {
   return base64.decode(input)
+}
+
+export const zdecode = (input: string): any => {
+  return JSON.parse(pako.inflateRaw(Buffer.from(input, 'base64'), { to: 'string' }))
+}
+
+export const zencode = (input: any): string => {
+  return Buffer.from(pako.deflateRaw(Buffer.from(JSON.stringify(input), 'utf-8'))).toString('base64')
 }
 
 export const readLockfile = async (): Promise<string> => {
