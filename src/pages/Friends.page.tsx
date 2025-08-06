@@ -34,7 +34,7 @@ export const FriendsPage = () => {
 
         {
           presences?.length ?
-            presences.filter(p => p.product === 'valorant').map(p => <IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate('/player/' + p.puuid)} />) :
+            presences.filter(p => p.product === 'valorant').map(p => <IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />) :
             <span className="p-4">No friends online</span>
         }
 
@@ -42,13 +42,13 @@ export const FriendsPage = () => {
 
         {
           presences?.length ?
-            presences.filter(p => p.product !== 'valorant').map(p => <IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate('/player/' + p.puuid)} />) :
+            presences.filter(p => p.product !== 'valorant').map(p => <IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />) :
             <span className="p-4">No friends online</span>
         }
 
         {
           friends?.length ?
-            friends.map(p => <FriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate('/player/' + p.puuid)} />) :
+            friends.map(p => <FriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />) :
             <span className="p-4">No friends online</span>
         }
 

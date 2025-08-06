@@ -19,6 +19,7 @@ export const Main = () => {
     const [table, setTable] = useAtom(atoms.table)
     const [allowAnalytics] = useAtom(atoms.allowAnalytics)
     const [gameState] = useAtom(atoms.gameState)
+    const [cache] = useAtom(atoms.cache)
 
     const { trackEvent } = useAptabase();
 
@@ -136,6 +137,10 @@ export const Main = () => {
     }
 
     async function handleGameEnd(){
+      const match = await sharedapi?.getMatchDetails(currentMatchId!)
+      if (match)
+        await cache?.execute('INSERT into matches (matchId, data) VALUES ($1, $2)', [match.matchInfo.matchId, match])
+
       setTable({})
       setCurrentMatchId(null)
       setCurrentMatch(null)
@@ -200,7 +205,7 @@ export const Main = () => {
 
     return (
       <div className="p-2 flex flex-col">
-        { error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div> }
+        { error && <div className="alert alert-error border-error my-4 w-1/2 m-auto">{error}</div> }
 
         {
           progress.steps > 1 &&

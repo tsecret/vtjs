@@ -104,7 +104,7 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
     peakRankSeasonId: playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?
       Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.Rank - a.Rank)[0].SeasonID
       : null,
-    lastGameMMRDiff: playerMMR.LatestCompetitiveUpdate.RankedRatingEarned
+    lastGameMMRDiff: playerMMR.LatestCompetitiveUpdate?.RankedRatingEarned
   }
 }
 
@@ -136,8 +136,8 @@ export const playerHasWon = (puuid: string, match: MatchDetailsResponse) => {
 }
 
 export const isSmurf = (player: PlayerRow) => {
-  return (player.accountLevel && player.accountLevel < 100)
-    && (player.kd && player.kd > 1.2)
+  return Boolean((player.accountLevel && player.accountLevel < 100)
+    && (player.kd && player.kd > 1.5))
 }
 
 export const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[], mapUrl: string): AgentStats[] => {

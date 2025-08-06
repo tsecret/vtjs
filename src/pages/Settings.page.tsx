@@ -9,7 +9,10 @@ export const Settings = () => {
   const [store] = useAtom(atoms.store)
   const [allowAnalytics, setAllowAnalytics] = useAtom(atoms.allowAnalytics)
 
+
+  const [clearingCache, setClearingCache] = useState<boolean>(false)
   const [savedRequests, setSavedRequests] = useState<number>()
+  const [savedMatches, setSavedMatces] = useState<number>()
 
   async function onChange(event: React.ChangeEvent<HTMLInputElement>){
     switch (event.target.name) {
@@ -21,19 +24,38 @@ export const Settings = () => {
   }
 
   async function clearCache(){
+    setClearingCache(true)
+
     const response = await cache?.execute('DELETE FROM requests WHERE ttl <= $1', [+new Date()])
     if (savedRequests && response)
       setSavedRequests(savedRequests - response.rowsAffected)
+
+    setClearingCache(false)
+  }
+
+  async function clearAllCache(){
+    setClearingCache(true)
+
+    const requests = await cache?.execute('DELETE FROM requests')
+    const matches = await cache?.execute('DELETE FROM matches')
+
+    if (savedRequests && requests)
+      setSavedRequests(savedRequests - requests?.rowsAffected)
+
+    if (savedMatches && matches)
+    setSavedMatces(savedMatches - matches?.rowsAffected)
+
+    setClearingCache(false)
   }
 
   useEffect(() => {
+    (async () => {
+      const requests: any = await cache?.select('SELECT COUNT(*) from requests')
+      setSavedRequests(requests[0]['COUNT(*)'])
 
-    const loadCache = async () => {
-      const res: any = await cache?.select('SELECT COUNT(*) from requests')
-      setSavedRequests(res[0]['COUNT(*)'])
-    }
-
-    loadCache()
+      const matches: any = await cache?.select('SELECT COUNT(*) from matches')
+      setSavedMatces(matches[0]['COUNT(*)'])
+    })()
   }, [])
 
   return <div className="flex flex-col space-y-4 p-4 max-w-md m-auto">
@@ -49,11 +71,17 @@ export const Settings = () => {
     <section id="cache" className="flex flex-col space-y-4">
       <h2>Cache</h2>
 
-      <div className="flex flex-row items-center space-x-2"><span>Saved Requests: {savedRequests}</span></div>
+      <div>
+        <div className="flex flex-row items-center space-x-2"><span>Saved requests: {savedRequests}</span></div>
+        <div className="flex flex-row items-center space-x-2"><span>Saved matches: {savedMatches}</span></div>
+      </div>
 
       <p className="alert">Its okay to have lots of requests cached, especially if you play daily. But if you feel like the app is lagging, try clearing the cache</p>
 
-      <button className="btn btn-small btn-sm btn-warning" onClick={clearCache}>Clear Old Cache</button>
+      <div className="flex flex-row items-center space-x-2">
+        <button className="btn flex-1 btn-sm btn-warning" disabled={clearingCache} onClick={clearCache}>Clear Old Cache</button>
+        <button className="btn flex-1 btn-sm btn-error" disabled={clearingCache} onClick={clearAllCache}>Clear All Cache</button>
+      </div>
     </section>
 
     <div className="divider" />
