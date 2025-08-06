@@ -68,6 +68,7 @@ function App() {
     setInitStatus('Loading database')
     const db = await Database.load(CACHE_NAME);
     await db.execute('CREATE TABLE IF NOT EXISTS requests (endpoint str PRIMARY KEY, ttl int, data JSON)')
+    await db.execute('CREATE TABLE IF NOT EXISTS matches (matchId str PRIMARY KEY, data JSON)')
 
     setcache(db)
 

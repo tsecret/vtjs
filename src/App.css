@@ -55,6 +55,10 @@
     @apply text-[0.5rem]
   }
 
+  .text-tiny {
+    @apply text-[0.25rem]
+  }
+
   .alert-error {
     @apply bg-error/10 text-error
   }

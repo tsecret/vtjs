@@ -163,26 +163,24 @@ export const PlayerDetails = () => {
 
     {/* Player Data */}
     <section id="player-card" className="space-y-2">
-      <div className="space-x-4">
-        <div className="stats shadow">
+
+
+      <div className="flex flex-row">
           <div className="stat">
             <div className="stat-title">Name</div>
             <div className="stat-value">{playerCard?.name}</div>
             <div className="stat-desc">{playerCard?.tag}</div>
           </div>
-        </div>
 
-        <div className="stats shadow">
           <div className="stat">
             <div className="stat-title">Account level</div>
             <div className="stat-value">{accountLevel}</div>
             <div className="stat-desc opacity-0">a</div>
           </div>
-        </div>
       </div>
 
       <div>
-        <div className="stats shadow">
+        <div className="stats shadow w-full">
           <div className="stat border-4" style={{ color: '#' + playerCard?.currentRankColor }}>
             <div className="stat-title">Rank</div>
             <div className="stat-value">{playerCard?.currentRank}</div>
@@ -190,11 +188,6 @@ export const PlayerDetails = () => {
           </div>
         </div>
       </div>
-
-    </section>
-
-    {/* stats */}
-    <section id="stats" className="space-x-2">
 
       <div className="stats shadow">
         <div className="stat">
@@ -213,211 +206,217 @@ export const PlayerDetails = () => {
         </div>
       </div>
 
-
     </section>
 
-    {/* Kills Death, KD and ADR Charts */}
-    <div className="card w-full max-w-1/2 my-10">
-      <div className="card-body">
-        <div className="flex flex-row justify-between">
-          <h2 className="cart-title">Performance over last 20 matches</h2>
-          <div className="join">
-            <input className="join-item btn btn-soft btn-xs" type="radio" onClick={() => setChartType('kills/deaths')} defaultChecked={true} name="options" aria-label="Kills and Deaths" />
-            <input className="join-item btn btn-soft btn-xs" type="radio" onClick={() => setChartType('kd')} name="options" aria-label="K/D Ratio" />
-            <input className="join-item btn btn-soft btn-xs" type="radio" onClick={() => setChartType('adr')} name="options" aria-label="ADR" />
-          </div>
-        </div>
+    {
+      chartData?.length ?
+      <>
+        {/* Kills Death, KD and ADR Charts */}
+        <div className="card w-full max-w-3xl my-10">
+          <div className="card-body">
+            <div className="flex flex-row justify-between">
+              <h2 className="cart-title">Performance over last 20 matches</h2>
+              <div className="join join-vertical sm:join-horizontal">
+                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('kills/deaths')} defaultChecked={true} name="options" aria-label="Kills and Deaths" />
+                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('kd')} name="options" aria-label="K/D Ratio" />
+                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('adr')} name="options" aria-label="ADR" />
+              </div>
+            </div>
 
-        <ChartContainer config={chartConfig} className="min-h-[200px]">
-          <LineChart accessibilityLayer data={chartData}>
-            <XAxis
-              dataKey="i"
-              tickLine={true}
-              axisLine={true}
-              padding={{ left: 16, right: 16 }}
-              tickFormatter={(_, i) => {
-                return i === 0 ? 'Oldest':
-                      i === (chartData!.length-1) ? 'Recent':
-                      ''
-              }}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
-            />
-            {
-              chartType === 'kills/deaths' ?
-              <>
-                <YAxis
-                  type="number"
-                  domain={[0, 'dataMax + 2']}
-                  tickCount={30}
-                  allowDecimals={false}
-                  padding={{ bottom: 32, top: 32 }}
+            <ChartContainer config={chartConfig} className="min-h-[200px]">
+              <LineChart accessibilityLayer data={chartData}>
+                <XAxis
+                  dataKey="i"
+                  tickLine={true}
+                  axisLine={true}
+                  padding={{ left: 16, right: 16 }}
+                  tickFormatter={(_, i) => {
+                    return i === 0 ? 'Oldest':
+                          i === (chartData!.length-1) ? 'Recent':
+                          ''
+                  }}
                 />
-                <Line
-                  dataKey="kills"
-                  type="linear"
-                  stroke="var(--color-kills)"
-                  strokeWidth={2}
-                  dot={{ fill: "var(--color-kills)" }}
-                  activeDot={{ r: 6 }}
-                  isAnimationActive={false}
-                >
-                  <LabelList
-                    position="top"
-                    offset={12}
-                    className="fill-foreground"
-                    fontSize={12}
-                  />
-                </Line>
-                <Line
-                    dataKey="deaths"
-                    type="linear"
-                    stroke="var(--color-deaths)"
-                    strokeWidth={2}
-                    dot={{ fill: "var(--color-deaths)" }}
-                    activeDot={{ r: 6 }}
-                    isAnimationActive={false}
-                  >
-                    <LabelList
-                      position="top"
-                      offset={12}
-                      className="fill-foreground"
-                      fontSize={12}
-                    />
-                </Line>
-              </>:
-              chartType === 'kd' ?
-              <>
-                <YAxis
-                  type="number"
-                  domain={[0, (dataMax: number) => (Math.round(dataMax) + 0.5)]}
-                  allowDecimals={false}
-                  ticks={Array.from({length: Math.floor(3 / 0.5) + 1}, (_, i) => i * 0.5)}
-                  padding={{ bottom: 32, top: 32 }}
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent indicator="line" />}
                 />
-                <ReferenceLine y={1} stroke="gray" strokeDasharray="4 1" />
-                { chartData?.map(data => <ReferenceLine segment={[{ x: data.i, y: data.kd }, { x: data.i, y: 1 }]} strokeWidth={1} stroke={ data.kd >= 1 ? 'green' : 'red' } />) }
-                <Line
-                    dataKey="kd"
-                    type="natural"
-                    dot={({ payload, ...props }) => (
-                      <Dot
-                        key={payload.i}
-                        r={4}
-                        cx={props.cx}
-                        cy={props.cy}
-                        fill={ props.value >= 1 ? 'green' : 'red' }
-                        stroke={payload.fill}
-                      />
-                    )}
-                    strokeWidth={0}
-                    activeDot={false}
-                    isAnimationActive={false}
-                  >
-                    <LabelList
-                      position="top"
-                      offset={16}
-                      className="fill-foreground"
-                      fontSize={10}
-                      content={({ value, x, y, offset }: any) => (
-                        <text
-                          x={Number.isInteger(value) ? x - 2 : x - 10}
-                          y={value > 1 ? y - offset + 4: y + offset}
-                          fill="#666"
-                        >
-                          {value}
-                        </text>
-                      )}
+                {
+                  chartType === 'kills/deaths' ?
+                  <>
+                    <YAxis
+                      type="number"
+                      domain={[0, 'dataMax + 2']}
+                      tickCount={30}
+                      allowDecimals={false}
+                      padding={{ bottom: 32, top: 32 }}
                     />
-                </Line>
-              </>:
-              chartType === 'adr' ?
-              <>
-                  <YAxis
-                    type="number"
-                    domain={[(dataMin: number) => dataMin - 50, (dataMax: number) => dataMax + 50]}
-                    allowDecimals={false}
-                    ticks={Array.from({ length: 12 }, (_, i) => i * 25)}
-                    padding={{ bottom: 32, top: 32 }}
-                  />
-                  <ReferenceLine y={100} stroke="gray" strokeDasharray="4 12" />
-                  { chartData?.map(data => <ReferenceLine segment={[{ x: data.i, y: data.adr }, { x: data.i, y: 100 }]} strokeWidth={1} stroke={ data.adr >= 100 ? 'green' : 'red' } />) }
-                  <Line
-                      dataKey="adr"
-                      type="natural"
-                      dot={({ payload, ...props }) => (
-                        <Dot
-                          key={payload.i}
-                          r={4}
-                          cx={props.cx}
-                          cy={props.cy}
-                          fill={ props.value >= 100 ? 'green' : 'red' }
-                          stroke={payload.fill}
-                        />
-                      )}
-                      strokeWidth={0}
-                      activeDot={false}
+                    <Line
+                      dataKey="kills"
+                      type="linear"
+                      stroke="var(--color-kills)"
+                      strokeWidth={2}
+                      dot={{ fill: "var(--color-kills)" }}
+                      activeDot={{ r: 6 }}
                       isAnimationActive={false}
                     >
                       <LabelList
-                        offset={16}
+                        position="top"
+                        offset={12}
                         className="fill-foreground"
-                        fontSize={10}
-                        content={({ value, x, y, offset }: any) => (
-                          <text
-                            x={value > 100 ? x - 10 : x - 8}
-                            y={value > 100 ? y - offset + 4: y + offset}
-                            fill="#666"
-                          >
-                            {value}
-                          </text>
-                        )}
+                        fontSize={12}
                       />
-                  </Line>
-              </> :
-              <></>
-            }
-          </LineChart>
-        </ChartContainer>
+                    </Line>
+                    <Line
+                        dataKey="deaths"
+                        type="linear"
+                        stroke="var(--color-deaths)"
+                        strokeWidth={2}
+                        dot={{ fill: "var(--color-deaths)" }}
+                        activeDot={{ r: 6 }}
+                        isAnimationActive={false}
+                      >
+                        <LabelList
+                          position="top"
+                          offset={12}
+                          className="fill-foreground"
+                          fontSize={12}
+                        />
+                    </Line>
+                  </>:
+                  chartType === 'kd' ?
+                  <>
+                    <YAxis
+                      type="number"
+                      domain={[0, (dataMax: number) => (Math.round(dataMax) + 0.5)]}
+                      allowDecimals={false}
+                      ticks={Array.from({length: Math.floor(3 / 0.5) + 1}, (_, i) => i * 0.5)}
+                      padding={{ bottom: 32, top: 32 }}
+                    />
+                    <ReferenceLine y={1} stroke="gray" strokeDasharray="4 1" />
+                    { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.kd }, { x: data.i, y: 1 }]} strokeWidth={1} stroke={ data.kd >= 1 ? 'green' : 'red' } />) }
+                    <Line
+                        dataKey="kd"
+                        type="natural"
+                        dot={({ payload, ...props }) => (
+                          <Dot
+                            key={payload.i}
+                            r={4}
+                            cx={props.cx}
+                            cy={props.cy}
+                            fill={ props.value >= 1 ? 'green' : 'red' }
+                            stroke={payload.fill}
+                          />
+                        )}
+                        strokeWidth={0}
+                        activeDot={false}
+                        isAnimationActive={false}
+                      >
+                        <LabelList
+                          position="top"
+                          offset={16}
+                          className="fill-foreground"
+                          fontSize={10}
+                          content={({ value, x, y, offset }: any) => (
+                            <text
+                              x={Number.isInteger(value) ? x - 2 : x - 10}
+                              y={value > 1 ? y - offset + 4: y + offset}
+                              fill="#666"
+                            >
+                              {value}
+                            </text>
+                          )}
+                        />
+                    </Line>
+                  </>:
+                  chartType === 'adr' ?
+                  <>
+                      <YAxis
+                        type="number"
+                        domain={[(dataMin: number) => dataMin - 50, (dataMax: number) => dataMax + 50]}
+                        allowDecimals={false}
+                        ticks={Array.from({ length: 12 }, (_, i) => i * 25)}
+                        padding={{ bottom: 32, top: 32 }}
+                      />
+                      <ReferenceLine y={100} stroke="gray" strokeDasharray="4 12" />
+                      { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.adr }, { x: data.i, y: 100 }]} strokeWidth={1} stroke={ data.adr >= 100 ? 'green' : 'red' } />) }
+                      <Line
+                          dataKey="adr"
+                          type="natural"
+                          dot={({ payload, ...props }) => (
+                            <Dot
+                              key={payload.i}
+                              r={4}
+                              cx={props.cx}
+                              cy={props.cy}
+                              fill={ props.value >= 100 ? 'green' : 'red' }
+                              stroke={payload.fill}
+                            />
+                          )}
+                          strokeWidth={0}
+                          activeDot={false}
+                          isAnimationActive={false}
+                        >
+                          <LabelList
+                            offset={16}
+                            className="fill-foreground"
+                            fontSize={10}
+                            content={({ value, x, y, offset }: any) => (
+                              <text
+                                x={value > 100 ? x - 10 : x - 8}
+                                y={value > 100 ? y - offset + 4: y + offset}
+                                fill="#666"
+                              >
+                                {value}
+                              </text>
+                            )}
+                          />
+                      </Line>
+                  </> :
+                  <></>
+                }
+              </LineChart>
+            </ChartContainer>
 
-      </div>
-    </div>
+          </div>
+        </div>
 
-    <section className="overflow-x-auto flex flex-col items-center">
-      <span className="font-bold my-4">Player Match History</span>
+        <section className="overflow-x-auto flex flex-col items-center">
+          <span className="font-bold my-4">Player Match History</span>
 
-      <table className="table table-xs">
+          <table className="table table-xs">
 
-        <thead>
-          <tr className="text-center">
-            <th>Date</th>
-            <th>Agent</th>
-            <th>Map</th>
-            <th>K / D / A</th>
-            <th>Result</th>
-            <th>Score</th>
-            <th>-+</th>
-          </tr>
-        </thead>
+            <thead>
+              <tr className="text-center">
+                <th>Date</th>
+                <th>Agent</th>
+                <th>Map</th>
+                <th>K / D / A</th>
+                <th>Result</th>
+                <th>Score</th>
+                <th>-+</th>
+              </tr>
+            </thead>
 
-        <tbody>
-          {table.map(match => (
-            <tr key={match.matchId} className={clsx(match.won ? 'bg-success/5' : 'bg-error/5', 'text-center')}>
-              <th>{match.date.toLocaleString()}</th>
-              <th><img src={match.agentImage || undefined} className="max-h-6"/></th>
-              <th>{match.mapName}</th>
-              <td>{match.kills} / {match.deaths} / {match.assists}</td>
-              <td className={match.won ? 'text-success' : 'text-error'}>{match.won ? 'Win' : 'Loss'}</td>
-              <td className={match.won ? 'text-success' : 'text-error'}>{match.score}</td>
-              <td className={(match.kills - match.deaths) > 1 ? 'text-success' : (match.kills - match.deaths) == 0 ? '' : 'text-error'}>{(match.kills - match.deaths) > 1 ? '+' : null}{(match.kills - match.deaths)}</td>
-            </tr>
-          ))}
-        </tbody>
+            <tbody>
+              {table.map(match => (
+                <tr key={match.matchId} className={clsx(match.won ? 'bg-success/5' : 'bg-error/5', 'text-center')}>
+                  <th>{match.date.toLocaleString()}</th>
+                  <th><img src={match.agentImage || undefined} className="max-h-6"/></th>
+                  <th>{match.mapName}</th>
+                  <td>{match.kills} / {match.deaths} / {match.assists}</td>
+                  <td className={match.won ? 'text-success' : 'text-error'}>{match.won ? 'Win' : 'Loss'}</td>
+                  <td className={match.won ? 'text-success' : 'text-error'}>{match.score}</td>
+                  <td className={(match.kills - match.deaths) > 1 ? 'text-success' : (match.kills - match.deaths) == 0 ? '' : 'text-error'}>{(match.kills - match.deaths) > 1 ? '+' : null}{(match.kills - match.deaths)}</td>
+                </tr>
+              ))}
+            </tbody>
 
-      </table>
-    </section>
+          </table>
+        </section>
+      </> :
+      <p className="my-10">No competitive matches played</p>
+    }
+
 
   </div>
 }
