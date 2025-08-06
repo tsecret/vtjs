@@ -64,7 +64,7 @@ export class BaseAPI {
       const response = await res.json()
       if (!options.noCache && options.ttl !== undefined) {
         await this.cache.execute(
-          'INSERT or REPLACE into requests (endpoint, ttl, data) VALUES ($1, $2, $3)', 
+          'INSERT or REPLACE into requests (endpoint, ttl, data) VALUES ($1, $2, $3)',
           [endpoint, +new Date() + options.ttl, response]
         )
       }
