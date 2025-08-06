@@ -14,6 +14,7 @@ interface Row {
   kills: number
   deaths: number
   assists: number
+  hs: number
   date: Date,
   won: boolean
   score: string
@@ -38,9 +39,10 @@ type ChartData = {
   deaths: number
   kd: number
   adr: number
+  hs: number
 }[]
 
-type ChartType = 'kills/deaths' | 'kd' | 'adr'
+type ChartType = 'kills/deaths' | 'kd' | 'adr' | 'hs'
 
 export const PlayerDetails = () => {
   const [sharedapi] = useAtom(atoms.sharedapi)
@@ -85,24 +87,28 @@ export const PlayerDetails = () => {
         const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
         const team = match.teams?.find(team => team.teamId === player.teamId)!
 
+        const { hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
+
         _chartData.push({
           i: parseInt(i),
           kills: player.stats?.kills ?? 0,
           deaths: player.stats?.deaths ?? 0,
-          kd: parseFloat(((player.stats?.kills || 0) / (player.stats?.deaths || 1)).toFixed(2)),
-          adr: match.roundResults ?
-            Math.round(
-              match.roundResults.reduce((damage, round) =>
-                damage + round.playerStats.filter(stat => stat.subject === puuid).reduce((roundDamage, stats) =>
-                  roundDamage + stats.damage.reduce((damage, shot) =>
-                    damage + shot.damage,
-                  0),
-                0),
-              0)
-            / match.roundResults.length)
-          : 0
+          kd,
+          adr,
+          hs
         })
 
+        // adr: match.roundResults ?
+        //   Math.round(
+        //     match.roundResults.reduce((damage, round) =>
+        //       damage + round.playerStats.filter(stat => stat.subject === puuid).reduce((roundDamage, stats) =>
+        //         roundDamage + stats.damage.reduce((damage, shot) =>
+        //           damage + shot.damage,
+        //         0),
+        //       0),
+        //     0)
+        //   / match.roundResults.length)
+        // : 0
 
 
         table.push({
@@ -111,6 +117,7 @@ export const PlayerDetails = () => {
           kills: player.stats?.kills ?? 0,
           deaths: player.stats?.deaths ?? 0,
           assists: player.stats?.assists ?? 0,
+          hs,
           date: new Date(match.matchInfo.gameStartMillis),
           won: utils.playerHasWon(puuid, match),
           score: `${team.roundsWon}-${team.roundsPlayed-team.roundsWon}`,
@@ -137,7 +144,6 @@ export const PlayerDetails = () => {
 
       const mmr = await sharedapi?.getPlayerMMR(puuid)
       const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
-
 
       setPlayerCard({
         ...playerCard,
@@ -220,6 +226,7 @@ export const PlayerDetails = () => {
                 <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('kills/deaths')} defaultChecked={true} name="options" aria-label="Kills and Deaths" />
                 <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('kd')} name="options" aria-label="K/D Ratio" />
                 <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('adr')} name="options" aria-label="ADR" />
+                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('hs')} name="options" aria-label="HS%" />
               </div>
             </div>
 
@@ -238,7 +245,7 @@ export const PlayerDetails = () => {
                 />
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent indicator="line" />}
+                  content={<ChartTooltipContent indicator="dot" color="#00d390" />}
                 />
                 {
                   chartType === 'kills/deaths' ?
@@ -293,7 +300,7 @@ export const PlayerDetails = () => {
                       padding={{ bottom: 32, top: 32 }}
                     />
                     <ReferenceLine y={1} stroke="gray" strokeDasharray="4 1" />
-                    { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.kd }, { x: data.i, y: 1 }]} strokeWidth={1} stroke={ data.kd >= 1 ? 'green' : 'red' } />) }
+                    { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.kd }, { x: data.i, y: 1 }]} strokeWidth={1} stroke={ data.kd >= 1 ? '#00d390' : '#ff637d' } />) }
                     <Line
                         dataKey="kd"
                         type="natural"
@@ -303,7 +310,7 @@ export const PlayerDetails = () => {
                             r={4}
                             cx={props.cx}
                             cy={props.cy}
-                            fill={ props.value >= 1 ? 'green' : 'red' }
+                            fill={ props.value >= 1 ? '#00d390' : '#ff637d' }
                             stroke={payload.fill}
                           />
                         )}
@@ -338,7 +345,7 @@ export const PlayerDetails = () => {
                         padding={{ bottom: 32, top: 32 }}
                       />
                       <ReferenceLine y={100} stroke="gray" strokeDasharray="4 12" />
-                      { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.adr }, { x: data.i, y: 100 }]} strokeWidth={1} stroke={ data.adr >= 100 ? 'green' : 'red' } />) }
+                      { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.adr }, { x: data.i, y: 100 }]} strokeWidth={1} stroke={ data.adr >= 100 ? '#00d390' : '#ff637d' } />) }
                       <Line
                           dataKey="adr"
                           type="natural"
@@ -348,7 +355,7 @@ export const PlayerDetails = () => {
                               r={4}
                               cx={props.cx}
                               cy={props.cy}
-                              fill={ props.value >= 100 ? 'green' : 'red' }
+                              fill={ props.value >= 100 ? '#00d390' : '#ff637d' }
                               stroke={payload.fill}
                             />
                           )}
@@ -370,6 +377,33 @@ export const PlayerDetails = () => {
                               </text>
                             )}
                           />
+                      </Line>
+                  </> :
+                  chartType === 'hs' ?
+                  <>
+                      <YAxis
+                        type="number"
+                        domain={[0, 100]}
+                        allowDecimals={false}
+                        ticks={Array.from({ length: 5 }, (_, i) => i * 25)}
+                        padding={{ bottom: 32, top: 32 }}
+                      />
+                      {/* { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.hs }, { x: data.i, y: 100 }]} strokeWidth={1} stroke={ data.hs >= 100 ? '#00d390' : '#ff637d' } />) } */}
+                      <Line
+                        dataKey="hs"
+                        type="linear"
+                        stroke="var(--color-kills)"
+                        strokeWidth={2}
+                        dot={{ fill: "var(--color-kills)" }}
+                        activeDot={{ r: 6 }}
+                        isAnimationActive={false}
+                      >
+                        <LabelList
+                          position="top"
+                          offset={12}
+                          className="fill-foreground"
+                          fontSize={12}
+                        />
                       </Line>
                   </> :
                   <></>
@@ -394,19 +428,21 @@ export const PlayerDetails = () => {
                 <th>Result</th>
                 <th>Score</th>
                 <th>-+</th>
+                <th>HS%</th>
               </tr>
             </thead>
 
             <tbody>
               {table.map(match => (
                 <tr key={match.matchId} className={clsx(match.won ? 'bg-success/5' : 'bg-error/5', 'text-center')}>
-                  <th>{match.date.toLocaleString()}</th>
-                  <th><img src={match.agentImage || undefined} className="max-h-6"/></th>
-                  <th>{match.mapName}</th>
+                  <td>{match.date.toLocaleString()}</td>
+                  <td><img src={match.agentImage || undefined} className="max-h-6"/></td>
+                  <td>{match.mapName}</td>
                   <td>{match.kills} / {match.deaths} / {match.assists}</td>
                   <td className={match.won ? 'text-success' : 'text-error'}>{match.won ? 'Win' : 'Loss'}</td>
                   <td className={match.won ? 'text-success' : 'text-error'}>{match.score}</td>
                   <td className={(match.kills - match.deaths) > 1 ? 'text-success' : (match.kills - match.deaths) == 0 ? '' : 'text-error'}>{(match.kills - match.deaths) > 1 ? '+' : null}{(match.kills - match.deaths)}</td>
+                  <td>{match.hs ? match.hs + '%' : null}</td>
                 </tr>
               ))}
             </tbody>
