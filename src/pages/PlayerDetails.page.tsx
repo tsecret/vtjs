@@ -7,6 +7,7 @@ import { MatchDetailsResponse } from "../interface"
 import * as utils from '../utils'
 import atoms from "../utils/atoms"
 import clsx from "clsx"
+import moment from "moment"
 
 interface Row {
   matchId: string
@@ -440,7 +441,7 @@ export const PlayerDetails = () => {
             <tbody>
               {table.map(match => (
                 <tr key={match.matchId} className={clsx(match.won ? 'bg-success/5' : 'bg-error/5', 'text-center')}>
-                  <td>{match.date.toLocaleString()}</td>
+                  <td className="text-left">{moment(match.date).format('HH:mm DD/MM/YY')} <span className="opacity-25">({moment(match.date).fromNow()})</span></td>
                   <td><img src={match.agentImage || undefined} className="max-h-6"/></td>
                   <td>{match.mapName}</td>
                   <td>{match.kills} / {match.deaths} / {match.assists}</td>

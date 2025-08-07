@@ -1,7 +1,7 @@
 import { localDataDir } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
-import pako from 'pako'
+import pako from 'pako';
 
 import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
@@ -140,6 +140,10 @@ export const getSeasonDateById = (seasonId: string): Date | null => {
 }
 
 export const playerHasWon = (puuid: string, match: MatchDetailsResponse) => {
+  return match.teams?.find(team => team.teamId === match.players.find(player => player.subject === puuid)?.teamId)?.won ?? false
+}
+
+export const getMatchResult = (puuid: string, match: MatchDetailsResponse) => {
   return match.teams?.find(team => team.teamId === match.players.find(player => player.subject === puuid)?.teamId)?.won ?? false
 }
 

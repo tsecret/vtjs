@@ -1,12 +1,10 @@
 import { useAtom } from "jotai"
+import { SquareArrowOutUpRight } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router"
 import { FriendsResponse, PresenceResponse } from "../interface"
 import { base64Decode, getMap } from "../utils"
 import atoms from "../utils/atoms"
-import { SquareArrowOutUpRight } from "lucide-react"
-import { useNavigate } from "react-router"
-
-// TODO handle LOL
 
 export const FriendsPage = () => {
   const [localapi] = useAtom(atoms.localapi)
@@ -14,6 +12,7 @@ export const FriendsPage = () => {
   const [presences, setPresences] = useState<PresenceResponse['presences']>()
 
   const navigate = useNavigate()
+  const ingameFriendsPuuids = presences?.map(p => p.puuid)
 
   useEffect(() => {
     (async () => {
@@ -21,7 +20,7 @@ export const FriendsPage = () => {
       if (friends) setFriends(friends.friends)
 
       const presences = await localapi?.getPresences()
-      if (presences) setPresences(presences.presences.map(p => ({...p, presence: p.private ? JSON.parse(base64Decode(p.private)) : null })))
+      if (presences) setPresences(presences.presences.filter(p => p.private).map(p => ({...p, presence: p.private ? JSON.parse(base64Decode(p.private)) : null })))
 
     })()
   }, [])
@@ -48,7 +47,10 @@ export const FriendsPage = () => {
 
         {
           friends?.length ?
-            friends.map(p => <FriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />) :
+            friends
+              .filter(friend => !ingameFriendsPuuids?.includes(friend.puuid))
+              .sort((a, b) => a.game_name.localeCompare(b.game_name))
+              .map(friend => <FriendRow key={friend.puuid} friend={friend} onExternalLinkClick={() => navigate(`/player/${friend.puuid}`)} />) :
             <span className="p-4">No friends online</span>
         }
 
@@ -65,7 +67,7 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
     const queues = {
       'competitive': "Competitive",
       'deathmatch': 'Deathmatch',
-      undefined: 'Playing'
+      'swiftplay': 'Swiftplay',
     }
 
     switch (friend.product) {
@@ -78,7 +80,7 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
           return 'In Menu'
         }
 
-        return `${queues[friend.presence?.queueId]} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam} on ${getMap(friend.presence.matchMap).displayName}`
+        return `${queues[friend.presence?.queueId] || 'Playing'} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam} on ${getMap(friend.presence.matchMap).displayName}`
       case 'league_of_legends':
         return 'Playing League of Legends'
       default:
