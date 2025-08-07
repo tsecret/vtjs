@@ -1,4 +1,4 @@
-import { Lockfile, EntitlementsTokenResponse, PlayerAccount, HelpResponse, FriendsResponse, PresenceResponse } from '../interface'
+import { Lockfile, EntitlementsTokenResponse, PlayerAccount, HelpResponse } from '../interface'
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 
 export class LocalAPI {
@@ -7,7 +7,7 @@ export class LocalAPI {
 
   constructor({ port, password }: Lockfile){
     this.HOSTNAME = `https://${import.meta.env.DEV ? '192.168.31.197' : 'localhost'}:${port}`
-    this.HEADERS = { 'Authorization': `Basic ${password}` }
+    this.HEADERS= { 'Authorization': `Basic ${password}` }
   }
 
    private async fetch(endpoint: string){
@@ -35,14 +35,6 @@ export class LocalAPI {
 
   async help(): Promise<HelpResponse> {
     return this.fetch('/help')
-  }
-
-  async getFriends(): Promise<FriendsResponse> {
-    return this.fetch('/chat/v4/friends')
-  }
-
-  async getPresences(): Promise<PresenceResponse> {
-    return this.fetch('/chat/v4/presences')
   }
 
 }

@@ -22,7 +22,6 @@ import * as utils from './utils';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
 import { SocketListener } from './components/SocketListener';
-import { FriendsPage } from './pages/Friends.page';
 
 function App() {
   const [, setAppInfo] = useAtom(atoms.appInfo)
@@ -114,7 +113,6 @@ function App() {
       <Route path="/dashboard" element={<Main />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/store" element={<StorePage />} />
-      <Route path="/friends" element={<FriendsPage />} />
       <Route path="/player/:puuid" element={<PlayerDetails />} />
     </Routes>
   </main>

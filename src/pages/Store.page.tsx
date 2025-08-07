@@ -21,7 +21,7 @@ export const StorePage = () => {
 
       // Bundle
       const bundleInfo = await Promise.all(storeInfo.FeaturedBundle.Bundles.map(bundle => storeapi.getBundleById(bundle.DataAssetID)))
-      setBundles(bundleInfo.filter(bundle => bundle).map(bundle => ({
+      setBundles(bundleInfo.map(bundle => ({
         name: bundle.data.displayName,
         url: bundle.data.displayIcon,
         uuid: bundle.data.uuid,
@@ -66,7 +66,7 @@ export const StorePage = () => {
     </section>
 
     <section id="skins" className="flex flex-row items-center space-x-4 m-auto px-8 my-8">
-      {skins?.map(skin => <div key={skin.uuid} className="flex flex-1 flex-col border-2 border-primary rounded-md p-4 h-48 max-w-64 justify-between">
+      {skins?.map(skin => <div className="flex flex-1 flex-col border-2 border-primary rounded-md p-4 h-48 max-w-64 justify-between">
         <img className="max-h-24 object-contain" src={skin.url} draggable={false} />
         <div>
           <p className="font-bold">{skin.name}</p>
