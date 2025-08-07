@@ -13,6 +13,10 @@ export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(re
 
 export const isMac = () => navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
+export const base64Decode = (input: string): string => {
+  return base64.decode(input)
+}
+
 export const readLockfile = async (): Promise<string> => {
   if (isMac()){
     return lockfile
@@ -100,7 +104,7 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
     peakRankSeasonId: playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?
       Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.Rank - a.Rank)[0].SeasonID
       : null,
-    lastGameMMRDiff: playerMMR.LatestCompetitiveUpdate.RankedRatingEarned
+    lastGameMMRDiff: playerMMR.LatestCompetitiveUpdate?.RankedRatingEarned
   }
 }
 
@@ -132,8 +136,8 @@ export const playerHasWon = (puuid: string, match: MatchDetailsResponse) => {
 }
 
 export const isSmurf = (player: PlayerRow) => {
-  return (player.accountLevel && player.accountLevel < 100)
-    && (player.kd && player.kd > 1.2)
+  return Boolean((player.accountLevel && player.accountLevel < 100)
+    && (player.kd && player.kd > 1.5))
 }
 
 export const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[], mapUrl: string): AgentStats[] => {

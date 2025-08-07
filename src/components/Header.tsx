@@ -1,7 +1,7 @@
 import { relaunch } from '@tauri-apps/plugin-process';
 import { check, Update } from '@tauri-apps/plugin-updater';
 import { useAtom } from 'jotai';
-import { ChevronLeft, Download, Settings, Store } from 'lucide-react';
+import { ChevronLeft, Download, Settings, Store, User, Users } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router';
 import atoms from '../utils/atoms';
@@ -9,6 +9,7 @@ import atoms from '../utils/atoms';
 export const Header = () => {
   const [update, setUpdate] = useState<Update|null>()
   const [player] = useAtom(atoms.player)
+  const [puuid] = useAtom(atoms.puuid)
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -52,7 +53,7 @@ export const Header = () => {
         <span className="font-bold">VTJS</span>
         <div className="badge badge-dash badge-primary">Beta</div>
 
-        <div className="ml-auto flex flex-row items-center space-x-4">
+        <div className="ml-auto flex flex-row items-center space-x-2">
           { update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16}/> Update available</button> }
           <span>{player?.game_name}{' '}
             <div className="relative group inline-block">
@@ -64,27 +65,35 @@ export const Header = () => {
               </span>
             </div>
           </span>
-          <button className="btn btn-soft btn-sm btn-primary rounded-md ml-auto" onClick={() => navigate('/store')}><Store size={20} /> Store</button>
-          <button className="btn btn-soft btn-sm btn-primary btn-circle ml-auto" onClick={() => navigate('/settings')}><Settings size={20} /></button>
+          <button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate(`/player/${puuid}`)}><User size={20} /> My Profile</button>
+          <button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate('/store')}><Store size={20} /> Store</button>
+          <button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate('/friends')}><Users size={20} /> Friends</button>
+          <button className="btn btn-soft btn-sm btn-primary btn-circle" onClick={() => navigate('/settings')}><Settings size={20} /></button>
         </div>
       </>
       : location.pathname === '/settings' ?
       <>
-        <button className="btn btn-primary btn-sm" onClick={(() => navigate('/dashboard'))}><ChevronLeft /></button>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>
 
         <span className="font-bold">Settings</span>
       </>
       : location.pathname.startsWith('/player/') ?
       <>
-        <button className="btn btn-primary btn-sm" onClick={(() => navigate('/dashboard'))}><ChevronLeft /></button>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>
 
         <span className="font-bold">Player Details</span>
       </>
       : location.pathname.startsWith('/store') ?
       <>
-        <button className="btn btn-primary btn-sm" onClick={(() => navigate('/dashboard'))}><ChevronLeft /></button>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>
 
         <span className="font-bold">Store</span>
+      </>
+      : location.pathname.startsWith('/friends') ?
+      <>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>
+
+        <span className="font-bold">Friends</span>
       </>
       : null
 

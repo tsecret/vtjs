@@ -1,9 +1,12 @@
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useAtom } from "jotai"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router"
-import atoms from "../utils/atoms"
-import * as utils from '../utils'
+import { Dot, LabelList, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts"
 import { MatchDetailsResponse } from "../interface"
+import * as utils from '../utils'
+import atoms from "../utils/atoms"
+import clsx from "clsx"
 
 interface Row {
   matchId: string
@@ -11,6 +14,7 @@ interface Row {
   kills: number
   deaths: number
   assists: number
+  hs: number
   date: Date,
   won: boolean
   score: string
@@ -19,26 +23,92 @@ interface Row {
   agentImage: string | null
 }
 
+type PlayerCard = {
+  name: string
+  tag: string
+  currentRank: string
+  currentRR: number
+  currentRankColor: string
+  peakRank: string
+  peakRankColor: string
+}
+
+type ChartData = {
+  i: number
+  kills: number
+  deaths: number
+  kd: number
+  adr: number
+  hs: number
+}[]
+
+type ChartType = 'kills/deaths' | 'kd' | 'adr' | 'hs'
+
 export const PlayerDetails = () => {
   const [sharedapi] = useAtom(atoms.sharedapi)
+
   const [table, setTable] = useState<Row[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+  const [playerCard, setPlayerCard] = useState<PlayerCard>()
+  const [accountLevel, setAccountLevel] = useState<number>()
+
+  const [chartData, setChartData] = useState<ChartData>()
+  const [chartType, setChartType] = useState<ChartType>('kills/deaths')
 
   const { puuid } = useParams()
 
+  const chartConfig = {
+    kills: {
+      label: "Kills",
+      color: "#00d390",
+    },
+    deaths: {
+      label: "Deaths",
+      color: "#ff637d",
+    },
+  } satisfies ChartConfig
+
   useEffect(() => {
 
-    const load = async () => {
+    (async () => {
       if (!puuid || !sharedapi) return
+      setLoading(true)
 
       const table: Row[] = []
 
       const { History } = await sharedapi.getPlayerMatchHistory(puuid)
       const matches = await Promise.all(History.map(match => sharedapi.getMatchDetails(match.MatchID)))
 
-      for (const match of matches){
+      const _chartData: ChartData = []
+
+      for (const i in matches){
+        const match = matches[i]
         const player = match.players.find(player => player.subject === puuid) as MatchDetailsResponse['players'][0]
         const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
         const team = match.teams?.find(team => team.teamId === player.teamId)!
+
+        const { hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
+
+        _chartData.push({
+          i: parseInt(i),
+          kills: player.stats?.kills ?? 0,
+          deaths: player.stats?.deaths ?? 0,
+          kd,
+          adr,
+          hs
+        })
+
+        // adr: match.roundResults ?
+        //   Math.round(
+        //     match.roundResults.reduce((damage, round) =>
+        //       damage + round.playerStats.filter(stat => stat.subject === puuid).reduce((roundDamage, stats) =>
+        //         roundDamage + stats.damage.reduce((damage, shot) =>
+        //           damage + shot.damage,
+        //         0),
+        //       0),
+        //     0)
+        //   / match.roundResults.length)
+        // : 0
 
 
         table.push({
@@ -47,6 +117,7 @@ export const PlayerDetails = () => {
           kills: player.stats?.kills ?? 0,
           deaths: player.stats?.deaths ?? 0,
           assists: player.stats?.assists ?? 0,
+          hs,
           date: new Date(match.matchInfo.gameStartMillis),
           won: utils.playerHasWon(puuid, match),
           score: `${team.roundsWon}-${team.roundsPlayed-team.roundsWon}`,
@@ -57,12 +128,38 @@ export const PlayerDetails = () => {
       }
 
       setTable(table)
-    }
+      setLoading(false)
+      setAccountLevel(matches.length ? matches[0].players.find(p => p.subject === puuid)!.accountLevel : 0)
+      setChartData(_chartData.reverse())
 
-    load()
+    })()
+
   }, [])
 
-  if (!table.length)
+  useEffect(() => {
+    if (!sharedapi || !puuid) return
+
+    (async () => {
+      const [{ GameName, TagLine }] = await sharedapi.getPlayerNames([puuid])
+
+      const mmr = await sharedapi?.getPlayerMMR(puuid)
+      const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
+
+      setPlayerCard({
+        ...playerCard,
+        name: GameName,
+        tag: TagLine,
+        currentRank: utils.getRank(currentRank).rankName,
+        currentRR,
+        currentRankColor: utils.getRank(currentRank).rankColor,
+        peakRank: utils.getRank(peakRank).rankName,
+        peakRankColor: utils.getRank(peakRank).rankColor
+      })
+
+    })()
+  }, [])
+
+  if (loading)
     return <div className='flex flex-row justify-center space-x-4'>
       <span className="loading loading-spinner loading-xs"></span>
       <p>Loading matches</p>
@@ -70,65 +167,292 @@ export const PlayerDetails = () => {
 
   return <div className="flex flex-col items-center p-4">
 
-    <section id="stats" className="space-x-2">
+    {/* Player Data */}
+    <section id="player-card" className="space-y-2">
+
+
+      <div className="flex flex-row">
+          <div className="stat">
+            <div className="stat-title">Name</div>
+            <div className="stat-value">{playerCard?.name}</div>
+            <div className="stat-desc">{playerCard?.tag}</div>
+          </div>
+
+          <div className="stat">
+            <div className="stat-title">Account level</div>
+            <div className="stat-value">{accountLevel}</div>
+            <div className="stat-desc opacity-0">a</div>
+          </div>
+      </div>
+
+      <div>
+        <div className="stats shadow w-full">
+          <div className="stat border-4" style={{ color: '#' + playerCard?.currentRankColor }}>
+            <div className="stat-title">Rank</div>
+            <div className="stat-value">{playerCard?.currentRank}</div>
+            <div className="stat-desc">Peak <span style={{ color: '#' + playerCard?.peakRankColor }}>{playerCard?.peakRank}</span></div>
+          </div>
+        </div>
+      </div>
 
       <div className="stats shadow">
         <div className="stat">
           <div className="stat-title">Total Matches</div>
           <div className="stat-value">{table.length}</div>
         </div>
-      </div>
 
-      <div className="stats shadow">
         <div className="stat">
           <div className="stat-title">Wins / Loss</div>
           <div className="stat-value">{table.filter(match => match.won).length} / {table.filter(match => !match.won).length}</div>
         </div>
-      </div>
 
-      <div className="stats shadow">
         <div className="stat">
           <div className="stat-title">Winrate %</div>
           <div className="stat-value">{table.length ? (table.filter(match => match.won).length / table.length * 100).toFixed(0) : 0}%</div>
         </div>
       </div>
 
-
     </section>
 
-    <section className="overflow-x-auto flex flex-col items-center">
-      <span className="font-bold my-4">Player Match History</span>
+    {
+      chartData?.length ?
+      <>
+        {/* Kills Death, KD and ADR Charts */}
+        <div className="card w-full max-w-3xl my-10">
+          <div className="card-body">
+            <div className="flex flex-row justify-between">
+              <h2 className="cart-title">Performance over last 20 matches</h2>
+              <div className="join join-vertical sm:join-horizontal">
+                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('kills/deaths')} defaultChecked={true} name="options" aria-label="Kills and Deaths" />
+                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('kd')} name="options" aria-label="K/D Ratio" />
+                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('adr')} name="options" aria-label="ADR" />
+                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('hs')} name="options" aria-label="HS%" />
+              </div>
+            </div>
 
-      <table className="table table-xs">
+            <ChartContainer config={chartConfig} className="min-h-[200px]">
+              <LineChart accessibilityLayer data={chartData}>
+                <XAxis
+                  dataKey="i"
+                  tickLine={true}
+                  axisLine={true}
+                  padding={{ left: 16, right: 16 }}
+                  tickFormatter={(_, i) => {
+                    return i === 0 ? 'Oldest':
+                          i === (chartData!.length-1) ? 'Recent':
+                          ''
+                  }}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent indicator="dot" color="#00d390" />}
+                />
+                {
+                  chartType === 'kills/deaths' ?
+                  <>
+                    <YAxis
+                      type="number"
+                      domain={[0, 'dataMax + 2']}
+                      tickCount={30}
+                      allowDecimals={false}
+                      padding={{ bottom: 32, top: 32 }}
+                    />
+                    <Line
+                      dataKey="kills"
+                      type="linear"
+                      stroke="var(--color-kills)"
+                      strokeWidth={2}
+                      dot={{ fill: "var(--color-kills)" }}
+                      activeDot={{ r: 6 }}
+                      isAnimationActive={false}
+                    >
+                      <LabelList
+                        position="top"
+                        offset={12}
+                        className="fill-foreground"
+                        fontSize={12}
+                      />
+                    </Line>
+                    <Line
+                        dataKey="deaths"
+                        type="linear"
+                        stroke="var(--color-deaths)"
+                        strokeWidth={2}
+                        dot={{ fill: "var(--color-deaths)" }}
+                        activeDot={{ r: 6 }}
+                        isAnimationActive={false}
+                      >
+                        <LabelList
+                          position="top"
+                          offset={12}
+                          className="fill-foreground"
+                          fontSize={12}
+                        />
+                    </Line>
+                  </>:
+                  chartType === 'kd' ?
+                  <>
+                    <YAxis
+                      type="number"
+                      domain={[0, (dataMax: number) => (Math.round(dataMax) + 0.5)]}
+                      allowDecimals={false}
+                      ticks={Array.from({length: Math.floor(3 / 0.5) + 1}, (_, i) => i * 0.5)}
+                      padding={{ bottom: 32, top: 32 }}
+                    />
+                    <ReferenceLine y={1} stroke="gray" strokeDasharray="4 1" />
+                    { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.kd }, { x: data.i, y: 1 }]} strokeWidth={1} stroke={ data.kd >= 1 ? '#00d390' : '#ff637d' } />) }
+                    <Line
+                        dataKey="kd"
+                        type="natural"
+                        dot={({ payload, ...props }) => (
+                          <Dot
+                            key={payload.i}
+                            r={4}
+                            cx={props.cx}
+                            cy={props.cy}
+                            fill={ props.value >= 1 ? '#00d390' : '#ff637d' }
+                            stroke={payload.fill}
+                          />
+                        )}
+                        strokeWidth={0}
+                        activeDot={false}
+                        isAnimationActive={false}
+                      >
+                        <LabelList
+                          position="top"
+                          offset={16}
+                          className="fill-foreground"
+                          fontSize={10}
+                          content={({ value, x, y, offset }: any) => (
+                            <text
+                              x={Number.isInteger(value) ? x - 2 : x - 10}
+                              y={value > 1 ? y - offset + 4: y + offset}
+                              fill="#666"
+                            >
+                              {value}
+                            </text>
+                          )}
+                        />
+                    </Line>
+                  </>:
+                  chartType === 'adr' ?
+                  <>
+                      <YAxis
+                        type="number"
+                        domain={[(dataMin: number) => dataMin - 50, (dataMax: number) => dataMax + 50]}
+                        allowDecimals={false}
+                        ticks={Array.from({ length: 12 }, (_, i) => i * 25)}
+                        padding={{ bottom: 32, top: 32 }}
+                      />
+                      <ReferenceLine y={100} stroke="gray" strokeDasharray="4 12" />
+                      { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.adr }, { x: data.i, y: 100 }]} strokeWidth={1} stroke={ data.adr >= 100 ? '#00d390' : '#ff637d' } />) }
+                      <Line
+                          dataKey="adr"
+                          type="natural"
+                          dot={({ payload, ...props }) => (
+                            <Dot
+                              key={payload.i}
+                              r={4}
+                              cx={props.cx}
+                              cy={props.cy}
+                              fill={ props.value >= 100 ? '#00d390' : '#ff637d' }
+                              stroke={payload.fill}
+                            />
+                          )}
+                          strokeWidth={0}
+                          activeDot={false}
+                          isAnimationActive={false}
+                        >
+                          <LabelList
+                            offset={16}
+                            className="fill-foreground"
+                            fontSize={10}
+                            content={({ value, x, y, offset }: any) => (
+                              <text
+                                x={value > 100 ? x - 10 : x - 8}
+                                y={value > 100 ? y - offset + 4: y + offset}
+                                fill="#666"
+                              >
+                                {value}
+                              </text>
+                            )}
+                          />
+                      </Line>
+                  </> :
+                  chartType === 'hs' ?
+                  <>
+                      <YAxis
+                        type="number"
+                        domain={[0, 100]}
+                        allowDecimals={false}
+                        ticks={Array.from({ length: 5 }, (_, i) => i * 25)}
+                        padding={{ bottom: 32, top: 32 }}
+                      />
+                      {/* { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.hs }, { x: data.i, y: 100 }]} strokeWidth={1} stroke={ data.hs >= 100 ? '#00d390' : '#ff637d' } />) } */}
+                      <Line
+                        dataKey="hs"
+                        type="linear"
+                        stroke="var(--color-kills)"
+                        strokeWidth={2}
+                        dot={{ fill: "var(--color-kills)" }}
+                        activeDot={{ r: 6 }}
+                        isAnimationActive={false}
+                      >
+                        <LabelList
+                          position="top"
+                          offset={12}
+                          className="fill-foreground"
+                          fontSize={12}
+                        />
+                      </Line>
+                  </> :
+                  <></>
+                }
+              </LineChart>
+            </ChartContainer>
 
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Agent</th>
-            <th>Map</th>
-            <th>Score</th>
-            <th>Result</th>
-            <th>K / D / A</th>
-            <th>-+</th>
-          </tr>
-        </thead>
+          </div>
+        </div>
 
-        <tbody>
-          {table.map(match => (
-            <tr key={match.matchId}>
-              <th>{match.date.toLocaleString()}</th>
-              <th><img src={match.agentImage || undefined} className="max-h-6"/></th>
-              <th>{match.mapName}</th>
-              <td>{match.kills} / {match.deaths} / {match.assists}</td>
-              <td className={match.won ? 'text-success' : 'text-error'}>{match.won ? 'Win' : 'Loss'}</td>
-              <td className={match.won ? 'text-success' : 'text-error'}>{match.score}</td>
-              <td className={match.kills - match.deaths > 1 ? 'text-success' : 'text-error'}>{match.kills - match.deaths > 1 ? '+' : null}{match.kills - match.deaths}</td>
-            </tr>
-          ))}
-        </tbody>
+        <section className="overflow-x-auto flex flex-col items-center">
+          <span className="font-bold my-4">Player Match History</span>
 
-      </table>
-    </section>
+          <table className="table table-xs">
+
+            <thead>
+              <tr className="text-center">
+                <th>Date</th>
+                <th>Agent</th>
+                <th>Map</th>
+                <th>K / D / A</th>
+                <th>Result</th>
+                <th>Score</th>
+                <th>-+</th>
+                <th>HS%</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {table.map(match => (
+                <tr key={match.matchId} className={clsx(match.won ? 'bg-success/5' : 'bg-error/5', 'text-center')}>
+                  <td>{match.date.toLocaleString()}</td>
+                  <td><img src={match.agentImage || undefined} className="max-h-6"/></td>
+                  <td>{match.mapName}</td>
+                  <td>{match.kills} / {match.deaths} / {match.assists}</td>
+                  <td className={match.won ? 'text-success' : 'text-error'}>{match.won ? 'Win' : 'Loss'}</td>
+                  <td className={match.won ? 'text-success' : 'text-error'}>{match.score}</td>
+                  <td className={(match.kills - match.deaths) > 1 ? 'text-success' : (match.kills - match.deaths) == 0 ? '' : 'text-error'}>{(match.kills - match.deaths) > 1 ? '+' : null}{(match.kills - match.deaths)}</td>
+                  <td>{match.hs ? match.hs + '%' : null}</td>
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
+        </section>
+      </> :
+      <p className="my-10">No competitive matches played</p>
+    }
+
 
   </div>
 }

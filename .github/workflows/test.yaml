@@ -1,7 +1,6 @@
 name: 'Test Release'
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - test
@@ -10,7 +9,7 @@ jobs:
   test:
     permissions:
       contents: write
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -36,9 +35,31 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install
 
-      - name: Run Tests
-        run: pnpm test --run
-      
-      - name: Run Build
-        run: pnpm build
+      - name: Change Variables
+        run: |
+          sed -i 's/"productName": "vtjs"/"productName": "vtjs-test"/' ./src-tauri/tauri.conf.json
+          sed -i 's/"identifier": "com.vtjs.app"/"identifier": "com.vtjs-test.app"/' ./src-tauri/tauri.conf.json
+          sed -i 's/"title": "VTJS"/"title": "VTJS Test"/' ./src-tauri/tauri.conf.json
+          sed -i 's/prod.json/test.json/' ./src-tauri/tauri.conf.json
 
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          VITE_APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
+        with:
+          tagName: app-test-v__VERSION__
+          releaseName: 'VTJS Test v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
+
+      - name: Update Gist
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.TOKEN }}
+          gist_id: 0b5f7094000f4063d72276c5e05824aa
+          file_path: ./latest.json
+          gist_file_name: 'test.json'

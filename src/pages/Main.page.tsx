@@ -10,7 +10,7 @@ export const Main = () => {
     const [error, setError] = useState<string|null>()
     const [progress, setProgress] = useState<{ step: number, steps: number, player: string | null }>({ step: 0, steps: 0, player: null })
     const [currentMatchId, setCurrentMatchId] = useState<string | null>()
-    const [currentMatch, setCurrentMatch] = useState<CurrentPreGameMatchResponse | CurrentGameMatchResponse>()
+    const [currentMatch, setCurrentMatch] = useState<CurrentPreGameMatchResponse | CurrentGameMatchResponse | null>()
 
     const [puuid] = useAtom(atoms.puuid)
     const [player] = useAtom(atoms.player)
@@ -19,6 +19,7 @@ export const Main = () => {
     const [table, setTable] = useAtom(atoms.table)
     const [allowAnalytics] = useAtom(atoms.allowAnalytics)
     const [gameState] = useAtom(atoms.gameState)
+    const [cache] = useAtom(atoms.cache)
 
     const { trackEvent } = useAptabase();
 
@@ -38,6 +39,9 @@ export const Main = () => {
       const match = isPreGame
         ? await sharedapi.getCurrentPreGameMatch(matchId)
         : await sharedapi.getCurrentGameMatch(matchId)
+
+      setCurrentMatchId(isPreGame ? (match as CurrentPreGameMatchResponse).ID : (match as CurrentGameMatchResponse).MatchID)
+      setCurrentMatch(match)
 
       const puuids = utils.extractPlayers(match)
       const players = await sharedapi.getPlayerNames(puuids)
@@ -85,6 +89,7 @@ export const Main = () => {
           rankPeakDate: !isPreGame && peakRankSeasonId ? utils.getSeasonDateById(peakRankSeasonId) : null,
           lastGameMMRDiff,
           enemy: isEnemy,
+          accountLevel: player.PlayerIdentity.AccountLevel || null
         }
       }
 
@@ -120,8 +125,6 @@ export const Main = () => {
         await trackEvent('check_finish')
 
       setTable(table)
-      setCurrentMatchId(isPreGame ? (match as CurrentPreGameMatchResponse).ID : (match as CurrentGameMatchResponse).MatchID)
-      setCurrentMatch(match)
       setProgress({ step: 0, steps: 0, player: null })
     }
 
@@ -134,12 +137,16 @@ export const Main = () => {
     }
 
     async function handleGameEnd(){
+      const match = await sharedapi?.getMatchDetails(currentMatchId!)
+      if (match)
+        await cache?.execute('INSERT into matches (matchId, data) VALUES ($1, $2)', [match.matchInfo.matchId, match])
+
       setTable({})
       setCurrentMatchId(null)
-      // setCurrentMatch(null)
+      setCurrentMatch(null)
     }
 
-    async function onCheck() {
+    async function check() {
       setError(null)
       if (!puuid || !localapi || !sharedapi) return
 
@@ -162,6 +169,19 @@ export const Main = () => {
 
     }
 
+    async function silentCheck() {
+      if (!sharedapi || !puuid) return
+
+      const currentPreGamePlayer = await sharedapi.getCurrentPreGamePlayer(puuid)
+      const currentGamePlayer = currentPreGamePlayer ? null : await sharedapi.getCurrentGamePlayer(puuid)
+
+      if (currentPreGamePlayer)
+        await handlePreGameMatch(currentPreGamePlayer)
+
+      if (currentGamePlayer)
+        await handleGameMatch(currentGamePlayer)
+    }
+
     useEffect(() => {
 
       if (gameState.state === 'PreGame'){
@@ -178,17 +198,14 @@ export const Main = () => {
 
     }, [gameState])
 
+    useEffect(() => {
+      if (localapi && sharedapi && player)
+        silentCheck()
+    }, [localapi, sharedapi, player])
+
     return (
       <div className="p-2 flex flex-col">
-        { error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div> }
-
-        {
-          currentMatch &&
-            <section id='match-info' className="flex flex-row items-center my-10 space-x-4 m-auto">
-              <div className="badge badge-soft badge-primary badge-lg">Server: {currentMatch.GamePodID.split('.')[currentMatch.GamePodID.split('.').length-1]}</div>
-              <div className="badge badge-soft badge-primary badge-lg">Map: {utils.getMap(currentMatch.MapID).displayName}</div>
-            </section>
-        }
+        { error && <div className="alert alert-error border-error my-4 w-1/2 m-auto">{error}</div> }
 
         {
           progress.steps > 1 &&
@@ -206,14 +223,24 @@ export const Main = () => {
 
         { player && Object.keys(table).length === 0 && <section className="m-auto text-center mt-20">
           <h2 className="font-bold">Waiting for match</h2>
-          <p className="text-xs text-slate-400">The check should start automatically. It case it didn't, click <button className="underline" onClick={onCheck}>here</button></p>
+          <p className="text-xs text-slate-400">The check should start automatically. It case it didn't, click <button className="underline" onClick={check}>here</button></p>
           </section>
         }
 
         {
-          Object.keys(table).length > 1 && <button className="btn btn-primary m-auto btn-sm" onClick={onCheck}>Recheck</button>
+          currentMatch &&
+            <section id='match-info' className="flex flex-row items-center my-10 space-x-4 m-auto">
+              <div className="badge badge-soft badge-primary badge-lg">Server: {currentMatch.GamePodID.split('.')[currentMatch.GamePodID.split('.').length-1]}</div>
+              <div className="badge badge-soft badge-primary badge-lg">Map: {utils.getMap(currentMatch.MapID).displayName}</div>
+            </section>
         }
 
+        {
+          Object.keys(table).length > 1 && <button className="btn btn-primary m-auto btn-sm" onClick={check}>Recheck</button>
+        }
+
+
+        { import.meta.env.VITE_DEV === 'true' && Object.keys(table).length > 1 && <button className="btn btn-sm m-auto" onClick={handleGameEnd}>Game End</button> }
       </div>
     );
 }
