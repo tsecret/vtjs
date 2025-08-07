@@ -59,4 +59,5 @@ jobs:
         with:
           token: ${{ secrets.TOKEN }}
           gist_id: 0b5f7094000f4063d72276c5e05824aa
-          file_path: ./prod.json
+          file_path: ./latest.json
+          gist_file_name: 'prod.json'
