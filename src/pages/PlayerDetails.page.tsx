@@ -77,7 +77,12 @@ export const PlayerDetails = () => {
       const table: Row[] = []
 
       const { History } = await sharedapi.getPlayerMatchHistory(puuid)
-      const matches = await Promise.all(History.map(match => sharedapi.getMatchDetails(match.MatchID)))
+
+      const matches: MatchDetailsResponse[] = []
+
+      for (const match of History){
+        matches.push(await sharedapi.getMatchDetails(match.MatchID))
+      }
 
       const _chartData: ChartData = []
 

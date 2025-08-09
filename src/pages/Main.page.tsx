@@ -13,7 +13,7 @@ export const Main = () => {
     const [player] = useAtom(atoms.player);
     const [sharedapi] = useAtom(atoms.sharedapi);
     const [table] = useAtom(atoms.table);
-    const [gameState] = useAtom(atoms.gameState);
+    const [gameState, setGameState] = useAtom(atoms.gameState);
     const [allowAnalytics] = useAtom(atoms.allowAnalytics);
     const [matchProcessing] = useAtom(atoms.matchProcessing);
     const [currentMatch] = useAtom(atoms.currentMatch);
@@ -39,6 +39,12 @@ export const Main = () => {
             if (allowAnalytics) {
                 await trackEvent('manual_check');
             }
+
+            if (currentPreGamePlayer)
+              setGameState({ state: 'PreGame', matchId: currentPreGamePlayer.MatchID })
+
+            if (currentGamePlayer)
+              setGameState({ state: 'Game', matchId: currentGamePlayer.MatchID })
 
         } catch (err) {
             console.error('Manual check failed:', err);
@@ -67,19 +73,6 @@ export const Main = () => {
             {error && (
                 <div className="alert alert-error border-error my-4 w-1/2 m-auto">
                     {error}
-                </div>
-            )}
-
-            {/* Game State Indicator */}
-            {gameState.state !== 'Idle' && (
-                <div className="flex justify-center mb-4">
-                    <div className={`badge badge-lg ${
-                        gameState.state === 'PreGame' ? 'badge-warning' :
-                        gameState.state === 'Game' ? 'badge-success' : 'badge-neutral'
-                    }`}>
-                        {gameState.state === 'PreGame' ? 'Agent Select' :
-                         gameState.state === 'Game' ? 'In Game' : 'Idle'}
-                    </div>
                 </div>
             )}
 
