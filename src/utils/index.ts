@@ -53,7 +53,7 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
     if (!player.stats) continue
 
 
-    kds.push(player.stats.kills / player.stats.deaths || 1)
+    kds.push(player.stats.kills / (player.stats.deaths || 1))
 
     if (match.roundResults){
       const shots = { legshots: 0, bodyshots: 0, headshots: 0 }
