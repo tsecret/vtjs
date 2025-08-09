@@ -22,6 +22,7 @@ import * as utils from './utils';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
 import { SocketListener } from './components/SocketListener';
+import { MatchHandler } from './components/MatchHandler';
 import { FriendsPage } from './pages/Friends.page';
 
 function App() {
@@ -109,6 +110,7 @@ function App() {
   return <main className="relative select-none cursor-default">
     <Header />
     <SocketListener />
+    <MatchHandler />
     <Routes>
       <Route path="/" element={<Splash status={initStatus} />} />
       <Route path="/welcome" element={<WelcomePage />} />

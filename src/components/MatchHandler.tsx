@@ -1,0 +1,236 @@
+import { useAptabase } from '@aptabase/react';
+import { useAtom } from "jotai";
+import { useEffect, useRef } from "react";
+import { CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse } from "../interface";
+import * as utils from '../utils';
+import atoms from "../utils/atoms";
+
+
+export const MatchHandler = () => {
+    const [puuid] = useAtom(atoms.puuid)
+    const [sharedapi] = useAtom(atoms.sharedapi)
+    const [table, setTable] = useAtom(atoms.table)
+    const [allowAnalytics] = useAtom(atoms.allowAnalytics)
+    const [gameState] = useAtom(atoms.gameState)
+    const [cache] = useAtom(atoms.cache)
+    const [, setMatchProcessing] = useAtom(atoms.matchProcessing)
+    const [, setCurrentMatch] = useAtom(atoms.currentMatch)
+
+    const { trackEvent } = useAptabase();
+
+    const currentMatchRef = useRef<{ matchId: string | null, isProcessing: boolean }>({
+        matchId: null,
+        isProcessing: false
+    });
+
+    async function handleMatch(
+        matchId: string,
+        isPreGame: boolean,
+        trackEventName: string
+    ) {
+        if (!sharedapi || !puuid) return
+
+        if (currentMatchRef.current.isProcessing && currentMatchRef.current.matchId === matchId) {
+            return;
+        }
+
+        currentMatchRef.current = { matchId, isProcessing: true };
+        setMatchProcessing({ isProcessing: true, currentPlayer: null, progress: { step: 0, total: 0 } });
+
+        try {
+            if (allowAnalytics)
+                await trackEvent(trackEventName);
+
+            if (matchId !== currentMatchRef.current.matchId) {
+                const newTable = { ...table };
+                Object.keys(newTable).forEach(key => { delete newTable[key] });
+                setTable(newTable);
+            }
+
+            const match = isPreGame
+                ? await sharedapi.getCurrentPreGameMatch(matchId)
+                : await sharedapi.getCurrentGameMatch(matchId);
+
+            if (!match) return
+
+            const puuids = utils.extractPlayers(match);
+            const players = await sharedapi.getPlayerNames(puuids);
+
+            const updatedTable = { ...table };
+
+            if (isPreGame) {
+                const preGameMatch = match as CurrentPreGameMatchResponse;
+                preGameMatch.AllyTeam?.Players.forEach((player: any) => {
+                    updatedTable[player.Subject] = {} as any;
+                });
+            } else {
+                const gameMatch = match as CurrentGameMatchResponse;
+                gameMatch.Players.forEach((player: any) => {
+                    updatedTable[player.Subject] = {} as any;
+                });
+            }
+
+            const playerTeamId = isPreGame
+                ? null
+                : (match as CurrentGameMatchResponse).Players.find((player: any) => player.Subject === puuid)?.TeamID as 'RED' | 'BLUE';
+
+            const playersToProcess = isPreGame
+                ? (match as CurrentPreGameMatchResponse).AllyTeam?.Players || []
+                : (match as CurrentGameMatchResponse).Players;
+
+            for (const player of playersToProcess) {
+                try {
+                    const mmr = await sharedapi.getPlayerMMR(player.Subject);
+                    const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff } = utils.calculateRanking(mmr);
+                    const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
+                    const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
+
+                    const playerInfo = players.find(_player => _player.Subject === player.Subject);
+                    if (!playerInfo) continue;
+
+                    const { GameName, TagLine } = playerInfo;
+                    const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.CharacterID as string);
+                    const isEnemy = isPreGame ? false : (player as any).TeamID !== playerTeamId;
+
+                    updatedTable[player.Subject] = {
+                        name: GameName,
+                        tag: TagLine,
+                        puuid: player.Subject,
+                        agentId: agentId,
+                        agentName: agentName,
+                        agentImage: agentImage,
+                        currentRank: currentRankName,
+                        currentRankColor,
+                        currentRR,
+                        rankPeak: rankPeakName,
+                        rankPeakColor: rankPeakColor,
+                        rankPeakDate: !isPreGame && peakRankSeasonId ? utils.getSeasonDateById(peakRankSeasonId) : null,
+                        lastGameMMRDiff,
+                        enemy: isEnemy,
+                        accountLevel: player.PlayerIdentity.AccountLevel || null
+                    };
+                } catch (error) {
+                    console.error(`Failed to process player ${player.Subject}:`, error);
+                }
+            }
+
+            setTable(updatedTable);
+            setCurrentMatch(match);
+
+            processDetailedStats(players, match);
+
+        } catch (error) {
+            console.error('Error processing match:', error);
+        } finally {
+            currentMatchRef.current.isProcessing = false;
+            setMatchProcessing({ isProcessing: false, currentPlayer: null, progress: { step: 0, total: 0 } });
+        }
+    }
+
+    async function processDetailedStats(players: any[], match: CurrentPreGameMatchResponse | CurrentGameMatchResponse) {
+        if (!sharedapi) return;
+
+        try {
+            setMatchProcessing({
+                isProcessing: true,
+                currentPlayer: null,
+                progress: { step: 0, total: players.length }
+            });
+
+            for (const i in players) {
+                const player = players[i];
+
+                setMatchProcessing({
+                    isProcessing: true,
+                    currentPlayer: player.GameName || player.Subject,
+                    progress: { step: parseInt(i) + 1, total: players.length }
+                });
+                const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject);
+                const matches = await Promise.all(matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID)))
+
+                const { kd, hs, adr, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matches);
+                const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID);
+
+                setTable(prevTable => ({
+                    ...prevTable,
+                    [player.Subject]: {
+                        ...prevTable[player.Subject],
+                        kd,
+                        hs,
+                        adr,
+                        lastGameWon,
+                        lastGameScore,
+                        accountLevel,
+                        bestAgents
+                    }
+                }));
+            }
+
+            setMatchProcessing({ isProcessing: false, currentPlayer: null, progress: { step: 0, total: 0 } });
+
+            if (allowAnalytics)
+              await trackEvent('check_finish')
+
+        } catch (error) {
+            console.error('Error processing detailed stats:', error);
+        }
+    }
+
+    async function handlePreGameMatch(currentPreGamePlayer: CurrentPreGamePlayerResponse) {
+        await handleMatch(currentPreGamePlayer.MatchID, true, 'check_pregame');
+    }
+
+    async function handleGameMatch(currentGamePlayer: CurrentGamePlayerResponse) {
+        await handleMatch(currentGamePlayer.MatchID, false, 'check_game');
+    }
+
+    async function handleGameEnd() {
+        if (!cache || !currentMatchRef.current.matchId) return;
+
+        try {
+            const match = await sharedapi?.getMatchDetails(currentMatchRef.current.matchId);
+            if (match) {
+                await cache.execute('INSERT into matches (matchId, data) VALUES ($1, $2)', [
+                    match.matchInfo.matchId,
+                    JSON.stringify(match)
+                ]);
+            }
+
+            setTable({});
+            setCurrentMatch(null);
+            setMatchProcessing({ isProcessing: false, currentPlayer: null, progress: { step: 0, total: 0 } });
+            currentMatchRef.current = { matchId: null, isProcessing: false };
+
+            console.log('Match ended, data cleared');
+        } catch (error) {
+            console.error('Error handling game end:', error);
+        }
+    }
+
+    useEffect(() => {
+        if (!sharedapi || !puuid) return;
+
+        if (gameState.state === 'PreGame' && gameState.matchId) {
+            handlePreGameMatch({
+                MatchID: gameState.matchId,
+                Subject: puuid,
+                Version: 0
+            });
+        }
+
+        if (gameState.state === 'Game' && gameState.matchId) {
+            handleGameMatch({
+                MatchID: gameState.matchId,
+                Subject: puuid,
+                Version: 0
+            });
+        }
+
+        if (gameState.state === 'Idle') {
+            handleGameEnd();
+        }
+
+    }, [gameState, sharedapi, puuid]);
+
+    return null;
+};

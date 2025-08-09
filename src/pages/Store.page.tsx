@@ -50,7 +50,7 @@ export const StorePage = () => {
 
     <section id="bundles" className="w-1/2 max-w-2xl rounded-md">
       <div className="carousel w-full">
-        {bundles?.map((bundle, i) => <div id={`bundle${i}`} className="carousel-item relative w-full">
+        {bundles?.map((bundle, i) => <div key={bundle.uuid} id={`bundle${i}`} className="carousel-item relative w-full">
           <img className="w-full rounded-md" src={bundle.url} />
           <div className="absolute left-5 bottom-5">
             <p className="font-bold">{bundle.name}</p>
