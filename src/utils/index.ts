@@ -1,6 +1,8 @@
 import { localDataDir } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
+import pako from 'pako';
+
 import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
 import maps from '../assets/maps.json';
@@ -15,6 +17,20 @@ export const isMac = () => navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
 export const base64Decode = (input: string): string => {
   return base64.decode(input)
+}
+
+export const zdecode = (input: string): any => {
+  return JSON.parse(pako.inflateRaw(Buffer.from(input, 'base64'), { to: 'string' }))
+}
+
+export const zencode = (input: any): string => {
+  return Buffer.from(pako.deflateRaw(Buffer.from(JSON.stringify(input), 'utf-8'))).toString('base64')
+}
+
+export const randomInt = (min: number, max: number): number =>  {
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
 }
 
 export const readLockfile = async (): Promise<string> => {
@@ -130,6 +146,10 @@ export const getSeasonDateById = (seasonId: string): Date | null => {
 }
 
 export const playerHasWon = (puuid: string, match: MatchDetailsResponse) => {
+  return match.teams?.find(team => team.teamId === match.players.find(player => player.subject === puuid)?.teamId)?.won ?? false
+}
+
+export const getMatchResult = (puuid: string, match: MatchDetailsResponse) => {
   return match.teams?.find(team => team.teamId === match.players.find(player => player.subject === puuid)?.teamId)?.won ?? false
 }
 

@@ -18,15 +18,15 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
         </td>
         <th>{ player.puuid === puuid ? <span>You</span> : <><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span></>}</th>
         <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
-        <th className="flex-col flex">
+        <th className="flex-col flex text-center">
           <span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span>
           {player.rankPeakDate ? <span className="text-mini text-center text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span> : null}
         </th>
-        <th><span>{player.accountLevel}</span></th>
-        <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-green-400' : 'text-red-400')}>{player.kd}</span></td>
+        <th><span className="text-center">{player.accountLevel}</span></th>
+        <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-success' : 'text-error')}>{player.kd}</span></td>
         <td><span className="text-center">{player.hs}{player.hs ? '%' : null}</span></td>
         <td><span className="text-center">{player.adr}</span></td>
-        <td><span className={clsx('text-center', player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-green-400' : 'text-red-500')}>{player.lastGameScore}{player.lastGameMMRDiff && player.lastGameScore ? ` (${player.lastGameMMRDiff > 0 ? '+'+player.lastGameMMRDiff : player.lastGameMMRDiff})` : null}</span></td>
+        <td><span className={clsx('text-center', player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-success' : 'text-error')}>{player.lastGameScore}{player.lastGameMMRDiff && player.lastGameScore ? ` (${player.lastGameMMRDiff > 0 ? '+'+player.lastGameMMRDiff : player.lastGameMMRDiff})` : null}</span></td>
         <td>
           <div className="flex flex-row space-x-2">
             {player.bestAgents?.map(agent => (

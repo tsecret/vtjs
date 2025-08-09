@@ -906,3 +906,8 @@ export type WalletResponse = {
         [x: string]: number;
     };
 };
+
+export type GameSettingsResponse = {
+  type: 'Ares.PlayerSettings'
+  data: string
+}

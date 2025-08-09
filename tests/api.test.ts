@@ -19,6 +19,19 @@ describe('utils', () => {
     expect(password).toEqual('cmlvdDp0ZXN0LXBhc3N3b3Jk')
   })
 
+  describe('zlib', () => {
+    const d = { text: 'test' }
+    const t = 'q1YqSa0oUbICUsUlSrUA'
+
+    it('encode', async () => {
+      expect(utils.zencode(d)).toBe(t)
+    })
+
+    it('decodd', async () => {
+      expect(utils.zdecode(t)).toStrictEqual(d)
+    })
+  })
+
   describe('extractPlayers', () => {
     it('extractPlayers from pre-game match', () => {
       expect(utils.extractPlayers(currentPreGameMatch as CurrentPreGameMatchResponse)).toStrictEqual(currentPreGameMatch.AllyTeam.Players.map(player => player.Subject))

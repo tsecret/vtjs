@@ -10,9 +10,11 @@ import { LocalAPI, SharedAPI } from "./api";
 import { TestLocalAPI } from "./api/local.dev";
 import { TestSharedAPI } from "./api/shared.dev";
 import { StoreAPI } from './api/store';
-import "./App.css";
-import { Splash } from "./components";
+import { MatchHandler } from './components';
 import { Header } from "./components/Header";
+import { SocketListener } from './components/SocketListener';
+import { FriendsPage } from './pages/Friends.page';
+import { InitPage } from './pages/Init.page';
 import { Main } from "./pages/Main.page";
 import { PlayerDetails } from "./pages/PlayerDetails.page";
 import { Settings } from "./pages/Settings.page";
@@ -21,11 +23,9 @@ import { WelcomePage } from './pages/Welcome.page';
 import * as utils from './utils';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
-import { SocketListener } from './components/SocketListener';
-import { MatchHandler } from './components/MatchHandler';
-import { FriendsPage } from './pages/Friends.page';
 
 function App() {
+
   const [, setAppInfo] = useAtom(atoms.appInfo)
   const [, setPlayer] = useAtom(atoms.player)
   const [, setLocalapi] = useAtom(atoms.localapi)
@@ -37,7 +37,9 @@ function App() {
   const [, setAllowAnalytics] = useAtom(atoms.allowAnalytics)
   const [, setFirstTimeUser] = useAtom(atoms.firstTimeUser)
 
+
   const [initStatus, setInitStatus] = useState<string>('Preparing app')
+  const [error, setError] = useState<string|null>(null)
 
   const navigate = useNavigate();
   const { trackEvent } = useAptabase();
@@ -73,34 +75,44 @@ function App() {
 
     setcache(db)
 
-    setInitStatus('Loading Lockfile')
-    const { port, password } = utils.parseLockFile(await utils.readLockfile())
-    const localapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestLocalAPI({ port: '', password: '' }) :  new LocalAPI({ port, password })
-    const player = await localapi.getPlayerAccount()
+    try {
+      setInitStatus('Loading Lockfile')
+      const { port, password } = utils.parseLockFile(await utils.readLockfile())
+      const localapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestLocalAPI({ port: '', password: '' }) :  new LocalAPI({ port, password })
+      const player = await localapi.getPlayerAccount()
 
-    setInitStatus('Loading Player')
-    const { accessToken, token: entToken, subject: puuid } = await localapi.getEntitlementToken()
-    const sharedapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestSharedAPI({ entToken, accessToken }) : new SharedAPI({ entToken, accessToken })
+      setInitStatus('Loading Player')
+      const { accessToken, token: entToken, subject: puuid } = await localapi.getEntitlementToken()
+      const sharedapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestSharedAPI({ entToken, accessToken }) : new SharedAPI({ entToken, accessToken })
 
-    const storeapi = new StoreAPI({ entToken, accessToken })
+      const storeapi = new StoreAPI({ entToken, accessToken })
 
-    setPlayer(player)
-    setpuuid(puuid)
-    setLocalapi(localapi)
-    setSharedapi(sharedapi)
-    setStoreapi(storeapi)
+      setPlayer(player)
+      setpuuid(puuid)
+      setLocalapi(localapi)
+      setSharedapi(sharedapi)
+      setStoreapi(storeapi)
 
-    console.log('localapi', localapi)
-    console.log('player', player)
+      console.log('localapi', localapi)
+      console.log('player', player)
 
-    invoke('start_ws', {
-      wsUrl: `wss://${import.meta.env.VITE_DEV === 'true' ? '192.168.31.197' : 'localhost'}:${port}`,
-      headers: {
-        Authorization: `Basic ${password}`,
-      },
-    });
+      invoke('start_ws', {
+        wsUrl: `wss://${import.meta.env.VITE_DEV === 'true' ? '192.168.31.197' : 'localhost'}:${port}`,
+        headers: {
+          Authorization: `Basic ${password}`,
+        },
+      });
 
-    navigate(firstTimeUser ? '/welcome' : '/dashboard')
+      if (allowAnalytics)
+        await trackEvent('app_load')
+
+      navigate(firstTimeUser ? '/welcome' : '/dashboard')
+    } catch (err){
+      console.log('err', err)
+      setError('Make sure Riot Client is open, and you have logged into your account')
+      navigate('/')
+    }
+
   }
 
   useEffect(() => {
@@ -112,7 +124,7 @@ function App() {
     <SocketListener />
     <MatchHandler />
     <Routes>
-      <Route path="/" element={<Splash status={initStatus} />} />
+      <Route path="/" element={<InitPage status={initStatus} error={error} />} />
       <Route path="/welcome" element={<WelcomePage />} />
       <Route path="/dashboard" element={<Main />} />
       <Route path="/settings" element={<Settings />} />

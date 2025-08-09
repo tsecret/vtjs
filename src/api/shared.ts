@@ -1,4 +1,4 @@
-import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
+import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, GameSettingsResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
 import { BaseAPI } from './base';
 
 export class SharedAPI extends BaseAPI {
@@ -43,6 +43,14 @@ export class SharedAPI extends BaseAPI {
 
   async getPlayerMMR(puuid: string): Promise<PlayerMMRResponse> {
     return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/mmr/v1/players/${puuid}`)
+  }
+
+  async getGameSettings(): Promise<GameSettingsResponse> {
+    return this.fetch('https://player-preferences-usw2.pp.sgp.pvp.net', '/playerPref/v3/getPreference/Ares.PlayerSettings', { noCache: true })
+  }
+
+  async setGameSettings(data: GameSettingsResponse): Promise<GameSettingsResponse> {
+    return this.fetch('https://player-preferences-usw2.pp.sgp.pvp.net', '/playerPref/v3/savePreference', { noCache: true, body: data })
   }
 
 }

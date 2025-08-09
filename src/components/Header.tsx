@@ -46,11 +46,14 @@ export const Header = () => {
     checkForUpdate()
   }, [])
 
-  return <div className="w-full p-2 flex flex-row items-center space-x-4 px-4">
+  if (location.pathname === '/')
+    return null
+
+  return <header className="w-full p-2 flex flex-row items-center space-x-4 px-4">
     {
       location.pathname === '/dashboard' ?
       <>
-        <span className="font-bold">VTJS</span>
+        <a className="font-bold" href='/'>VTJS</a>
         <div className="badge badge-dash badge-primary">Beta</div>
 
         <div className="ml-auto flex flex-row items-center space-x-2">
@@ -96,7 +99,6 @@ export const Header = () => {
         <span className="font-bold">Friends</span>
       </>
       : null
-
     }
-  </div>
+  </header>
 }

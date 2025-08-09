@@ -7,6 +7,7 @@ import { MatchDetailsResponse } from "../interface"
 import * as utils from '../utils'
 import atoms from "../utils/atoms"
 import clsx from "clsx"
+import moment from "moment"
 
 interface Row {
   matchId: string
@@ -33,6 +34,12 @@ type PlayerCard = {
   peakRankColor: string
 }
 
+type PlayerStats = {
+  hs: number
+  kd: number
+  adr: number
+}
+
 type ChartData = {
   i: number
   kills: number
@@ -50,6 +57,7 @@ export const PlayerDetails = () => {
   const [table, setTable] = useState<Row[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [playerCard, setPlayerCard] = useState<PlayerCard>()
+  const [playerStats, setPlayerStats] = useState<PlayerStats>()
   const [accountLevel, setAccountLevel] = useState<number>()
 
   const [chartData, setChartData] = useState<ChartData>()
@@ -75,6 +83,8 @@ export const PlayerDetails = () => {
       setLoading(true)
 
       const table: Row[] = []
+      const _chartData: ChartData = []
+      let accountLevel: number = 0
 
       const { History } = await sharedapi.getPlayerMatchHistory(puuid)
 
@@ -84,15 +94,19 @@ export const PlayerDetails = () => {
         matches.push(await sharedapi.getMatchDetails(match.MatchID))
       }
 
-      const _chartData: ChartData = []
+      const { hs: avgHS, adr: avgAdr, kd: avgKd } = utils.calculateStatsForPlayer(puuid, matches)
 
       for (const i in matches){
         const match = matches[i]
+
         const player = match.players.find(player => player.subject === puuid) as MatchDetailsResponse['players'][0]
         const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
         const team = match.teams?.find(team => team.teamId === player.teamId)!
 
         const { hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
+
+        if (!accountLevel)
+          accountLevel = player.accountLevel
 
         _chartData.push({
           i: parseInt(i),
@@ -134,9 +148,13 @@ export const PlayerDetails = () => {
 
       setTable(table)
       setLoading(false)
-      setAccountLevel(matches.length ? matches[0].players.find(p => p.subject === puuid)!.accountLevel : 0)
+      setAccountLevel(accountLevel)
       setChartData(_chartData.reverse())
-
+      setPlayerStats({
+        hs: avgHS,
+        adr: avgAdr,
+        kd: avgKd
+      })
     })()
 
   }, [])
@@ -151,14 +169,13 @@ export const PlayerDetails = () => {
       const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
 
       setPlayerCard({
-        ...playerCard,
         name: GameName,
         tag: TagLine,
         currentRank: utils.getRank(currentRank).rankName,
         currentRR,
         currentRankColor: utils.getRank(currentRank).rankColor,
         peakRank: utils.getRank(peakRank).rankName,
-        peakRankColor: utils.getRank(peakRank).rankColor
+        peakRankColor: utils.getRank(peakRank).rankColor,
       })
 
     })()
@@ -173,7 +190,7 @@ export const PlayerDetails = () => {
   return <div className="flex flex-col items-center p-4">
 
     {/* Player Data */}
-    <section id="player-card" className="space-y-2">
+    <section id="player-card" className="space-y-2 flex flex-col">
 
 
       <div className="flex flex-row">
@@ -214,6 +231,23 @@ export const PlayerDetails = () => {
         <div className="stat">
           <div className="stat-title">Winrate %</div>
           <div className="stat-value">{table.length ? (table.filter(match => match.won).length / table.length * 100).toFixed(0) : 0}%</div>
+        </div>
+      </div>
+
+      <div className="stats shadow">
+        <div className="stat">
+          <div className="stat-title">K/D</div>
+          <div className={clsx('stat-value', playerStats && playerStats?.kd >= 1 ? 'text-success' : 'text-error' )}>{playerStats?.kd}</div>
+        </div>
+
+        <div className="stat">
+          <div className="stat-title">Average Damage per Round</div>
+          <div className={clsx('stat-value', playerStats && playerStats?.adr >= 150 ? 'text-success' : 'text-error' )}>{playerStats?.adr}</div>
+        </div>
+
+        <div className="stat">
+          <div className="stat-title">Headshot %</div>
+          <div className="stat-value">{playerStats?.hs}%</div>
         </div>
       </div>
 
@@ -304,8 +338,8 @@ export const PlayerDetails = () => {
                       ticks={Array.from({length: Math.floor(3 / 0.5) + 1}, (_, i) => i * 0.5)}
                       padding={{ bottom: 32, top: 32 }}
                     />
-                    <ReferenceLine y={1} stroke="gray" strokeDasharray="4 1" />
-                    { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.kd }, { x: data.i, y: 1 }]} strokeWidth={1} stroke={ data.kd >= 1 ? '#00d390' : '#ff637d' } />) }
+                    <ReferenceLine y={playerStats?.kd} stroke="gray" strokeDasharray="4 1" />
+                    { playerStats && chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: playerStats.kd }, { x: data.i, y: data.kd }]} strokeWidth={1} stroke={ data.kd >= playerStats.kd ? '#00d390' : '#ff637d' } />) }
                     <Line
                         dataKey="kd"
                         type="natural"
@@ -315,7 +349,7 @@ export const PlayerDetails = () => {
                             r={4}
                             cx={props.cx}
                             cy={props.cy}
-                            fill={ props.value >= 1 ? '#00d390' : '#ff637d' }
+                            fill={ playerStats && props.value >= playerStats.kd ? '#00d390' : '#ff637d' }
                             stroke={payload.fill}
                           />
                         )}
@@ -331,7 +365,7 @@ export const PlayerDetails = () => {
                           content={({ value, x, y, offset }: any) => (
                             <text
                               x={Number.isInteger(value) ? x - 2 : x - 10}
-                              y={value > 1 ? y - offset + 4: y + offset}
+                              y={playerStats && value > playerStats.kd ? y - offset + 4: y + offset}
                               fill="#666"
                             >
                               {value}
@@ -349,8 +383,8 @@ export const PlayerDetails = () => {
                         ticks={Array.from({ length: 12 }, (_, i) => i * 25)}
                         padding={{ bottom: 32, top: 32 }}
                       />
-                      <ReferenceLine y={100} stroke="gray" strokeDasharray="4 12" />
-                      { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.adr }, { x: data.i, y: 100 }]} strokeWidth={1} stroke={ data.adr >= 100 ? '#00d390' : '#ff637d' } />) }
+                      <ReferenceLine y={playerStats?.adr} stroke="gray" strokeDasharray="4 1" />
+                      { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.adr }, { x: data.i, y: playerStats?.adr }]} strokeWidth={1} stroke={ playerStats && data.adr >= playerStats?.adr ? '#00d390' : '#ff637d' } />) }
                       <Line
                           dataKey="adr"
                           type="natural"
@@ -360,7 +394,7 @@ export const PlayerDetails = () => {
                               r={4}
                               cx={props.cx}
                               cy={props.cy}
-                              fill={ props.value >= 100 ? '#00d390' : '#ff637d' }
+                              fill={ playerStats && props.value >= playerStats?.adr ? '#00d390' : '#ff637d' }
                               stroke={payload.fill}
                             />
                           )}
@@ -374,8 +408,8 @@ export const PlayerDetails = () => {
                             fontSize={10}
                             content={({ value, x, y, offset }: any) => (
                               <text
-                                x={value > 100 ? x - 10 : x - 8}
-                                y={value > 100 ? y - offset + 4: y + offset}
+                                x={playerStats && value > playerStats?.adr ? x - 10 : x - 8}
+                                y={playerStats && value > playerStats?.adr ? y - offset + 4: y + offset}
                                 fill="#666"
                               >
                                 {value}
@@ -440,7 +474,7 @@ export const PlayerDetails = () => {
             <tbody>
               {table.map(match => (
                 <tr key={match.matchId} className={clsx(match.won ? 'bg-success/5' : 'bg-error/5', 'text-center')}>
-                  <td>{match.date.toLocaleString()}</td>
+                  <td className="text-left">{moment(match.date).format('HH:mm DD/MM/YY')} <span className="opacity-25">({moment(match.date).fromNow()})</span></td>
                   <td><img src={match.agentImage || undefined} className="max-h-6"/></td>
                   <td>{match.mapName}</td>
                   <td>{match.kills} / {match.deaths} / {match.assists}</td>
