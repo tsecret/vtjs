@@ -237,12 +237,12 @@ export const PlayerDetails = () => {
       <div className="stats shadow">
         <div className="stat">
           <div className="stat-title">K/D</div>
-          <div className={clsx('stat-value', playerStats?.kd >= 1 ? 'text-success' : 'text-error' )}>{playerStats?.kd}</div>
+          <div className={clsx('stat-value', playerStats && playerStats?.kd >= 1 ? 'text-success' : 'text-error' )}>{playerStats?.kd}</div>
         </div>
 
         <div className="stat">
           <div className="stat-title">Average Damage per Round</div>
-          <div className={clsx('stat-value', playerStats?.adr >= 150 ? 'text-success' : 'text-error' )}>{playerStats?.adr}</div>
+          <div className={clsx('stat-value', playerStats && playerStats?.adr >= 150 ? 'text-success' : 'text-error' )}>{playerStats?.adr}</div>
         </div>
 
         <div className="stat">
@@ -384,7 +384,7 @@ export const PlayerDetails = () => {
                         padding={{ bottom: 32, top: 32 }}
                       />
                       <ReferenceLine y={playerStats?.adr} stroke="gray" strokeDasharray="4 1" />
-                      { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.adr }, { x: data.i, y: playerStats?.adr }]} strokeWidth={1} stroke={ data.adr >= playerStats?.adr ? '#00d390' : '#ff637d' } />) }
+                      { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.adr }, { x: data.i, y: playerStats?.adr }]} strokeWidth={1} stroke={ playerStats && data.adr >= playerStats?.adr ? '#00d390' : '#ff637d' } />) }
                       <Line
                           dataKey="adr"
                           type="natural"
