@@ -17,6 +17,12 @@ const player = atom<PlayerAccount>()
 const table = atom<{ [key: PlayerRow['puuid']]: PlayerRow }>({})
 
 const gameState = atom<{ state: GameState, matchId: string | null }>({ state: 'Idle', matchId: null })
+const matchProcessing = atom<{ isProcessing: boolean, currentPlayer: string | null, progress: { step: number, total: number } }>({
+  isProcessing: false,
+  currentPlayer: null,
+  progress: { step: 0, total: 0 }
+})
+const currentMatch = atom<any>(null)
 
 // Settings
 const store = atom<Store>()
@@ -34,6 +40,8 @@ export default {
   table,
 
   gameState,
+  matchProcessing,
+  currentMatch,
 
   // Settings
   store,

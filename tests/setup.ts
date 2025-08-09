@@ -47,11 +47,11 @@ const getResponseFromUrl = (url: string) => {
     }
 
     if (url.includes('/core-game/v1/matches/')){
-      return currentPreGameMatch
+      return currentGameMatch
     }
 
     if (url.includes('/pregame/v1/matches/')){
-      return currentGameMatch
+      return currentPreGameMatch
     }
 
     if (url.includes('/name-service/v2/players')){

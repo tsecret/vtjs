@@ -221,7 +221,7 @@ export const PlayerDetails = () => {
         <div className="card w-full max-w-3xl my-10">
           <div className="card-body">
             <div className="flex flex-row justify-between">
-              <h2 className="cart-title">Performance over last 20 matches</h2>
+              <h2 className="card-title">Performance over last 20 matches</h2>
               <div className="join join-vertical sm:join-horizontal">
                 <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('kills/deaths')} defaultChecked={true} name="options" aria-label="Kills and Deaths" />
                 <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('kd')} name="options" aria-label="K/D Ratio" />
