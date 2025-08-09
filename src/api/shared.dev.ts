@@ -1,6 +1,8 @@
 import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
-import { sleep } from "../utils";
+import { randomInt, sleep } from "../utils";
 import { SharedAPI } from "./shared";
+
+import agents from '../assets/agents.json'
 
 import competitiveUpdates from '../../tests/fixtures/shared/competitive-updates.json';
 import currentMatch from '../../tests/fixtures/shared/current-game-match.json';
@@ -43,9 +45,23 @@ export class TestSharedAPI extends SharedAPI {
     return matchHistory
   }
 
-  async getMatchDetails(_matchId: string): Promise<MatchDetailsResponse> {
+  async getMatchDetails(matchId: string): Promise<MatchDetailsResponse> {
+
+    const match = JSON.parse(JSON.stringify(matchDetails))
+
+    match.matchInfo.matchId = matchId
+    match.matchInfo.gameStartMillis = randomInt(+new Date()- 365 * 24 * 60 * 60 * 1000, +new Date())
+
+    for (const player of match.players){
+      player.stats.kills = randomInt(0, 30)
+      player.stats.deaths = randomInt(0, 30)
+      player.stats.assists = randomInt(0, 30)
+      player.characterId = agents.map(agent => agent.uuid)[randomInt(0, agents.map(agent => agent.uuid).length)]
+
+    }
+
     // @ts-ignore
-    return matchDetails
+    return match
   }
 
   async getCompetitiveUpdates(_puuid: string): Promise<CompetitiveUpdatesResponse> {
@@ -53,8 +69,15 @@ export class TestSharedAPI extends SharedAPI {
   }
 
   async getPlayerMMR(_puuid: string): Promise<PlayerMMRResponse> {
+
+    const mmr = { ...playerMMR }
+
+    mmr.LatestCompetitiveUpdate.TierAfterUpdate = randomInt(3, 28)
     // @ts-ignore
-    return playerMMR
+    mmr.QueueSkills.competitive.SeasonalInfoBySeasonID[mmr.LatestCompetitiveUpdate.SeasonID].Rank = randomInt(mmr.LatestCompetitiveUpdate.TierAfterUpdate, 28)
+
+    // @ts-ignore
+    return mmr
   }
 
 }

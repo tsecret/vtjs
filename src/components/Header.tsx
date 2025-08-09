@@ -53,7 +53,7 @@ export const Header = () => {
     {
       location.pathname === '/dashboard' ?
       <>
-        <span className="font-bold">VTJS</span>
+        <a className="font-bold" href='/'>VTJS</a>
         <div className="badge badge-dash badge-primary">Beta</div>
 
         <div className="ml-auto flex flex-row items-center space-x-2">

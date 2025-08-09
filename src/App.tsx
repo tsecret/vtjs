@@ -10,6 +10,7 @@ import { LocalAPI, SharedAPI } from "./api";
 import { TestLocalAPI } from "./api/local.dev";
 import { TestSharedAPI } from "./api/shared.dev";
 import { StoreAPI } from './api/store';
+import { MatchHandler } from './components';
 import { Header } from "./components/Header";
 import { SocketListener } from './components/SocketListener';
 import { FriendsPage } from './pages/Friends.page';
@@ -109,6 +110,7 @@ function App() {
     } catch (err){
       console.log('err', err)
       setError('Make sure Riot Client is open, and you have logged into your account')
+      navigate('/')
     }
 
   }
