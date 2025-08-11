@@ -37,7 +37,6 @@ function App() {
   const [, setAllowAnalytics] = useAtom(atoms.allowAnalytics)
   const [, setFirstTimeUser] = useAtom(atoms.firstTimeUser)
 
-
   const [initStatus, setInitStatus] = useState<string>('Preparing app')
   const [error, setError] = useState<string|null>(null)
 
@@ -72,6 +71,7 @@ function App() {
     const db = await Database.load(CACHE_NAME);
     await db.execute('CREATE TABLE IF NOT EXISTS requests (endpoint str PRIMARY KEY, ttl int, data JSON)')
     await db.execute('CREATE TABLE IF NOT EXISTS matches (matchId str PRIMARY KEY, data JSON)')
+    await db.execute('CREATE TABLE IF NOT EXISTS players (puuid str PRIMARY KEY)')
 
     setcache(db)
 

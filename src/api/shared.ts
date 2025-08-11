@@ -50,7 +50,7 @@ export class SharedAPI extends BaseAPI {
   }
 
   async setGameSettings(data: GameSettingsResponse): Promise<GameSettingsResponse> {
-    return this.fetch('https://player-preferences-usw2.pp.sgp.pvp.net', '/playerPref/v3/savePreference', { noCache: true, body: data })
+    return this.fetch('https://player-preferences-usw2.pp.sgp.pvp.net', '/playerPref/v3/savePreference', { noCache: true, body: JSON.stringify(data), method: 'PUT' })
   }
 
 }
