@@ -110,6 +110,7 @@ export const Settings = () => {
 
     <div className="divider" />
 
+    {/* Game Settings */}
     <section id="cache" className="flex flex-col space-y-4">
 
       <div className="flex flex-row justify-between">
@@ -119,12 +120,14 @@ export const Settings = () => {
 
       <p className="">VTJS allows you to easily copy and paste game settings like Mouse and ADS sensitivity, minimap config and keybinds from one account to another</p>
 
-      <ol className="text-sm">
-        <li>1. Press <strong>Save Current Settings</strong> button</li>
-        <li>2. Log into account you want to paste the settings to</li>
-        <li>3. Press <strong>Load Saved Settings</strong></li>
-        <li>4. Launch Valorant and check</li>
-      </ol>
+      <div className="alert alert-dash">
+        <ol className="text-sm">
+          <li>1. Press <strong>Save Current Settings</strong> button</li>
+          <li>2. Log into account you want to paste the settings to</li>
+          <li>3. Press <strong>Load Saved Settings</strong></li>
+          <li>4. Launch Valorant and check</li>
+        </ol>
+      </div>
 
       { savedGameSettings && <p>Settings saved for account: {savedGameSettings.name}</p> }
 
@@ -136,6 +139,7 @@ export const Settings = () => {
 
     <div className="divider" />
 
+    {/* Cache */}
     <section id="cache" className="flex flex-col space-y-4">
       <h2>Cache</h2>
 
@@ -144,7 +148,7 @@ export const Settings = () => {
         <div className="flex flex-row items-center space-x-2"><span>Saved matches: {savedMatches}</span></div>
       </div>
 
-      <p className="text-sm">Its okay to have lots of requests cached, especially if you play daily. But if you feel like the app is lagging, try clearing the cache</p>
+      <p>Its okay to have lots of requests cached, especially if you play daily. But if you feel like the app is lagging, try clearing the cache</p>
 
       <div className="flex flex-row items-center space-x-2">
         <button className="btn flex-1 btn-sm btn-warning" disabled={clearingCache} onClick={clearCache}>Clear Old Cache</button>
@@ -154,6 +158,7 @@ export const Settings = () => {
 
     <div className="divider" />
 
+    {/* Privacy */}
     <section id="analytics" className="space-y-4">
       <h2>Privacy</h2>
 
@@ -162,9 +167,9 @@ export const Settings = () => {
         <span>Enable analytics</span>
       </label>
 
-      <p className="alert text-sm">
+      <div className="alert alert-dash text-sm">
         <Heart />Enabling analytics allows us to better understand how you use the app and helps us make the app better for everyone. We are NOT interested in your personal information, cookies, etc. Only app usage is tracked
-      </p>
+      </div>
 
     </section>
 
