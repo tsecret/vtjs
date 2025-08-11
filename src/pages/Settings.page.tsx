@@ -1,9 +1,9 @@
-import { useAtom } from "jotai"
-import { Heart } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
-import atoms from "../utils/atoms"
 import { GameSettingsResponse } from "@/interface"
 import clsx from "clsx"
+import { useAtom } from "jotai"
+import { Heart } from "lucide-react"
+import { useEffect, useState } from "react"
+import atoms from "../utils/atoms"
 
 export const Settings = () => {
   const [appInfo] = useAtom(atoms.appInfo)
