@@ -1,13 +1,15 @@
 import { localDataDir } from '@tauri-apps/api/path';
-import { readTextFile } from '@tauri-apps/plugin-fs';
+import { readTextFile, readDir } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
 import pako from 'pako';
+import { Buffer } from 'buffer';
 
 import lockfile from '../../lockfile.json';
 import agents from '../assets/agents.json';
 import maps from '../assets/maps.json';
 import ranks from '../assets/ranks.json';
 import seasons from '../assets/seasons.json';
+import configs from '../../tests/fixtures/local/configs.json'
 
 import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
 
@@ -40,6 +42,16 @@ export const readLockfile = async (): Promise<string> => {
     const path = await localDataDir()
     const file = await readTextFile(path + '\\Riot Games\\Riot Client\\Config\\lockfile')
     return file.toString()
+  }
+}
+
+export const readConfigs = async (): Promise<string[]> => {
+  if (isMac()){
+    return configs
+  } else {
+    const path = await localDataDir()
+    const files = await readDir(path + '\\Valorant\\Saved\\Config')
+    return files.map(file => file.name).filter(name => name.match(/(.*)-(.*)-(.*)-(.*)-(.*)/))
   }
 }
 

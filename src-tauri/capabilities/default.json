@@ -27,6 +27,17 @@
         }
       ]
     },
+    {
+      "identifier": "fs:allow-read-dir",
+      "allow": [
+        {
+          "path": "$LOCALDATA/**"
+        },
+        {
+          "path": "$EXE/**"
+        }
+      ]
+    },
     "os:default",
     "os:allow-hostname",
     "websocket:default",
@@ -47,6 +58,9 @@
         },
         {
           "url": "https://valorant-api.com:*"
+        },
+        {
+          "url": "https://*.pvp.net:*"
         }
       ]
     },
