@@ -11,7 +11,7 @@ import ranks from '../assets/ranks.json';
 import seasons from '../assets/seasons.json';
 import configs from '../../tests/fixtures/local/configs.json'
 
-import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
+import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchResult, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -68,55 +68,68 @@ export const extractPlayers = (match: CurrentPreGameMatchResponse | CurrentGameM
   return match.Players.map(player => player.Subject)
 }
 
-export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]) => {
+export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]): { kills: number, deaths: number, assists: number, kd: number, hs: number, adr: number } => {
 
-  let kds: number[] = []
-  let hss: number[] = []
-  let adr: number[] = []
-  let accountLevel = 0
+  const stats = {
+    i: 0,
+    kills: 0,
+    deaths: 0,
+    assists: 0,
+    kd: 0,
+    hs: 0,
+    adr: 0,
+  }
 
   for (const match of matches){
-    const player = match.players.find(player => player.subject === puuid)!
+    const player = match.players.find(player => player.subject === puuid)
 
-    if (!player.stats) continue
+    if (!player || !player.stats) continue
 
-
-    kds.push(player.stats.kills / (player.stats.deaths || 1))
+    stats.i += 1
+    stats.kills += player.stats.kills
+    stats.deaths += player.stats.deaths
+    stats.assists += player.stats.assists
+    stats.kd += player.stats.kills / (player.stats.deaths || 1)
 
     if (match.roundResults){
+
       const shots = { legshots: 0, bodyshots: 0, headshots: 0 }
-      const damagePerRound: number[] = []
+      let damagePerRound = 0
 
       for (const roundResult of match.roundResults){
-        let dmg = 0;
+
         for (const damage of roundResult.playerStats.find(result => result.subject === puuid)!.damage){
           shots.legshots += damage.legshots
           shots.bodyshots += damage.bodyshots
           shots.headshots += damage.headshots
-          dmg += damage.damage
+          damagePerRound += damage.damage
         }
 
-        damagePerRound.push(dmg)
       }
 
-      hss.push(shots.headshots / (shots.legshots + shots.bodyshots + shots.headshots))
-      adr.push(damagePerRound.reduce((a, b) => a + b) / damagePerRound.length)
+      stats.adr += damagePerRound / match.roundResults.length
+      stats.hs += shots.headshots / (shots.headshots + shots.bodyshots + shots.legshots)
     }
 
-    accountLevel = Math.max(accountLevel, player.accountLevel)
   }
 
-  // Last Game Won and Score
-  const team = matches.length ? matches[0].teams?.find(team => team.teamId === matches[0].players.find(player => player.subject === puuid)!.teamId)! : undefined
- 
+  if (stats.i == 0)
+    return {
+      kills: 0,
+      deaths: 0,
+      assists: 0,
+      kd: 0,
+      hs: 0,
+      adr: 0,
+    }
 
   return {
-    kd: kds.length ? parseFloat((kds.reduce((a, b) => a + b) / kds.length).toFixed(2)) : 0,
-    hs: hss.length ? Math.round(hss.reduce((a, b) => a + b) / hss.length * 100) : 0,
-    adr: adr.length ? Math.round(adr.reduce((a, b) => a + b) / adr.length) : 0,
-    lastGameWon: team ? team.won : 'N/A',
-    lastGameScore: team ? `${team.roundsWon}:${team.roundsPlayed - team.roundsWon}` : 'N/A',
-    accountLevel,
+    kills: Math.round(stats.kills / matches.length),
+    deaths: Math.round(stats.deaths / matches.length),
+    assists: Math.round(stats.assists / matches.length),
+    kd: Number((stats.kd / matches.length).toFixed(2)),
+    hs: Math.round((stats.hs / matches.length) * 100),
+    adr: Math.round(stats.adr / matches.length),
   }
 }
 
@@ -132,6 +145,24 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
       : null,
     lastGameMMRDiff: playerMMR.LatestCompetitiveUpdate?.RankedRatingEarned
   }
+}
+
+export const getMatchResult = (puuid: string, matches: MatchDetailsResponse[]): { result: MatchResult, score: string, accountLevel: number } => {
+  if (!matches.length)
+    return { result: 'N/A', score: '', accountLevel: 0 }
+
+  const recentMatch = matches[0]
+
+  if (!recentMatch.teams)
+    return { result: 'N/A', score: '', accountLevel: 0 }
+
+  const player = matches[0].players.find(player => player.subject === puuid)!
+  const team = recentMatch.teams.find(team => team.teamId === player.teamId)!
+
+  if (recentMatch.teams[0].roundsWon === recentMatch.teams[1].roundsWon)
+    return { result: 'tie', score: `${recentMatch.teams[0].roundsWon}-${recentMatch.teams[1].roundsWon}`, accountLevel: player.accountLevel }
+
+  return { result: team.won ? 'won' : 'loss', score: `${team.roundsWon}-${team.roundsPlayed - team.roundsWon}`, accountLevel: player.accountLevel }
 }
 
 export const getAgent = (uuid: string): Agent => {
@@ -155,14 +186,6 @@ export const getSeasonDateById = (seasonId: string): Date | null => {
   if (!season) return null
 
   return new Date(season.endTime)
-}
-
-export const playerHasWon = (puuid: string, match: MatchDetailsResponse) => {
-  return match.teams?.find(team => team.teamId === match.players.find(player => player.subject === puuid)?.teamId)?.won ?? false
-}
-
-export const getMatchResult = (puuid: string, match: MatchDetailsResponse) => {
-  return match.teams?.find(team => team.teamId === match.players.find(player => player.subject === puuid)?.teamId)?.won ?? false
 }
 
 export const isSmurf = (player: PlayerRow) => {

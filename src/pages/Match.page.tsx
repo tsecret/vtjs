@@ -5,6 +5,8 @@ import { useNavigate, useParams } from "react-router"
 import * as utils from '../utils'
 import moment from "moment"
 import clsx from "clsx"
+import { MatchDetailsResponse } from "@/interface"
+import { Bomb, ExternalLink, FlagOff, ScissorsLineDashed, Skull } from "lucide-react"
 
 type Match = {
   mapName: string
@@ -26,6 +28,17 @@ type Match = {
     rankName: string
     rankColor: string
   }[]
+  roundResults: MatchDetailsResponse['roundResults']
+  teams: {
+    red: {
+      won: boolean
+      score: number
+    },
+    blue: {
+      won: boolean
+      score: number
+    }
+  }
 }
 
 export const MatchPage = () => {
@@ -46,6 +59,9 @@ export const MatchPage = () => {
         setError('Error while loading match details')
         return
       }
+
+      const teamRed = match.teams?.find(team => team.teamId === 'Red')!
+      const teamBlue = match.teams?.find(team => team.teamId === 'Blue')!
 
       setMatch({
         mapName: utils.getMap(match.matchInfo.mapId)?.displayName || '',
@@ -73,7 +89,18 @@ export const MatchPage = () => {
             rankName,
             rankColor
           }
-        }).sort((a, b) => b.kd - a.kd)
+        }).sort((a, b) => b.kd - a.kd),
+        roundResults: match.roundResults,
+        teams: {
+          red: {
+            won: teamRed.won,
+            score: teamRed.roundsWon
+          },
+          blue: {
+            won: teamBlue.won,
+            score: teamBlue.roundsWon
+          },
+        }
       })
 
     })();
@@ -108,9 +135,21 @@ export const MatchPage = () => {
       </div>
     </section>
 
+    {/* Score */}
+    <section className="flex flex-row">
+      <div className="stat">
+        <div className="stat-title">Team Red</div>
+        <div className="stat-value text-error">{match.teams.red.score}</div>
+      </div>
+      <div className="stat">
+        <div className="stat-title">Team Blue</div>
+        <div className="stat-value text-info">{match.teams.blue.score}</div>
+      </div>
+    </section>
+
     {/* Player Table */}
     <section>
-      <table className="table table-md">
+      <table className="table table-xs sm:table-sm">
         <thead>
           <tr className="text-center">
             <th>Agent</th>
@@ -119,27 +158,52 @@ export const MatchPage = () => {
             <th>K/D/A</th>
             <th>KD Ratio</th>
             <th>HS%</th>
+            <th></th>
           </tr>
         </thead>
 
         <tbody>
           {match.players.map(player => (
-            <tr key={player.puuid} onClick={() => navigate(`/player/${player.puuid}`)} className={clsx("cursor-pointer", player.team === 'Blue' ? 'bg-success/5' : 'bg-error/5', 'text-center')}>
+            <tr key={player.puuid} className={clsx(player.team === 'Blue' ? 'bg-info/10' : 'bg-error/5', 'text-center')}>
               <td className="flex flex-row items-center"><img src={player.agentImg} className="max-h-8"/></td>
               <td className="text-left">
                 <span>{player.name}</span>
                 <span className="text-xs opacity-50">#{player.tag}</span>
               </td>
               <td><span className="text-xs font-bold" style={{ color: `#${player.rankColor}` }} >{player.rankName}</span></td>
-              <td>{player.kills}/{player.deaths}/{player.assists}</td>
+              <td>{player.kills} / {player.deaths} / {player.assists}</td>
               <td><span className={player.kd >= 1 ? 'text-success' : 'text-error'}>{player.kd}</span></td>
               <td>{player.hs}%</td>
+              <td><button className="btn btn-ghost btn-sm" onClick={() => navigate(`/player/${player.puuid}?refMatchId=${matchId}`)}><ExternalLink size={16} /></button></td>
             </tr>
           ))}
         </tbody>
 
       </table>
     </section>
+
+    {/* Round Timeline */}
+    {/* <section>
+      <ul className="timeline">
+        {
+          match.roundResults?.map(round => (
+             <li key={round.roundNum}>
+                <div className={clsx('timeline-box', round.winningTeam === 'Red' ? 'timeline-start bg-error/5' : 'timeline-end bg-info/10')}>{}</div>
+                <div className="timeline-middle bg-base-300 rounded-full p-2">
+                  {
+                    round.roundResultCode === 'Defuse' ? <ScissorsLineDashed size={20} />
+                    : round.roundResultCode === 'Elimination' ? <Skull size={20} />
+                    : round.roundResultCode === 'Detonate' ? <Bomb size={20} />
+                    : round.roundResultCode === 'Surrendered' ? <FlagOff size={20} />
+                    : null
+                  }
+                </div>
+                <hr />
+            </li>
+          ))
+        }
+      </ul>
+    </section> */}
 
   </div>
 }

@@ -81,11 +81,12 @@ export const MatchHandler = () => {
             for (const player of playersToProcess) {
                 try {
                     const mmr = await sharedapi.getPlayerMMR(player.Subject);
+
                     const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff } = utils.calculateRanking(mmr);
                     const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
                     const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
 
-                    const playerInfo = players.find(_player => _player.Subject === player.Subject);
+                    const playerInfo = players.find(p => p.Subject === player.Subject);
                     if (!playerInfo) continue;
 
                     const { GameName, TagLine } = playerInfo;
@@ -148,7 +149,8 @@ export const MatchHandler = () => {
                 const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject);
                 const matches = await Promise.all(matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID)))
 
-                const { kd, hs, adr, lastGameWon, lastGameScore, accountLevel } = utils.calculateStatsForPlayer(player.Subject, matches);
+                const { kd, hs, adr } = utils.calculateStatsForPlayer(player.Subject, matches);
+                const { result: lastGameResult, score: lastGameScore, accountLevel } = utils.getMatchResult(player.Subject, matches)
                 const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID);
 
                 setTable(prevTable => ({
@@ -158,7 +160,7 @@ export const MatchHandler = () => {
                         kd,
                         hs,
                         adr,
-                        lastGameWon,
+                        lastGameResult,
                         lastGameScore,
                         accountLevel,
                         bestAgents

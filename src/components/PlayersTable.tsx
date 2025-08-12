@@ -9,24 +9,24 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
   const navigate = useNavigate()
 
   const Row = ({ player }: { player: PlayerRow }) => {
-      return <tr key={player.puuid} className={clsx(player.enemy ? 'bg-error/5' : 'bg-success/5')}>
+      return <tr key={player.puuid} className={clsx(player.enemy ? 'bg-error/5' : 'bg-success/5', 'text-center')}>
         <td>
           <div className="flex flex-row items-center">
             <img src={player.agentImage || undefined} className='h-6 mr-4' draggable={false} />
             <span>{player.agentName}</span>
           </div>
         </td>
-        <th>{ player.puuid === puuid ? <span>You</span> : <><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span></>}</th>
+        <th className="text-start">{ player.puuid === puuid ? <span>You</span> : <><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span></>}</th>
         <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
-        <th className="flex-col flex text-center">
+        <th className="flex flex-col">
           <span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span>
-          {player.rankPeakDate ? <span className="text-mini text-center text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span> : null}
+          {player.rankPeakDate ? <span className="text-mini text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span> : null}
         </th>
-        <th><span className="text-center">{player.accountLevel}</span></th>
+        <th><span>{player.accountLevel}</span></th>
         <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-success' : 'text-error')}>{player.kd}</span></td>
-        <td><span className="text-center">{player.hs}{player.hs ? '%' : null}</span></td>
-        <td><span className="text-center">{player.adr}</span></td>
-        <td><span className={clsx('text-center', player.lastGameScore === 'N/A' ? null : player.lastGameWon ? 'text-success' : 'text-error')}>{player.lastGameScore}{player.lastGameMMRDiff && player.lastGameScore ? ` (${player.lastGameMMRDiff > 0 ? '+'+player.lastGameMMRDiff : player.lastGameMMRDiff})` : null}</span></td>
+        <td><span>{player.hs}{player.hs ? '%' : null}</span></td>
+        <td><span>{player.adr}</span></td>
+        <td><span className={clsx(player.lastGameResult === 'won' ? 'text-success' : player.lastGameResult === 'loss' ? 'text-error' : null)}>{player.lastGameScore}{player.lastGameMMRDiff && player.lastGameScore ? ` (${player.lastGameMMRDiff > 0 ? '+'+player.lastGameMMRDiff : player.lastGameMMRDiff})` : null}</span></td>
         <td>
           <div className="flex flex-row space-x-2">
             {player.bestAgents?.map(agent => (
