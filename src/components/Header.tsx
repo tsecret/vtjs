@@ -86,6 +86,12 @@ export const Header = () => {
 
         <span className="font-bold">Player Details</span>
       </>
+      : location.pathname.startsWith('/match/') ?
+      <>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>
+
+        <span className="font-bold">Match Details</span>
+      </>
       : location.pathname.startsWith('/store') ?
       <>
         <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>

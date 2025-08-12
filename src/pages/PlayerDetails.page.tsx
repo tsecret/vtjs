@@ -1,7 +1,7 @@
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useAtom } from "jotai"
 import { useEffect, useState } from "react"
-import { useParams } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import { Dot, LabelList, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts"
 import { MatchDetailsResponse } from "../interface"
 import * as utils from '../utils'
@@ -64,6 +64,7 @@ export const PlayerDetails = () => {
   const [chartType, setChartType] = useState<ChartType>('kills/deaths')
 
   const { puuid } = useParams()
+  const navigate = useNavigate()
 
   const chartConfig = {
     kills: {
@@ -473,7 +474,7 @@ export const PlayerDetails = () => {
 
             <tbody>
               {table.map(match => (
-                <tr key={match.matchId} className={clsx(match.won ? 'bg-success/5' : 'bg-error/5', 'text-center')}>
+                <tr key={match.matchId} onClick={() => navigate(`/match/${match.matchId}`)}  className={clsx("cursor-pointer", match.won ? 'bg-success/5' : 'bg-error/5', 'text-center')}>
                   <td className="text-left">{moment(match.date).format('HH:mm DD/MM/YY')} <span className="opacity-25">({moment(match.date).fromNow()})</span></td>
                   <td><img src={match.agentImage || undefined} className="max-h-6"/></td>
                   <td>{match.mapName}</td>
