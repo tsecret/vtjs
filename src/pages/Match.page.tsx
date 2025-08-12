@@ -1,12 +1,12 @@
+import { MatchDetailsResponse } from "@/interface"
 import atoms from "@/utils/atoms"
+import clsx from "clsx"
 import { useAtom } from "jotai"
+import { ExternalLink } from "lucide-react"
+import moment from "moment"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router"
 import * as utils from '../utils'
-import moment from "moment"
-import clsx from "clsx"
-import { MatchDetailsResponse } from "@/interface"
-import { Bomb, ExternalLink, FlagOff, ScissorsLineDashed, Skull } from "lucide-react"
 
 type Match = {
   mapName: string
