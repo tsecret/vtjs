@@ -23,7 +23,7 @@ export interface PlayerRow {
   agentName: string | null
   agentId: string | null
   agentImage: string | null
-  lastGameWon?: boolean | string
+  lastGameResult?: MatchResult
   lastGameScore?: string
   lastGameMMRDiff?: number
   gameHistory?: string[]
@@ -49,3 +49,5 @@ export type Payload = {
 
 
 export type GameState = 'Idle' | 'PreGame' | 'Game'
+
+export type MatchResult = 'won' | 'loss' | 'tie' | 'N/A'

@@ -44,8 +44,12 @@ describe('utils', () => {
 
   describe('calculateStatsForPlayer', () => {
 
+    it('execution time', () => {
+      utils.calculateStatsForPlayer('test-player-1-puuid', Array(1000).fill(matchDetails))
+    })
+
     it('no matches', () => {
-      const expected = { kd: 0, accountLevel: 0, lastGameWon: 'N/A', lastGameScore: 'N/A', adr: 0, hs: 0 }
+      const expected = { kd: 0, adr: 0, hs: 0, assists: 0, deaths: 0, kills: 0 }
       expect(utils.calculateStatsForPlayer('test-player-1-puuid', [] as any)).toEqual(expected)
     })
 
@@ -56,20 +60,20 @@ describe('utils', () => {
             subject: 'test-player-1-puuid',
             stats: {
               kills: 5,
+              assists: 0,
               deaths: 0,
             },
-            accountLevel: 10
           }
         ],
         teams: []
       }
 
-      const expected = { kd: 5, accountLevel: 10, lastGameWon: 'N/A', lastGameScore: 'N/A', adr: 0, hs: 0 }
+      const expected = { kd: 5, adr: 0, hs: 0, kills: 5, deaths: 0, assists: 0 }
       expect(utils.calculateStatsForPlayer('test-player-1-puuid', [input] as any)).toEqual(expected)
     })
 
     it('all good', () => {
-      const expected = { kd: 1.56, accountLevel: 89, lastGameWon: false, lastGameScore: '8:13', adr: 124, hs: 19 }
+      const expected = { kd: 1.56, adr: 124, hs: 19, kills: 25, deaths: 16, assists: 7 }
       expect(utils.calculateStatsForPlayer('test-player-1-puuid', [matchDetails] as any)).toEqual(expected)
     })
 

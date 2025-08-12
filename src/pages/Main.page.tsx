@@ -70,11 +70,7 @@ export const Main = () => {
 
     return (
         <div className="p-2 flex flex-col">
-            {error && (
-                <div className="alert alert-error border-error my-4 w-1/2 m-auto">
-                    {error}
-                </div>
-            )}
+            {error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div> }
 
             {/* Progress Indicator */}
             {matchProcessing.isProcessing && matchProcessing.progress.total > 0 && (
@@ -102,6 +98,7 @@ export const Main = () => {
             {/* Waiting State */}
             {player && Object.keys(table).length === 0 && gameState.state === 'Idle' && (
                 <section className="m-auto text-center mt-20">
+                    <span className="loading loading-ring loading-lg my-4" />
                     <h2 className="font-bold">Waiting for match</h2>
                     <p className="text-xs text-slate-400">
                         The check should start automatically when a match is found.
@@ -133,27 +130,7 @@ export const Main = () => {
             )}
 
             {/* Manual Recheck Button */}
-            {Object.keys(table).length > 1 && (
-                <button className="btn btn-primary m-auto btn-sm" onClick={manualCheck}>
-                    Recheck
-                </button>
-            )}
-
-            {/* Dev Tools */}
-            {import.meta.env.VITE_DEV === 'true' && Object.keys(table).length > 1 && (
-                <div className="flex gap-2 justify-center mt-4">
-                    <button
-                        className="btn btn-sm"
-                        onClick={() => {
-                            // Force game end for testing
-                            // This would typically be handled by MatchHandler
-                            console.log('Force game end (dev only)');
-                        }}
-                    >
-                        Force Game End (Dev)
-                    </button>
-                </div>
-            )}
+            {Object.keys(table).length > 1 && <button className="btn btn-primary m-auto btn-sm" onClick={manualCheck}>Recheck</button>}
         </div>
     );
 };

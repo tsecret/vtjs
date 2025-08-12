@@ -59,15 +59,14 @@
     @apply text-[0.25rem]
   }
 
-  .alert-error {
-    @apply bg-error/10 text-error
-  }
 }
 
-@layer utilities {
-  .alert-error {
-    @apply bg-error/10 text-error
-  }
+@utility stat-value {
+  @apply text-xl
+}
+
+@utility alert-error {
+  @apply bg-error/10 text-error
 }
 
 @layer base {

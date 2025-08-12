@@ -16,13 +16,14 @@ import { SocketListener } from './components/SocketListener';
 import { FriendsPage } from './pages/Friends.page';
 import { InitPage } from './pages/Init.page';
 import { Main } from "./pages/Main.page";
-import { PlayerDetails } from "./pages/PlayerDetails.page";
+import { PlayerPage } from "./pages/Player.page";
 import { Settings } from "./pages/Settings.page";
 import { StorePage } from './pages/Store.page';
 import { WelcomePage } from './pages/Welcome.page';
 import * as utils from './utils';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
+import { MatchPage } from './pages/Match.page';
 
 function App() {
 
@@ -130,7 +131,8 @@ function App() {
       <Route path="/settings" element={<Settings />} />
       <Route path="/store" element={<StorePage />} />
       <Route path="/friends" element={<FriendsPage />} />
-      <Route path="/player/:puuid" element={<PlayerDetails />} />
+      <Route path="/player/:puuid" element={<PlayerPage />} />
+      <Route path="/match/:matchId" element={<MatchPage />} />
     </Routes>
   </main>
 }

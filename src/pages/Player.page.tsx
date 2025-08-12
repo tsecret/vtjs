@@ -1,13 +1,14 @@
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useAtom } from "jotai"
 import { useEffect, useState } from "react"
-import { useParams } from "react-router"
+import { useNavigate, useParams, useSearchParams } from "react-router"
 import { Dot, LabelList, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts"
-import { MatchDetailsResponse } from "../interface"
+import { MatchResult, MatchDetailsResponse } from "../interface"
 import * as utils from '../utils'
 import atoms from "../utils/atoms"
 import clsx from "clsx"
 import moment from "moment"
+import { ExternalLink } from "lucide-react"
 
 interface Row {
   matchId: string
@@ -17,7 +18,7 @@ interface Row {
   assists: number
   hs: number
   date: Date,
-  won: boolean
+  result: MatchResult
   score: string
   agentId: string | null
   agentName: string | null
@@ -51,7 +52,7 @@ type ChartData = {
 
 type ChartType = 'kills/deaths' | 'kd' | 'adr' | 'hs'
 
-export const PlayerDetails = () => {
+export const PlayerPage = () => {
   const [sharedapi] = useAtom(atoms.sharedapi)
 
   const [table, setTable] = useState<Row[]>([])
@@ -64,6 +65,9 @@ export const PlayerDetails = () => {
   const [chartType, setChartType] = useState<ChartType>('kills/deaths')
 
   const { puuid } = useParams()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
+  const refMatchId = searchParams.get('refMatchId')
 
   const chartConfig = {
     kills: {
@@ -101,45 +105,33 @@ export const PlayerDetails = () => {
 
         const player = match.players.find(player => player.subject === puuid) as MatchDetailsResponse['players'][0]
         const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
-        const team = match.teams?.find(team => team.teamId === player.teamId)!
 
-        const { hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
+        const { result, score } = utils.getMatchResult(player.subject, [match])
+
+        const { kills, deaths, assists, hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
 
         if (!accountLevel)
           accountLevel = player.accountLevel
 
         _chartData.push({
           i: parseInt(i),
-          kills: player.stats?.kills ?? 0,
-          deaths: player.stats?.deaths ?? 0,
+          kills,
+          deaths,
           kd,
           adr,
           hs
         })
 
-        // adr: match.roundResults ?
-        //   Math.round(
-        //     match.roundResults.reduce((damage, round) =>
-        //       damage + round.playerStats.filter(stat => stat.subject === puuid).reduce((roundDamage, stats) =>
-        //         roundDamage + stats.damage.reduce((damage, shot) =>
-        //           damage + shot.damage,
-        //         0),
-        //       0),
-        //     0)
-        //   / match.roundResults.length)
-        // : 0
-
-
         table.push({
           matchId: match.matchInfo.matchId,
           mapName: utils.getMap(match.matchInfo.mapId).displayName,
-          kills: player.stats?.kills ?? 0,
-          deaths: player.stats?.deaths ?? 0,
-          assists: player.stats?.assists ?? 0,
+          kills,
+          deaths,
+          assists,
           hs,
           date: new Date(match.matchInfo.gameStartMillis),
-          won: utils.playerHasWon(puuid, match),
-          score: `${team.roundsWon}-${team.roundsPlayed-team.roundsWon}`,
+          result,
+          score,
           agentId,
           agentName,
           agentImage
@@ -225,12 +217,12 @@ export const PlayerDetails = () => {
 
         <div className="stat">
           <div className="stat-title">Wins / Loss</div>
-          <div className="stat-value">{table.filter(match => match.won).length} / {table.filter(match => !match.won).length}</div>
+          <div className="stat-value">{table.filter(match => match.result === 'won').length} / {table.filter(match => match.result === 'loss').length}</div>
         </div>
 
         <div className="stat">
           <div className="stat-title">Winrate %</div>
-          <div className="stat-value">{table.length ? (table.filter(match => match.won).length / table.length * 100).toFixed(0) : 0}%</div>
+          <div className="stat-value">{table.length ? (table.filter(match => match.result === 'won').length / table.length * 100).toFixed(0) : 0}%</div>
         </div>
       </div>
 
@@ -466,22 +458,24 @@ export const PlayerDetails = () => {
                 <th>K / D / A</th>
                 <th>Result</th>
                 <th>Score</th>
-                <th>-+</th>
+                <th>±Δ</th>
                 <th>HS%</th>
+                <th></th>
               </tr>
             </thead>
 
             <tbody>
               {table.map(match => (
-                <tr key={match.matchId} className={clsx(match.won ? 'bg-success/5' : 'bg-error/5', 'text-center')}>
+                <tr key={match.matchId} className={clsx(match.result === 'won' ? 'bg-success/5' : match.result === 'loss' ? 'bg-error/5' : 'bg-white/5', 'text-center', refMatchId === match.matchId && 'outline-2 outline-primary')}>
                   <td className="text-left">{moment(match.date).format('HH:mm DD/MM/YY')} <span className="opacity-25">({moment(match.date).fromNow()})</span></td>
                   <td><img src={match.agentImage || undefined} className="max-h-6"/></td>
                   <td>{match.mapName}</td>
                   <td>{match.kills} / {match.deaths} / {match.assists}</td>
-                  <td className={match.won ? 'text-success' : 'text-error'}>{match.won ? 'Win' : 'Loss'}</td>
-                  <td className={match.won ? 'text-success' : 'text-error'}>{match.score}</td>
-                  <td className={(match.kills - match.deaths) > 1 ? 'text-success' : (match.kills - match.deaths) == 0 ? '' : 'text-error'}>{(match.kills - match.deaths) > 1 ? '+' : null}{(match.kills - match.deaths)}</td>
+                  <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.result === 'won' ? 'Win' : match.result === 'loss' ? 'Loss' : 'Draw'}</td>
+                  <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.score}</td>
+                  <td className={(match.kills - match.deaths) >= 1 ? 'text-success' : (match.kills - match.deaths) == 0 ? '' : 'text-error'}>{(match.kills - match.deaths) >= 1 ? '+' : null}{(match.kills - match.deaths)}</td>
                   <td>{match.hs ? match.hs + '%' : null}</td>
+                  <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/match/${match.matchId}`)}><ExternalLink size={14} /></button></td>
                 </tr>
               ))}
             </tbody>
