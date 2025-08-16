@@ -2,8 +2,6 @@ import { SkinResponse, StorefrontResponse, WalletResponse } from "../interface";
 import { BaseAPI } from "./base";
 
 export class StoreAPI extends BaseAPI {
-  private SHARD = 'eu'
-
   async getStore(puuid: string): Promise<StorefrontResponse> {
     return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/store/v3/storefront/${puuid}`, { body: JSON.stringify({}), method: 'POST' })
   }
