@@ -2,7 +2,7 @@ import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import { CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse } from "../interface";
-import * as utils from '../utils';
+import * as utils from '../utils/utils';
 import atoms from "../utils/atoms";
 
 

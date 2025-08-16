@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { Dot, LabelList, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts"
 import { MatchResult, MatchDetailsResponse } from "../interface"
-import * as utils from '../utils'
+import * as utils from '../utils/utils'
 import atoms from "../utils/atoms"
 import clsx from "clsx"
 import moment from "moment"

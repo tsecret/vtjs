@@ -1,5 +1,5 @@
 import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
-import { randomInt, sleep } from "../utils";
+import { randomInt, sleep } from "../utils/utils";
 import { SharedAPI } from "./shared";
 
 import agents from '../assets/agents.json'

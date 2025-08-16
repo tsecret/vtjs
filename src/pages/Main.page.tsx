@@ -2,7 +2,7 @@ import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
 import { useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
-import * as utils from '../utils';
+import * as utils from '../utils/utils';
 import atoms from "../utils/atoms";
 
 

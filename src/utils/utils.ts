@@ -1,0 +1,262 @@
+import { localDataDir } from '@tauri-apps/api/path';
+import { readTextFile, readDir, readTextFileLines } from '@tauri-apps/plugin-fs';
+import base64 from 'base-64';
+import pako from 'pako';
+import { Buffer } from 'buffer';
+
+import lockfile from '../../lockfile.json';
+import agents from '../assets/agents.json';
+import maps from '../assets/maps.json';
+import ranks from '../assets/ranks.json';
+import seasons from '../assets/seasons.json';
+import configs from '../../tests/fixtures/local/configs.json'
+import ShooterGameLog from '../../tests/fixtures/ShooterGame.json'
+
+import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchResult, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
+
+export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const isMac = () => navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
+export const base64Decode = (input: string): string => {
+  return base64.decode(input)
+}
+
+export const zdecode = (input: string): any => {
+  return JSON.parse(pako.inflateRaw(Buffer.from(input, 'base64'), { to: 'string' }))
+}
+
+export const zencode = (input: any): string => {
+  return Buffer.from(pako.deflateRaw(Buffer.from(JSON.stringify(input), 'utf-8'))).toString('base64')
+}
+
+export const randomInt = (min: number, max: number): number =>  {
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+}
+
+export const readLockfile = async (): Promise<string> => {
+  if (isMac()){
+    return lockfile
+  } else {
+    const path = await localDataDir()
+    const file = await readTextFile(path + '\\Riot Games\\Riot Client\\Config\\lockfile')
+    return file.toString()
+  }
+}
+
+export const readConfigs = async (): Promise<string[]> => {
+  if (isMac()){
+    return configs
+  } else {
+    const path = await localDataDir()
+    const files = await readDir(path + '\\Valorant\\Saved\\Config')
+    return files.map(file => file.name).filter(name => name.match(/(.*)-(.*)-(.*)-(.*)-(.*)/))
+  }
+}
+
+export const readLog = async () => {
+  if (isMac()){
+    for (const line of ShooterGameLog){
+      const res = parseShardFromLogline(line)
+      if (res) return res
+    }
+  } else {
+    const path = await localDataDir()
+    const lines = await readTextFileLines(path + '\\Valorant\\Saved\\Logs\\ShooterGame.log')
+    for await (const line of lines){
+      const res = parseShardFromLogline(line)
+      if (res) return res
+    }
+  }
+
+  return ['', '']
+}
+
+export const parseShardFromLogline = (line: string): [string, string] | undefined => {
+    if (!line.includes('https://glz')) return
+
+    const urlMatch = line.match(/URL \[GET (https?:\/\/[^\]]+)\]/)
+    if (!urlMatch) return
+
+    const regionMatch = urlMatch[1].match(/glz-([a-zA-Z]+)-\d+\.([a-zA-Z]+)\.a\.pvp\.net/)
+    if (regionMatch) return [regionMatch[1], regionMatch[2]]
+}
+
+export const parseLockFile = (content: string): { port: string, password: string } => {
+  const [_, __, port, password, ___] =  content.split(':')
+
+  return { port, password: base64.encode(`riot:${password}`) }
+}
+
+export const extractPlayers = (match: CurrentPreGameMatchResponse | CurrentGameMatchResponse): string[] => {
+  if ('AllyTeam' in match)
+    return match.AllyTeam?.Players.map(player => player.Subject) || []
+
+  return match.Players.map(player => player.Subject)
+}
+
+export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]): { kills: number, deaths: number, assists: number, kd: number, hs: number, adr: number } => {
+
+  const stats = {
+    i: 0,
+    kills: 0,
+    deaths: 0,
+    assists: 0,
+    kd: 0,
+    hs: 0,
+    adr: 0,
+  }
+
+  for (const match of matches){
+    const player = match.players.find(player => player.subject === puuid)
+
+    if (!player || !player.stats) continue
+
+    stats.i += 1
+    stats.kills += player.stats.kills
+    stats.deaths += player.stats.deaths
+    stats.assists += player.stats.assists
+    stats.kd += player.stats.kills / (player.stats.deaths || 1)
+
+    if (match.roundResults){
+
+      const shots = { legshots: 0, bodyshots: 0, headshots: 0 }
+      let damagePerRound = 0
+
+      for (const roundResult of match.roundResults){
+
+        for (const damage of roundResult.playerStats.find(result => result.subject === puuid)!.damage){
+          shots.legshots += damage.legshots
+          shots.bodyshots += damage.bodyshots
+          shots.headshots += damage.headshots
+          damagePerRound += damage.damage
+        }
+
+      }
+
+      stats.adr += damagePerRound / match.roundResults.length
+      stats.hs += shots.headshots / (shots.headshots + shots.bodyshots + shots.legshots)
+    }
+
+  }
+
+  if (stats.i == 0)
+    return {
+      kills: 0,
+      deaths: 0,
+      assists: 0,
+      kd: 0,
+      hs: 0,
+      adr: 0,
+    }
+
+  return {
+    kills: Math.round(stats.kills / matches.length),
+    deaths: Math.round(stats.deaths / matches.length),
+    assists: Math.round(stats.assists / matches.length),
+    kd: Number((stats.kd / matches.length).toFixed(2)),
+    hs: Math.round((stats.hs / matches.length) * 100),
+    adr: Math.round(stats.adr / matches.length),
+  }
+}
+
+export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: number, currentRR: number, peakRank: number, peakRankSeasonId: string | null, lastGameMMRDiff: number } =>  {
+  return {
+    currentRank: playerMMR.LatestCompetitiveUpdate?.TierAfterUpdate || 0,
+    currentRR: playerMMR.LatestCompetitiveUpdate?.RankedRatingAfterUpdate || 0,
+    peakRank: playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?
+      Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.Rank - a.Rank)[0].Rank
+      : 0,
+    peakRankSeasonId: playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?
+      Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.Rank - a.Rank)[0].SeasonID
+      : null,
+    lastGameMMRDiff: playerMMR.LatestCompetitiveUpdate?.RankedRatingEarned
+  }
+}
+
+export const getMatchResult = (puuid: string, matches: MatchDetailsResponse[]): { result: MatchResult, score: string, accountLevel: number } => {
+  if (!matches.length)
+    return { result: 'N/A', score: '', accountLevel: 0 }
+
+  const recentMatch = matches[0]
+
+  if (!recentMatch.teams)
+    return { result: 'N/A', score: '', accountLevel: 0 }
+
+  const player = matches[0].players.find(player => player.subject === puuid)!
+  const team = recentMatch.teams.find(team => team.teamId === player.teamId)!
+
+  if (recentMatch.teams[0].roundsWon === recentMatch.teams[1].roundsWon)
+    return { result: 'tie', score: `${recentMatch.teams[0].roundsWon}-${recentMatch.teams[1].roundsWon}`, accountLevel: player.accountLevel }
+
+  return { result: team.won ? 'won' : 'loss', score: `${team.roundsWon}-${team.roundsPlayed - team.roundsWon}`, accountLevel: player.accountLevel }
+}
+
+export const getAgent = (uuid: string): Agent => {
+  if (!uuid)
+    return { uuid, displayIcon: null, displayName: null, killfeedPortrait: null }
+
+  return agents.find(agent => agent.uuid === uuid.toLowerCase())!
+}
+
+export const getRank = (rank: number): { rankName: string, rankColor: string } => {
+  const _rank = ranks.find(_rank => _rank.tier === rank)
+  return { rankName: _rank?.tierName as string, rankColor: _rank?.color as string }
+}
+
+export const getMap = (uuid: string) => {
+  return maps.find(map => map.mapUrl === uuid)!
+}
+
+export const getSeasonDateById = (seasonId: string): Date | null => {
+  const season = seasons.find(season => season.seasonUuid === seasonId)
+  if (!season) return null
+
+  return new Date(season.endTime)
+}
+
+export const isSmurf = (player: PlayerRow) => {
+  return Boolean((player.accountLevel && player.accountLevel < 100)
+    && (player.kd && player.kd > 1.5))
+}
+
+export const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[], mapUrl: string): AgentStats[] => {
+  matches = matches.filter(match => match.matchInfo.mapId === mapUrl)
+
+  const agents: { [key: string]: { k: number, d: number, kd: number, games: number } }  = {}
+
+  for (const match of matches){
+    const player = match.players.find(player => player.subject === puuid)!
+
+    if (!player.stats) continue
+
+    const { kills, deaths } = player?.stats
+
+    if (!(player.characterId in agents)){
+      agents[player.characterId] = { k: kills, d: deaths, kd: 0, games: 1 }
+      continue
+    }
+
+    agents[player.characterId].k += kills
+    agents[player.characterId].d += deaths
+    agents[player.characterId].games += 1
+
+  }
+
+  for (const characterId in agents){
+      agents[characterId].k = Math.round(agents[characterId].k / agents[characterId].games)
+      agents[characterId].d = Math.round(agents[characterId].d / agents[characterId].games)
+      agents[characterId].kd = parseFloat((agents[characterId].k / agents[characterId].d).toFixed(2))
+  }
+
+  return Object.keys(agents).map(characterId => ({
+    agentId: characterId,
+    agentUrl: getAgent(characterId).displayIcon!,
+    avgKills: agents[characterId].k,
+    avgDeaths: agents[characterId].d,
+    avgKd: agents[characterId].kd,
+    games: agents[characterId].games,
+  })).sort((a, b) => b.avgKd - a.avgKd)
+}

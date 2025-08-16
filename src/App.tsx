@@ -20,10 +20,13 @@ import { PlayerPage } from "./pages/Player.page";
 import { Settings } from "./pages/Settings.page";
 import { StorePage } from './pages/Store.page';
 import { WelcomePage } from './pages/Welcome.page';
-import * as utils from './utils';
+import * as utils from './utils/utils';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
 import { MatchPage } from './pages/Match.page';
+import { fetch as httpfetch } from '@tauri-apps/plugin-http';
+import { Announcement } from './components/Announcement';
+
 
 function App() {
 
@@ -37,6 +40,7 @@ function App() {
   const [, setstore] = useAtom(atoms.store)
   const [, setAllowAnalytics] = useAtom(atoms.allowAnalytics)
   const [, setFirstTimeUser] = useAtom(atoms.firstTimeUser)
+  const [, setAnnouncement] = useAtom(atoms.announcement)
 
   const [initStatus, setInitStatus] = useState<string>('Preparing app')
   const [error, setError] = useState<string|null>(null)
@@ -67,6 +71,15 @@ function App() {
       await db.execute('CREATE TABLE IF NOT EXISTS matches (matchId str PRIMARY KEY, data JSON)');
       await db.execute('CREATE TABLE IF NOT EXISTS players (puuid str PRIMARY KEY)');
 
+      try{
+        const ANNOUNCEMENT_URL = 'https://gist.githubusercontent.com/tsecret/0b5f7094000f4063d72276c5e05824aa/raw/announcement.txt'
+        const announcement = await httpfetch(ANNOUNCEMENT_URL).then(res => res.text())
+        if (announcement)
+          setAnnouncement(announcement)
+
+      } catch (err){
+        console.error('Failed to fetch announcement: ', err)
+      }
 
       try {
         setInitStatus('Reading lockfile');
@@ -117,6 +130,7 @@ function App() {
   }, [])
 
   return <main className="relative select-none cursor-default">
+    <Announcement />
     <Header />
     <SocketListener />
     <MatchHandler />

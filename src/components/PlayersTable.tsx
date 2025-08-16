@@ -2,7 +2,7 @@ import clsx from "clsx"
 import { CircleEllipsis } from "lucide-react"
 import { useNavigate } from "react-router"
 import { PlayerRow } from "../interface"
-import * as utils from '../utils'
+import * as utils from '../utils/utils'
 
 export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid']]: PlayerRow }, puuid: string }) => {
 

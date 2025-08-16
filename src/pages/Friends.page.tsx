@@ -3,7 +3,7 @@ import { SquareArrowOutUpRight } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 import { FriendsResponse, PresenceResponse } from "../interface"
-import { base64Decode, getMap } from "../utils"
+import { base64Decode, getMap } from "../utils/utils"
 import atoms from "../utils/atoms"
 
 export const FriendsPage = () => {

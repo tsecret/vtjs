@@ -69,6 +69,10 @@
   @apply bg-error/10 text-error
 }
 
+@utility alert-warning {
+  @apply bg-warning/10 text-warning
+}
+
 @layer base {
   :root {
     --chart-1: oklch(0.646 0.222 41.116);
