@@ -75,7 +75,7 @@ export const readLog = async () => {
 }
 
 export const parseShardFromLogline = (line: string): [string, string] | undefined => {
-    if (!line.includes('[Session_Get]')) return
+    if (!line.includes('https://glz')) return
 
     const urlMatch = line.match(/URL \[GET (https?:\/\/[^\]]+)\]/)
     if (!urlMatch) return
