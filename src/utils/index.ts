@@ -1,5 +1,5 @@
 import { localDataDir } from '@tauri-apps/api/path';
-import { readTextFile, readDir } from '@tauri-apps/plugin-fs';
+import { readTextFile, readDir, readTextFileLines } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
 import pako from 'pako';
 import { Buffer } from 'buffer';
@@ -10,6 +10,7 @@ import maps from '../assets/maps.json';
 import ranks from '../assets/ranks.json';
 import seasons from '../assets/seasons.json';
 import configs from '../../tests/fixtures/local/configs.json'
+import ShooterGameLog from '../../tests/fixtures/ShooterGame.json'
 
 import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchResult, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
 
@@ -53,6 +54,34 @@ export const readConfigs = async (): Promise<string[]> => {
     const files = await readDir(path + '\\Valorant\\Saved\\Config')
     return files.map(file => file.name).filter(name => name.match(/(.*)-(.*)-(.*)-(.*)-(.*)/))
   }
+}
+
+export const readLog = async () => {
+  if (isMac()){
+    for (const line of ShooterGameLog){
+      const res = parseShardFromLogline(line)
+      if (res) return res
+    }
+  } else {
+    const path = await localDataDir()
+    const lines = await readTextFileLines(path + '\\Valorant\\Saved\\Logs\\ShooterGame.log')
+    for await (const line of lines){
+      const res = parseShardFromLogline(line)
+      if (res) return res
+    }
+  }
+
+  return ['', '']
+}
+
+export const parseShardFromLogline = (line: string): [string, string] | undefined => {
+    if (!line.includes('[Session_Get]')) return
+
+    const urlMatch = line.match(/URL \[GET (https?:\/\/[^\]]+)\]/)
+    if (!urlMatch) return
+
+    const regionMatch = urlMatch[1].match(/glz-([a-zA-Z]+)-\d+\.([a-zA-Z]+)\.a\.pvp\.net/)
+    if (regionMatch) return [regionMatch[1], regionMatch[2]]
 }
 
 export const parseLockFile = (content: string): { port: string, password: string } => {

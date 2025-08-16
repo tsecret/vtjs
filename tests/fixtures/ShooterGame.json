@@ -1,0 +1,5 @@
+[
+  "[2025.08.15-21.03.00:714][480]LogPlatformCommon: Platform HTTP Query End. QueryName: [Party_FetchCustomGameConfigs], URL [GET https://glz-eu-1.eu.a.pvp.net/parties/v1/parties/customgameconfigs], TraceID: [4D33FA2449A766F6284FB8BB842160A5] Response Code: [200], Seconds Since Query [0.097000]",
+  "[2025.08.15-21.03.00:716][480]LogPlatformCommon: Platform HTTP Query End. QueryName: [Session_Get], URL [GET https://glz-eu-1.eu.a.pvp.net/session/v1/sessions/da8baa6f-f67c-58a5-b24f-6d0bb0f31216], TraceID: [58D600CD4FD58A1EA5518AB2A0370395] Response Code: [200], Seconds Since Query [0.093000]",
+  "[2025.08.15-21.03.00:716][480]LogPlatformSessionManager: Warning: Session Update had older version."
+]

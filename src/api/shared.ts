@@ -3,9 +3,6 @@ import { BaseAPI } from './base';
 
 export class SharedAPI extends BaseAPI {
 
-  private REGION = 'eu'
-  private SHARD = 'eu'
-
   async getCurrentPreGamePlayer(puuid: string): Promise<CurrentPreGamePlayerResponse|null> {
     return this.fetch(`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`, `/pregame/v1/players/${puuid}`, { noCache: true })
   }
