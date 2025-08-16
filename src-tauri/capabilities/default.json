@@ -38,6 +38,17 @@
         }
       ]
     },
+    {
+      "identifier": "fs:allow-read-text-file-lines",
+      "allow": [
+        {
+          "path": "$LOCALDATA/**"
+        },
+        {
+          "path": "$EXE/**"
+        }
+      ]
+    },
     "os:default",
     "os:allow-hostname",
     "websocket:default",

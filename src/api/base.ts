@@ -4,6 +4,8 @@ import { CACHE_NAME } from "../utils/constants";
 
 export class BaseAPI {
   private HEADERS = {};
+  public REGION: string
+  public SHARD: string
 
   // @ts-ignore
   private cache: Database
@@ -13,7 +15,7 @@ export class BaseAPI {
   private static callTimestamps: number[] = [];
   private static MAX_CALLS_PER_MINUTE = 45;
 
-  constructor({ entToken, accessToken }: { entToken: string, accessToken: string }){
+  constructor({ entToken, accessToken, region, shard }: { entToken: string, accessToken: string, region: string, shard: string }){
     this.HEADERS = {
         'X-Riot-ClientPlatform': 'ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9',
         'X-Riot-ClientVersion': 'release-10.11-shipping-6-3556814',
@@ -21,6 +23,8 @@ export class BaseAPI {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
     }
+    this.REGION = region
+    this.SHARD = shard
   }
 
   private delay(ms: number = 5000){
