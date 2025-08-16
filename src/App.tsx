@@ -69,8 +69,10 @@ function App() {
 
 
       try {
-        setInitStatus('Loading Lockfile');
+        setInitStatus('Reading lockfile');
         const { port, password } = utils.parseLockFile(await utils.readLockfile());
+
+        setInitStatus('Reading logs');
         const [region, shard] = await utils.readLog()
 
         const localapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestLocalAPI({ port: '', password: '' }) :  new LocalAPI({ port, password });
