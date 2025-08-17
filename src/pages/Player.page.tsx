@@ -53,6 +53,8 @@ type ChartData = {
 type ChartType = 'kills/deaths' | 'kd' | 'adr' | 'hs'
 
 export const PlayerPage = () => {
+  const [error, setError] = useState<string|null>(null)
+
   const [sharedapi] = useAtom(atoms.sharedapi)
 
   const [table, setTable] = useState<Row[]>([])
@@ -90,63 +92,69 @@ export const PlayerPage = () => {
       const _chartData: ChartData = []
       let accountLevel: number = 0
 
-      const { History } = await sharedapi.getPlayerMatchHistory(puuid)
+      try {
+        const { History } = await sharedapi.getPlayerMatchHistory(puuid)
 
-      const matches: MatchDetailsResponse[] = []
+        const matches: MatchDetailsResponse[] = []
 
-      for (const match of History){
-        matches.push(await sharedapi.getMatchDetails(match.MatchID))
+        for (const match of History){
+          matches.push(await sharedapi.getMatchDetails(match.MatchID))
+        }
+
+        const { hs: avgHS, adr: avgAdr, kd: avgKd } = utils.calculateStatsForPlayer(puuid, matches)
+
+        for (const i in matches){
+          const match = matches[i]
+
+          const player = match.players.find(player => player.subject === puuid) as MatchDetailsResponse['players'][0]
+          const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
+
+          const { result, score } = utils.getMatchResult(player.subject, [match])
+
+          const { kills, deaths, assists, hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
+
+          if (!accountLevel)
+            accountLevel = player.accountLevel
+
+          _chartData.push({
+            i: parseInt(i),
+            kills,
+            deaths,
+            kd,
+            adr,
+            hs
+          })
+
+          table.push({
+            matchId: match.matchInfo.matchId,
+            mapName: utils.getMap(match.matchInfo.mapId).displayName,
+            kills,
+            deaths,
+            assists,
+            hs,
+            date: new Date(match.matchInfo.gameStartMillis),
+            result,
+            score,
+            agentId,
+            agentName,
+            agentImage
+          })
+        }
+
+        setTable(table)
+        setLoading(false)
+        setAccountLevel(accountLevel)
+        setChartData(_chartData.reverse())
+        setPlayerStats({
+          hs: avgHS,
+          adr: avgAdr,
+          kd: avgKd
+        })
+      } catch (err){
+        console.error(err)
+        setError('Faled to load matches:' + err)
       }
 
-      const { hs: avgHS, adr: avgAdr, kd: avgKd } = utils.calculateStatsForPlayer(puuid, matches)
-
-      for (const i in matches){
-        const match = matches[i]
-
-        const player = match.players.find(player => player.subject === puuid) as MatchDetailsResponse['players'][0]
-        const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
-
-        const { result, score } = utils.getMatchResult(player.subject, [match])
-
-        const { kills, deaths, assists, hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
-
-        if (!accountLevel)
-          accountLevel = player.accountLevel
-
-        _chartData.push({
-          i: parseInt(i),
-          kills,
-          deaths,
-          kd,
-          adr,
-          hs
-        })
-
-        table.push({
-          matchId: match.matchInfo.matchId,
-          mapName: utils.getMap(match.matchInfo.mapId).displayName,
-          kills,
-          deaths,
-          assists,
-          hs,
-          date: new Date(match.matchInfo.gameStartMillis),
-          result,
-          score,
-          agentId,
-          agentName,
-          agentImage
-        })
-      }
-
-      setTable(table)
-      setLoading(false)
-      setAccountLevel(accountLevel)
-      setChartData(_chartData.reverse())
-      setPlayerStats({
-        hs: avgHS,
-        adr: avgAdr,
-        kd: avgKd
-      })
     })()
 
   }, [])
@@ -172,6 +180,11 @@ export const PlayerPage = () => {
 
     })()
   }, [])
+
+  if (error)
+    return <div className='flex flex-row justify-center space-x-4'>
+      <p className="alert alert-error">{error}</p>
+    </div>
 
   if (loading)
     return <div className='flex flex-row justify-center space-x-4'>
