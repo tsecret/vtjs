@@ -1,18 +1,19 @@
 import { localDataDir } from '@tauri-apps/api/path';
-import { readTextFile, readDir, readTextFileLines } from '@tauri-apps/plugin-fs';
+import { readDir, readTextFile, readTextFileLines } from '@tauri-apps/plugin-fs';
 import base64 from 'base-64';
-import pako from 'pako';
 import { Buffer } from 'buffer';
+import pako from 'pako';
 
 import lockfile from '../../lockfile.json';
+import configs from '../../tests/fixtures/local/configs.json';
+import ShooterGameLog from '../../tests/fixtures/ShooterGame.json';
 import agents from '../assets/agents.json';
 import maps from '../assets/maps.json';
 import ranks from '../assets/ranks.json';
 import seasons from '../assets/seasons.json';
-import configs from '../../tests/fixtures/local/configs.json'
-import ShooterGameLog from '../../tests/fixtures/ShooterGame.json'
 
-import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchResult, MatchDetailsResponse, PlayerMMRResponse, PlayerRow } from '../interface';
+import type { BestAgent, BestMaps, PlayerMatchStats } from '@/interface/utils.interface';
+import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, Map, MatchDetailsResponse, MatchResult, PlayerMMRResponse, PlayerRow } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -97,7 +98,7 @@ export const extractPlayers = (match: CurrentPreGameMatchResponse | CurrentGameM
   return match.Players.map(player => player.Subject)
 }
 
-export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]): { kills: number, deaths: number, assists: number, kd: number, hs: number, adr: number } => {
+export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]): PlayerMatchStats => {
 
   const stats = {
     i: 0,
@@ -107,6 +108,10 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
     kd: 0,
     hs: 0,
     adr: 0,
+    wins: 0,
+    losses: 0,
+    ties: 0,
+    winrate: 0,
   }
 
   for (const match of matches){
@@ -119,6 +124,12 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
     stats.deaths += player.stats.deaths
     stats.assists += player.stats.assists
     stats.kd += player.stats.kills / (player.stats.deaths || 1)
+
+    const { result } = getMatchResult(puuid, match)
+    result == 'won' ? stats.wins += 1 :
+    result == 'loss' ? stats.losses += 1 :
+    result == 'tie' ? stats.ties += 1 :
+    null
 
     if (match.roundResults){
 
@@ -143,14 +154,7 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
   }
 
   if (stats.i == 0)
-    return {
-      kills: 0,
-      deaths: 0,
-      assists: 0,
-      kd: 0,
-      hs: 0,
-      adr: 0,
-    }
+    return stats
 
   return {
     kills: Math.round(stats.kills / matches.length),
@@ -159,6 +163,10 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
     kd: Number((stats.kd / matches.length).toFixed(2)),
     hs: Math.round((stats.hs / matches.length) * 100),
     adr: Math.round(stats.adr / matches.length),
+    wins: stats.wins,
+    losses: stats.losses,
+    ties: stats.ties,
+    winrate: Math.round((stats.wins / matches.length) * 100),
   }
 }
 
@@ -176,28 +184,21 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
   }
 }
 
-export const getMatchResult = (puuid: string, matches: MatchDetailsResponse[]): { result: MatchResult, score: string, accountLevel: number } => {
-  if (!matches.length)
+export const getMatchResult = (puuid: string, match: MatchDetailsResponse): { result: MatchResult, score: string, accountLevel: number } => {
+
+  if (!match.teams)
     return { result: 'N/A', score: '', accountLevel: 0 }
 
-  const recentMatch = matches[0]
+  const player = match.players.find(player => player.subject === puuid)!
+  const team = match.teams.find(team => team.teamId === player.teamId)!
 
-  if (!recentMatch.teams)
-    return { result: 'N/A', score: '', accountLevel: 0 }
+  if (match.teams[0].roundsWon === match.teams[1].roundsWon)
+    return { result: 'tie', score: `${match.teams[0].roundsWon}:${match.teams[1].roundsWon}`, accountLevel: player.accountLevel }
 
-  const player = matches[0].players.find(player => player.subject === puuid)!
-  const team = recentMatch.teams.find(team => team.teamId === player.teamId)!
-
-  if (recentMatch.teams[0].roundsWon === recentMatch.teams[1].roundsWon)
-    return { result: 'tie', score: `${recentMatch.teams[0].roundsWon}-${recentMatch.teams[1].roundsWon}`, accountLevel: player.accountLevel }
-
-  return { result: team.won ? 'won' : 'loss', score: `${team.roundsWon}-${team.roundsPlayed - team.roundsWon}`, accountLevel: player.accountLevel }
+  return { result: team.won ? 'won' : 'loss', score: `${team.roundsWon}:${team.roundsPlayed - team.roundsWon}`, accountLevel: player.accountLevel }
 }
 
 export const getAgent = (uuid: string): Agent => {
-  if (!uuid)
-    return { uuid, displayIcon: null, displayName: null, killfeedPortrait: null }
-
   return agents.find(agent => agent.uuid === uuid.toLowerCase())!
 }
 
@@ -206,7 +207,7 @@ export const getRank = (rank: number): { rankName: string, rankColor: string } =
   return { rankName: _rank?.tierName as string, rankColor: _rank?.color as string }
 }
 
-export const getMap = (uuid: string) => {
+export const getMap = (uuid: string): Map => {
   return maps.find(map => map.mapUrl === uuid)!
 }
 
@@ -259,4 +260,61 @@ export const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[
     avgKd: agents[characterId].kd,
     games: agents[characterId].games,
   })).sort((a, b) => b.avgKd - a.avgKd)
+}
+
+export const calculateBestAgents = (puuid: string, matches: MatchDetailsResponse[]): BestAgent[] => {
+  const bestAgents: BestAgent[] = []
+
+  const agents: { [key: string]: MatchDetailsResponse[] } = {}
+
+  for (const match of matches){
+    const player = match.players.find(player => player.subject === puuid)!
+
+    if (!(player.characterId in agents)){
+      agents[player.characterId] = [match]
+    } else {
+      agents[player.characterId].push(match)
+    }
+
+  }
+
+  for (const agentId in agents){
+    const stats = calculateStatsForPlayer(puuid, agents[agentId])
+    bestAgents.push({
+      agentId,
+      matches: agents[agentId].length,
+      ...stats
+    })
+
+  }
+
+  return bestAgents.sort((a, b) => (b.matches || 1) - (a.matches || 0))
+}
+
+export const calculateBestMaps = (puuid: string, matches: MatchDetailsResponse[]): BestMaps[] => {
+  const bestMaps: BestMaps[] = []
+
+  const maps: { [key: string]: MatchDetailsResponse[] } = {}
+
+  for (const match of matches){
+
+    if (!(match.matchInfo.mapId in maps)){
+      maps[match.matchInfo.mapId] = [match]
+    } else {
+      maps[match.matchInfo.mapId].push(match)
+    }
+
+  }
+
+  for (const mapId in maps){
+    const stats = calculateStatsForPlayer(puuid, maps[mapId])
+    bestMaps.push({
+      mapId,
+      matches: maps[mapId].length,
+      ...stats
+    })
+
+  }
+
+  return bestMaps.sort((a, b) => (b.matches || 1) - (a.matches || 0))
 }

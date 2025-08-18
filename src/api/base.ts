@@ -13,7 +13,7 @@ export class BaseAPI {
 
   // Rate limiting tracking
   private static callTimestamps: number[] = [];
-  private static MAX_CALLS_PER_MINUTE = 45;
+  private static MAX_CALLS_PER_MINUTE = 30;
 
   constructor({ entToken, accessToken, region, shard }: { entToken: string, accessToken: string, region: string, shard: string }){
     this.HEADERS = {
@@ -41,7 +41,7 @@ export class BaseAPI {
 
     if (BaseAPI.callTimestamps.length >= BaseAPI.MAX_CALLS_PER_MINUTE) {
       const waitTime = 60_000 - (now - BaseAPI.callTimestamps[0]);
-      console.log(`Rate limit reached, waiting ${waitTime}ms`);
+      console.log(`Internal Rate Limit is hit, waiting ${waitTime}ms`);
       await this.delay(waitTime);
       return this.ensureRateLimit(); // Re-check after waiting
     }
@@ -57,10 +57,9 @@ export class BaseAPI {
       body?: any,
       headers?: any | null
       method?: 'GET' | 'PUT' | 'POST',
-      try?: number,
       noCache?: boolean
       ttl?: number
-    } = { body: null, headers: null, method: 'GET', try: 1, ttl: this.cacheTTL },
+    } = { body: null, headers: null, method: 'GET', ttl: this.cacheTTL },
   ): Promise<any>{
 
     if (!this.cache)
@@ -77,7 +76,7 @@ export class BaseAPI {
       }
     }
 
-    await this.ensureRateLimit();
+    // await this.ensureRateLimit();
 
     const res = await httpfetch(
       hostname + endpoint,
@@ -100,12 +99,11 @@ export class BaseAPI {
       return response
     }
 
-    if (!options.try) options.try = 1
-
     if (res.status === 429){
-      console.log('Rate limit hit, waiting for', options.try * 10_000)
-      await this.delay(options.try * 10_000)
-      return this.fetch(hostname, endpoint, { ...options, try: options.try + 1 })
+      const retrySeconds = parseInt(res.headers.get('retry-after') || '60')
+      console.log('Rate limit hit, waiting for', retrySeconds * 1000)
+      await this.delay(retrySeconds * 1000)
+      return this.fetch(hostname, endpoint, options)
     }
 
     return null

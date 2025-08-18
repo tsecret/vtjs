@@ -60,6 +60,7 @@ export const Main = () => {
             matchId: gameState.matchId,
             state: gameState.state,
             mapName: currentMatch.MapID ? utils.getMap(currentMatch.MapID)?.displayName : 'Unknown',
+            mapId: currentMatch.MapID,
             gameServer: currentMatch.GamePodID ?
                 currentMatch.GamePodID.split('.')[currentMatch.GamePodID.split('.').length - 1] :
                 'Unknown'
@@ -93,7 +94,7 @@ export const Main = () => {
             )}
 
             {/* Players Table */}
-            <PlayersTable table={table} puuid={puuid as string} />
+            <PlayersTable table={table} puuid={puuid as string} mapId={matchDisplayInfo?.mapId} />
 
             {/* Waiting State */}
             {player && Object.keys(table).length === 0 && gameState.state === 'Idle' && (

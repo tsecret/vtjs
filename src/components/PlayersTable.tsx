@@ -1,10 +1,10 @@
 import clsx from "clsx"
-import { CircleEllipsis, ExternalLink } from "lucide-react"
+import { ExternalLink } from "lucide-react"
 import { useNavigate } from "react-router"
 import { PlayerRow } from "../interface"
 import * as utils from '../utils/utils'
 
-export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid']]: PlayerRow }, puuid: string }) => {
+export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow['puuid']]: PlayerRow }, puuid: string, mapId: string }) => {
 
   const navigate = useNavigate()
 
@@ -43,7 +43,7 @@ export const PlayersTable = ({ table, puuid }: { table: { [key: PlayerRow['puuid
           </div>
         </td>
         <td>{ utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }</td>
-        <td><button className="btn btn-xs btn-ghost"><ExternalLink size={14} onClick={() => navigate('/player/' + player.puuid)}/></button></td>
+        <td><button className="btn btn-xs btn-ghost"><ExternalLink size={14} onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}/></button></td>
       </tr>
     }
 

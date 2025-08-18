@@ -150,7 +150,7 @@ export const MatchHandler = () => {
                 const matches = await Promise.all(matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID)))
 
                 const { kd, hs, adr } = utils.calculateStatsForPlayer(player.Subject, matches);
-                const { result: lastGameResult, score: lastGameScore, accountLevel } = utils.getMatchResult(player.Subject, matches)
+                const { result: lastGameResult, score: lastGameScore, accountLevel } = utils.getMatchResult(player.Subject, matches[0])
                 const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID);
 
                 setTable(prevTable => ({
