@@ -2296,26 +2296,6 @@
       ]
     },
     {
-      "uuid": "1f10dab3-4294-3827-fa35-c2aa00213cf3",
-      "displayName": "Basic Training",
-      "narrativeDescription": null,
-      "tacticalDescription": null,
-      "coordinates": null,
-      "displayIcon": null,
-      "listViewIcon": "https://media.valorant-api.com/maps/1f10dab3-4294-3827-fa35-c2aa00213cf3/listviewicon.png",
-      "listViewIconTall": null,
-      "splash": "https://media.valorant-api.com/maps/1f10dab3-4294-3827-fa35-c2aa00213cf3/splash.png",
-      "stylizedBackgroundImage": null,
-      "premierBackgroundImage": null,
-      "assetPath": "ShooterGame/Content/Maps/NPEV2/NPEV2_PrimaryAsset",
-      "mapUrl": "/Game/Maps/NPEV2/NPEV2",
-      "xMultiplier": 0,
-      "yMultiplier": 0,
-      "xScalarToAdd": 0,
-      "yScalarToAdd": 0,
-      "callouts": null
-    },
-    {
       "uuid": "fd267378-4d1d-484f-ff52-77821ed10dc2",
       "displayName": "Pearl",
       "narrativeDescription": null,
@@ -2764,46 +2744,6 @@
           }
         }
       ]
-    },
-    {
-      "uuid": "ee613ee9-28b7-4beb-9666-08db13bb2244",
-      "displayName": "The Range",
-      "narrativeDescription": null,
-      "tacticalDescription": null,
-      "coordinates": "45\u00B026\u0027FF\u0027N,12\u00B020\u0027Q\u0027E",
-      "displayIcon": null,
-      "listViewIcon": "https://media.valorant-api.com/maps/ee613ee9-28b7-4beb-9666-08db13bb2244/listviewicon.png",
-      "listViewIconTall": "https://media.valorant-api.com/maps/ee613ee9-28b7-4beb-9666-08db13bb2244/listviewicontall.png",
-      "splash": "https://media.valorant-api.com/maps/ee613ee9-28b7-4beb-9666-08db13bb2244/splash.png",
-      "stylizedBackgroundImage": null,
-      "premierBackgroundImage": null,
-      "assetPath": "ShooterGame/Content/Maps/Poveglia/Poveglia_PrimaryAsset",
-      "mapUrl": "/Game/Maps/Poveglia/Range",
-      "xMultiplier": 0,
-      "yMultiplier": 0,
-      "xScalarToAdd": 0,
-      "yScalarToAdd": 0,
-      "callouts": null
-    },
-    {
-      "uuid": "5914d1e0-40c4-cfdd-6b88-eba06347686c",
-      "displayName": "The Range",
-      "narrativeDescription": null,
-      "tacticalDescription": null,
-      "coordinates": "45\u00B026\u0027FF\u0027N,12\u00B020\u0027Q\u0027E",
-      "displayIcon": null,
-      "listViewIcon": "https://media.valorant-api.com/maps/5914d1e0-40c4-cfdd-6b88-eba06347686c/listviewicon.png",
-      "listViewIconTall": "https://media.valorant-api.com/maps/5914d1e0-40c4-cfdd-6b88-eba06347686c/listviewicontall.png",
-      "splash": "https://media.valorant-api.com/maps/5914d1e0-40c4-cfdd-6b88-eba06347686c/splash.png",
-      "stylizedBackgroundImage": null,
-      "premierBackgroundImage": null,
-      "assetPath": "ShooterGame/Content/Maps/PovegliaV2/PovegliaV2_PrimaryAsset",
-      "mapUrl": "/Game/Maps/PovegliaV2/RangeV2",
-      "xMultiplier": 0,
-      "yMultiplier": 0,
-      "xScalarToAdd": 0,
-      "yScalarToAdd": 0,
-      "callouts": null
     },
     {
       "uuid": "1c18ab1f-420d-0d8b-71d0-77ad3c439115",

@@ -47,7 +47,7 @@ export const Header = () => {
   }, [])
 
   if (location.pathname === '/')
-    return null
+    return update ? <button className="btn btn-soft btn-primary absolute bottom-8 right-8 z-10" onClick={onUpdate}><Download size={16}/> Update available</button> : null
 
   return <header className="w-full p-2 flex flex-row items-center space-x-4 px-4">
     {

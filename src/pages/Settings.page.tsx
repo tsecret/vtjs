@@ -113,10 +113,7 @@ export const Settings = () => {
     {/* Game Settings */}
     <section id="cache" className="flex flex-col space-y-4">
 
-      <div className="flex flex-row justify-between">
-        <h2>Game Settings</h2>
-        <span className="badge badge-primary">NEW</span>
-      </div>
+      <h2>Game Settings</h2>
 
       <p className="">VTJS allows you to easily copy and paste game settings like Mouse and ADS sensitivity, minimap config and keybinds from one account to another</p>
 

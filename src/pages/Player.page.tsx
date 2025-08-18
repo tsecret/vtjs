@@ -4,11 +4,12 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { Dot, LabelList, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts"
 import { MatchResult, MatchDetailsResponse } from "../interface"
-import * as utils from '../utils'
+import * as utils from '../utils/utils'
 import atoms from "../utils/atoms"
 import clsx from "clsx"
 import moment from "moment"
 import { ExternalLink } from "lucide-react"
+import { BestAgent, BestMaps } from "@/interface/utils.interface"
 
 interface Row {
   matchId: string
@@ -20,6 +21,7 @@ interface Row {
   date: Date,
   result: MatchResult
   score: string
+  mmrUpdate: number | null
   agentId: string | null
   agentName: string | null
   agentImage: string | null
@@ -53,6 +55,8 @@ type ChartData = {
 type ChartType = 'kills/deaths' | 'kd' | 'adr' | 'hs'
 
 export const PlayerPage = () => {
+  const [error, setError] = useState<string|null>(null)
+
   const [sharedapi] = useAtom(atoms.sharedapi)
 
   const [table, setTable] = useState<Row[]>([])
@@ -60,6 +64,8 @@ export const PlayerPage = () => {
   const [playerCard, setPlayerCard] = useState<PlayerCard>()
   const [playerStats, setPlayerStats] = useState<PlayerStats>()
   const [accountLevel, setAccountLevel] = useState<number>()
+  const [bestAgents, setBestAgents] = useState<(BestAgent & { agentName: string, agentUrl: string })[]>()
+  const [bestMaps, setBestMaps] = useState<(BestMaps & { mapName: string, mapUrl: string })[]>()
 
   const [chartData, setChartData] = useState<ChartData>()
   const [chartType, setChartType] = useState<ChartType>('kills/deaths')
@@ -68,6 +74,8 @@ export const PlayerPage = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams();
   const refMatchId = searchParams.get('refMatchId')
+  const refMapId = searchParams.get('mapId')
+  const refAgentId = searchParams.get('agentId')
 
   const chartConfig = {
     kills: {
@@ -90,63 +98,89 @@ export const PlayerPage = () => {
       const _chartData: ChartData = []
       let accountLevel: number = 0
 
-      const { History } = await sharedapi.getPlayerMatchHistory(puuid)
+      try {
+        const { History } = await sharedapi.getPlayerMatchHistory(puuid)
+        const { Matches: mmrUpdates } = await sharedapi.getCompetitiveUpdates(puuid)
 
-      const matches: MatchDetailsResponse[] = []
+        const matches: MatchDetailsResponse[] = []
 
-      for (const match of History){
-        matches.push(await sharedapi.getMatchDetails(match.MatchID))
+        for (const match of History){
+          matches.push(await sharedapi.getMatchDetails(match.MatchID))
+        }
+
+        const { hs: avgHS, adr: avgAdr, kd: avgKd } = utils.calculateStatsForPlayer(puuid, matches)
+
+        for (const i in matches){
+          const match = matches[i]
+          const mmrUpdate = mmrUpdates.find(update => update.MatchID === match.matchInfo.matchId)
+
+          const player = match.players.find(player => player.subject === puuid) as MatchDetailsResponse['players'][0]
+          const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
+
+          const { result, score } = utils.getMatchResult(player.subject, match)
+
+          const { kills, deaths, assists, hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
+
+          if (!accountLevel)
+            accountLevel = player.accountLevel
+
+          _chartData.push({
+            i: parseInt(i),
+            kills,
+            deaths,
+            kd,
+            adr,
+            hs
+          })
+
+          table.push({
+            matchId: match.matchInfo.matchId,
+            mapName: utils.getMap(match.matchInfo.mapId).displayName,
+            kills,
+            deaths,
+            assists,
+            hs,
+            date: new Date(match.matchInfo.gameStartMillis),
+            result,
+            score,
+            mmrUpdate: mmrUpdate?.RankedRatingEarned || null,
+            agentId,
+            agentName,
+            agentImage
+          })
+        }
+
+        // Top Agents
+        const bestAgents = utils.calculateBestAgents(puuid, matches)
+          .map(agent => {
+            const { displayName: agentName, displayIcon: agentUrl } = utils.getAgent(agent.agentId)
+            return { ...agent, agentName, agentUrl }
+          })
+
+        // Top Maps
+        const bestMaps = utils.calculateBestMaps(puuid, matches)
+          .map(map => {
+            const { displayName: mapName, listViewIcon: mapUrl } = utils.getMap(map.mapId)
+            return { ...map, mapName, mapUrl }
+          })
+
+
+        setBestAgents(bestAgents)
+        setBestMaps(bestMaps)
+        setTable(table)
+        setLoading(false)
+        setAccountLevel(accountLevel)
+        setChartData(_chartData.reverse())
+        setPlayerStats({
+          hs: avgHS,
+          adr: avgAdr,
+          kd: avgKd
+        })
+      } catch (err){
+        console.error(err)
+        setError('Faled to load matches:' + err)
       }
 
-      const { hs: avgHS, adr: avgAdr, kd: avgKd } = utils.calculateStatsForPlayer(puuid, matches)
-
-      for (const i in matches){
-        const match = matches[i]
-
-        const player = match.players.find(player => player.subject === puuid) as MatchDetailsResponse['players'][0]
-        const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
-
-        const { result, score } = utils.getMatchResult(player.subject, [match])
-
-        const { kills, deaths, assists, hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
-
-        if (!accountLevel)
-          accountLevel = player.accountLevel
-
-        _chartData.push({
-          i: parseInt(i),
-          kills,
-          deaths,
-          kd,
-          adr,
-          hs
-        })
-
-        table.push({
-          matchId: match.matchInfo.matchId,
-          mapName: utils.getMap(match.matchInfo.mapId).displayName,
-          kills,
-          deaths,
-          assists,
-          hs,
-          date: new Date(match.matchInfo.gameStartMillis),
-          result,
-          score,
-          agentId,
-          agentName,
-          agentImage
-        })
-      }
-
-      setTable(table)
-      setLoading(false)
-      setAccountLevel(accountLevel)
-      setChartData(_chartData.reverse())
-      setPlayerStats({
-        hs: avgHS,
-        adr: avgAdr,
-        kd: avgKd
-      })
     })()
 
   }, [])
@@ -173,10 +207,15 @@ export const PlayerPage = () => {
     })()
   }, [])
 
-  if (loading)
+  if (error)
     return <div className='flex flex-row justify-center space-x-4'>
-      <span className="loading loading-spinner loading-xs"></span>
-      <p>Loading matches</p>
+      <p className="alert alert-error">{error}</p>
+    </div>
+
+  if (loading)
+    return <div className='flex flex-col items-center space-y-4'>
+      <p><span className="loading loading-spinner loading-xs mr-2"></span> Loading matches</p>
+      <p className="alert max-w-md text-center text-xs">If loading takes too long, you probably hit the Riot's rate limit and matches will load in a minute or so</p>
     </div>
 
   return <div className="flex flex-col items-center p-4">
@@ -248,8 +287,10 @@ export const PlayerPage = () => {
     {
       chartData?.length ?
       <>
+        <div className="divider px-32" />
+
         {/* Kills Death, KD and ADR Charts */}
-        <div className="card w-full max-w-3xl my-10">
+        <section className="card w-full max-w-3xl">
           <div className="card-body">
             <div className="flex flex-row justify-between">
               <h2 className="card-title">Performance over last 20 matches</h2>
@@ -443,10 +484,102 @@ export const PlayerPage = () => {
             </ChartContainer>
 
           </div>
-        </div>
+        </section>
 
-        <section className="overflow-x-auto flex flex-col items-center">
-          <span className="font-bold my-4">Player Match History</span>
+        <div className="divider px-32" />
+
+        {/* Best Agents Table */}
+        <section className="flex flex-col space-y-8 lg:flex-row lg:space-x-8">
+          <div className="flex flex-col space-y-4">
+            <label className="font-bold my-4">Agent Performance</label>
+
+            <div className="overflow-x-auto">
+              <table className="table table-xs text-center">
+                <thead>
+                  <tr>
+                    <th>Agent</th>
+                    <th>Matches</th>
+                    <th>KD</th>
+                    <th>HS%</th>
+                    <th>ADR</th>
+                    <th>W / T / L</th>
+                    <th>WR%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bestAgents?.map(agent => (
+                    <tr key={agent.agentId} className={clsx(refAgentId === agent.agentId && 'border-2 border-primary')}>
+                      <th className="flex flex-row items-center space-x-2">
+                        <img src={agent.agentUrl} className="max-h-6" draggable={false} />
+                        <span>{agent.agentName}</span>
+                      </th>
+                      <td>{agent.matches}</td>
+                      <td className={clsx(agent.kd >= 1 ? 'text-success' : 'text-error')}>{agent.kd}</td>
+                      <td>{agent.hs}%</td>
+                      <td className={clsx(agent.adr >= 150 ? 'text-success' : 'text-error')}>{agent.adr}</td>
+                      <td className="space-x-0.5">
+                        <span className="text-success">{agent.wins}</span>
+                        <span className="opacity-50">-</span>
+                        <span>{agent.ties}</span>
+                        <span className="opacity-50">-</span>
+                        <span className="text-error">{agent.losses}</span>
+                      </td>
+                      <td className={clsx(agent.winrate > 50 ? 'text-success' : 'text-error')}>{agent.winrate}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-4">
+            <label className="font-bold my-4">Map Performance</label>
+
+            <div className="overflow-x-auto">
+              <table className="table table-xs text-center">
+                <thead>
+                  <tr>
+                    <th>Map</th>
+                    <th>Matches</th>
+                    <th>KD</th>
+                    <th>HS%</th>
+                    <th>ADR</th>
+                    <th>W / T / L</th>
+                    <th>WR%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bestMaps?.map(map => (
+                    <tr key={map.mapId}  className={clsx(refMapId === map.mapId && 'border-2 border-primary')}>
+                      <th className="flex flex-row items-center space-x-2">
+                        <img src={map.mapUrl} className="max-h-6 blur-[1px] brightness-50" draggable={false} />
+                        <span className="z-10 absolute left-4">{map.mapName}</span>
+                      </th>
+                      <td>{map.matches}</td>
+                      <td className={clsx(map.kd >= 1 ? 'text-success' : 'text-error')}>{map.kd}</td>
+                      <td>{map.hs}%</td>
+                      <td className={clsx(map.adr >= 150 ? 'text-success' : 'text-error')}>{map.adr}</td>
+                      <td className="space-x-0.5">
+                        <span className="text-success">{map.wins}</span>
+                        <span className="opacity-50">-</span>
+                        <span>{map.ties}</span>
+                        <span className="opacity-50">-</span>
+                        <span className="text-error">{map.losses}</span>
+                      </td>
+                      <td className={clsx(map.winrate > 50 ? 'text-success' : 'text-error')}>{map.winrate}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <div className="divider px-32" />
+
+        {/* Matches Table */}
+        <section className="overflow-x-auto flex flex-col space-y-8">
+          <label className="font-bold my-4">Player Match History</label>
 
           <table className="table table-xs">
 
@@ -458,7 +591,7 @@ export const PlayerPage = () => {
                 <th>K / D / A</th>
                 <th>Result</th>
                 <th>Score</th>
-                <th>±Δ</th>
+                <th>±RR</th>
                 <th>HS%</th>
                 <th></th>
               </tr>
@@ -466,14 +599,14 @@ export const PlayerPage = () => {
 
             <tbody>
               {table.map(match => (
-                <tr key={match.matchId} className={clsx(match.result === 'won' ? 'bg-success/5' : match.result === 'loss' ? 'bg-error/5' : 'bg-white/5', 'text-center', refMatchId === match.matchId && 'outline-2 outline-primary')}>
+                <tr key={match.matchId} className={clsx(match.result === 'won' ? 'bg-success/5' : match.result === 'loss' ? 'bg-error/5' : 'bg-white/5', 'text-center', refMatchId === match.matchId && 'border-2 border-primary')}>
                   <td className="text-left">{moment(match.date).format('HH:mm DD/MM/YY')} <span className="opacity-25">({moment(match.date).fromNow()})</span></td>
                   <td><img src={match.agentImage || undefined} className="max-h-6"/></td>
                   <td>{match.mapName}</td>
                   <td>{match.kills} / {match.deaths} / {match.assists}</td>
                   <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.result === 'won' ? 'Win' : match.result === 'loss' ? 'Loss' : 'Draw'}</td>
                   <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.score}</td>
-                  <td className={(match.kills - match.deaths) >= 1 ? 'text-success' : (match.kills - match.deaths) == 0 ? '' : 'text-error'}>{(match.kills - match.deaths) >= 1 ? '+' : null}{(match.kills - match.deaths)}</td>
+                  <td className={clsx(match.mmrUpdate ? match.mmrUpdate > 0 ? 'text-success' : 'text-error' : null)}>{match.mmrUpdate ? match.mmrUpdate > 0 ? `+${match.mmrUpdate}` : match.mmrUpdate : null}</td>
                   <td>{match.hs ? match.hs + '%' : null}</td>
                   <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/match/${match.matchId}`)}><ExternalLink size={14} /></button></td>
                 </tr>

@@ -1,8 +1,9 @@
 import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
-import { randomInt, sleep } from "../utils";
+import { randomInt, sleep } from "../utils/utils";
 import { SharedAPI } from "./shared";
 
 import agents from '../assets/agents.json'
+import maps from '../assets/maps.json'
 
 import competitiveUpdates from '../../tests/fixtures/shared/competitive-updates.json';
 import currentMatch from '../../tests/fixtures/shared/current-game-match.json';
@@ -51,13 +52,13 @@ export class TestSharedAPI extends SharedAPI {
 
     match.matchInfo.matchId = matchId
     match.matchInfo.gameStartMillis = randomInt(+new Date()- 365 * 24 * 60 * 60 * 1000, +new Date())
+    match.matchInfo.mapId = maps.map(map => map.mapUrl)[randomInt(0, maps.length)]
 
     for (const player of match.players){
       player.stats.kills = randomInt(0, 30)
       player.stats.deaths = randomInt(0, 30)
       player.stats.assists = randomInt(0, 30)
-      player.characterId = agents.map(agent => agent.uuid)[randomInt(0, agents.map(agent => agent.uuid).length)]
-
+      player.characterId = agents.map(agent => agent.uuid)[randomInt(0, agents.length)]
     }
 
     // @ts-ignore
@@ -65,6 +66,7 @@ export class TestSharedAPI extends SharedAPI {
   }
 
   async getCompetitiveUpdates(_puuid: string): Promise<CompetitiveUpdatesResponse> {
+    // @ts-ignore
     return competitiveUpdates
   }
 
