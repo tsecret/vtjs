@@ -2,7 +2,7 @@ import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import { CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse } from "../interface";
-import * as utils from '../utils';
+import * as utils from '../utils/utils';
 import atoms from "../utils/atoms";
 
 
@@ -118,7 +118,7 @@ export const MatchHandler = () => {
             setTable(updatedTable);
             setCurrentMatch(match);
 
-            processDetailedStats(players, match);
+            processPlayers(players, match);
 
         } catch (error) {
             console.error('Error processing match:', error);
@@ -128,7 +128,7 @@ export const MatchHandler = () => {
         }
     }
 
-    async function processDetailedStats(players: any[], match: CurrentPreGameMatchResponse | CurrentGameMatchResponse) {
+    async function processPlayers(players: any[], match: CurrentPreGameMatchResponse | CurrentGameMatchResponse) {
         if (!sharedapi) return;
 
         try {
@@ -146,11 +146,12 @@ export const MatchHandler = () => {
                     currentPlayer: player.GameName || player.Subject,
                     progress: { step: parseInt(i) + 1, total: players.length }
                 });
+
                 const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject);
                 const matches = await Promise.all(matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID)))
 
                 const { kd, hs, adr } = utils.calculateStatsForPlayer(player.Subject, matches);
-                const { result: lastGameResult, score: lastGameScore, accountLevel } = utils.getMatchResult(player.Subject, matches)
+                const { result: lastGameResult, score: lastGameScore, accountLevel } = utils.getMatchResult(player.Subject, matches[0])
                 const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID);
 
                 setTable(prevTable => ({

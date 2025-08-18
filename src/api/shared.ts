@@ -35,7 +35,10 @@ export class SharedAPI extends BaseAPI {
   }
 
   async getCompetitiveUpdates(puuid: string): Promise<CompetitiveUpdatesResponse> {
-    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/mmr/v1/players/${puuid}/competitiveupdates?queue=competitive`)
+    const startIndex = 0
+    const endIndex = 20
+    const queue = 'competitive'
+    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/mmr/v1/players/${puuid}/competitiveupdates?startIndex=${startIndex}&endIndex=${endIndex}&queue=${queue}`)
   }
 
   async getPlayerMMR(puuid: string): Promise<PlayerMMRResponse> {

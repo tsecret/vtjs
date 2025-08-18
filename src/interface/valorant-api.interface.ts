@@ -1,6 +1,13 @@
 export type Agent = {
   uuid: string
-  displayName: string | null
-  displayIcon: string | null
-  killfeedPortrait: string | null
+  displayName: string
+  displayIcon: string
+  killfeedPortrait: string
+}
+
+export type Map = {
+  uuid: string
+  displayName: string
+  displayIcon: string
+  listViewIcon: string
 }
