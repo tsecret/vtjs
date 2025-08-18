@@ -8,6 +8,7 @@ import { StoreAPI } from '../api/store'
 
 const appInfo = atom<{ version: string, tauriVersion: string, identifier: string }>()
 const cache = atom<Database>()
+const announcement = atom<string|null>()
 
 const localapi = atom<LocalAPI>()
 const sharedapi = atom<SharedAPI>()
@@ -32,6 +33,7 @@ const firstTimeUser = atom<boolean>(true)
 export default {
   appInfo,
   cache,
+  announcement,
   localapi,
   sharedapi,
   storeapi,

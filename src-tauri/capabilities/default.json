@@ -72,6 +72,9 @@
         },
         {
           "url": "https://*.pvp.net:*"
+        },
+        {
+          "url": "https://gist.githubusercontent.com/tsecret/0b5f7094000f4063d72276c5e05824aa/*"
         }
       ]
     },
