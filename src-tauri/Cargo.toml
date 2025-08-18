@@ -1,6 +1,6 @@
 [package]
 name = "vtjs"
-version = "0.2.6"
+version = "0.2.7"
 description = "VTJS"
 authors = ["you"]
 edition = "2021"
