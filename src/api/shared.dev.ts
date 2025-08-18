@@ -66,6 +66,7 @@ export class TestSharedAPI extends SharedAPI {
   }
 
   async getCompetitiveUpdates(_puuid: string): Promise<CompetitiveUpdatesResponse> {
+    // @ts-ignore
     return competitiveUpdates
   }
 

@@ -11,10 +11,6 @@ export class BaseAPI {
   private cache: Database
   public cacheTTL = 30 * 60 * 1000
 
-  // Rate limiting tracking
-  private static callTimestamps: number[] = [];
-  private static MAX_CALLS_PER_MINUTE = 30;
-
   constructor({ entToken, accessToken, region, shard }: { entToken: string, accessToken: string, region: string, shard: string }){
     this.HEADERS = {
         'X-Riot-ClientPlatform': 'ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9',
@@ -29,25 +25,6 @@ export class BaseAPI {
 
   private delay(ms: number = 5000){
     return new Promise(resolve => setTimeout(resolve, ms))
-  }
-
-  private async ensureRateLimit(): Promise<void> {
-    const now = Date.now();
-
-    // Remove timestamps older than 60s
-    BaseAPI.callTimestamps = BaseAPI.callTimestamps.filter(
-      ts => now - ts < 60_000
-    );
-
-    if (BaseAPI.callTimestamps.length >= BaseAPI.MAX_CALLS_PER_MINUTE) {
-      const waitTime = 60_000 - (now - BaseAPI.callTimestamps[0]);
-      console.log(`Internal Rate Limit is hit, waiting ${waitTime}ms`);
-      await this.delay(waitTime);
-      return this.ensureRateLimit(); // Re-check after waiting
-    }
-
-    // Record this call
-    BaseAPI.callTimestamps.push(now);
   }
 
   protected async fetch(

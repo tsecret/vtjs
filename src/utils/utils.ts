@@ -100,8 +100,8 @@ export const extractPlayers = (match: CurrentPreGameMatchResponse | CurrentGameM
 
 export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]): PlayerMatchStats => {
 
+  let validMatches = 0
   const stats = {
-    i: 0,
     kills: 0,
     deaths: 0,
     assists: 0,
@@ -119,7 +119,7 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
 
     if (!player || !player.stats) continue
 
-    stats.i += 1
+    validMatches += 1
     stats.kills += player.stats.kills
     stats.deaths += player.stats.deaths
     stats.assists += player.stats.assists
@@ -153,7 +153,7 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
 
   }
 
-  if (stats.i == 0)
+  if (validMatches == 0)
     return stats
 
   return {

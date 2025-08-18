@@ -118,7 +118,7 @@ export const MatchHandler = () => {
             setTable(updatedTable);
             setCurrentMatch(match);
 
-            processDetailedStats(players, match);
+            processPlayers(players, match);
 
         } catch (error) {
             console.error('Error processing match:', error);
@@ -128,7 +128,7 @@ export const MatchHandler = () => {
         }
     }
 
-    async function processDetailedStats(players: any[], match: CurrentPreGameMatchResponse | CurrentGameMatchResponse) {
+    async function processPlayers(players: any[], match: CurrentPreGameMatchResponse | CurrentGameMatchResponse) {
         if (!sharedapi) return;
 
         try {
@@ -146,6 +146,7 @@ export const MatchHandler = () => {
                     currentPlayer: player.GameName || player.Subject,
                     progress: { step: parseInt(i) + 1, total: players.length }
                 });
+
                 const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject);
                 const matches = await Promise.all(matchHistory.map(match => sharedapi.getMatchDetails(match.MatchID)))
 

@@ -21,6 +21,7 @@ interface Row {
   date: Date,
   result: MatchResult
   score: string
+  mmrUpdate: number | null
   agentId: string | null
   agentName: string | null
   agentImage: string | null
@@ -99,6 +100,7 @@ export const PlayerPage = () => {
 
       try {
         const { History } = await sharedapi.getPlayerMatchHistory(puuid)
+        const { Matches: mmrUpdates } = await sharedapi.getCompetitiveUpdates(puuid)
 
         const matches: MatchDetailsResponse[] = []
 
@@ -110,6 +112,7 @@ export const PlayerPage = () => {
 
         for (const i in matches){
           const match = matches[i]
+          const mmrUpdate = mmrUpdates.find(update => update.MatchID === match.matchInfo.matchId)
 
           const player = match.players.find(player => player.subject === puuid) as MatchDetailsResponse['players'][0]
           const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.characterId)
@@ -140,6 +143,7 @@ export const PlayerPage = () => {
             date: new Date(match.matchInfo.gameStartMillis),
             result,
             score,
+            mmrUpdate: mmrUpdate?.RankedRatingEarned || null,
             agentId,
             agentName,
             agentImage
@@ -279,8 +283,6 @@ export const PlayerPage = () => {
       </div>
 
     </section>
-
-
 
     {
       chartData?.length ?
@@ -487,7 +489,7 @@ export const PlayerPage = () => {
         <div className="divider px-32" />
 
         {/* Best Agents Table */}
-        <section className="flex flex-row space-x-8">
+        <section className="flex flex-col space-y-8 lg:flex-row lg:space-x-8">
           <div className="flex flex-col space-y-4">
             <label className="font-bold my-4">Agent Performance</label>
 
@@ -517,9 +519,9 @@ export const PlayerPage = () => {
                       <td className={clsx(agent.adr >= 150 ? 'text-success' : 'text-error')}>{agent.adr}</td>
                       <td className="space-x-0.5">
                         <span className="text-success">{agent.wins}</span>
-                        <span>-</span>
+                        <span className="opacity-50">-</span>
                         <span>{agent.ties}</span>
-                        <span>-</span>
+                        <span className="opacity-50">-</span>
                         <span className="text-error">{agent.losses}</span>
                       </td>
                       <td className={clsx(agent.winrate > 50 ? 'text-success' : 'text-error')}>{agent.winrate}%</td>
@@ -559,9 +561,9 @@ export const PlayerPage = () => {
                       <td className={clsx(map.adr >= 150 ? 'text-success' : 'text-error')}>{map.adr}</td>
                       <td className="space-x-0.5">
                         <span className="text-success">{map.wins}</span>
-                        <span>-</span>
+                        <span className="opacity-50">-</span>
                         <span>{map.ties}</span>
-                        <span>-</span>
+                        <span className="opacity-50">-</span>
                         <span className="text-error">{map.losses}</span>
                       </td>
                       <td className={clsx(map.winrate > 50 ? 'text-success' : 'text-error')}>{map.winrate}%</td>
@@ -589,7 +591,7 @@ export const PlayerPage = () => {
                 <th>K / D / A</th>
                 <th>Result</th>
                 <th>Score</th>
-                <th>±Δ</th>
+                <th>±RR</th>
                 <th>HS%</th>
                 <th></th>
               </tr>
@@ -604,7 +606,7 @@ export const PlayerPage = () => {
                   <td>{match.kills} / {match.deaths} / {match.assists}</td>
                   <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.result === 'won' ? 'Win' : match.result === 'loss' ? 'Loss' : 'Draw'}</td>
                   <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.score}</td>
-                  <td className={(match.kills - match.deaths) >= 1 ? 'text-success' : (match.kills - match.deaths) == 0 ? '' : 'text-error'}>{(match.kills - match.deaths) >= 1 ? '+' : null}{(match.kills - match.deaths)}</td>
+                  <td className={clsx(match.mmrUpdate ? match.mmrUpdate > 0 ? 'text-success' : 'text-error' : null)}>{match.mmrUpdate ? match.mmrUpdate > 0 ? `+${match.mmrUpdate}` : match.mmrUpdate : null}</td>
                   <td>{match.hs ? match.hs + '%' : null}</td>
                   <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/match/${match.matchId}`)}><ExternalLink size={14} /></button></td>
                 </tr>
