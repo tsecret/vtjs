@@ -23,6 +23,9 @@ export const SocketListener = () => {
               if (match){
                 const [, , , , , type, , matchId] = match
 
+                if (matchId === state.current.matchId)
+                  return
+
                 if (type === 'pregame' && state.current.state !== 'PreGame'){
                   if (state.current.matchId && matchId !== state.current.matchId) return
 
@@ -41,7 +44,7 @@ export const SocketListener = () => {
             }
 
             if (payload.eventType === 'Update' && payload.data.phase === 'Idle' && state.current.state !== 'Idle'){
-              state.current = { state: 'Idle', matchId: null }
+              state.current = { state: 'Idle', matchId: state.current.matchId }
               setGameState(state.current)
             }
 
