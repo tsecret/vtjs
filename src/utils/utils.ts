@@ -13,7 +13,7 @@ import ranks from '../assets/ranks.json';
 import seasons from '../assets/seasons.json';
 
 import type { BestAgent, BestMaps, PlayerMatchStats } from '@/interface/utils.interface';
-import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, Map, MatchDetailsResponse, MatchResult, PlayerMMRResponse, PlayerRow } from '../interface';
+import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, Map, MatchDetailsResponse, MatchResult, PlayerMMRResponse, PlayerRow, StorefrontResponse } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -186,7 +186,7 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
 
 export const getMatchResult = (puuid: string, match: MatchDetailsResponse): { result: MatchResult, score: string, accountLevel: number } => {
 
-  if (!match.teams)
+  if (!match || !match.teams)
     return { result: 'N/A', score: '', accountLevel: 0 }
 
   const player = match.players.find(player => player.subject === puuid)!
@@ -317,4 +317,21 @@ export const calculateBestMaps = (puuid: string, matches: MatchDetailsResponse[]
   }
 
   return bestMaps.sort((a, b) => (b.matches || 1) - (a.matches || 0))
+}
+
+export const getStoreItemInfo = (offers: StorefrontResponse['AccessoryStore']['AccessoryStoreOffers'] | StorefrontResponse['SkinsPanelLayout']['SingleItemStoreOffers']): { uuid: string, price: number, type: 'weaponskin' | 'spray' | 'playercard' | 'buddy' }[] => {
+
+  return offers.map(offer => {
+    const rawOffer = "Offer" in offer ? offer.Offer : offer
+
+    return {
+      uuid: rawOffer.Rewards[0]['ItemID'],
+      price: Object.values(rawOffer.Cost)[0],
+      type:
+        rawOffer.Rewards[0]['ItemTypeID'] === 'e7c63390-eda7-46e0-bb7a-a6abdacd2433' ? 'weaponskin' :
+        rawOffer.Rewards[0]['ItemTypeID'] === 'd5f120f8-ff8c-4aac-92ea-f2b5acbe9475' ? 'spray' :
+        rawOffer.Rewards[0]['ItemTypeID'] === '3f296c07-64c3-494c-923b-fe692a4fa1bd' ? 'playercard' :
+        'buddy'
+    }
+  })
 }
