@@ -912,6 +912,9 @@ export type SkinResponse = {
     uuid: string
     displayName: string
     displayIcon: string
+    fullTransparentIcon: string
+    wideArt: string
+    largeArt: string
   }
 }
 

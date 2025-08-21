@@ -9,6 +9,7 @@ import currentGameMatch from './fixtures/shared/current-game-match.json';
 import currentPreGameMatch from './fixtures/shared/current-pregame-match.json';
 import matchDetails from './fixtures/shared/match-details.json';
 import playerMMR from './fixtures/shared/player-mmr.json';
+import storefront from './fixtures/shared/storefront.json';
 
 describe('utils', () => {
 
@@ -155,6 +156,61 @@ describe('utils', () => {
       expect(utils.getPlayerBestAgent(puuid, [matchDetails, matchDetails] as MatchDetailsResponse[], mapUrl)).toStrictEqual([{ ...expected[0], games: 2 }])
     })
   })
+
+  describe('getStoreItemInfo', () => {
+
+    it('gets accessories info', () => {
+      const expected = [
+        {
+          price: 4000,
+          type: 'spray',
+          uuid: "d80c7de5-4625-7ed6-f2b6-4eb4ec963717"
+        },
+        {
+          price: 4500,
+          type: 'playercard',
+          uuid: "82b5cd0d-4b81-c336-2332-61a753849355"
+        },
+        {
+          price: 6000,
+          type: 'spray',
+          uuid: "eb1455b9-4b48-8a79-c16b-8592043285d4"
+        },
+        {
+          price: 6000,
+          type: 'spray',
+          uuid: "a0a399da-4322-83f0-e734-49a81ab6e820"
+        }
+      ]
+      expect(utils.getStoreItemInfo(storefront.AccessoryStore.AccessoryStoreOffers)).toStrictEqual(expected)
+    })
+
+    it('gets item info', () => {
+      const expected = [
+        {
+          price: 1775,
+          type: 'weaponskin',
+          uuid: "e16ea577-4d7f-e686-456a-54b4b1d9cba2"
+        },
+        {
+          price: 2550,
+          type: 'weaponskin',
+          uuid: "155ba654-4afa-1029-9e71-e0b6962d5410"
+        },
+        {
+          price: 875,
+          type: 'weaponskin',
+          uuid: "b8bc5d1b-44aa-aa83-0246-b1a6bb496177"
+        },
+        {
+          price: 1775,
+          type: 'weaponskin',
+          uuid: "46048768-4499-72f7-820b-7cbe1d4ad844"
+        }
+      ]
+      expect(utils.getStoreItemInfo(storefront.SkinsPanelLayout.SingleItemStoreOffers)).toStrictEqual(expected)
+    })
+  })
 })
 
 describe('api', () => {
@@ -162,7 +218,7 @@ describe('api', () => {
   let sharedapi: SharedAPI;
 
   beforeEach(() => {
-    sharedapi = new SharedAPI({ entToken: '', accessToken: '' })
+    sharedapi = new SharedAPI({ entToken: '', accessToken: '', region: '', shard: '' })
   })
 
   describe('shared', () => {
@@ -182,7 +238,7 @@ describe('request caching', () => {
   const puuid = 'test-player'
 
   beforeEach(async () => {
-    sharedapi = new SharedAPI({ entToken: 'test-ent-token', accessToken: 'test-access-token' })
+    sharedapi = new SharedAPI({ entToken: 'test-ent-token', accessToken: 'test-access-token', region: '', shard: '' })
     vi.useFakeTimers()
   })
 

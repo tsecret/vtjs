@@ -17,4 +17,16 @@ export class StoreAPI extends BaseAPI {
   async getBundleById(bundleId: string): Promise<SkinResponse> {
     return this.fetch('https://valorant-api.com', `/v1/bundles/${bundleId}`, { headers: {} })
   }
+
+  async getSprayById(sprayId: string): Promise<SkinResponse> {
+    return this.fetch('https://valorant-api.com', `/v1/sprays/${sprayId}`, { headers: {} })
+  }
+
+  async getPlayerCardById(playerCardId: string): Promise<SkinResponse> {
+    return this.fetch('https://valorant-api.com', `/v1/playercards/${playerCardId}`, { headers: {} })
+  }
+
+  async getBuddieById(buddieId: string): Promise<SkinResponse> {
+    return this.fetch('https://valorant-api.com', `/v1/buddies/${buddieId}`, { headers: {} })
+  }
 }
