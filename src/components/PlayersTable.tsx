@@ -43,7 +43,7 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
           </div>
         </td>
         <td>{ utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }</td>
-        <td><button className="btn btn-xs btn-ghost"><ExternalLink size={14} onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}/></button></td>
+        <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}><ExternalLink size={14} /></button></td>
       </tr>
     }
 

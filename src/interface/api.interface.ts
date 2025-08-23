@@ -62,7 +62,7 @@ export type PresenceResponse = {
 
 export type PresenceJSON = {
   isValid: boolean
-  sessionLoopState: 'MENUS' | 'INGAME'
+  sessionLoopState: 'MENUS' | 'INGAME' | 'PREGAME'
   partyOwnerSessionLoopState: 'MENUS' | 'INGAME'
   customGameName: string
   customGameTeam: string
@@ -78,7 +78,7 @@ export type PresenceJSON = {
   partyState: 'DEFAULT' | 'MATCHMAKING'
   partyAccessibility: 'CLOSED'
   maxPartySize: number
-  queueId: 'competitive'
+  queueId: 'competitive' | 'deathmatch'
   partyLFM: boolean
   partyClientVersion: string
   partySize: number

@@ -40,14 +40,17 @@ export interface PlayerRow {
 
 export type Payload = {
   data: {
-    phase: 'Idle'
+    phase: 'Idle' | 'Gameplay'
     version: string
+    presences: {
+      private: string
+      puuid: string
+    }[]
   }
   eventType: 'Create' | 'Update',
   uri: string
 }
 
-
-export type GameState = 'Idle' | 'PreGame' | 'Game'
+export type GameState = 'MENUS' | 'PREGAME' | 'INGAME'
 
 export type MatchResult = 'won' | 'loss' | 'tie' | 'N/A'

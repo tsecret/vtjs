@@ -198,7 +198,7 @@ export const getMatchResult = (puuid: string, match: MatchDetailsResponse): { re
   return { result: team.won ? 'won' : 'loss', score: `${team.roundsWon}:${team.roundsPlayed - team.roundsWon}`, accountLevel: player.accountLevel }
 }
 
-export const getAgent = (uuid: string): Agent => {
+export const getAgent = (uuid: string): Agent =>  {
   return agents.find(agent => agent.uuid === uuid.toLowerCase())!
 }
 
