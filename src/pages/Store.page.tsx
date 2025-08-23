@@ -141,7 +141,9 @@ export const StorePage = () => {
         {accessories?.map(skin => <div key={skin.uuid} className="flex flex-1 flex-col border-2 border-primary rounded-md p-4 min-h-48 max-w-64 justify-between tooltip">
             <div className="tooltip-content">
               {
-                skin.urlFull ? <img className="max-h-96 object-contain" src={skin.urlFull} draggable={false} /> : null
+                skin.urlFull ? <img className="max-h-96 object-contain" src={skin.urlFull} draggable={false} /> :
+                skin.urlWide ? <img className="max-h-96 object-contain" src={skin.urlWide} draggable={false} /> :
+                null
               }
             </div>
 

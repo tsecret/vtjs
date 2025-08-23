@@ -1,9 +1,9 @@
 import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
-import { CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse } from "../interface";
-import * as utils from '../utils/utils';
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse } from "../interface";
 import atoms from "../utils/atoms";
+import * as utils from '../utils/utils';
 
 
 export const MatchHandler = () => {
@@ -29,10 +29,8 @@ export const MatchHandler = () => {
         trackEventName: string
     ) {
         if (!sharedapi || !puuid) return
+        if (currentMatchRef.current.isProcessing) return
 
-        if (currentMatchRef.current.isProcessing && currentMatchRef.current.matchId === matchId) {
-            return;
-        }
 
         currentMatchRef.current = { matchId, isProcessing: true };
         setMatchProcessing({ isProcessing: true, currentPlayer: null, progress: { step: 0, total: 0 } });
@@ -41,11 +39,9 @@ export const MatchHandler = () => {
             if (allowAnalytics)
                 await trackEvent(trackEventName);
 
-            if (matchId !== currentMatchRef.current.matchId) {
-                const newTable = { ...table };
-                Object.keys(newTable).forEach(key => { delete newTable[key] });
-                setTable(newTable);
-            }
+            const newTable = { ...table };
+            Object.keys(newTable).forEach(key => { delete newTable[key] });
+            setTable(newTable);
 
             const match = isPreGame
                 ? await sharedapi.getCurrentPreGameMatch(matchId)
@@ -90,7 +86,7 @@ export const MatchHandler = () => {
                     if (!playerInfo) continue;
 
                     const { GameName, TagLine } = playerInfo;
-                    const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.CharacterID as string);
+                    const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = player.CharacterID ? utils.getAgent(player.CharacterID as string) : { uuid: '', displayName: null, killfeedPortrait: null }
                     const isEnemy = isPreGame ? false : (player as any).TeamID !== playerTeamId;
 
                     updatedTable[player.Subject] = {
@@ -179,14 +175,6 @@ export const MatchHandler = () => {
         }
     }
 
-    async function handlePreGameMatch(currentPreGamePlayer: CurrentPreGamePlayerResponse) {
-        await handleMatch(currentPreGamePlayer.MatchID, true, 'check_pregame');
-    }
-
-    async function handleGameMatch(currentGamePlayer: CurrentGamePlayerResponse) {
-        await handleMatch(currentGamePlayer.MatchID, false, 'check_game');
-    }
-
     async function handleGameEnd() {
         if (!cache || !currentMatchRef.current.matchId) return;
 
@@ -213,23 +201,21 @@ export const MatchHandler = () => {
     useEffect(() => {
         if (!sharedapi || !puuid) return;
 
-        if (gameState.state === 'PreGame' && gameState.matchId) {
-            handlePreGameMatch({
-                MatchID: gameState.matchId,
-                Subject: puuid,
-                Version: 0
-            });
+        if (gameState.state === 'PREGAME') {
+            sharedapi.getCurrentPreGamePlayer(puuid)
+            .then(match => {
+              if (match) handleMatch(match.MatchID, true, 'check_pregame')
+            })
         }
 
-        if (gameState.state === 'Game' && gameState.matchId) {
-            handleGameMatch({
-                MatchID: gameState.matchId,
-                Subject: puuid,
-                Version: 0
-            });
+        if (gameState.state === 'INGAME') {
+            sharedapi.getCurrentGamePlayer(puuid)
+            .then(match => {
+              if (match) handleMatch(match.MatchID, false, 'check_game')
+            })
         }
 
-        if (gameState.state === 'Idle') {
+        if (gameState.state === 'MENUS') {
             handleGameEnd();
         }
 

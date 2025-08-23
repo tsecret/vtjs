@@ -1,60 +1,56 @@
+import { base64Decode } from "@/utils";
 import { listen } from "@tauri-apps/api/event";
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
-import { GameState, Payload } from "../interface";
+import { GameState, Payload, PresenceJSON } from "../interface";
 import atoms from "../utils/atoms";
 
 export const SocketListener = () => {
   const [, setGameState] = useAtom(atoms.gameState)
-  const state = useRef<{ state: GameState, matchId: string | null }>({ state: 'Idle', matchId: null });
+  const [puuid] = useAtom(atoms.puuid)
+  const state = useRef<{ state: GameState, matchId: string | null }>({ state: 'MENUS', matchId: null });
 
 
   useEffect(() => {
-      listen<string>('ws_message', (event) => {
+    if (!puuid) return
 
-          try {
-            const [, , payload]: [null, null, Payload] = JSON.parse(event.payload.replace('///', ''))
+    listen<string>('ws_message', (event) => {
 
-            if (payload.data.version === '-1') return
+        try {
+          const [, , payload]: [null, null, Payload] = JSON.parse(event.payload.replace('///', ''))
 
-            if (payload.eventType === 'Create'){
-              const match = payload.uri.match(/\/(.*)\/(.*)\/(.*)\/(.*)\/(.*)\/(.*)\/matches\/(.*)/)
+          const presence = payload.data.presences.find(p => p.puuid === puuid)
+          if (!presence) return
 
-              if (match){
-                const [, , , , , type, , matchId] = match
+          const decoded: PresenceJSON  = JSON.parse(base64Decode(presence.private))
 
-                if (matchId === state.current.matchId)
-                  return
+          console.log('decoded', decoded)
 
-                if (type === 'pregame' && state.current.state !== 'PreGame'){
-                  if (state.current.matchId && matchId !== state.current.matchId) return
+          if (decoded.sessionLoopState === state.current.state)
+            return
 
-                  state.current = { state: 'PreGame', matchId }
-                  setGameState(state.current)
-                }
-
-                if (type === 'core-game' && state.current.state !== 'Game'){
-                  if (state.current.matchId && matchId !== state.current.matchId) return
-
-                  state.current = { state: 'Game', matchId }
-                  setGameState(state.current)
-                }
-
-              }
-            }
-
-            if (payload.eventType === 'Update' && payload.data.phase === 'Idle' && state.current.state !== 'Idle'){
-              state.current = { state: 'Idle', matchId: state.current.matchId }
-              setGameState(state.current)
-            }
-
-          } catch(err) {
-            console.log('err', err)
+          if (decoded.sessionLoopState === 'PREGAME'){
+            state.current = { state: decoded.sessionLoopState, matchId: '' }
+            setGameState(state.current)
           }
-        });
 
-        return () => {};
-    }, [])
+          if (decoded.sessionLoopState === 'INGAME'){
+            state.current = { state: decoded.sessionLoopState, matchId: '' }
+            setGameState(state.current)
+          }
 
-    return null
+          if (decoded.sessionLoopState === 'MENUS'){
+            state.current = { state: decoded.sessionLoopState, matchId: '' }
+            setGameState(state.current)
+          }
+
+        } catch(err) {
+          console.log('err', err)
+        }
+    });
+
+    return () => {};
+  }, [puuid])
+
+  return null
 }
