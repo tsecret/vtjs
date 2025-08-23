@@ -27,6 +27,6 @@ export class StoreAPI extends BaseAPI {
   }
 
   async getBuddieById(buddieId: string): Promise<SkinResponse> {
-    return this.fetch('https://valorant-api.com', `/v1/buddies/${buddieId}`, { headers: {} })
+    return this.fetch('https://valorant-api.com', `/v1/buddies/levels/${buddieId}`, { headers: {} })
   }
 }

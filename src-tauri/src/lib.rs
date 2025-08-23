@@ -100,7 +100,7 @@ fn start_ws(
             }
         };
         // Send initial message after connecting
-        let initial_msg = serde_json::json!([5, "OnJsonApiEvent"]).to_string();
+        let initial_msg = serde_json::json!([5, "OnJsonApiEvent_chat_v4_presences"]).to_string();
         if let Err(e) = socket.send(Message::Text(initial_msg)) {
             app.emit("ws_error", format!("Failed to send initial message: {}", e)).ok();
             WS_ACTIVE.store(false, Ordering::SeqCst);

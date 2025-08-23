@@ -17,7 +17,7 @@ const puuid = atom<string>()
 const player = atom<PlayerAccount>()
 const table = atom<{ [key: PlayerRow['puuid']]: PlayerRow }>({})
 
-const gameState = atom<{ state: GameState, matchId: string | null }>({ state: 'Idle', matchId: null })
+const gameState = atom<{ state: GameState, matchId: string | null }>({ state: 'MENUS', matchId: null })
 const matchProcessing = atom<{ isProcessing: boolean, currentPlayer: string | null, progress: { step: number, total: number } }>({
   isProcessing: false,
   currentPlayer: null,

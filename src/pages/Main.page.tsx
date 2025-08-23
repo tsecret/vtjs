@@ -41,10 +41,10 @@ export const Main = () => {
             }
 
             if (currentPreGamePlayer)
-              setGameState({ state: 'PreGame', matchId: currentPreGamePlayer.MatchID })
+              setGameState({ state: 'PREGAME', matchId: currentPreGamePlayer.MatchID })
 
             if (currentGamePlayer)
-              setGameState({ state: 'Game', matchId: currentGamePlayer.MatchID })
+              setGameState({ state: 'INGAME', matchId: currentGamePlayer.MatchID })
 
         } catch (err) {
             console.error('Manual check failed:', err);
@@ -97,7 +97,7 @@ export const Main = () => {
             <PlayersTable table={table} puuid={puuid as string} mapId={matchDisplayInfo?.mapId} />
 
             {/* Waiting State */}
-            {player && Object.keys(table).length === 0 && gameState.state === 'Idle' && (
+            {player && Object.keys(table).length === 0 && gameState.state === 'MENUS' && (
                 <section className="m-auto text-center mt-20">
                     <span className="loading loading-ring loading-lg my-4" />
                     <h2 className="font-bold">Waiting for match</h2>
@@ -122,9 +122,9 @@ export const Main = () => {
                     <div className="badge badge-soft badge-primary badge-lg">
                         Map: {matchDisplayInfo.mapName}
                     </div>
-                    {matchDisplayInfo.state !== 'Idle' && (
+                    {matchDisplayInfo.state !== 'MENUS' && (
                         <div className="badge badge-soft badge-secondary badge-lg">
-                            {matchDisplayInfo.state === 'PreGame' ? 'Agent Select' : 'In Game'}
+                            {matchDisplayInfo.state === 'PREGAME' ? 'Agent Select' : 'In Game'}
                         </div>
                     )}
                 </section>
