@@ -89,6 +89,10 @@ export const MatchHandler = () => {
                     const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = player.CharacterID ? utils.getAgent(player.CharacterID as string) : { uuid: '', displayName: null, killfeedPortrait: null }
                     const isEnemy = isPreGame ? false : (player as any).TeamID !== playerTeamId;
 
+                    const retard = await cache?.select<{ dodge: boolean }[]>('SELECT * FROM players WHERE puuid = $1 AND dodge = "true"', [player.Subject])
+                      .then(players => players[0])
+
+
                     updatedTable[player.Subject] = {
                         name: GameName,
                         tag: TagLine,
@@ -105,7 +109,8 @@ export const MatchHandler = () => {
                         rankPeakDate: !isPreGame && peakRankSeasonId ? utils.getSeasonDateById(peakRankSeasonId) : null,
                         lastGameMMRDiff,
                         enemy: isEnemy,
-                        accountLevel: player.PlayerIdentity.AccountLevel || null
+                        accountLevel: player.PlayerIdentity.AccountLevel || null,
+                        dodge: retard?.dodge || false
                     };
                 } catch (error) {
                     console.error(`Failed to process player ${player.Subject}:`, error);

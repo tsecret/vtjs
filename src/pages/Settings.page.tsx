@@ -16,6 +16,7 @@ export const Settings = () => {
   const [clearingCache, setClearingCache] = useState<boolean>(false)
   const [savedRequests, setSavedRequests] = useState<number>()
   const [savedMatches, setSavedMatces] = useState<number>()
+  const [dodgedPlayers, setDodgedPlayers] = useState<number>()
 
   const [savedGameSettings, setGameSettings] = useState<{ name: string, data: GameSettingsResponse } |null>(null)
   const [gameSettingsState, setGameSettingsState] = useState<{ copied: boolean, pasted: boolean, modifying: boolean }>({ copied: false, pasted: false, modifying: false })
@@ -89,6 +90,11 @@ export const Settings = () => {
 
       const matches: any = await cache?.select('SELECT COUNT(*) from matches')
       setSavedMatces(matches[0]['COUNT(*)'])
+
+      const retards: any  = await cache?.select('SELECT COUNT(*) from players WHERE dodge = "true"')
+      setDodgedPlayers(retards[0]['COUNT(*)'])
+
+
     })();
 
     (async () => {
@@ -155,6 +161,7 @@ export const Settings = () => {
       <div>
         <div className="flex flex-row items-center space-x-2"><span>Saved requests: {savedRequests}</span></div>
         <div className="flex flex-row items-center space-x-2"><span>Saved matches: {savedMatches}</span></div>
+        <div className="flex flex-row items-center space-x-2"><span>Avoid list: {dodgedPlayers}</span></div>
       </div>
 
       <p>Its okay to have lots of requests cached, especially if you play daily. But if you feel like the app is lagging, try clearing the cache</p>

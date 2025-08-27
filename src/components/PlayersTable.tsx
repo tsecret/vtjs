@@ -43,7 +43,10 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
             ))}
           </div>
         </td>
-        <td>{ utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }</td>
+        <td>
+          { utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }
+          { player.dodge && <div className="tooltip badge badge-soft badge-warning" data-tip="This player is in your avoid list. Check player profile to learn more">Avoid</div> }
+        </td>
         <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}><ExternalLink size={14} /></button></td>
       </tr>
     }

@@ -35,6 +35,8 @@ type PlayerCard = {
   currentRankColor: string
   peakRank: string
   peakRankColor: string
+  dodge?: boolean
+  dodgeTimestamp?: number
 }
 
 type PlayerStats = {
@@ -58,6 +60,8 @@ export const PlayerPage = () => {
   const [error, setError] = useState<string|null>(null)
 
   const [sharedapi] = useAtom(atoms.sharedapi)
+  const [cache] = useAtom(atoms.cache)
+  const [ownPuuid] = useAtom(atoms.puuid)
 
   const [table, setTable] = useState<Row[]>([])
   const [loading, setLoading] = useState<boolean>(false)
@@ -87,6 +91,15 @@ export const PlayerPage = () => {
       color: "#ff637d",
     },
   } satisfies ChartConfig
+
+  const onDodgeChange = async (state: boolean) => {
+    if (!playerCard) return
+
+    const res = await cache?.execute('INSERT into players (puuid, dodge, dodgeTimestamp) VALUES ($1, $2, $3) ON CONFLICT(puuid) DO UPDATE SET dodge = $2, dodgeTimestamp = $3 WHERE puuid = $1', [puuid, state, +new Date()])
+
+    if (res?.rowsAffected == 1)
+      setPlayerCard({ ...playerCard, dodge: state, dodgeTimestamp: state ? +new Date() : 0 })
+  }
 
   useEffect(() => {
 
@@ -194,6 +207,8 @@ export const PlayerPage = () => {
       const mmr = await sharedapi?.getPlayerMMR(puuid)
       const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
 
+      const player = await cache?.select<any[]>("SELECT * from players WHERE puuid = ?", [puuid]).then(players => players[0])
+
       setPlayerCard({
         name: GameName,
         tag: TagLine,
@@ -202,6 +217,8 @@ export const PlayerPage = () => {
         currentRankColor: utils.getRank(currentRank).rankColor,
         peakRank: utils.getRank(peakRank).rankName,
         peakRankColor: utils.getRank(peakRank).rankColor,
+        dodge: player?.dodge,
+        dodgeTimestamp: player?.dodgeTimestamp
       })
 
     })()
@@ -220,72 +237,86 @@ export const PlayerPage = () => {
 
   return <div className="flex flex-col items-center p-4">
 
-    {/* Player Data */}
-    <section id="player-card" className="space-y-2 flex flex-col">
+    <div className="flex flex-row space-x-4">
+      {/* Player Data */}
+      <section id="player-card" className="space-y-2 flex flex-col">
 
-
-      <div className="flex flex-row">
-          <div className="stat">
-            <div className="stat-title">Name</div>
-            <div className="stat-value">{playerCard?.name}</div>
-            <div className="stat-desc">{playerCard?.tag}</div>
-          </div>
-
-          <div className="stat">
-            <div className="stat-title">Account level</div>
-            <div className="stat-value">{accountLevel}</div>
-            <div className="stat-desc opacity-0">a</div>
-          </div>
-      </div>
-
-      <div>
-        <div className="stats shadow w-full">
-          <div className="stat border-4" style={{ color: '#' + playerCard?.currentRankColor }}>
-            <div className="stat-title">Rank</div>
-            <div className="stat-value justify-between flex">
-              <span>{playerCard?.currentRank}</span>
-              <span>{playerCard?.currentRR} / 100</span>
+        <div className="flex flex-row">
+            <div className="stat">
+              <div className="stat-title">Name</div>
+              <div className="stat-value">{playerCard?.name}</div>
+              <div className="stat-desc">{playerCard?.tag}</div>
             </div>
-            <div className="stat-desc">Peak <span style={{ color: '#' + playerCard?.peakRankColor }}>{playerCard?.peakRank}</span></div>
+
+            <div className="stat">
+              <div className="stat-title">Account level</div>
+              <div className="stat-value">{accountLevel}</div>
+              <div className="stat-desc opacity-0">a</div>
+            </div>
+        </div>
+
+        <div>
+          <div className="stats shadow w-full">
+            <div className="stat border-4" style={{ color: '#' + playerCard?.currentRankColor }}>
+              <div className="stat-title">Rank</div>
+              <div className="stat-value justify-between flex">
+                <span>{playerCard?.currentRank}</span>
+                <span>{playerCard?.currentRR} / 100</span>
+              </div>
+              <div className="stat-desc">Peak <span style={{ color: '#' + playerCard?.peakRankColor }}>{playerCard?.peakRank}</span></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="stats shadow">
-        <div className="stat">
-          <div className="stat-title">Total Matches</div>
-          <div className="stat-value">{table.length}</div>
+        <div className="stats shadow">
+          <div className="stat">
+            <div className="stat-title">Total Matches</div>
+            <div className="stat-value">{table.length}</div>
+          </div>
+
+          <div className="stat">
+            <div className="stat-title">Wins / Loss</div>
+            <div className="stat-value">{table.filter(match => match.result === 'won').length} / {table.filter(match => match.result === 'loss').length}</div>
+          </div>
+
+          <div className="stat">
+            <div className="stat-title">Winrate %</div>
+            <div className="stat-value">{table.length ? (table.filter(match => match.result === 'won').length / table.length * 100).toFixed(0) : 0}%</div>
+          </div>
         </div>
 
-        <div className="stat">
-          <div className="stat-title">Wins / Loss</div>
-          <div className="stat-value">{table.filter(match => match.result === 'won').length} / {table.filter(match => match.result === 'loss').length}</div>
+        <div className="stats shadow">
+          <div className="stat">
+            <div className="stat-title">K/D</div>
+            <div className={clsx('stat-value', playerStats && playerStats?.kd >= 1 ? 'text-success' : 'text-error' )}>{playerStats?.kd}</div>
+          </div>
+
+          <div className="stat">
+            <div className="stat-title">Average Damage per Round</div>
+            <div className={clsx('stat-value', playerStats && playerStats?.adr >= 150 ? 'text-success' : 'text-error' )}>{playerStats?.adr}</div>
+          </div>
+
+          <div className="stat">
+            <div className="stat-title">Headshot %</div>
+            <div className="stat-value">{playerStats?.hs}%</div>
+          </div>
         </div>
 
-        <div className="stat">
-          <div className="stat-title">Winrate %</div>
-          <div className="stat-value">{table.length ? (table.filter(match => match.result === 'won').length / table.length * 100).toFixed(0) : 0}%</div>
-        </div>
-      </div>
+      </section>
 
-      <div className="stats shadow">
-        <div className="stat">
-          <div className="stat-title">K/D</div>
-          <div className={clsx('stat-value', playerStats && playerStats?.kd >= 1 ? 'text-success' : 'text-error' )}>{playerStats?.kd}</div>
-        </div>
+      {
+        puuid !== ownPuuid &&
+        <div className="flex flex-col space-y-4 p-4 rounded-md max-w-64">
+          <p>If this player ruined the game, trolled or played like dogshit, you can add him to avoid list</p>
+          <p className="text-xs text-gray-400">This avoid list is saved locally, meaning you still have a chance to queue with this player, but the warning will be displayed next to their name</p>
 
-        <div className="stat">
-          <div className="stat-title">Average Damage per Round</div>
-          <div className={clsx('stat-value', playerStats && playerStats?.adr >= 150 ? 'text-success' : 'text-error' )}>{playerStats?.adr}</div>
-        </div>
+          {playerCard?.dodgeTimestamp ? <p className="text-xs text-gray-400">Dodge from {moment(playerCard.dodgeTimestamp).format('DD-MM-YYYY')}</p> : null}
 
-        <div className="stat">
-          <div className="stat-title">Headshot %</div>
-          <div className="stat-value">{playerStats?.hs}%</div>
+          <button className="btn btn-soft btn-sm btn-warning" onClick={() => onDodgeChange(playerCard?.dodge ? false : true)}>{playerCard?.dodge ? 'Remove from Avoid list' : 'Avoid Player'}</button>
         </div>
-      </div>
+      }
 
-    </section>
+    </div>
 
     {
       chartData?.length ?

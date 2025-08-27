@@ -37,6 +37,7 @@ export interface PlayerRow {
   accountLevel?: number | null
   enemy: boolean
   bestAgents?: AgentStats[]
+  dodge?: boolean
 }
 
 export type Payload = {

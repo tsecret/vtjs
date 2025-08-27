@@ -27,7 +27,6 @@ import { MatchPage } from './pages/Match.page';
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 import { Announcement } from './components/Announcement';
 
-
 function App() {
 
   const [, setAppInfo] = useAtom(atoms.appInfo)
@@ -69,7 +68,11 @@ function App() {
       const db = await Database.load(CACHE_NAME);
       await db.execute('CREATE TABLE IF NOT EXISTS requests (endpoint str PRIMARY KEY, ttl int, data JSON)');
       await db.execute('CREATE TABLE IF NOT EXISTS matches (matchId str PRIMARY KEY, data JSON)');
-      await db.execute('CREATE TABLE IF NOT EXISTS players (puuid str PRIMARY KEY)');
+      await db.execute('CREATE TABLE IF NOT EXISTS players (puuid str PRIMARY KEY, dodge boolean, dodgeTimestamp int)');
+
+      db.execute('ALTER TABLE players ADD COLUMN dodge boolean');
+      db.execute('ALTER TABLE players ADD COLUMN dodgeTimestamp int');
+
 
       try{
         const ANNOUNCEMENT_URL = 'https://gist.githubusercontent.com/tsecret/0b5f7094000f4063d72276c5e05824aa/raw/announcement.txt'
