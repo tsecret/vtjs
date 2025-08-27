@@ -34,8 +34,6 @@ export const StorePage = () => {
       const skins = getStoreItemInfo(storeInfo.SkinsPanelLayout.SingleItemStoreOffers)
       const skinsData = await Promise.all(skins.map(skin => storeapi.getSkinByLevelId(skin.uuid)))
 
-
-
       // Accessories
       const accessories = getStoreItemInfo(storeInfo.AccessoryStore.AccessoryStoreOffers)
       const accessoriesData = await Promise.all(
@@ -72,9 +70,10 @@ export const StorePage = () => {
       )
       setSkins(
         skins
+          .filter(skin => skinsData.filter(__skin => __skin && __skin.data).find(_skin => _skin.data.uuid === skin.uuid))
           .map(skin => ({
             ...skin,
-            ...skinsData.find(_skin => _skin.data.uuid === skin.uuid)!.data
+            ...skinsData.find(_skin => _skin && _skin.data.uuid === skin.uuid)!.data
           }))
           .map(skin => ({
             uuid: skin.uuid,

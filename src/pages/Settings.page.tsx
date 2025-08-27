@@ -110,6 +110,18 @@ export const Settings = () => {
 
     <div className="divider" />
 
+    {/* App Settings */}
+    {/* <section className="flex flex-col space-y-4">
+      <h2>App Settings</h2>
+
+      <label className="label space-x-4">
+        <input name="allowAnalytics" type="checkbox" className="toggle" defaultChecked={allowAnalytics} onChange={onChange} />
+        <span>Show Hidden Player Names</span>
+      </label>
+    </section> */}
+
+    {/* <div className="divider" /> */}
+
     {/* Game Settings */}
     <section id="cache" className="flex flex-col space-y-4">
 

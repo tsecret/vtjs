@@ -242,7 +242,10 @@ export const PlayerPage = () => {
         <div className="stats shadow w-full">
           <div className="stat border-4" style={{ color: '#' + playerCard?.currentRankColor }}>
             <div className="stat-title">Rank</div>
-            <div className="stat-value">{playerCard?.currentRank}</div>
+            <div className="stat-value justify-between flex">
+              <span>{playerCard?.currentRank}</span>
+              <span>{playerCard?.currentRR} / 100</span>
+            </div>
             <div className="stat-desc">Peak <span style={{ color: '#' + playerCard?.peakRankColor }}>{playerCard?.peakRank}</span></div>
           </div>
         </div>

@@ -76,6 +76,9 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
         if (!friend.presence)
           return ''
 
+        if (friend.state === 'away')
+          return 'Away'
+
         if (friend.presence?.sessionLoopState === 'MENUS'){
           return 'In Menu'
         }

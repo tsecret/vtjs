@@ -1,7 +1,7 @@
 import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
-import { CurrentGameMatchResponse, CurrentPreGameMatchResponse } from "../interface";
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, PlayerNamesReponse } from "../interface";
 import atoms from "../utils/atoms";
 import * as utils from '../utils/utils';
 
@@ -76,9 +76,9 @@ export const MatchHandler = () => {
 
             for (const player of playersToProcess) {
                 try {
-                    const mmr = await sharedapi.getPlayerMMR(player.Subject);
+                    const playerMMR = await sharedapi.getPlayerMMR(player.Subject);
 
-                    const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff } = utils.calculateRanking(mmr);
+                    const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff, mmr } = utils.calculateRanking(playerMMR);
                     const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
                     const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
 
@@ -99,6 +99,7 @@ export const MatchHandler = () => {
                         currentRank: currentRankName,
                         currentRankColor,
                         currentRR,
+                        mmr,
                         rankPeak: rankPeakName,
                         rankPeakColor: rankPeakColor,
                         rankPeakDate: !isPreGame && peakRankSeasonId ? utils.getSeasonDateById(peakRankSeasonId) : null,
@@ -124,7 +125,7 @@ export const MatchHandler = () => {
         }
     }
 
-    async function processPlayers(players: any[], match: CurrentPreGameMatchResponse | CurrentGameMatchResponse) {
+    async function processPlayers(players: PlayerNamesReponse[], match: CurrentPreGameMatchResponse | CurrentGameMatchResponse) {
         if (!sharedapi) return;
 
         try {

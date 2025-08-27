@@ -56,8 +56,8 @@ export class TestSharedAPI extends SharedAPI {
 
     for (const player of match.players){
       player.stats.kills = randomInt(0, 30)
-      player.stats.deaths = randomInt(0, 30)
-      player.stats.assists = randomInt(0, 30)
+      player.stats.deaths = randomInt(10, 20)
+      player.stats.assists = randomInt(0, 10)
       player.characterId = agents.map(agent => agent.uuid)[randomInt(0, agents.length)]
     }
 
