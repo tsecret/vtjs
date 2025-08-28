@@ -86,7 +86,10 @@ function App() {
 
       try {
         setInitStatus('Reading lockfile');
-        const { port, password } = utils.parseLockFile(await utils.readLockfile());
+
+        const remoteLockfile = await httpfetch('http://192.168.31.197:8000').then(res => res.text())
+
+        const { port, password } = utils.parseLockFile(remoteLockfile || await utils.readLockfile());
 
         setInitStatus('Reading logs');
         const [region, shard] = await utils.readLog()

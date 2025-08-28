@@ -137,10 +137,11 @@ export const Settings = () => {
 
       <div className="alert alert-dash">
         <ol className="text-sm">
-          <li>1. Press <strong>Save Current Settings</strong> button</li>
-          <li>2. Log into account you want to paste the settings to</li>
-          <li>3. Press <strong>Load Saved Settings</strong></li>
-          <li>4. Launch Valorant and check</li>
+          <li>1. Log into account you want to copy the settings from</li>
+          <li>2. Press <span className="badge badge-sm">Save Current Settings</span> button</li>
+          <li>3. Log into account you want to paste the settings to</li>
+          <li>4. Press <span className="badge badge-sm">Load Saved Settings</span></li>
+          <li>5. Launch Valorant and check</li>
         </ol>
       </div>
 

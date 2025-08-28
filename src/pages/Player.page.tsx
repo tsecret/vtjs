@@ -307,7 +307,7 @@ export const PlayerPage = () => {
       {
         puuid !== ownPuuid &&
         <div className="flex flex-col space-y-4 p-4 rounded-md max-w-64">
-          <p>If this player ruined the game, trolled or played like dogshit, you can add him to avoid list</p>
+          <p>If this player ruined the game, trolled or played like dogshit, you can add this animal to your avoid list</p>
           <p className="text-xs text-gray-400">This avoid list is saved locally, meaning you still have a chance to queue with this player, but the warning will be displayed next to their name</p>
 
           {playerCard?.dodgeTimestamp ? <p className="text-xs text-gray-400">Dodge from {moment(playerCard.dodgeTimestamp).format('DD-MM-YYYY')}</p> : null}
