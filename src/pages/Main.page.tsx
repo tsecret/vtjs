@@ -8,7 +8,7 @@ import atoms from "../utils/atoms";
 
 export const Main = () => {
     const [error, setError] = useState<string | null>(null);
-    const [versusStats, setVersusStats] = useState<{ teamMMR: number, enemyMMR: number }>()
+    const [_, setVersusStats] = useState<{ teamMMR: number, enemyMMR: number }>()
 
     const [puuid] = useAtom(atoms.puuid);
     const [player] = useAtom(atoms.player);

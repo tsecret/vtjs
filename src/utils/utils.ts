@@ -12,7 +12,7 @@ import maps from '../assets/maps.json';
 import ranks from '../assets/ranks.json';
 import seasons from '../assets/seasons.json';
 
-import type { BestAgent, BestMaps, CalculatedMatchMMR, DashboardStats, PlayerMatchStats, PlayerRanking } from '@/interface/utils.interface';
+import type { BestAgent, BestMaps, PlayerMatchStats, PlayerRanking } from '@/interface/utils.interface';
 import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, Map, MatchDetailsResponse, MatchResult, PlayerMMRResponse, PlayerRow, StorefrontResponse } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
