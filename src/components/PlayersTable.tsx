@@ -22,6 +22,7 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
           <span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span>
           {player.rankPeakDate ? <span className="text-mini text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span> : null}
         </th>
+        <th>{player.mmr}</th>
         <th><span>{player.accountLevel}</span></th>
         <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-success' : 'text-error')}>{player.kd}</span></td>
         <td><span>{player.hs}{player.hs ? '%' : null}</span></td>
@@ -42,7 +43,10 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
             ))}
           </div>
         </td>
-        <td>{ utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }</td>
+        <td>
+          { utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }
+          { player.dodge && <div className="tooltip badge badge-soft badge-warning" data-tip="This player is in your avoid list. Check player profile to learn more">Avoid</div> }
+        </td>
         <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}><ExternalLink size={14} /></button></td>
       </tr>
     }
@@ -59,6 +63,7 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
             <th>Player</th>
             <th>Rank</th>
             <th>Peak Rank</th>
+            <th>MMR</th>
             <th>LVL</th>
             <th>K/D</th>
             <th>HS%</th>
