@@ -1,7 +1,7 @@
 import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
-import { CurrentGameMatchResponse, CurrentPreGameMatchResponse } from "../interface";
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, PlayerNamesReponse } from "../interface";
 import atoms from "../utils/atoms";
 import * as utils from '../utils/utils';
 
@@ -76,9 +76,9 @@ export const MatchHandler = () => {
 
             for (const player of playersToProcess) {
                 try {
-                    const mmr = await sharedapi.getPlayerMMR(player.Subject);
+                    const playerMMR = await sharedapi.getPlayerMMR(player.Subject);
 
-                    const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff } = utils.calculateRanking(mmr);
+                    const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff, mmr } = utils.calculateRanking(playerMMR);
                     const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
                     const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
 
@@ -88,6 +88,10 @@ export const MatchHandler = () => {
                     const { GameName, TagLine } = playerInfo;
                     const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = player.CharacterID ? utils.getAgent(player.CharacterID as string) : { uuid: '', displayName: null, killfeedPortrait: null }
                     const isEnemy = isPreGame ? false : (player as any).TeamID !== playerTeamId;
+
+                    const retard = await cache?.select<{ dodge: boolean }[]>('SELECT * FROM players WHERE puuid = $1 AND dodge = "true"', [player.Subject])
+                      .then(players => players[0])
+
 
                     updatedTable[player.Subject] = {
                         name: GameName,
@@ -99,12 +103,14 @@ export const MatchHandler = () => {
                         currentRank: currentRankName,
                         currentRankColor,
                         currentRR,
+                        mmr,
                         rankPeak: rankPeakName,
                         rankPeakColor: rankPeakColor,
                         rankPeakDate: !isPreGame && peakRankSeasonId ? utils.getSeasonDateById(peakRankSeasonId) : null,
                         lastGameMMRDiff,
                         enemy: isEnemy,
-                        accountLevel: player.PlayerIdentity.AccountLevel || null
+                        accountLevel: player.PlayerIdentity.AccountLevel || null,
+                        dodge: retard?.dodge || false
                     };
                 } catch (error) {
                     console.error(`Failed to process player ${player.Subject}:`, error);
@@ -124,7 +130,7 @@ export const MatchHandler = () => {
         }
     }
 
-    async function processPlayers(players: any[], match: CurrentPreGameMatchResponse | CurrentGameMatchResponse) {
+    async function processPlayers(players: PlayerNamesReponse[], match: CurrentPreGameMatchResponse | CurrentGameMatchResponse) {
         if (!sharedapi) return;
 
         try {

@@ -1,6 +1,6 @@
 import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
 import * as utils from '../utils/utils';
 import atoms from "../utils/atoms";
@@ -8,6 +8,7 @@ import atoms from "../utils/atoms";
 
 export const Main = () => {
     const [error, setError] = useState<string | null>(null);
+    const [_, setVersusStats] = useState<{ teamMMR: number, enemyMMR: number }>()
 
     const [puuid] = useAtom(atoms.puuid);
     const [player] = useAtom(atoms.player);
@@ -67,6 +68,23 @@ export const Main = () => {
         };
     };
 
+    useEffect(() => {
+      if (Object.keys(table).length < 10) return
+
+      let teamMMR = 0
+      let enemyMMR = 0
+
+      for (const player of Object.values(table)) {
+        player.enemy ? enemyMMR += player.mmr : teamMMR += player.mmr
+      }
+
+      teamMMR /= 5
+      enemyMMR /= 5
+
+      setVersusStats({ teamMMR, enemyMMR })
+
+    }, [table])
+
     const matchDisplayInfo = getMatchDisplayInfo();
 
     return (
@@ -93,6 +111,32 @@ export const Main = () => {
                 </div>
             )}
 
+            {/* Match Info */}
+            {matchDisplayInfo && Object.keys(table).length > 0 && (
+                <section id="match-info" className="flex flex-row items-center my-10 space-x-4 m-auto">
+                    <div className="badge badge-soft badge-primary badge-lg">
+                        Server: {matchDisplayInfo.gameServer}
+                    </div>
+                    <div className="badge badge-soft badge-primary badge-lg">
+                        Map: {matchDisplayInfo.mapName}
+                    </div>
+                    {matchDisplayInfo.state !== 'MENUS' && (
+                        <div className="badge badge-soft badge-secondary badge-lg">
+                            {matchDisplayInfo.state === 'PREGAME' ? 'Agent Select' : 'In Game'}
+                        </div>
+                    )}
+                </section>
+            )}
+
+            {/* {
+              versusStats &&
+                <section className="m-auto text-center">
+                  <p>MMR Diff</p>
+                  <span>(Team) {versusStats.teamMMR} - {versusStats.enemyMMR} (Enemy)</span>
+                </section>
+            } */}
+
+
             {/* Players Table */}
             <PlayersTable table={table} puuid={puuid as string} mapId={matchDisplayInfo?.mapId} />
 
@@ -113,22 +157,7 @@ export const Main = () => {
                 </section>
             )}
 
-            {/* Match Info */}
-            {matchDisplayInfo && Object.keys(table).length > 0 && (
-                <section id="match-info" className="flex flex-row items-center my-10 space-x-4 m-auto">
-                    <div className="badge badge-soft badge-primary badge-lg">
-                        Server: {matchDisplayInfo.gameServer}
-                    </div>
-                    <div className="badge badge-soft badge-primary badge-lg">
-                        Map: {matchDisplayInfo.mapName}
-                    </div>
-                    {matchDisplayInfo.state !== 'MENUS' && (
-                        <div className="badge badge-soft badge-secondary badge-lg">
-                            {matchDisplayInfo.state === 'PREGAME' ? 'Agent Select' : 'In Game'}
-                        </div>
-                    )}
-                </section>
-            )}
+
 
             {/* Manual Recheck Button */}
             {Object.keys(table).length > 1 && <button className="btn btn-primary m-auto btn-sm" onClick={manualCheck}>Recheck</button>}

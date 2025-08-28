@@ -12,7 +12,7 @@ import maps from '../assets/maps.json';
 import ranks from '../assets/ranks.json';
 import seasons from '../assets/seasons.json';
 
-import type { BestAgent, BestMaps, PlayerMatchStats } from '@/interface/utils.interface';
+import type { BestAgent, BestMaps, PlayerMatchStats, PlayerRanking } from '@/interface/utils.interface';
 import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, Map, MatchDetailsResponse, MatchResult, PlayerMMRResponse, PlayerRow, StorefrontResponse } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
@@ -170,7 +170,7 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
   }
 }
 
-export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: number, currentRR: number, peakRank: number, peakRankSeasonId: string | null, lastGameMMRDiff: number } =>  {
+export const calculateRanking = (playerMMR: PlayerMMRResponse): PlayerRanking =>  {
   return {
     currentRank: playerMMR.LatestCompetitiveUpdate?.TierAfterUpdate || 0,
     currentRR: playerMMR.LatestCompetitiveUpdate?.RankedRatingAfterUpdate || 0,
@@ -180,7 +180,8 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): { currentRank: n
     peakRankSeasonId: playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?
       Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.Rank - a.Rank)[0].SeasonID
       : null,
-    lastGameMMRDiff: playerMMR.LatestCompetitiveUpdate?.RankedRatingEarned
+    lastGameMMRDiff: playerMMR.LatestCompetitiveUpdate?.RankedRatingEarned,
+    mmr: playerMMR.LatestCompetitiveUpdate?.TierAfterUpdate * 100 + playerMMR.LatestCompetitiveUpdate?.RankedRatingAfterUpdate
   }
 }
 

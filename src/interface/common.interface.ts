@@ -26,6 +26,7 @@ export interface PlayerRow {
   lastGameResult?: MatchResult
   lastGameScore?: string
   lastGameMMRDiff?: number
+  mmr: number
   gameHistory?: string[]
   currentRank?: string
   currentRankColor?: string
@@ -36,6 +37,7 @@ export interface PlayerRow {
   accountLevel?: number | null
   enemy: boolean
   bestAgents?: AgentStats[]
+  dodge?: boolean
 }
 
 export type Payload = {

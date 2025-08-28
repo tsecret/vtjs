@@ -16,6 +16,7 @@ export const Settings = () => {
   const [clearingCache, setClearingCache] = useState<boolean>(false)
   const [savedRequests, setSavedRequests] = useState<number>()
   const [savedMatches, setSavedMatces] = useState<number>()
+  const [dodgedPlayers, setDodgedPlayers] = useState<number>()
 
   const [savedGameSettings, setGameSettings] = useState<{ name: string, data: GameSettingsResponse } |null>(null)
   const [gameSettingsState, setGameSettingsState] = useState<{ copied: boolean, pasted: boolean, modifying: boolean }>({ copied: false, pasted: false, modifying: false })
@@ -89,6 +90,11 @@ export const Settings = () => {
 
       const matches: any = await cache?.select('SELECT COUNT(*) from matches')
       setSavedMatces(matches[0]['COUNT(*)'])
+
+      const retards: any  = await cache?.select('SELECT COUNT(*) from players WHERE dodge = "true"')
+      setDodgedPlayers(retards[0]['COUNT(*)'])
+
+
     })();
 
     (async () => {
@@ -110,6 +116,18 @@ export const Settings = () => {
 
     <div className="divider" />
 
+    {/* App Settings */}
+    {/* <section className="flex flex-col space-y-4">
+      <h2>App Settings</h2>
+
+      <label className="label space-x-4">
+        <input name="allowAnalytics" type="checkbox" className="toggle" defaultChecked={allowAnalytics} onChange={onChange} />
+        <span>Show Hidden Player Names</span>
+      </label>
+    </section> */}
+
+    {/* <div className="divider" /> */}
+
     {/* Game Settings */}
     <section id="cache" className="flex flex-col space-y-4">
 
@@ -119,10 +137,11 @@ export const Settings = () => {
 
       <div className="alert alert-dash">
         <ol className="text-sm">
-          <li>1. Press <strong>Save Current Settings</strong> button</li>
-          <li>2. Log into account you want to paste the settings to</li>
-          <li>3. Press <strong>Load Saved Settings</strong></li>
-          <li>4. Launch Valorant and check</li>
+          <li>1. Log into account you want to copy the settings from</li>
+          <li>2. Press <span className="badge badge-sm">Save Current Settings</span> button</li>
+          <li>3. Log into account you want to paste the settings to</li>
+          <li>4. Press <span className="badge badge-sm">Load Saved Settings</span></li>
+          <li>5. Launch Valorant and check</li>
         </ol>
       </div>
 
@@ -143,6 +162,7 @@ export const Settings = () => {
       <div>
         <div className="flex flex-row items-center space-x-2"><span>Saved requests: {savedRequests}</span></div>
         <div className="flex flex-row items-center space-x-2"><span>Saved matches: {savedMatches}</span></div>
+        <div className="flex flex-row items-center space-x-2"><span>Avoid list: {dodgedPlayers}</span></div>
       </div>
 
       <p>Its okay to have lots of requests cached, especially if you play daily. But if you feel like the app is lagging, try clearing the cache</p>

@@ -40,3 +40,12 @@ export type PlayerMatchStats = {
   ties: number,
   winrate: number
 }
+
+export type PlayerRanking = {
+  currentRank: number,
+  currentRR: number,
+  peakRank: number,
+  peakRankSeasonId: string | null,
+  lastGameMMRDiff: number
+  mmr: number
+}
