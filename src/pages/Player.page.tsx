@@ -8,8 +8,8 @@ import * as utils from '../utils/utils'
 import atoms from "../utils/atoms"
 import clsx from "clsx"
 import moment from "moment"
-import { ExternalLink } from "lucide-react"
-import { BestAgent, BestMaps } from "@/interface/utils.interface"
+import { ChevronDown, ChevronsDown, ChevronsUp, ExternalLink } from "lucide-react"
+import { BestAgent, BestMaps, Rank } from "@/interface/utils.interface"
 
 interface Row {
   matchId: string
@@ -25,6 +25,8 @@ interface Row {
   agentId: string | null
   agentName: string | null
   agentImage: string | null
+  rankBefore: Rank | null,
+  rankAfter: Rank | null,
 }
 
 type PlayerCard = {
@@ -134,6 +136,9 @@ export const PlayerPage = () => {
 
           const { kills, deaths, assists, hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
 
+          const rankBefore = mmrUpdate?.TierBeforeUpdate ? utils.getRank(mmrUpdate?.TierBeforeUpdate) : null
+          const rankAfter = mmrUpdate?.TierAfterUpdate ? utils.getRank(mmrUpdate?.TierAfterUpdate) : null
+
           if (!accountLevel)
             accountLevel = player.accountLevel
 
@@ -159,7 +164,9 @@ export const PlayerPage = () => {
             mmrUpdate: mmrUpdate?.RankedRatingEarned || null,
             agentId,
             agentName,
-            agentImage
+            agentImage,
+            rankBefore,
+            rankAfter
           })
         }
 
@@ -622,10 +629,10 @@ export const PlayerPage = () => {
                 <th>Date</th>
                 <th>Agent</th>
                 <th>Map</th>
+                <th>Rank</th>
                 <th>K / D / A</th>
                 <th>Result</th>
                 <th>Score</th>
-                <th>±RR</th>
                 <th>HS%</th>
                 <th></th>
               </tr>
@@ -637,10 +644,18 @@ export const PlayerPage = () => {
                   <td className="text-left">{moment(match.date).format('HH:mm DD/MM/YY')} <span className="opacity-25">({moment(match.date).fromNow()})</span></td>
                   <td><img src={match.agentImage || undefined} className="max-h-6"/></td>
                   <td>{match.mapName}</td>
+                  <td>
+                    <div className="tooltip flex flex-row items-center" data-tip={match.rankBefore?.rankName}>
+                      <img className="w-6 mr-2" src={match.rankBefore?.rankImg} />
+                      <span className={clsx(match.mmrUpdate ? match.mmrUpdate > 0 ? 'text-success' : 'text-error' : null)}>{match.mmrUpdate ? match.mmrUpdate > 0 ? `+${match.mmrUpdate}` : match.mmrUpdate : null}</span>
+                      { match.rankBefore && match.rankAfter &&
+                        (match.rankAfter?.tier > match.rankBefore?.tier ? <ChevronsUp size={16}/> : match.rankAfter?.tier < match.rankBefore?.tier ? <ChevronsDown size={16}/> : null)
+                      }
+                    </div>
+                  </td>
                   <td>{match.kills} / {match.deaths} / {match.assists}</td>
                   <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.result === 'won' ? 'Win' : match.result === 'loss' ? 'Loss' : 'Draw'}</td>
                   <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.score}</td>
-                  <td className={clsx(match.mmrUpdate ? match.mmrUpdate > 0 ? 'text-success' : 'text-error' : null)}>{match.mmrUpdate ? match.mmrUpdate > 0 ? `+${match.mmrUpdate}` : match.mmrUpdate : null}</td>
                   <td>{match.hs ? match.hs + '%' : null}</td>
                   <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/match/${match.matchId}`)}><ExternalLink size={14} /></button></td>
                 </tr>

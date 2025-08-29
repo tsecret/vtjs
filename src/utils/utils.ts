@@ -12,7 +12,7 @@ import maps from '../assets/maps.json';
 import ranks from '../assets/ranks.json';
 import seasons from '../assets/seasons.json';
 
-import type { BestAgent, BestMaps, PlayerMatchStats, PlayerRanking } from '@/interface/utils.interface';
+import type { BestAgent, BestMaps, PlayerMatchStats, PlayerRanking, Rank } from '@/interface/utils.interface';
 import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, Map, MatchDetailsResponse, MatchResult, PlayerMMRResponse, PlayerRow, StorefrontResponse } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
@@ -203,9 +203,14 @@ export const getAgent = (uuid: string): Agent =>  {
   return agents.find(agent => agent.uuid === uuid.toLowerCase())!
 }
 
-export const getRank = (rank: number): { rankName: string, rankColor: string } => {
+export const getRank = (rank: number): Rank => {
   const _rank = ranks.find(_rank => _rank.tier === rank)
-  return { rankName: _rank?.tierName as string, rankColor: _rank?.color as string }
+  return {
+    tier: rank,
+    rankName: _rank?.tierName as string,
+    rankColor: _rank?.color as string,
+    rankImg: _rank?.largeIcon as string
+  }
 }
 
 export const getMap = (uuid: string): Map => {

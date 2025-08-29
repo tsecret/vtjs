@@ -87,7 +87,10 @@ function App() {
       try {
         setInitStatus('Reading lockfile');
 
-        const remoteLockfile = await httpfetch('http://192.168.31.197:8000').then(res => res.text())
+        let remoteLockfile = null
+
+        if (import.meta.env.VITE_DEV === 'true')
+          remoteLockfile = await httpfetch('http://192.168.31.197:8000').then(res => res.text())
 
         const { port, password } = utils.parseLockFile(remoteLockfile || await utils.readLockfile());
 
