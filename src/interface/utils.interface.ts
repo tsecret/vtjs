@@ -49,3 +49,10 @@ export type PlayerRanking = {
   lastGameMMRDiff: number
   mmr: number
 }
+
+export type Rank = {
+  tier: number
+  rankName: string,
+  rankColor: string,
+  rankImg: string
+}
