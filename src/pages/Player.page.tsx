@@ -1,15 +1,15 @@
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { BestAgent, BestMaps, Rank } from "@/interface/utils.interface"
+import clsx from "clsx"
 import { useAtom } from "jotai"
+import { ChevronsDown, ChevronsUp, ExternalLink } from "lucide-react"
+import moment from "moment"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { Dot, LabelList, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts"
-import { MatchResult, MatchDetailsResponse } from "../interface"
-import * as utils from '../utils/utils'
+import { MatchDetailsResponse, MatchResult } from "../interface"
 import atoms from "../utils/atoms"
-import clsx from "clsx"
-import moment from "moment"
-import { ExternalLink } from "lucide-react"
-import { BestAgent, BestMaps } from "@/interface/utils.interface"
+import * as utils from '../utils/utils'
 
 interface Row {
   matchId: string
@@ -25,6 +25,8 @@ interface Row {
   agentId: string | null
   agentName: string | null
   agentImage: string | null
+  rankBefore: Rank | null,
+  rankAfter: Rank | null,
 }
 
 type PlayerCard = {
@@ -134,6 +136,9 @@ export const PlayerPage = () => {
 
           const { kills, deaths, assists, hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match])
 
+          const rankBefore = mmrUpdate?.TierBeforeUpdate ? utils.getRank(mmrUpdate?.TierBeforeUpdate) : null
+          const rankAfter = mmrUpdate?.TierAfterUpdate ? utils.getRank(mmrUpdate?.TierAfterUpdate) : null
+
           if (!accountLevel)
             accountLevel = player.accountLevel
 
@@ -159,7 +164,9 @@ export const PlayerPage = () => {
             mmrUpdate: mmrUpdate?.RankedRatingEarned || null,
             agentId,
             agentName,
-            agentImage
+            agentImage,
+            rankBefore,
+            rankAfter
           })
         }
 
@@ -205,6 +212,7 @@ export const PlayerPage = () => {
       const [{ GameName, TagLine }] = await sharedapi.getPlayerNames([puuid])
 
       const mmr = await sharedapi?.getPlayerMMR(puuid)
+      console.log('mmr', mmr)
       const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
 
       const player = await cache?.select<any[]>("SELECT * from players WHERE puuid = ?", [puuid]).then(players => players[0])
@@ -237,35 +245,28 @@ export const PlayerPage = () => {
 
   return <div className="flex flex-col items-center p-4">
 
+    {/* Player Data */}
     <div className="flex flex-row space-x-4">
-      {/* Player Data */}
-      <section id="player-card" className="space-y-2 flex flex-col">
-
-        <div className="flex flex-row">
-            <div className="stat">
-              <div className="stat-title">Name</div>
-              <div className="stat-value">{playerCard?.name}</div>
-              <div className="stat-desc">{playerCard?.tag}</div>
-            </div>
-
-            <div className="stat">
-              <div className="stat-title">Account level</div>
-              <div className="stat-value">{accountLevel}</div>
-              <div className="stat-desc opacity-0">a</div>
-            </div>
-        </div>
+      <div className="card bg-base-200 shadow-xl p-6 rounded-2xl space-y-2">
 
         <div>
-          <div className="stats shadow w-full">
-            <div className="stat border-4" style={{ color: '#' + playerCard?.currentRankColor }}>
-              <div className="stat-title">Rank</div>
-              <div className="stat-value justify-between flex">
-                <span>{playerCard?.currentRank}</span>
-                <span>{playerCard?.currentRR} / 100</span>
-              </div>
-              <div className="stat-desc">Peak <span style={{ color: '#' + playerCard?.peakRankColor }}>{playerCard?.peakRank}</span></div>
-            </div>
-          </div>
+          <span className="text-2xl font-bold">{playerCard?.name}</span>
+          <span> #{playerCard?.tag}</span>
+        </div>
+
+        <p className="text-gray-400">Account Level: {accountLevel}</p>
+
+        <div className="mt-4 flex flex-row items-center justify-between">
+          <span className="badge badge-lg" style={{ color: '#' + playerCard?.currentRankColor }}>
+            {playerCard?.currentRank}
+          </span>
+          <p className="text-sm text-gray-400">Peak: <span style={{ color: '#' + playerCard?.peakRankColor }}>{playerCard?.peakRank}</span></p>
+        </div>
+
+        <div className="mt-4">
+          <p className="text-sm text-gray-300 mb-1">Rank Progress</p>
+          <progress className="progress progress-primary w-full" value={playerCard?.currentRR} max="100"></progress>
+          <p className="text-xs text-gray-400 mt-1">{playerCard?.currentRR} / 100</p>
         </div>
 
         <div className="stats shadow">
@@ -292,7 +293,7 @@ export const PlayerPage = () => {
           </div>
 
           <div className="stat">
-            <div className="stat-title">Average Damage per Round</div>
+            <div className="stat-title">Average Damage / Round</div>
             <div className={clsx('stat-value', playerStats && playerStats?.adr >= 150 ? 'text-success' : 'text-error' )}>{playerStats?.adr}</div>
           </div>
 
@@ -301,8 +302,7 @@ export const PlayerPage = () => {
             <div className="stat-value">{playerStats?.hs}%</div>
           </div>
         </div>
-
-      </section>
+      </div>
 
       {
         puuid !== ownPuuid &&
@@ -321,6 +321,55 @@ export const PlayerPage = () => {
     {
       chartData?.length ?
       <>
+        <div className="divider px-32" />
+
+        {/* Matches Table */}
+        <section className="overflow-x-auto flex flex-col space-y-8">
+          <label className="font-bold my-4">Player Match History</label>
+
+          <table className="table table-xs">
+
+            <thead>
+              <tr className="text-center">
+                <th>Date</th>
+                <th>Agent</th>
+                <th>Map</th>
+                <th>Rank</th>
+                <th>K / D / A</th>
+                <th>Result</th>
+                <th>Score</th>
+                <th>HS%</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {table.map(match => (
+                <tr key={match.matchId} className={clsx(match.result === 'won' ? 'bg-success/5' : match.result === 'loss' ? 'bg-error/5' : 'bg-white/5', 'text-center', refMatchId === match.matchId && 'border-2 border-primary')}>
+                  <td className="text-left">{moment(match.date).format('HH:mm DD/MM/YY')} <span className="opacity-25">({moment(match.date).fromNow()})</span></td>
+                  <td><img src={match.agentImage || undefined} className="max-h-6"/></td>
+                  <td>{match.mapName}</td>
+                  <td>
+                    <div className="tooltip flex flex-row items-center" data-tip={match.rankBefore?.rankName}>
+                      <img className="w-6 mr-2" src={match.rankBefore?.rankImg} />
+                      <span className={clsx(match.mmrUpdate ? match.mmrUpdate > 0 ? 'text-success' : 'text-error' : null)}>{match.mmrUpdate ? match.mmrUpdate > 0 ? `+${match.mmrUpdate}` : match.mmrUpdate : null}</span>
+                      { match.rankBefore && match.rankAfter &&
+                        (match.rankAfter?.tier > match.rankBefore?.tier ? <ChevronsUp size={16}/> : match.rankAfter?.tier < match.rankBefore?.tier ? <ChevronsDown size={16}/> : null)
+                      }
+                    </div>
+                  </td>
+                  <td>{match.kills} / {match.deaths} / {match.assists}</td>
+                  <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.result === 'won' ? 'Win' : match.result === 'loss' ? 'Loss' : 'Draw'}</td>
+                  <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.score}</td>
+                  <td>{match.hs ? match.hs + '%' : null}</td>
+                  <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/match/${match.matchId}`)}><ExternalLink size={14} /></button></td>
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
+        </section>
+
         <div className="divider px-32" />
 
         {/* Kills Death, KD and ADR Charts */}
@@ -607,47 +656,6 @@ export const PlayerPage = () => {
               </table>
             </div>
           </div>
-        </section>
-
-        <div className="divider px-32" />
-
-        {/* Matches Table */}
-        <section className="overflow-x-auto flex flex-col space-y-8">
-          <label className="font-bold my-4">Player Match History</label>
-
-          <table className="table table-xs">
-
-            <thead>
-              <tr className="text-center">
-                <th>Date</th>
-                <th>Agent</th>
-                <th>Map</th>
-                <th>K / D / A</th>
-                <th>Result</th>
-                <th>Score</th>
-                <th>±RR</th>
-                <th>HS%</th>
-                <th></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {table.map(match => (
-                <tr key={match.matchId} className={clsx(match.result === 'won' ? 'bg-success/5' : match.result === 'loss' ? 'bg-error/5' : 'bg-white/5', 'text-center', refMatchId === match.matchId && 'border-2 border-primary')}>
-                  <td className="text-left">{moment(match.date).format('HH:mm DD/MM/YY')} <span className="opacity-25">({moment(match.date).fromNow()})</span></td>
-                  <td><img src={match.agentImage || undefined} className="max-h-6"/></td>
-                  <td>{match.mapName}</td>
-                  <td>{match.kills} / {match.deaths} / {match.assists}</td>
-                  <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.result === 'won' ? 'Win' : match.result === 'loss' ? 'Loss' : 'Draw'}</td>
-                  <td className={clsx(match.result === 'won' ? 'text-success' : match.result === 'loss' ? 'text-error' : null)}>{match.score}</td>
-                  <td className={clsx(match.mmrUpdate ? match.mmrUpdate > 0 ? 'text-success' : 'text-error' : null)}>{match.mmrUpdate ? match.mmrUpdate > 0 ? `+${match.mmrUpdate}` : match.mmrUpdate : null}</td>
-                  <td>{match.hs ? match.hs + '%' : null}</td>
-                  <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/match/${match.matchId}`)}><ExternalLink size={14} /></button></td>
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
         </section>
       </> :
       <p className="my-10">No competitive matches played</p>

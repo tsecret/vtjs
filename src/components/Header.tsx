@@ -5,6 +5,8 @@ import { ChevronLeft, Download, Settings, Store, User, Users } from 'lucide-reac
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router';
 import atoms from '../utils/atoms';
+import { useLongPress } from 'use-long-press';
+
 
 export const Header = () => {
   const [update, setUpdate] = useState<Update|null>()
@@ -42,6 +44,10 @@ export const Header = () => {
       await relaunch()
   }
 
+  const handlers = useLongPress(() => {
+    navigate('/test')
+  });
+
   useEffect(() => {
     checkForUpdate()
   }, [])
@@ -54,7 +60,7 @@ export const Header = () => {
       location.pathname === '/dashboard' ?
       <>
         <a className="font-bold" href='/'>VTJS</a>
-        <div className="badge badge-dash badge-primary">Beta</div>
+        <div className="badge badge-dash badge-primary" {...handlers()}>Beta</div>
 
         <div className="ml-auto flex flex-row items-center space-x-2">
           { update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16}/> Update available</button> }
@@ -103,6 +109,12 @@ export const Header = () => {
         <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>
 
         <span className="font-bold">Friends</span>
+      </>
+      : location.pathname.startsWith('/test') ?
+      <>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>
+
+        <span className="font-bold">Test</span>
       </>
       : null
     }

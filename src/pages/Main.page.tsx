@@ -8,7 +8,7 @@ import atoms from "../utils/atoms";
 
 export const Main = () => {
     const [error, setError] = useState<string | null>(null);
-    const [_, setVersusStats] = useState<{ teamMMR: number, enemyMMR: number }>()
+    const [versusStats, setVersusStats] = useState<{ teamMMR: number, enemyMMR: number }>()
 
     const [puuid] = useAtom(atoms.puuid);
     const [player] = useAtom(atoms.player);
@@ -128,13 +128,26 @@ export const Main = () => {
                 </section>
             )}
 
-            {/* {
+            {
               versusStats &&
-                <section className="m-auto text-center">
-                  <p>MMR Diff</p>
-                  <span>(Team) {versusStats.teamMMR} - {versusStats.enemyMMR} (Enemy)</span>
+                <section className="m-auto text-center p-2 rounded-md min-w-96">
+
+                  <div className="flex flex-row items-center justify-between">
+                    <div className="flex flex-col">
+                      <span>Team</span>
+                      <span>{versusStats.teamMMR}</span>
+                    </div>
+
+                    <p>MMR Difference</p>
+
+                    <div className="flex flex-col">
+                      <span>Enemy</span>
+                      <span>{versusStats.enemyMMR}</span>
+                    </div>
+                  </div>
+
                 </section>
-            } */}
+            }
 
 
             {/* Players Table */}

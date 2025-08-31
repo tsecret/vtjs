@@ -83,6 +83,10 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
           return 'In Menu'
         }
 
+        if (friend.presence?.matchMap === '/Game/Maps/PovegliaV2/RangeV2'){
+          return 'On Range'
+        }
+
         return `${queues[friend.presence?.queueId] || 'Playing'} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam} on ${getMap(friend.presence.matchMap).displayName}`
       case 'league_of_legends':
         return 'Playing League of Legends'
