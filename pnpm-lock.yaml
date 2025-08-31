@@ -101,6 +101,9 @@ importers:
       tailwindcss:
         specifier: ^4.1.10
         version: 4.1.10
+      use-long-press:
+        specifier: ^3.3.0
+        version: 3.3.0(react@18.3.1)
     devDependencies:
       '@tauri-apps/cli':
         specifier: ^2
@@ -1528,6 +1531,11 @@ packages:
     peerDependencies:
       browserslist: '>= 4.21.0'
 
+  use-long-press@3.3.0:
+    resolution: {integrity: sha512-Yedz46ILxsb1BTS6kUzpV/wyEZPUlJDq+8Oat0LP1eOZQHbS887baJHJbIGENqCo8wTKNxmoTHLdY8lU/e+wvw==}
+    peerDependencies:
+      react: '>=16.8.0'
+
   victory-vendor@36.9.2:
     resolution: {integrity: sha512-PnpQQMuxlwYdocC8fIJqVXvkeViHYzotI+NJrCuav0ZYFoq912ZHBk3mCeuj+5/VpodOjPe1z0Fk2ihgzlXqjQ==}
 
@@ -2889,6 +2897,10 @@ snapshots:
       browserslist: 4.25.0
       escalade: 3.2.0
       picocolors: 1.1.1
+
+  use-long-press@3.3.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   victory-vendor@36.9.2:
     dependencies:

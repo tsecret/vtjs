@@ -26,6 +26,7 @@ import { CACHE_NAME } from './utils/constants';
 import { MatchPage } from './pages/Match.page';
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 import { Announcement } from './components/Announcement';
+import { TestPage } from './pages/Test.page';
 
 function App() {
 
@@ -86,13 +87,7 @@ function App() {
 
       try {
         setInitStatus('Reading lockfile');
-
-        let remoteLockfile = null
-
-        if (import.meta.env.VITE_DEV === 'true')
-          remoteLockfile = await httpfetch('http://192.168.31.197:8000').then(res => res.text())
-
-        const { port, password } = utils.parseLockFile(remoteLockfile || await utils.readLockfile());
+        const { port, password } = utils.parseLockFile(await utils.readLockfile());
 
         setInitStatus('Reading logs');
         const [region, shard] = await utils.readLog()
@@ -147,6 +142,7 @@ function App() {
       <Route path="/" element={<InitPage status={initStatus} error={error} />} />
       <Route path="/welcome" element={<WelcomePage />} />
       <Route path="/dashboard" element={<Main />} />
+      <Route path="/test" element={<TestPage />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/store" element={<StorePage />} />
       <Route path="/friends" element={<FriendsPage />} />

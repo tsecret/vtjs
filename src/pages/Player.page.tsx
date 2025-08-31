@@ -1,15 +1,15 @@
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { BestAgent, BestMaps, Rank } from "@/interface/utils.interface"
+import clsx from "clsx"
 import { useAtom } from "jotai"
+import { ChevronsDown, ChevronsUp, ExternalLink } from "lucide-react"
+import moment from "moment"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { Dot, LabelList, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts"
-import { MatchResult, MatchDetailsResponse } from "../interface"
-import * as utils from '../utils/utils'
+import { MatchDetailsResponse, MatchResult } from "../interface"
 import atoms from "../utils/atoms"
-import clsx from "clsx"
-import moment from "moment"
-import { ChevronDown, ChevronsDown, ChevronsUp, ExternalLink } from "lucide-react"
-import { BestAgent, BestMaps, Rank } from "@/interface/utils.interface"
+import * as utils from '../utils/utils'
 
 interface Row {
   matchId: string
@@ -293,7 +293,7 @@ export const PlayerPage = () => {
           </div>
 
           <div className="stat">
-            <div className="stat-title">Average Damage per Round</div>
+            <div className="stat-title">Average Damage / Round</div>
             <div className={clsx('stat-value', playerStats && playerStats?.adr >= 150 ? 'text-success' : 'text-error' )}>{playerStats?.adr}</div>
           </div>
 

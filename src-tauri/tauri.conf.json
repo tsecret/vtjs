@@ -13,8 +13,8 @@
     "windows": [
       {
         "title": "VTJS",
-        "width": 1024,
-        "height": 720,
+        "width": 1280,
+        "height": 1024,
         "shadow": true,
         "minimizable": true,
         "decorations": true

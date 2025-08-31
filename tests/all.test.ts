@@ -139,7 +139,7 @@ describe('utils', () => {
     })
 
     it('calculateCompetitiveUpdates', () => {
-      const expected = { currentRank: 20, currentRR: 28, peakRank: 20, peakRankSeasonId: '16118998-4705-5813-86dd-0292a2439d90', lastGameMMRDiff: -13, mmr: 2028 }
+      const expected = { currentRank: 20, currentRR: 28, peakRank: 20, peakRankSeasonId: 'aef237a0-494d-3a14-a1c8-ec8de84e309c', lastGameMMRDiff: -13, mmr: 2028 }
       expect(utils.calculateRanking(playerMMR as PlayerMMRResponse)).toEqual(expected)
     })
 

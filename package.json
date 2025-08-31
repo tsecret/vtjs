@@ -41,7 +41,8 @@
     "react-router": "^7.6.2",
     "recharts": "2.15.4",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.10"
+    "tailwindcss": "^4.1.10",
+    "use-long-press": "^3.3.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
