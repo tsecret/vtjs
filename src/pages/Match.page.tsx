@@ -27,6 +27,7 @@ type Match = {
     partyId: string
     rankName: string
     rankColor: string
+    accountLevel: number
   }[]
   roundResults: MatchDetailsResponse['roundResults']
   teams: {
@@ -87,8 +88,9 @@ export const MatchPage = () => {
             team: player.teamId,
             partyId: player.partyId,
             rankName,
-            rankColor
-          }
+            rankColor,
+            accountLevel: player.accountLevel
+          } as Match['players'][0]
         }).sort((a, b) => b.kd - a.kd),
         roundResults: match.roundResults,
         teams: {
@@ -155,6 +157,7 @@ export const MatchPage = () => {
             <th>Agent</th>
             <th>Name</th>
             <th>Rank</th>
+            <th>LVL</th>
             <th>K/D/A</th>
             <th>KD Ratio</th>
             <th>HS%</th>
@@ -171,6 +174,7 @@ export const MatchPage = () => {
                 <span className="text-xs opacity-50">#{player.tag}</span>
               </td>
               <td><span className="text-xs font-bold" style={{ color: `#${player.rankColor}` }} >{player.rankName}</span></td>
+              <td>{player.accountLevel}</td>
               <td>{player.kills} / {player.deaths} / {player.assists}</td>
               <td><span className={player.kd >= 1 ? 'text-success' : 'text-error'}>{player.kd}</span></td>
               <td>{player.hs}%</td>
