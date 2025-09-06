@@ -212,7 +212,6 @@ export const PlayerPage = () => {
       const [{ GameName, TagLine }] = await sharedapi.getPlayerNames([puuid])
 
       const mmr = await sharedapi?.getPlayerMMR(puuid)
-      console.log('mmr', mmr)
       const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
 
       const player = await cache?.select<any[]>("SELECT * from players WHERE puuid = ?", [puuid]).then(players => players[0])

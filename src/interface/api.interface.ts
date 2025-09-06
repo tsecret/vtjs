@@ -333,13 +333,10 @@ export type MatchDetailsResponse = {
         isCompleted: boolean;
         customGameName: string;
         forcePostProcessing: boolean;
-        /** Queue ID */
         queueID: string;
-        /** Game Mode */
         gameMode: string;
         isRanked: boolean;
         isMatchSampled: boolean;
-        /** Season ID */
         seasonId: string;
         completionState: "Surrendered" | "Completed" | "VoteDraw" | "";
         platformType: "PC";

@@ -25,6 +25,7 @@ type Match = {
     agentImg: string
     team: string
     partyId: string
+    partyNumber: number
     rankName: string
     rankColor: string
     accountLevel: number
@@ -64,6 +65,8 @@ export const MatchPage = () => {
       const teamRed = match.teams?.find(team => team.teamId === 'Red')!
       const teamBlue = match.teams?.find(team => team.teamId === 'Blue')!
 
+      const parties = Object.keys(match.matchInfo.partyRRPenalties || {})
+
       setMatch({
         mapName: utils.getMap(match.matchInfo.mapId)?.displayName || '',
         date: match.matchInfo.gameStartMillis,
@@ -87,6 +90,7 @@ export const MatchPage = () => {
             agentImg: agentImg || '',
             team: player.teamId,
             partyId: player.partyId,
+            partyNumber: parties.indexOf(player.partyId)! + 1,
             rankName,
             rankColor,
             accountLevel: player.accountLevel
@@ -154,6 +158,7 @@ export const MatchPage = () => {
       <table className="table table-xs sm:table-sm">
         <thead>
           <tr className="text-center">
+            <th></th>
             <th>Agent</th>
             <th>Name</th>
             <th>Rank</th>
@@ -168,6 +173,7 @@ export const MatchPage = () => {
         <tbody>
           {match.players.map(player => (
             <tr key={player.puuid} className={clsx(player.team === 'Blue' ? 'bg-info/10' : 'bg-error/5', 'text-center')}>
+              <td>{player.partyNumber}</td>
               <td className="flex flex-row items-center"><img src={player.agentImg} className="max-h-8"/></td>
               <td className="text-left">
                 <span>{player.name}</span>
