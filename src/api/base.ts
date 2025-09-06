@@ -2,10 +2,14 @@ import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 import Database from "@tauri-apps/plugin-sql";
 import { CACHE_NAME } from "../utils/constants";
 
+type RateLimitCallback = (retryAfter: number) => void;
+
 export class BaseAPI {
   private HEADERS = {};
   public REGION: string
   public SHARD: string
+  private rateLimitCallback?: RateLimitCallback;
+
 
   // @ts-ignore
   private cache: Database
@@ -25,6 +29,10 @@ export class BaseAPI {
 
   private delay(ms: number = 5000){
     return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
+  setRateLimitCallback(callback: RateLimitCallback) {
+    this.rateLimitCallback = callback;
   }
 
   protected async fetch(
@@ -78,7 +86,11 @@ export class BaseAPI {
 
     if (res.status === 429){
       const retrySeconds = parseInt(res.headers.get('retry-after') || '60')
-      console.log('Rate limit hit, waiting for', retrySeconds * 1000)
+
+      if (this.rateLimitCallback) {
+        this.rateLimitCallback(retrySeconds);
+      }
+
       await this.delay(retrySeconds * 1000)
       return this.fetch(hostname, endpoint, options)
     }

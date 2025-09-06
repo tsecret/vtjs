@@ -4,6 +4,7 @@ import { atom } from 'jotai'
 import { LocalAPI, SharedAPI } from '../api'
 import { GameState, PlayerAccount, PlayerRow } from '../interface'
 import { StoreAPI } from '../api/store'
+import { Penalties } from '@/interface/utils.interface'
 
 
 const appInfo = atom<{ version: string, tauriVersion: string, identifier: string }>()
@@ -24,6 +25,13 @@ const matchProcessing = atom<{ isProcessing: boolean, currentPlayer: string | nu
   progress: { step: 0, total: 0 }
 })
 const currentMatch = atom<any>(null)
+const penalty = atom<Penalties>()
+const rateLimitNotification = atom<{ isActive: boolean, retryAfter: number }>({
+  isActive: false,
+  retryAfter: 0
+})
+
+
 
 // Settings
 const store = atom<Store>()
@@ -40,6 +48,8 @@ export default {
   puuid,
   player,
   table,
+  penalty,
+  rateLimitNotification,
 
   gameState,
   matchProcessing,

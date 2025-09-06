@@ -1,3 +1,5 @@
+import { PenaltiesResponse } from "./api.interface"
+
 export type BestAgent = {
   agentId: string,
   matches: number,
@@ -55,4 +57,11 @@ export type Rank = {
   rankName: string,
   rankColor: string,
   rankImg: string
+}
+
+export type Penalties = {
+  freeTimestamp: number
+  type: PenaltiesResponse['Penalties'][0]['RiotRestrictionEffect']['RestrictionType'][]
+  reason: PenaltiesResponse['Penalties'][0]['RiotRestrictionEffect']['RestrictionReason'][]
+  matchId: string
 }
