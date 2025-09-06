@@ -41,6 +41,7 @@ function App() {
   const [, setAllowAnalytics] = useAtom(atoms.allowAnalytics)
   const [, setFirstTimeUser] = useAtom(atoms.firstTimeUser)
   const [, setAnnouncement] = useAtom(atoms.announcement)
+  const [, setPenalty] = useAtom(atoms.penalty)
 
   const [initStatus, setInitStatus] = useState<string>('Preparing app')
   const [error, setError] = useState<string|null>(null)
@@ -99,6 +100,12 @@ function App() {
         const { accessToken, token: entToken, subject: puuid } = await localapi.getEntitlementToken();
         const sharedapi = import.meta.env.VITE_FROM_JSON === 'true' ? new TestSharedAPI({ entToken, accessToken, region, shard }) : new SharedAPI({ entToken, accessToken, region, shard });
         const storeapi = new StoreAPI({ entToken, accessToken, region, shard });
+
+        const penalties = await sharedapi.getPenalties()
+        if (penalties?.Infractions.length){
+          const penalty = utils.extractPenalties(penalties)
+          if (penalty) setPenalty(penalty)
+        }
 
         setAppInfo(appInfo);
         setstore(store);

@@ -928,3 +928,24 @@ export type GameSettingsResponse = {
   type: 'Ares.PlayerSettings'
   data: string
 }
+
+export type PenaltiesResponse = {
+    Subject: string;
+    Penalties: {
+      Expiry: string
+      ID: string
+      InfractionID: string
+      IssuingMatchID: string
+      IsAutomatedDetection: boolean
+      RiotRestrictionEffect: {
+        RestrictionType: 'TEXT_CHAT_MUTED' | 'VOICE_CHAT_MUTED' | 'PBE_LOGIN_TIME_BAN'
+        RestrictionReason: 'INAPPROPRIATE_VOICE' | 'INAPPROPRIATE_TEXT'
+      }
+    }[];
+    Version: number;
+    Infractions: {
+      ID: string
+      Name: string
+      RatingName: string
+    }[]
+};

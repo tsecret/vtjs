@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
 import * as utils from '../utils/utils';
 import atoms from "../utils/atoms";
+import { PenaltyAlert } from '@/components/PenaltyAlert';
 
 
 export const Main = () => {
@@ -18,6 +19,7 @@ export const Main = () => {
     const [allowAnalytics] = useAtom(atoms.allowAnalytics);
     const [matchProcessing] = useAtom(atoms.matchProcessing);
     const [currentMatch] = useAtom(atoms.currentMatch);
+    const [penalty] = useAtom(atoms.penalty);
 
     const { trackEvent } = useAptabase();
 
@@ -91,6 +93,8 @@ export const Main = () => {
         <div className="p-2 flex flex-col">
             {error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div> }
 
+            <PenaltyAlert penalty={penalty} />
+
             {/* Progress Indicator */}
             {matchProcessing.isProcessing && matchProcessing.progress.total > 0 && (
                 <div className="flex flex-col m-auto my-4 space-y-4">
@@ -148,7 +152,6 @@ export const Main = () => {
 
                 </section>
             }
-
 
             {/* Players Table */}
             <PlayersTable table={table} puuid={puuid as string} mapId={matchDisplayInfo?.mapId} />
