@@ -26,6 +26,12 @@ const matchProcessing = atom<{ isProcessing: boolean, currentPlayer: string | nu
 })
 const currentMatch = atom<any>(null)
 const penalty = atom<Penalties>()
+const rateLimitNotification = atom<{ isActive: boolean, retryAfter: number }>({
+  isActive: false,
+  retryAfter: 0
+})
+
+
 
 // Settings
 const store = atom<Store>()
@@ -43,6 +49,7 @@ export default {
   player,
   table,
   penalty,
+  rateLimitNotification,
 
   gameState,
   matchProcessing,

@@ -27,6 +27,7 @@ import { MatchPage } from './pages/Match.page';
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 import { Announcement } from './components/Announcement';
 import { TestPage } from './pages/Test.page';
+import { RateLimitNotification } from './components/RateLimitAlert';
 
 function App() {
 
@@ -42,6 +43,7 @@ function App() {
   const [, setFirstTimeUser] = useAtom(atoms.firstTimeUser)
   const [, setAnnouncement] = useAtom(atoms.announcement)
   const [, setPenalty] = useAtom(atoms.penalty)
+  const [, setRateLimitNotification] = useAtom(atoms.rateLimitNotification)
 
   const [initStatus, setInitStatus] = useState<string>('Preparing app')
   const [error, setError] = useState<string|null>(null)
@@ -107,6 +109,10 @@ function App() {
           if (penalty) setPenalty(penalty)
         }
 
+        sharedapi.setRateLimitCallback((retryAfter: number) => {
+          setRateLimitNotification({ isActive: true, retryAfter })
+        })
+
         setAppInfo(appInfo);
         setstore(store);
         setAllowAnalytics(allowAnalytics);
@@ -144,6 +150,7 @@ function App() {
     <Announcement />
     <Header />
     <SocketListener />
+    <RateLimitNotification />
     <MatchHandler />
     <Routes>
       <Route path="/" element={<InitPage status={initStatus} error={error} />} />
