@@ -1,4 +1,4 @@
-import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, GameSettingsResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
+import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, GameSettingsResponse, MatchDetailsResponse, PenaltiesResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
 import { BaseAPI } from './base';
 
 export class SharedAPI extends BaseAPI {
@@ -51,6 +51,10 @@ export class SharedAPI extends BaseAPI {
 
   async setGameSettings(data: GameSettingsResponse): Promise<GameSettingsResponse> {
     return this.fetch('https://player-preferences-usw2.pp.sgp.pvp.net', '/playerPref/v3/savePreference', { noCache: true, body: JSON.stringify(data), method: 'PUT' })
+  }
+
+  async getPenalties(): Promise<PenaltiesResponse> {
+    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, '/restrictions/v3/penalties', { noCache: true })
   }
 
 }

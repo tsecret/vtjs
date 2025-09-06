@@ -1,0 +1,271 @@
+{
+    "Subject": "test-player-1-puuid",
+    "Penalties": [
+        {
+            "ID": "8193e653-682b-4d9d-8fad-0a792cec6d25",
+            "IssuingGameStartUnixMillis": 1757116255592,
+            "IssuingMatchID": "test-match-id-1",
+            "Expiry": "2025-09-06T00:27:14.03688015Z",
+            "GamesRemaining": 1,
+            "ApplyToAllPlatforms": true,
+            "ApplyToPlatforms": [
+                "pc",
+                "console"
+            ],
+            "ApplyToPlatformGroups": [
+                "pc",
+                "console"
+            ],
+            "InfractionID": "2bc11f31-bf83-44e7-aab7-c4d6cb7b769a",
+            "Origin": "pc",
+            "ForgivenessIneligible": true,
+            "IsAutomatedDetection": true,
+            "PenaltyInfo": null,
+            "DelayedPenaltyEffect": null,
+            "GameBanEffect": null,
+            "QueueDelayEffect": null,
+            "QueueRestrictionEffect": null,
+            "RankedRatingPenaltyEffect": null,
+            "RiotRestrictionEffect": null,
+            "RMSNotifyEffect": null,
+            "WarningEffect": {
+                "WarningType": "VOICE",
+                "WarningTier": 1,
+                "ParentCentralRecordID": ""
+            },
+            "XPMultiplierEffect": null,
+            "PremierRestrictionEffect": null
+        },
+        {
+            "ID": "2a73d068-979d-442a-b65c-bf39022604a3",
+            "IssuingGameStartUnixMillis": 1757116255592,
+            "IssuingMatchID": "test-match-id-1",
+            "Expiry": "2025-09-07T00:27:14.037048664Z",
+            "GamesRemaining": 0,
+            "ApplyToAllPlatforms": true,
+            "ApplyToPlatforms": [
+                "pc",
+                "console"
+            ],
+            "ApplyToPlatformGroups": [
+                "pc",
+                "console"
+            ],
+            "InfractionID": "2bc11f31-bf83-44e7-aab7-c4d6cb7b769a",
+            "Origin": "pc",
+            "ForgivenessIneligible": true,
+            "IsAutomatedDetection": true,
+            "PenaltyInfo": null,
+            "DelayedPenaltyEffect": null,
+            "GameBanEffect": null,
+            "QueueDelayEffect": null,
+            "QueueRestrictionEffect": null,
+            "RankedRatingPenaltyEffect": null,
+            "RiotRestrictionEffect": {
+                "RestrictionType": "TEXT_CHAT_MUTED",
+                "RestrictionReason": "INAPPROPRIATE_TEXT",
+                "ChildCentralRecordID": "3c78a364-8ab8-11f0-8432-a3a1b475d291",
+                "ChildCentralRecordExpiry": "0001-01-01T00:00:00Z",
+                "ParentCentralRecordID": ""
+            },
+            "RMSNotifyEffect": null,
+            "WarningEffect": null,
+            "XPMultiplierEffect": null,
+            "PremierRestrictionEffect": null
+        },
+        {
+            "ID": "44ab9586-746c-4716-a824-13d696dc4c4a",
+            "IssuingGameStartUnixMillis": 1757116255592,
+            "IssuingMatchID": "test-match-id-1",
+            "Expiry": "2025-09-07T00:27:14.553571976Z",
+            "GamesRemaining": 0,
+            "ApplyToAllPlatforms": true,
+            "ApplyToPlatforms": [
+                "pc",
+                "console"
+            ],
+            "ApplyToPlatformGroups": [
+                "pc",
+                "console"
+            ],
+            "InfractionID": "2bc11f31-bf83-44e7-aab7-c4d6cb7b769a",
+            "Origin": "pc",
+            "ForgivenessIneligible": true,
+            "IsAutomatedDetection": true,
+            "PenaltyInfo": null,
+            "DelayedPenaltyEffect": null,
+            "GameBanEffect": null,
+            "QueueDelayEffect": null,
+            "QueueRestrictionEffect": null,
+            "RankedRatingPenaltyEffect": null,
+            "RiotRestrictionEffect": {
+                "RestrictionType": "VOICE_CHAT_MUTED",
+                "RestrictionReason": "INAPPROPRIATE_VOICE",
+                "ChildCentralRecordID": "3cb49b51-8ab8-11f0-b70e-592c2218d43e",
+                "ChildCentralRecordExpiry": "0001-01-01T00:00:00Z",
+                "ParentCentralRecordID": ""
+            },
+            "RMSNotifyEffect": null,
+            "WarningEffect": null,
+            "XPMultiplierEffect": null,
+            "PremierRestrictionEffect": null
+        },
+        {
+            "ID": "a6322623-e39c-4698-b296-9f26d8baa494",
+            "IssuingGameStartUnixMillis": 1757116255592,
+            "IssuingMatchID": "test-match-id-1",
+            "Expiry": "2025-09-07T00:27:15.300583963Z",
+            "GamesRemaining": 0,
+            "ApplyToAllPlatforms": true,
+            "ApplyToPlatforms": [
+                "pc",
+                "console"
+            ],
+            "ApplyToPlatformGroups": [
+                "pc",
+                "console"
+            ],
+            "InfractionID": "2bc11f31-bf83-44e7-aab7-c4d6cb7b769a",
+            "Origin": "pc",
+            "ForgivenessIneligible": false,
+            "IsAutomatedDetection": true,
+            "PenaltyInfo": null,
+            "DelayedPenaltyEffect": null,
+            "GameBanEffect": null,
+            "QueueDelayEffect": null,
+            "QueueRestrictionEffect": {
+                "QueueIDs": [
+                    "competitive",
+                    "console_competitive",
+                    "unrated",
+                    "console_unrated",
+                    "spikerush",
+                    "console_spikerush",
+                    "premier",
+                    "premier-seasonmatch",
+                    "premier-tournament",
+                    "premier-scrim",
+                    "premier-weeklypatient",
+                    "swiftplay",
+                    "swiftplaybots",
+                    "console_swiftplay",
+                    "console_swiftplaybots",
+                    "hurm",
+                    "console_hurm",
+                    "newmap",
+                    "ggteam",
+                    "onefa"
+                ],
+                "RecordID": ""
+            },
+            "RankedRatingPenaltyEffect": null,
+            "RiotRestrictionEffect": {
+                "RestrictionType": "PBE_LOGIN_TIME_BAN",
+                "RestrictionReason": "",
+                "ChildCentralRecordID": "3d26703e-8ab8-11f0-b7f3-2d51ecb0e2d9",
+                "ChildCentralRecordExpiry": "0001-01-01T00:00:00Z",
+                "ParentCentralRecordID": ""
+            },
+            "RMSNotifyEffect": null,
+            "WarningEffect": null,
+            "XPMultiplierEffect": null,
+            "PremierRestrictionEffect": null
+        },
+        {
+            "ID": "33960a47-dcda-423c-a996-908217962470",
+            "IssuingGameStartUnixMillis": 1757116255592,
+            "IssuingMatchID": "test-match-id-1",
+            "Expiry": "2025-09-13T00:27:16.050786676Z",
+            "GamesRemaining": 0,
+            "ApplyToAllPlatforms": true,
+            "ApplyToPlatforms": [
+                "pc",
+                "console"
+            ],
+            "ApplyToPlatformGroups": [
+                "pc",
+                "console"
+            ],
+            "InfractionID": "2bc11f31-bf83-44e7-aab7-c4d6cb7b769a",
+            "Origin": "pc",
+            "ForgivenessIneligible": false,
+            "IsAutomatedDetection": true,
+            "PenaltyInfo": null,
+            "DelayedPenaltyEffect": null,
+            "GameBanEffect": null,
+            "QueueDelayEffect": null,
+            "QueueRestrictionEffect": {
+                "QueueIDs": [
+                    "premier",
+                    "premier-seasonmatch",
+                    "premier-tournament",
+                    "premier-weeklypatient",
+                    "premier-scrim"
+                ],
+                "RecordID": ""
+            },
+            "RankedRatingPenaltyEffect": null,
+            "RiotRestrictionEffect": null,
+            "RMSNotifyEffect": null,
+            "WarningEffect": null,
+            "XPMultiplierEffect": null,
+            "PremierRestrictionEffect": {
+                "RestrictionType": "INELIGIBLE",
+                "SeasonID": "",
+                "Source": "COMMS_RESTRICTION"
+            }
+        },
+        {
+            "ID": "b91540ad-bc92-4f60-8272-82b4f631af83",
+            "IssuingGameStartUnixMillis": 1757116255592,
+            "IssuingMatchID": "test-match-id-1",
+            "Expiry": "2025-10-16T03:15:00Z",
+            "GamesRemaining": 0,
+            "ApplyToAllPlatforms": true,
+            "ApplyToPlatforms": [
+                "pc",
+                "console"
+            ],
+            "ApplyToPlatformGroups": [
+                "pc",
+                "console"
+            ],
+            "InfractionID": "2bc11f31-bf83-44e7-aab7-c4d6cb7b769a",
+            "Origin": "pc",
+            "ForgivenessIneligible": false,
+            "IsAutomatedDetection": true,
+            "PenaltyInfo": null,
+            "DelayedPenaltyEffect": null,
+            "GameBanEffect": null,
+            "QueueDelayEffect": null,
+            "QueueRestrictionEffect": {
+                "QueueIDs": [
+                    "premier",
+                    "premier-seasonmatch",
+                    "premier-tournament",
+                    "premier-weeklypatient",
+                    "premier-scrim"
+                ],
+                "RecordID": ""
+            },
+            "RankedRatingPenaltyEffect": null,
+            "RiotRestrictionEffect": null,
+            "RMSNotifyEffect": null,
+            "WarningEffect": null,
+            "XPMultiplierEffect": null,
+            "PremierRestrictionEffect": {
+                "RestrictionType": "DISQUALIFIED",
+                "SeasonID": "32bcad98-4779-d46e-2a4f-49932eb14bdb",
+                "Source": "COMMS_RESTRICTION"
+            }
+        }
+    ],
+    "Infractions": [
+        {
+            "ID": "2bc11f31-bf83-44e7-aab7-c4d6cb7b769a",
+            "Name": "POST_GAME_VOICE_COMMS_MISUSE_MODERATE",
+            "RatingName": "comms"
+        }
+    ],
+    "Version": 1757118434036
+}

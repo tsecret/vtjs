@@ -11,9 +11,10 @@ export const StorePage = () => {
   const [allowAnalytics] = useAtom(atoms.allowAnalytics)
 
   const [skins, setSkins] = useState<{ price: number, name: string, url: string, uuid: string }[]>()
-  const [, setBundles] = useState<{ price: number, name: string, url: string, uuid: string }[]>()
+  const [bundles, setBundles] = useState<{ price: number, name: string, url: string, uuid: string }[]>()
   const [accessories, setAccessories] = useState<{ price: number, name: string, url: string, uuid: string, urlFull: string, urlWide: string, urlTall: string }[]>()
 
+  const [bundlesResetTime, setBundlesResetTime] = useState<number[]>()
   const [skinsResetTime, setSkinsResetTime] = useState<number>()
   const [accessoriesResetTime, setAccessoriesResetTime] = useState<number>()
 
@@ -28,7 +29,6 @@ export const StorePage = () => {
 
       // Bundle
       const bundleInfo = await Promise.all(storeInfo.FeaturedBundle.Bundles.map(bundle => storeapi.getBundleById(bundle.DataAssetID)))
-
 
       // Skins
       const skins = getStoreItemInfo(storeInfo.SkinsPanelLayout.SingleItemStoreOffers)
@@ -45,12 +45,18 @@ export const StorePage = () => {
         )
       )
 
-      setBundles(bundleInfo.filter(bundle => bundle).map(bundle => ({
-        name: bundle.data.displayName,
-        url: bundle.data.displayIcon,
-        uuid: bundle.data.uuid,
-        price: Object.values(storeInfo.FeaturedBundle.Bundles.find(_bundle => _bundle.DataAssetID === bundle.data.uuid)!.TotalDiscountedCost as any)[0] as number
-      })))
+      console.log('storeInfo', storeInfo)
+
+      setBundles(
+        bundleInfo
+          .filter(bundle => bundle)
+          .map(bundle => ({
+            name: bundle.data.displayName,
+            url: bundle.data.displayIcon,
+            uuid: bundle.data.uuid,
+            price: Object.values(storeInfo.FeaturedBundle.Bundles.find(_bundle => _bundle.DataAssetID === bundle.data.uuid)!.TotalDiscountedCost as any)[0] as number
+        }))
+      )
       setAccessories(
         accessoriesData
           .filter(item => item != null)
@@ -82,6 +88,7 @@ export const StorePage = () => {
             name: skin.displayName
           }))
       )
+      setBundlesResetTime(storeInfo.FeaturedBundle.Bundles.map(bundle => +new Date() + bundle.DurationRemainingInSeconds * 1000))
       setSkinsResetTime(+new Date() + storeInfo.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds * 1000)
       setAccessoriesResetTime(+new Date() + storeInfo.AccessoryStore.AccessoryStoreRemainingDurationInSeconds * 1000)
 
@@ -94,9 +101,7 @@ export const StorePage = () => {
 
   return <div className="flex flex-col p-8 space-y-4 max-w-6xl m-auto">
 
-    <p className="alert alert-warning w-full">Bundles are corrently not shown</p>
-
-    {/* <section id="bundles" className="w-1/2 max-w-2xl rounded-md">
+    <section id="bundles" className="max-w-2xl rounded-md m-auto">
       <div className="carousel w-full">
         {bundles?.map((bundle, i) => <div key={bundle.uuid} id={`bundle${i}`} className="carousel-item relative w-full">
           <img className="w-full rounded-md" src={bundle.url} />
@@ -105,13 +110,17 @@ export const StorePage = () => {
             <p className="text-sm">{bundle.price}</p>
           </div>
 
+          <div className="absolute right-5 bottom-5">
+            { bundlesResetTime && <p>Ends in <Countdown date={bundlesResetTime[i]} /></p> }
+          </div>
+
           <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
             { bundles.length > 1 && <a href={`#bundle${i-1}`} className="btn btn-circle">❮</a> }
             { bundles.length > 1 && <a href={`#bundle${i+1}`} className="btn btn-circle">❯</a> }
           </div>
         </div>)}
       </div>
-    </section> */}
+    </section>
 
     {/* Store */}
     <section id="skins" className="w-full">

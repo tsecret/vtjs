@@ -12,8 +12,8 @@ import maps from '../assets/maps.json';
 import ranks from '../assets/ranks.json';
 import seasons from '../assets/seasons.json';
 
-import type { BestAgent, BestMaps, PlayerMatchStats, PlayerRanking, Rank } from '@/interface/utils.interface';
-import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, Map, MatchDetailsResponse, MatchResult, PlayerMMRResponse, PlayerRow, StorefrontResponse } from '../interface';
+import type { BestAgent, BestMaps, Penalties, PlayerMatchStats, PlayerRanking, Rank } from '@/interface/utils.interface';
+import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, Map, MatchDetailsResponse, MatchResult, PenaltiesResponse, PlayerMMRResponse, PlayerRow, StorefrontResponse } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -340,4 +340,23 @@ export const getStoreItemInfo = (offers: StorefrontResponse['AccessoryStore']['A
         'buddy'
     }
   })
+}
+
+export const extractPenalties = (penalties: PenaltiesResponse): Penalties | null => {
+  if (!penalties.Infractions.length)
+    return null
+
+  penalties.Penalties = penalties.Penalties.filter(p => p.RiotRestrictionEffect)
+
+  const penalty = penalties.Penalties.find(penalty => penalty.RiotRestrictionEffect.RestrictionType === 'PBE_LOGIN_TIME_BAN')
+
+  if (!penalty)
+    return null
+
+  return {
+    freeTimestamp: +new Date(penalty.Expiry),
+    type: penalties.Penalties.map(p => p.RiotRestrictionEffect.RestrictionType),
+    reason: penalties.Penalties.map(p => p.RiotRestrictionEffect.RestrictionReason).filter(p => p.length),
+    matchId: penalty.IssuingMatchID
+  }
 }

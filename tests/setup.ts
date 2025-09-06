@@ -16,6 +16,8 @@ import playerNames from './fixtures/shared/player-names.json'
 import playerMatchHistory from './fixtures/shared/match-history.json'
 import matchDetails from './fixtures/shared/match-details.json'
 import competitiveUpdates from './fixtures/shared/competitive-updates.json'
+import penalties from './fixtures/shared/penalties.json'
+
 
 globalThis.cache = {} as { [key: string]: [string, number, any] }
 globalThis.requestCache = {}
@@ -73,6 +75,10 @@ const getResponseFromUrl = (url: string) => {
 
     if (url.includes('/competitiveupdates')){
       return competitiveUpdates
+    }
+
+    if (url.includes('/restrictions/v3/penalties')){
+      return penalties
     }
 }
 
