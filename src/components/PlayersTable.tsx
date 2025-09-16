@@ -16,7 +16,16 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
             <span>{player.agentName}</span>
           </div>
         </td>
-        <th className="text-start">{ player.puuid === puuid ? <span>You</span> : <><span>{player.name}</span><span className="text-gray-500">#{player.tag}</span></>}</th>
+        <th className="text-start">
+          {
+            player.name === '' ? null :
+            player.puuid === puuid ? <span>You</span> :
+            <>
+              <span>{player.name}</span>
+              <span className="text-gray-500">#<span>{player.tag}</span></span>
+            </>
+          }
+        </th>
         <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
         <th className="flex flex-col">
           <span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span>
