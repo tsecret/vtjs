@@ -128,7 +128,7 @@ function App() {
         console.log('player', player);
 
         invoke('start_ws', {
-          wsUrl: `wss://${import.meta.env.VITE_DEV === 'true' ? '192.168.31.197' : 'localhost'}:${port}`,
+          wsUrl: `wss://${import.meta.env.VITE_DEV === 'true' ? import.meta.env.VITE_REMOTE_PC_IP : 'localhost'}:${port}`,
           headers: {
             Authorization: `Basic ${password}`,
           },

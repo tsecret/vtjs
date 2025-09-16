@@ -24,8 +24,6 @@ export const SocketListener = () => {
 
           const decoded: PresenceJSON  = JSON.parse(base64Decode(presence.private))
 
-          console.log('decoded', decoded)
-
           if (decoded.sessionLoopState === state.current.state)
             return
 

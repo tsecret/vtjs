@@ -56,10 +56,10 @@
       "identifier": "http:default",
       "allow": [
         {
-          "url": "https://192.168.31.197:*"
+          "url": "https://192.168.31.173:*"
         },
         {
-          "url": "http://192.168.31.197:*"
+          "url": "http://192.168.31.173:*"
         },
         {
           "url": "https://localhost:*"

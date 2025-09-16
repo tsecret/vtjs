@@ -45,8 +45,6 @@ export const StorePage = () => {
         )
       )
 
-      console.log('storeInfo', storeInfo)
-
       setBundles(
         bundleInfo
           .filter(bundle => bundle)
