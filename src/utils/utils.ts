@@ -360,3 +360,15 @@ export const extractPenalties = (penalties: PenaltiesResponse): Penalties | null
     matchId: penalty.IssuingMatchID
   }
 }
+
+export const extractPlayerName = (puuid: string, matches: MatchDetailsResponse[]): { name: string, tag: string }|null => {
+  for (const match of matches){
+    const player = match.players.find(player => player.subject === puuid)
+    if (!player) continue
+
+    if (player.subject !== '' && player.tagLine !== '')
+      return { name: player.gameName, tag: player.tagLine }
+
+  }
+  return null
+}

@@ -156,17 +156,32 @@ export const MatchHandler = () => {
                 const { result: lastGameResult, score: lastGameScore, accountLevel } = utils.getMatchResult(player.Subject, matches[0])
                 const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID);
 
+                let data = {
+                  kd,
+                  hs,
+                  adr,
+                  lastGameResult,
+                  lastGameScore,
+                  accountLevel,
+                  bestAgents
+                }
+
+                if (player.GameName === ''){
+                  const name = utils.extractPlayerName(player.Subject, matches)
+                  if (name){
+                    data = {
+                      ...data,
+                      ...name
+                    }
+                  }
+
+                }
+
                 setTable(prevTable => ({
                     ...prevTable,
                     [player.Subject]: {
                         ...prevTable[player.Subject],
-                        kd,
-                        hs,
-                        adr,
-                        lastGameResult,
-                        lastGameScore,
-                        accountLevel,
-                        bestAgents
+                        ...data,
                     }
                 }));
             }
