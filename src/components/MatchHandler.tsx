@@ -156,6 +156,9 @@ export const MatchHandler = () => {
                 const { result: lastGameResult, score: lastGameScore, accountLevel } = utils.getMatchResult(player.Subject, matches[0])
                 const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID);
 
+                const streak = utils.calculateStreak(player.Subject, matches)
+                const encounters = utils.extractEncounters(player.Subject, matches, players)
+
                 let data = {
                   kd,
                   hs,
@@ -163,7 +166,9 @@ export const MatchHandler = () => {
                   lastGameResult,
                   lastGameScore,
                   accountLevel,
-                  bestAgents
+                  bestAgents,
+                  streak,
+                  encounters
                 }
 
                 if (player.GameName === ''){

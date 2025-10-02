@@ -12,8 +12,8 @@ import maps from '../assets/maps.json';
 import ranks from '../assets/ranks.json';
 import seasons from '../assets/seasons.json';
 
-import type { BestAgent, BestMaps, Penalties, PlayerMatchStats, PlayerRanking, Rank } from '@/interface/utils.interface';
-import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, Map, MatchDetailsResponse, MatchResult, PenaltiesResponse, PlayerMMRResponse, PlayerRow, StorefrontResponse } from '../interface';
+import type { BestAgent, BestMaps, Encounters, MatchResult, MostPlayedServer, Penalties, PlayerMatchStats, PlayerRanking, Rank, Streak } from '@/interface/utils.interface';
+import type { Agent, AgentStats, CurrentGameMatchResponse, CurrentPreGameMatchResponse, Map, MatchDetailsResponse, PenaltiesResponse, PlayerMMRResponse, PlayerNamesReponse, PlayerRow, Result, StorefrontResponse } from '../interface';
 
 export const sleep = (ms: number = 2000) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -91,11 +91,14 @@ export const parseLockFile = (content: string): { port: string, password: string
   return { port, password: base64.encode(`riot:${password}`) }
 }
 
-export const extractPlayers = (match: CurrentPreGameMatchResponse | CurrentGameMatchResponse): string[] => {
+export const extractPlayers = (match: CurrentPreGameMatchResponse | CurrentGameMatchResponse | MatchDetailsResponse): string[] => {
   if ('AllyTeam' in match)
     return match.AllyTeam?.Players.map(player => player.Subject) || []
 
-  return match.Players.map(player => player.Subject)
+  if ('Players' in match)
+    return match.Players.map(player => player.Subject)
+
+  return match.players.map(player => player.subject)
 }
 
 export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]): PlayerMatchStats => {
@@ -185,7 +188,7 @@ export const calculateRanking = (playerMMR: PlayerMMRResponse): PlayerRanking =>
   }
 }
 
-export const getMatchResult = (puuid: string, match: MatchDetailsResponse): { result: MatchResult, score: string, accountLevel: number } => {
+export const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult => {
 
   if (!match || !match.teams)
     return { result: 'N/A', score: '', accountLevel: 0 }
@@ -325,7 +328,11 @@ export const calculateBestMaps = (puuid: string, matches: MatchDetailsResponse[]
   return bestMaps.sort((a, b) => (b.matches || 1) - (a.matches || 0))
 }
 
-export const getStoreItemInfo = (offers: StorefrontResponse['AccessoryStore']['AccessoryStoreOffers'] | StorefrontResponse['SkinsPanelLayout']['SingleItemStoreOffers']): { uuid: string, price: number, type: 'weaponskin' | 'spray' | 'playercard' | 'buddy' }[] => {
+export const getStoreItemInfo = (offers:
+  StorefrontResponse['AccessoryStore']['AccessoryStoreOffers'] |
+  StorefrontResponse['SkinsPanelLayout']['SingleItemStoreOffers'] |
+  StorefrontResponse['BonusStore']['BonusStoreOffers'])
+  : { uuid: string, price: number, type: 'weaponskin' | 'spray' | 'playercard' | 'buddy' }[] => {
 
   return offers.map(offer => {
     const rawOffer = "Offer" in offer ? offer.Offer : offer
@@ -371,4 +378,74 @@ export const extractPlayerName = (puuid: string, matches: MatchDetailsResponse[]
 
   }
   return null
+}
+
+export const calculateMostPlayedServer = (matches: MatchDetailsResponse[]): MostPlayedServer => {
+  const servers: MostPlayedServer = {}
+
+  for (const match of matches) {
+
+    const serverName = match.matchInfo.gamePodId.split('-')[4]
+
+    if (!(serverName in servers))
+      servers[serverName] = 0
+
+    servers[serverName] += 1
+
+  }
+
+  return servers
+}
+
+export const calculateStreak = (puuid: string, matches: MatchDetailsResponse[]): Streak | null => {
+  if (!matches.length)
+    return null
+
+  const results: Result[] = []
+
+  for (const match of matches){
+    const { result } = getMatchResult(puuid, match)
+    results.push(result)
+  }
+
+  const streak: Streak = {
+    type: results[0] ,
+    number: 0
+  }
+
+  for (const result of results){
+    if (result === streak.type){
+      streak.number += 1
+    } else {
+      break
+    }
+  }
+
+  return streak
+}
+
+export const extractEncounters = (puuid: string, matches: MatchDetailsResponse[], players: PlayerNamesReponse[]): Encounters[] => {
+  const encounters: { [key: string]: number } = {}
+
+  for (const match of matches){
+    for (const id of extractPlayers(match)){
+      if (id === puuid || !players.map(p => p.Subject).includes(id)) continue
+
+      if (id in encounters){
+        encounters[id] += 1
+      } else {
+        encounters[id] = 1
+      }
+    }
+  }
+
+  return Object.keys(encounters).map(puuid => {
+    const player = players.find(p => p.Subject === puuid)!
+    return {
+      puuid,
+      name: player.GameName,
+      tag: player.TagLine,
+      number: encounters[puuid]
+    }
+  })
 }
