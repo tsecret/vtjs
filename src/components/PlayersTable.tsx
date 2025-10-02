@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Users } from "lucide-react"
 import { useNavigate } from "react-router"
 import { PlayerRow } from "../interface"
 import * as utils from '../utils/utils'
@@ -31,12 +31,17 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
           <span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span>
           {player.rankPeakDate ? <span className="text-mini text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span> : null}
         </th>
-        <th>{player.mmr}</th>
         <th><span>{player.accountLevel}</span></th>
         <td><span className={clsx(!player.kd? null : player.kd >= 1 ? 'text-success' : 'text-error')}>{player.kd}</span></td>
         <td><span>{player.hs}{player.hs ? '%' : null}</span></td>
         <td><span>{player.adr}</span></td>
-        <td><span className={clsx(player.lastGameResult === 'won' ? 'text-success' : player.lastGameResult === 'loss' ? 'text-error' : null)}>{player.lastGameScore}{player.lastGameMMRDiff && player.lastGameScore ? ` (${player.lastGameMMRDiff > 0 ? '+'+player.lastGameMMRDiff : player.lastGameMMRDiff})` : null}</span></td>
+        <td>
+          <span className={clsx(player.lastGameResult === 'won' ? 'text-success' : player.lastGameResult === 'loss' ? 'text-error' : null)}>
+            {player.lastGameScore}
+            {player.lastGameMMRDiff && player.lastGameScore ? ` (${player.lastGameMMRDiff > 0 ? '+'+player.lastGameMMRDiff : player.lastGameMMRDiff})` : null}
+          </span>
+        </td>
+        <td><span className={clsx(player.streak?.type === 'won' ? 'text-success' : 'text-error')}>{player.streak ? player.streak.number : null}</span></td>
         <td>
           <div className="flex flex-row space-x-2">
             {player.bestAgents?.map(agent => (
@@ -56,6 +61,21 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
           { utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div> }
           { player.dodge && <div className="tooltip badge badge-soft badge-warning" data-tip="This player is in your avoid list. Check player profile to learn more">Avoid</div> }
         </td>
+        <td>
+          {
+            player.encounters && player.encounters.length > 1 ?
+            <div className="tooltip tooltip-left">
+              <div className="tooltip-content flex flex-col items-start">
+                <p className="mb-2">Played with those players before:</p>
+                {player.encounters?.map(e => (
+                    <p>{e.name}#{e.tag} - {e.number} matches</p>
+                ))}
+              </div>
+              <Users size={14} />
+            </div>
+            : null
+          }
+        </td>
         <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}><ExternalLink size={14} /></button></td>
       </tr>
     }
@@ -72,14 +92,15 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
             <th>Player</th>
             <th>Rank</th>
             <th>Peak Rank</th>
-            <th>MMR</th>
             <th>LVL</th>
             <th>K/D</th>
             <th>HS%</th>
             <th>ADR</th>
             <th>Last Game</th>
+            <th>Streak</th>
             <th>Top Agents on Current Map</th>
             <th>Note</th>
+            <th></th>
             <th></th>
           </tr>
         </thead>

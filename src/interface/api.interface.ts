@@ -873,7 +873,7 @@ export type StorefrontResponse = {
         StorefrontID: string;
     };
     /** Night market */
-    BonusStore?: {
+    BonusStore: {
         BonusStoreOffers: {
             /** UUID */
             BonusOfferID: string;
@@ -900,7 +900,7 @@ export type StorefrontResponse = {
             IsSeen: boolean;
         }[];
         BonusStoreRemainingDurationInSeconds: number;
-    } | undefined;
+    }
 };
 
 export type SkinResponse = {

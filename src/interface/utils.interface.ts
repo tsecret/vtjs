@@ -1,4 +1,5 @@
 import { PenaltiesResponse } from "./api.interface"
+import { Result } from "./common.interface"
 
 export type BestAgent = {
   agentId: string,
@@ -64,4 +65,26 @@ export type Penalties = {
   type: PenaltiesResponse['Penalties'][0]['RiotRestrictionEffect']['RestrictionType'][]
   reason: PenaltiesResponse['Penalties'][0]['RiotRestrictionEffect']['RestrictionReason'][]
   matchId: string
+}
+
+export type MostPlayedServer = {
+  [key: string]: number
+}
+
+export type Streak = {
+  type: Result,
+  number: number
+}
+
+export type MatchResult = {
+  result: Result,
+  score: string,
+  accountLevel: number
+}
+
+export type Encounters = {
+  puuid: string
+  name: string
+  tag: string
+  number: number
 }

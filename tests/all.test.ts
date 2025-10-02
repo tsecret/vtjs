@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SharedAPI } from '../src/api/shared';
 import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PenaltiesResponse, PlayerMMRResponse } from '../src/interface';
-import type { Penalties } from '../src/interface/utils.interface'
+import type { MostPlayedServer, Penalties } from '../src/interface/utils.interface'
 import * as utils from '../src/utils';
 
 import maps from '../src/assets/maps.json'
@@ -230,6 +230,16 @@ describe('utils', () => {
     it('with no penalties', async () => {
       expect(utils.extractPenalties({ Infractions: [], Penalties: [], Subject: '', Version: 1 } as PenaltiesResponse)).toEqual(null)
     })
+  })
+
+  describe.only('calculateMostPlayedServer', () => {
+    it('', () => {
+      const expected = {
+        frankfurt: 1
+      } as MostPlayedServer
+      expect(utils.calculateMostPlayedServer([matchDetails as MatchDetailsResponse])).toEqual(expected)
+    })
+
   })
 })
 

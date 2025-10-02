@@ -13,6 +13,7 @@ export const StorePage = () => {
   const [skins, setSkins] = useState<{ price: number, name: string, url: string, uuid: string }[]>()
   const [bundles, setBundles] = useState<{ price: number, name: string, url: string, uuid: string }[]>()
   const [accessories, setAccessories] = useState<{ price: number, name: string, url: string, uuid: string, urlFull: string, urlWide: string, urlTall: string }[]>()
+  const [nightMarket, setNightMarket] = useState<{ price: number, name: string, url: string, uuid: string }[]>()
 
   const [bundlesResetTime, setBundlesResetTime] = useState<number[]>()
   const [skinsResetTime, setSkinsResetTime] = useState<number>()
@@ -44,6 +45,10 @@ export const StorePage = () => {
           null
         )
       )
+
+      // Night Market
+      const market = getStoreItemInfo(storeInfo.BonusStore?.BonusStoreOffers)
+      const marketData = await Promise.all(market.map(skin => storeapi.getSkinByLevelId(skin.uuid)))
 
       setBundles(
         bundleInfo
@@ -78,6 +83,19 @@ export const StorePage = () => {
           .map(skin => ({
             ...skin,
             ...skinsData.find(_skin => _skin && _skin.data.uuid === skin.uuid)!.data
+          }))
+          .map(skin => ({
+            uuid: skin.uuid,
+            price: skin.price,
+            url: skin.displayIcon,
+            name: skin.displayName
+          }))
+      )
+      setNightMarket(
+        market
+          .map(skin => ({
+            ...skin,
+            ...marketData.find(_skin => _skin && _skin.data.uuid === skin.uuid)!.data
           }))
           .map(skin => ({
             uuid: skin.uuid,
@@ -138,7 +156,7 @@ export const StorePage = () => {
     </section>
 
     {/* Accessories */}
-    <section id="skins" className="w-full">
+    <section id="accessories" className="w-full">
       <div className="flex flex-row items-center justify-between">
         <h2>Accessories</h2>
         { accessoriesResetTime && <p>Resets in <Countdown date={accessoriesResetTime} /></p> }
@@ -159,6 +177,23 @@ export const StorePage = () => {
               <p className="font-bold">{skin.name}</p>
               <p className="text-sm">{skin.price}</p>
             </div>
+        </div>)}
+      </div>
+    </section>
+
+    {/* Night Market */}
+    <section id="nightmarket" className="w-full">
+      <div className="flex flex-row items-center justify-between">
+        <h2>Night Market</h2>
+        { skinsResetTime && <p>Resets in <Countdown date={skinsResetTime} /></p> }
+      </div>
+      <div className="flex flex-row items-center justify-center space-x-4 m-auto px-8 my-8">
+        {nightMarket?.map(skin => <div key={skin.uuid} className="flex flex-1 flex-col border-2 border-primary rounded-md p-4 h-48 max-w-64 justify-between">
+          <img className="max-h-24 object-contain" src={skin.url} draggable={false} />
+          <div>
+            <p className="font-bold">{skin.name}</p>
+            <p className="text-sm">{skin.price}</p>
+          </div>
         </div>)}
       </div>
     </section>

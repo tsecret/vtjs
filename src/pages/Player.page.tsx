@@ -7,7 +7,7 @@ import moment from "moment"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { Dot, LabelList, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts"
-import { MatchDetailsResponse, MatchResult } from "../interface"
+import { MatchDetailsResponse, Result, } from "../interface"
 import atoms from "../utils/atoms"
 import * as utils from '../utils/utils'
 
@@ -19,7 +19,7 @@ interface Row {
   assists: number
   hs: number
   date: Date,
-  result: MatchResult
+  result: Result
   score: string
   mmrUpdate: number | null
   agentId: string | null
