@@ -1,3 +1,4 @@
+import { Encounters, MostPlayedServer, Streak } from "./utils.interface"
 
 export interface Lockfile {
   port: string
@@ -23,7 +24,7 @@ export interface PlayerRow {
   agentName: string | null
   agentId: string | null
   agentImage: string | null
-  lastGameResult?: MatchResult
+  lastGameResult?: Result
   lastGameScore?: string
   lastGameMMRDiff?: number
   mmr: number
@@ -38,6 +39,9 @@ export interface PlayerRow {
   enemy: boolean
   bestAgents?: AgentStats[]
   dodge?: boolean
+  mostPlayedServers?: MostPlayedServer
+  streak?: Streak | null
+  encounters?: Encounters[]
 }
 
 export type Payload = {
@@ -55,4 +59,4 @@ export type Payload = {
 
 export type GameState = 'MENUS' | 'PREGAME' | 'INGAME'
 
-export type MatchResult = 'won' | 'loss' | 'tie' | 'N/A'
+export type Result = 'won' | 'loss' | 'tie' | 'N/A'

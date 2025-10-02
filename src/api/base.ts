@@ -73,6 +73,8 @@ export class BaseAPI {
       }
     )
 
+    console.log('res.status', res.status)
+
     if (res.status === 200){
       const response = await res.json()
       if (!options.noCache && options.ttl !== undefined) {
