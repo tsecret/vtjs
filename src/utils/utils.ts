@@ -175,16 +175,16 @@ export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResp
 
 export const calculateRanking = (playerMMR: PlayerMMRResponse): PlayerRanking =>  {
   return {
-    currentRank: playerMMR.LatestCompetitiveUpdate?.TierAfterUpdate || 0,
-    currentRR: playerMMR.LatestCompetitiveUpdate?.RankedRatingAfterUpdate || 0,
-    peakRank: playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?
-      Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.CompetitiveTier - a.CompetitiveTier)[0].CompetitiveTier
+    currentRank: playerMMR?.LatestCompetitiveUpdate?.TierAfterUpdate || 0,
+    currentRR: playerMMR?.LatestCompetitiveUpdate?.RankedRatingAfterUpdate || 0,
+    peakRank: playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID ?
+      Object.values(playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.CompetitiveTier - a.CompetitiveTier)[0].CompetitiveTier
       : 0,
-    peakRankSeasonId: playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID ?
-      Object.values(playerMMR.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.CompetitiveTier - a.CompetitiveTier)[0].SeasonID
+    peakRankSeasonId: playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID ?
+      Object.values(playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID).sort((a, b) => b.CompetitiveTier - a.CompetitiveTier)[0].SeasonID
       : null,
-    lastGameMMRDiff: playerMMR.LatestCompetitiveUpdate?.RankedRatingEarned,
-    mmr: playerMMR.LatestCompetitiveUpdate?.TierAfterUpdate * 100 + playerMMR.LatestCompetitiveUpdate?.RankedRatingAfterUpdate
+    lastGameMMRDiff: playerMMR?.LatestCompetitiveUpdate?.RankedRatingEarned,
+    mmr: playerMMR?.LatestCompetitiveUpdate?.TierAfterUpdate * 100 + playerMMR?.LatestCompetitiveUpdate?.RankedRatingAfterUpdate
   }
 }
 
