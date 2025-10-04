@@ -232,7 +232,7 @@ describe('utils', () => {
     })
   })
 
-  describe.only('calculateMostPlayedServer', () => {
+  describe('calculateMostPlayedServer', () => {
     it('', () => {
       const expected = {
         frankfurt: 1

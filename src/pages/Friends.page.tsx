@@ -95,6 +95,7 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
     }
   }
 
+  // @ts-ignore
   const getUrl = () => {
     if (friend.product === 'valorant')
       return `https://media.valorant-api.com/playercards/${friend.presence?.playerCardId}/displayicon.png`
