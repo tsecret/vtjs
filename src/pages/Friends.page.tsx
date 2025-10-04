@@ -3,8 +3,8 @@ import { SquareArrowOutUpRight } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 import { FriendsResponse, PresenceResponse } from "../interface"
-import { base64Decode, getMap } from "../utils/utils"
 import atoms from "../utils/atoms"
+import { base64Decode } from "../utils/utils"
 
 export const FriendsPage = () => {
   const [localapi] = useAtom(atoms.localapi)
@@ -87,7 +87,7 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
           return 'On Range'
         }
 
-        return `${queues[friend.presence?.queueId] || 'Playing'} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam} on ${getMap(friend.presence.matchMap).displayName}`
+        return `${queues[friend.presence?.queueId] || 'Playing'} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam}`
       case 'league_of_legends':
         return 'Playing League of Legends'
       default:
@@ -95,6 +95,7 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
     }
   }
 
+  // @ts-ignore
   const getUrl = () => {
     if (friend.product === 'valorant')
       return `https://media.valorant-api.com/playercards/${friend.presence?.playerCardId}/displayicon.png`
@@ -106,7 +107,11 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
   }
 
   return <li className="list-row">
-      <div><img className="size-10 rounded-box" src={getUrl()}/></div>
+      <div className="avatar avatar-placeholder">
+        <div className="bg-neutral size-10 rounded-box">
+          <span>{friend.game_name.slice(0,1).toUpperCase()}</span>
+        </div>
+      </div>
 
       <div>
         <span className="font-bold">{friend.game_name} <span className="opacity-25">{friend.game_tag}</span></span>
