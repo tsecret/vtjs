@@ -3,7 +3,7 @@ import { BaseAPI } from "./base";
 
 export class StoreAPI extends BaseAPI {
   async getStore(puuid: string): Promise<StorefrontResponse> {
-    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/store/v3/storefront/${puuid}`, { body: JSON.stringify({}), method: 'POST' })
+    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/store/v3/storefront/${puuid}`, { body: JSON.stringify({}), method: 'POST', ttl: 5 * 60 * 1000 })
   }
 
   async getWallet(puuid: string): Promise<WalletResponse> {

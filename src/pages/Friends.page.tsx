@@ -2,7 +2,7 @@ import { useAtom } from "jotai"
 import { SquareArrowOutUpRight } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import { FriendsResponse, PresenceResponse } from "../interface"
+import { FriendsResponse, PresenceResponse, QueueId } from "../interface"
 import atoms from "../utils/atoms"
 import { base64Decode } from "../utils/utils"
 
@@ -64,10 +64,14 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
 
   const getDescription = () => {
 
-    const queues = {
+    const queues: Record<QueueId, string> = {
       'competitive': "Competitive",
       'deathmatch': 'Deathmatch',
       'swiftplay': 'Swiftplay',
+      'hurm': 'Team Deathmatch',
+      'spikerush': "Spike Rush",
+      'unrated': "Unrated",
+      'ggteam': 'Escalation'
     }
 
     switch (friend.product) {
@@ -76,18 +80,18 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
         if (!friend.presence)
           return ''
 
-        if (friend.state === 'away')
+        if (friend.presence.isIdle)
           return 'Away'
 
-        if (friend.presence?.sessionLoopState === 'MENUS'){
+        if (friend.presence?.matchPresenceData.sessionLoopState === 'MENUS'){
           return 'In Menu'
         }
 
-        if (friend.presence?.matchMap === '/Game/Maps/PovegliaV2/RangeV2'){
+        if (friend.presence?.matchPresenceData.matchMap === '/Game/Maps/PovegliaV2/RangeV2'){
           return 'On Range'
         }
 
-        return `${queues[friend.presence?.queueId] || 'Playing'} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam}`
+        return `${queues[friend.presence?.queueId] || 'Playing'} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam}s`
       case 'league_of_legends':
         return 'Playing League of Legends'
       default:
@@ -98,7 +102,7 @@ const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResp
   // @ts-ignore
   const getUrl = () => {
     if (friend.product === 'valorant')
-      return `https://media.valorant-api.com/playercards/${friend.presence?.playerCardId}/displayicon.png`
+      return `https://media.valorant-api.com/playercards/${friend.presence?.playerPresenceData.playerCardId}/displayicon.png`
 
     if (friend.product === 'league_of_legends')
       return 'https://wiki.leagueoflegends.com/en-us/images/League_of_Legends_icon.svg?b3310'

@@ -5621,7 +5621,7 @@ dependencies = [
 
 [[package]]
 name = "vtjs"
-version = "0.3.1"
+version = "0.3.3"
 dependencies = [
  "base64 0.21.7",
  "native-tls",

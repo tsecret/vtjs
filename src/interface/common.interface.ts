@@ -60,3 +60,14 @@ export type Payload = {
 export type GameState = 'MENUS' | 'PREGAME' | 'INGAME'
 
 export type Result = 'won' | 'loss' | 'tie' | 'N/A'
+
+export type QueueId =
+  | 'competitive'
+  | 'deathmatch'
+  | 'swiftplay'
+  | 'unrated'
+  | 'spikerush'
+  | 'ggteam' // Escalation
+  | 'hurm' // Team Deathmatch
+
+export type ProvisioningFlow = 'Matchmaking' | 'Invalid'
