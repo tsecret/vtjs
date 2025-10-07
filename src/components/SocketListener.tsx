@@ -24,21 +24,21 @@ export const SocketListener = () => {
 
           const decoded: PresenceJSON  = JSON.parse(base64Decode(presence.private))
 
-          if (decoded.sessionLoopState === state.current.state)
+          if (decoded.matchPresenceData.sessionLoopState === state.current.state)
             return
 
-          if (decoded.sessionLoopState === 'PREGAME'){
-            state.current = { state: decoded.sessionLoopState, matchId: '' }
+          if (decoded.matchPresenceData.sessionLoopState === 'PREGAME'){
+            state.current = { state: decoded.matchPresenceData.sessionLoopState, matchId: '' }
             setGameState(state.current)
           }
 
-          if (decoded.sessionLoopState === 'INGAME'){
-            state.current = { state: decoded.sessionLoopState, matchId: '' }
+          if (decoded.matchPresenceData.sessionLoopState === 'INGAME'){
+            state.current = { state: decoded.matchPresenceData.sessionLoopState, matchId: '' }
             setGameState(state.current)
           }
 
-          if (decoded.sessionLoopState === 'MENUS'){
-            state.current = { state: decoded.sessionLoopState, matchId: '' }
+          if (decoded.matchPresenceData.sessionLoopState === 'MENUS'){
+            state.current = { state: decoded.matchPresenceData.sessionLoopState, matchId: '' }
             setGameState(state.current)
           }
 
