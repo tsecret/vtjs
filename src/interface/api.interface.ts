@@ -1,3 +1,4 @@
+import { GameState, ProvisioningFlow, QueueId } from "./common.interface"
 
 export interface PlayerAccount {
   game_name: string
@@ -62,34 +63,45 @@ export type PresenceResponse = {
 
 export type PresenceJSON = {
   isValid: boolean
-  sessionLoopState: 'MENUS' | 'INGAME' | 'PREGAME'
-  partyOwnerSessionLoopState: 'MENUS' | 'INGAME'
-  customGameName: string
-  customGameTeam: string
-  partyOwnerMatchMap: string // "/Game/Maps/Juliett/Juliett"
-  partyOwnerMatchCurrentTeam: string
+  isIdle: boolean
+  queueId: QueueId
+  provisioningFlow: ProvisioningFlow
+  partyId: string
+  partySize: number
+  maxPartySize: number
   partyOwnerMatchScoreAllyTeam: number
   partyOwnerMatchScoreEnemyTeam: number
-  partyOwnerProvisioningFlow: 'Matchmaking' | 'Invalid'
-  provisioningFlow: 'Matchmaking' | 'Invalid'
-  matchMap: string // "/Game/Maps/Juliett/Juliett"
-  partyId: string
-  isPartyOwner: boolean
-  partyState: 'DEFAULT' | 'MATCHMAKING'
-  partyAccessibility: 'CLOSED'
-  maxPartySize: number
-  queueId: 'competitive' | 'deathmatch'
-  partyLFM: boolean
-  partyClientVersion: string
-  partySize: number
-  rosterId: string
-  queueEntryTime: string
-  playerCardId: string
-  playerTitleId: string
-  preferredLevelBorderId: string
-  accountLevel: number
-  competitiveTier: number
-  isIdle: boolean
+  matchPresenceData: {
+    sessionLoopState: GameState
+    matchMap: string | "" // "/Game/Maps/Juliett/Juliett"
+    provisioningFlow: ProvisioningFlow
+    queueId: QueueId
+  }
+  partyPresenceData: {
+    partyId: string
+    isPartyOwner: boolean
+    partyState: 'DEFAULT' | 'MATCHMAKING'
+    partyAccessibility: 'CLOSED'
+    partyLFM: boolean
+    partyClientVersion: string
+    partyVersion: number
+    partySize: number
+    queueEntryTime: string
+    customGameName: string
+    customGameTeam: string
+    maxPartySize: number
+    partyOwnerMatchMap: string // "/Game/Maps/Juliett/Juliett"
+    partyOwnerMatchCurrentTeam: string
+    partyOwnerProvisioningFlow: ProvisioningFlow
+    partyOwnerSessionLoopState: GameState
+  }
+  playerPresenceData: {
+    playerCardId: string
+    playerTitleId: string
+    preferredLevelBorderId: string
+    accountLevel: number
+    competitiveTier: number
+  }
 }
 
 export type CurrentPreGamePlayerResponse = {

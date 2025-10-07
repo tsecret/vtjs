@@ -47,11 +47,16 @@ export class BaseAPI {
     } = { body: null, headers: null, method: 'GET', ttl: this.cacheTTL },
   ): Promise<any>{
 
+    if (!options.ttl)
+      options.ttl = this.cacheTTL
+
+    if (!options.noCache)
+      options.noCache = false
+
     if (!this.cache)
       this.cache = await Database.load(CACHE_NAME)
 
     if (!options.noCache && this.cache){
-
       const [response] = await this.cache.select<[{ endpoint: string, ttl: number, data: any }]>('SELECT * FROM requests WHERE endpoint=$1 LIMIT 1', [endpoint])
 
       if (response && response.data){
@@ -60,8 +65,6 @@ export class BaseAPI {
         }
       }
     }
-
-    // await this.ensureRateLimit();
 
     const res = await httpfetch(
       hostname + endpoint,
@@ -72,8 +75,6 @@ export class BaseAPI {
         danger: { acceptInvalidCerts: true, acceptInvalidHostnames: true }
       }
     )
-
-    console.log('res.status', res.status)
 
     if (res.status === 200){
       const response = await res.json()

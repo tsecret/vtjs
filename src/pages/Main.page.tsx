@@ -9,7 +9,7 @@ import { PenaltyAlert } from '@/components/PenaltyAlert';
 
 export const Main = () => {
     const [error, setError] = useState<string | null>(null);
-    const [versusStats, setVersusStats] = useState<{ teamMMR: number, enemyMMR: number }>()
+    const [, setVersusStats] = useState<{ teamMMR: number, enemyMMR: number }>()
 
     const [puuid] = useAtom(atoms.puuid);
     const [player] = useAtom(atoms.player);
@@ -132,7 +132,7 @@ export const Main = () => {
                 </section>
             )}
 
-            {
+            {/* {
               versusStats &&
                 <section className="m-auto text-center p-2 rounded-md min-w-96">
 
@@ -151,7 +151,7 @@ export const Main = () => {
                   </div>
 
                 </section>
-            }
+            } */}
 
             {/* Players Table */}
             <PlayersTable table={table} puuid={puuid as string} mapId={matchDisplayInfo?.mapId} />
