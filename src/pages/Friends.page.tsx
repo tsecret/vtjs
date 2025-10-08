@@ -7,6 +7,7 @@ import atoms from "../utils/atoms"
 import { base64Decode } from "../utils/utils"
 
 export const FriendsPage = () => {
+  const [puuid] = useAtom(atoms.puuid)
   const [localapi] = useAtom(atoms.localapi)
   const [friends, setFriends] = useState<FriendsResponse['friends']>()
   const [presences, setPresences] = useState<PresenceResponse['presences']>()
@@ -33,7 +34,10 @@ export const FriendsPage = () => {
 
         {
           presences?.length ?
-            presences.filter(p => p.product === 'valorant').map(p => <IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />) :
+            presences
+              .filter(p => p.product === 'valorant')
+              .filter(p => p.puuid !== puuid)
+              .map(p => <IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />) :
             <span className="p-4">No friends online</span>
         }
 
@@ -49,6 +53,7 @@ export const FriendsPage = () => {
           friends?.length ?
             friends
               .filter(friend => !ingameFriendsPuuids?.includes(friend.puuid))
+              .filter(p => p.puuid !== puuid)
               .sort((a, b) => a.game_name.localeCompare(b.game_name))
               .map(friend => <FriendRow key={friend.puuid} friend={friend} onExternalLinkClick={() => navigate(`/player/${friend.puuid}`)} />) :
             <span className="p-4">No friends online</span>

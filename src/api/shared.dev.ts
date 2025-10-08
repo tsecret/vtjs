@@ -1,9 +1,9 @@
-import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
+import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PenaltiesResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
 import { randomInt, sleep } from "../utils/utils";
 import { SharedAPI } from "./shared";
 
-import agents from '../assets/agents.json'
-import maps from '../assets/maps.json'
+import agents from '../assets/agents.json';
+import maps from '../assets/maps.json';
 
 import competitiveUpdates from '../../tests/fixtures/shared/competitive-updates.json';
 import currentMatch from '../../tests/fixtures/shared/current-game-match.json';
@@ -12,6 +12,7 @@ import currentPreGameMatch from '../../tests/fixtures/shared/current-pregame-mat
 import currentPreGamePlayer from '../../tests/fixtures/shared/current-pregame-player.json';
 import matchDetails from '../../tests/fixtures/shared/match-details.json';
 import matchHistory from '../../tests/fixtures/shared/match-history.json';
+import penaltiesClear from '../../tests/fixtures/shared/penalties-clear.json';
 import playerMMR from '../../tests/fixtures/shared/player-mmr.json';
 import playerNames from '../../tests/fixtures/shared/player-names.json';
 
@@ -80,6 +81,11 @@ export class TestSharedAPI extends SharedAPI {
 
     // @ts-ignore
     return mmr
+  }
+
+  async getPenalties(): Promise<PenaltiesResponse> {
+    // @ts-ignore
+    return penaltiesClear
   }
 
 }
