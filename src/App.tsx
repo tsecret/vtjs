@@ -29,6 +29,7 @@ import { Announcement } from './components/Announcement';
 import { TestPage } from './pages/Test.page';
 import { RateLimitNotification } from './components/RateLimitAlert';
 import { AvoidListPage } from './pages/AvoidList.page';
+import { Sync } from './components/Sync';
 
 function App() {
 
@@ -153,6 +154,7 @@ function App() {
     <SocketListener />
     <RateLimitNotification />
     <MatchHandler />
+    <Sync />
     <Routes>
       <Route path="/" element={<InitPage status={initStatus} error={error} />} />
       <Route path="/welcome" element={<WelcomePage />} />

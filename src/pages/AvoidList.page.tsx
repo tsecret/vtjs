@@ -41,7 +41,7 @@ export const AvoidListPage = () => {
             <li className="list-row flex flex-row items-center justify-between">
               <div className="space-x-4">
                 <span>{moment(p.dodgeTimeStamp).format('HH:mm DD/MM/YY')}</span>
-                <span>{p.name}<span className="opacity-50 text-xs"> #{p.tag}</span></span>
+                { p.name && p.tag ? <span>{p.name}<span className="opacity-50 text-xs"> #{p.tag}</span></span> : <span>Name is missing</span> }
               </div>
 
               <Link to={`/player/${p.puuid}`} className="btn btn-ghost btn-square"><SquareArrowOutUpRight /></Link>
