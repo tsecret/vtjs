@@ -116,6 +116,10 @@ export const Header = () => {
 
         <span className="font-bold">Test</span>
       </>
+      : location.pathname.startsWith('/avoid-list') ?
+      <>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>
+      </>
       : null
     }
   </header>

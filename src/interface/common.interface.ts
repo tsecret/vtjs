@@ -57,6 +57,13 @@ export type Payload = {
   uri: string
 }
 
+export type AvoidedPlayer = {
+  puuid: string,
+  name: string,
+  dodgeTimeStamp: number
+  reported: boolean
+}
+
 export type GameState = 'MENUS' | 'PREGAME' | 'INGAME'
 
 export type Result = 'won' | 'loss' | 'tie' | 'N/A'

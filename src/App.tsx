@@ -28,6 +28,7 @@ import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 import { Announcement } from './components/Announcement';
 import { TestPage } from './pages/Test.page';
 import { RateLimitNotification } from './components/RateLimitAlert';
+import { AvoidListPage } from './pages/AvoidList.page';
 
 function App() {
 
@@ -162,6 +163,7 @@ function App() {
       <Route path="/friends" element={<FriendsPage />} />
       <Route path="/player/:puuid" element={<ProfilePage />} />
       <Route path="/match/:matchId" element={<MatchPage />} />
+      <Route path="/avoid-list" element={<AvoidListPage />} />
     </Routes>
   </main>
 }
