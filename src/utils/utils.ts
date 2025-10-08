@@ -203,7 +203,8 @@ export const getMatchResult = (puuid: string, match: MatchDetailsResponse): Matc
 }
 
 export const getAgent = (uuid: string): Agent =>  {
-  return agents.find(agent => agent.uuid === uuid.toLowerCase())!
+  const agent = agents.find(agent => agent.uuid === uuid.toLowerCase())
+  return agent || { uuid: '', displayName: 'New Agent', killfeedPortrait: '', displayIcon: '' }
 }
 
 export const getRank = (rank: number): Rank => {

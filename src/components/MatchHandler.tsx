@@ -95,7 +95,7 @@ export const MatchHandler = () => {
                     if (!playerInfo) continue;
 
                     const { GameName, TagLine } = playerInfo;
-                    const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = player.CharacterID ? utils.getAgent(player.CharacterID as string) : { uuid: '', displayName: null, killfeedPortrait: null }
+                    const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.CharacterID as string)
                     const isEnemy = isPreGame ? false : (player as any).TeamID !== playerTeamId;
 
                     const retard = await cache?.select<{ dodge: boolean }[]>('SELECT * FROM players WHERE puuid = $1 AND dodge = "true"', [player.Subject])
