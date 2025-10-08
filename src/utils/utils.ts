@@ -218,7 +218,8 @@ export const getRank = (rank: number): Rank => {
 }
 
 export const getMap = (uuid: string): Map => {
-  return maps.find(map => map.mapUrl === uuid)!
+  const map = maps.find(map => map.mapUrl === uuid)
+  return map || { uuid, displayName: 'New Map', displayIcon: '', listViewIcon: '' }
 }
 
 export const getSeasonDateById = (seasonId: string): Date | null => {
