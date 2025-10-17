@@ -80,15 +80,15 @@ function App() {
       db.execute('ALTER TABLE players ADD COLUMN dodgeTimestamp int');
 
 
-      // try {
-      //   const ANNOUNCEMENT_URL = 'https://gist.githubusercontent.com/tsecret/0b5f7094000f4063d72276c5e05824aa/raw/announcement.txt'
-      //   const announcement = await httpfetch(ANNOUNCEMENT_URL).then(res => res.text())
-      //   if (announcement)
-      //     setAnnouncement(announcement)
+      try {
+        const ANNOUNCEMENT_URL = 'https://gist.githubusercontent.com/tsecret/0b5f7094000f4063d72276c5e05824aa/raw/announcement.txt'
+        const announcement = await httpfetch(ANNOUNCEMENT_URL).then(res => res.text())
+        if (announcement)
+          setAnnouncement(announcement)
 
-      // } catch (err){
-      //   console.error('Failed to fetch announcement: ', err)
-      // }
+      } catch (err){
+        console.error('Failed to fetch announcement: ', err)
+      }
 
       try {
         setInitStatus('Reading lockfile');
@@ -129,15 +129,15 @@ function App() {
         console.log('localapi', localapi);
         console.log('player', player);
 
-        // invoke('start_ws', {
-        //   wsUrl: `wss://${import.meta.env.VITE_DEV === 'true' ? import.meta.env.VITE_REMOTE_PC_IP : 'localhost'}:${port}`,
-        //   headers: {
-        //     Authorization: `Basic ${password}`,
-        //   },
-        // });
+        invoke('start_ws', {
+          wsUrl: `wss://${import.meta.env.VITE_DEV === 'true' ? import.meta.env.VITE_REMOTE_PC_IP : 'localhost'}:${port}`,
+          headers: {
+            Authorization: `Basic ${password}`,
+          },
+        });
 
-        // if (allowAnalytics)
-        //   await trackEvent('app_load');
+        if (allowAnalytics)
+          await trackEvent('app_load');
 
         navigate(firstTimeUser ? '/welcome' : '/dashboard');
       } catch (err){

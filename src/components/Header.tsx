@@ -1,11 +1,11 @@
 import { relaunch } from '@tauri-apps/plugin-process';
 import { check, Update } from '@tauri-apps/plugin-updater';
 import { useAtom } from 'jotai';
-import { ArrowBigDown, ChevronLeft, Download, RefreshCcw, RefreshCw, Settings, Store, User, Users } from 'lucide-react';
+import { ChevronLeft, Download, RefreshCw, Settings, Store, User, Users } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router';
-import atoms from '../utils/atoms';
 import { useLongPress } from 'use-long-press';
+import atoms from '../utils/atoms';
 
 
 export const Header = () => {
