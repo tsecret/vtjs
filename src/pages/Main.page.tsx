@@ -62,7 +62,7 @@ export const Main = () => {
         return {
             matchId: gameState.matchId,
             state: gameState.state,
-            mapName: currentMatch.MapID ? utils.getMap(currentMatch.MapID)?.displayName : 'Unknown',
+            mapName: utils.getMap(currentMatch.MapID).displayName,
             mapId: currentMatch.MapID,
             gameServer: currentMatch.GamePodID ?
                 currentMatch.GamePodID.split('.')[currentMatch.GamePodID.split('.').length - 1] :

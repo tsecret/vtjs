@@ -58,7 +58,7 @@ type ChartData = {
 
 type ChartType = 'kills/deaths' | 'kd' | 'adr' | 'hs'
 
-export const PlayerPage = () => {
+export const ProfilePage = () => {
   const [error, setError] = useState<string|null>(null)
 
   const [sharedapi] = useAtom(atoms.sharedapi)
@@ -211,8 +211,13 @@ export const PlayerPage = () => {
     (async () => {
       const [{ GameName, TagLine }] = await sharedapi.getPlayerNames([puuid])
 
-      const mmr = await sharedapi?.getPlayerMMR(puuid)
-      const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
+      const competitiveUpdates = await sharedapi.getCompetitiveUpdates(puuid)
+      const { TierAfterUpdate: currentRank, RankedRatingAfterUpdate: currentRR } = competitiveUpdates.Matches[0]
+      const peakRank = 1
+
+
+      // const mmr = await sharedapi?.getPlayerMMR(puuid)
+      // const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
 
       const player = await cache?.select<any[]>("SELECT * from players WHERE puuid = ?", [puuid]).then(players => players[0])
 
