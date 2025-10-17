@@ -203,7 +203,8 @@ export const getMatchResult = (puuid: string, match: MatchDetailsResponse): Matc
 }
 
 export const getAgent = (uuid: string): Agent =>  {
-  return agents.find(agent => agent.uuid === uuid.toLowerCase())!
+  const agent = agents.find(agent => agent.uuid === uuid.toLowerCase())
+  return agent || { uuid: '', displayName: 'New Agent', killfeedPortrait: '', displayIcon: '' }
 }
 
 export const getRank = (rank: number): Rank => {
@@ -217,7 +218,8 @@ export const getRank = (rank: number): Rank => {
 }
 
 export const getMap = (uuid: string): Map => {
-  return maps.find(map => map.mapUrl === uuid)!
+  const map = maps.find(map => map.mapUrl === uuid)
+  return map || { uuid, displayName: 'New Map', displayIcon: '', listViewIcon: '' }
 }
 
 export const getSeasonDateById = (seasonId: string): Date | null => {
@@ -333,6 +335,9 @@ export const getStoreItemInfo = (offers:
   StorefrontResponse['SkinsPanelLayout']['SingleItemStoreOffers'] |
   StorefrontResponse['BonusStore']['BonusStoreOffers'])
   : { uuid: string, price: number, type: 'weaponskin' | 'spray' | 'playercard' | 'buddy' }[] => {
+
+  if (!offers)
+    return []
 
   return offers.map(offer => {
     const rawOffer = "Offer" in offer ? offer.Offer : offer

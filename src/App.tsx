@@ -16,7 +16,7 @@ import { SocketListener } from './components/SocketListener';
 import { FriendsPage } from './pages/Friends.page';
 import { InitPage } from './pages/Init.page';
 import { Main } from "./pages/Main.page";
-import { PlayerPage } from "./pages/Player.page";
+import { ProfilePage } from "./pages/Profile.page";
 import { Settings } from "./pages/Settings.page";
 import { StorePage } from './pages/Store.page';
 import { WelcomePage } from './pages/Welcome.page';
@@ -28,6 +28,8 @@ import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 import { Announcement } from './components/Announcement';
 import { TestPage } from './pages/Test.page';
 import { RateLimitNotification } from './components/RateLimitAlert';
+import { AvoidListPage } from './pages/AvoidList.page';
+import { Sync } from './components/Sync';
 
 function App() {
 
@@ -78,7 +80,7 @@ function App() {
       db.execute('ALTER TABLE players ADD COLUMN dodgeTimestamp int');
 
 
-      try{
+      try {
         const ANNOUNCEMENT_URL = 'https://gist.githubusercontent.com/tsecret/0b5f7094000f4063d72276c5e05824aa/raw/announcement.txt'
         const announcement = await httpfetch(ANNOUNCEMENT_URL).then(res => res.text())
         if (announcement)
@@ -152,6 +154,7 @@ function App() {
     <SocketListener />
     <RateLimitNotification />
     <MatchHandler />
+    <Sync />
     <Routes>
       <Route path="/" element={<InitPage status={initStatus} error={error} />} />
       <Route path="/welcome" element={<WelcomePage />} />
@@ -160,8 +163,9 @@ function App() {
       <Route path="/settings" element={<Settings />} />
       <Route path="/store" element={<StorePage />} />
       <Route path="/friends" element={<FriendsPage />} />
-      <Route path="/player/:puuid" element={<PlayerPage />} />
+      <Route path="/player/:puuid" element={<ProfilePage />} />
       <Route path="/match/:matchId" element={<MatchPage />} />
+      <Route path="/avoid-list" element={<AvoidListPage />} />
     </Routes>
   </main>
 }

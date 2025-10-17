@@ -4,6 +4,7 @@ import { useAtom } from "jotai"
 import { Heart } from "lucide-react"
 import { useEffect, useState } from "react"
 import atoms from "../utils/atoms"
+import { Link } from "react-router"
 
 export const Settings = () => {
   const [appInfo] = useAtom(atoms.appInfo)
@@ -126,7 +127,9 @@ export const Settings = () => {
       </label>
     </section> */}
 
-    {/* <div className="divider" /> */}
+    <Link to='/avoid-list' className="btn">View Avoid List</Link>
+
+    <div className="divider" />
 
     {/* Game Settings */}
     <section id="cache" className="flex flex-col space-y-4">

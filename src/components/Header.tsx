@@ -1,17 +1,18 @@
 import { relaunch } from '@tauri-apps/plugin-process';
 import { check, Update } from '@tauri-apps/plugin-updater';
 import { useAtom } from 'jotai';
-import { ChevronLeft, Download, Settings, Store, User, Users } from 'lucide-react';
+import { ChevronLeft, Download, RefreshCw, Settings, Store, User, Users } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router';
-import atoms from '../utils/atoms';
 import { useLongPress } from 'use-long-press';
+import atoms from '../utils/atoms';
 
 
 export const Header = () => {
   const [update, setUpdate] = useState<Update|null>()
   const [player] = useAtom(atoms.player)
   const [puuid] = useAtom(atoms.puuid)
+  const [prefetching] = useAtom(atoms.prefetching)
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -74,6 +75,7 @@ export const Header = () => {
               </span>
             </div>
           </span>
+          { prefetching && <div className='btn btn-soft btn-info btn-sm'><RefreshCw size={16} className='animate-spin' /> Fetching player data</div> }
           <button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate(`/player/${puuid}`)}><User size={20} /> My Profile</button>
           <button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate('/store')}><Store size={20} /> Store</button>
           <button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate('/friends')}><Users size={20} /> Friends</button>
@@ -115,6 +117,10 @@ export const Header = () => {
         <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>
 
         <span className="font-bold">Test</span>
+      </>
+      : location.pathname.startsWith('/avoid-list') ?
+      <>
+        <button className="btn btn-primary btn-sm" onClick={(() => navigate(-1))}><ChevronLeft /></button>
       </>
       : null
     }

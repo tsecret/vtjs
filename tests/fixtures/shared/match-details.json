@@ -32,7 +32,7 @@
     "players": [
         {
             "subject": "test-player-1-puuid",
-            "gameName": "Me",
+            "gameName": "Player 1",
             "tagLine": "tag",
             "platformInfo": {
                 "platformType": "pc",
@@ -300,8 +300,8 @@
         },
         {
             "subject": "test-player-2-puuid",
-            "gameName": "KILL EVERYBODY",
-            "tagLine": "BORZ",
+            "gameName": "Player 2",
+            "tagLine": "tag",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -588,8 +588,8 @@
         },
         {
             "subject": "test-player-3-puuid",
-            "gameName": "kraize",
-            "tagLine": "SSS",
+            "gameName": "Player 3",
+            "tagLine": "tag",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -810,8 +810,8 @@
         },
         {
             "subject": "test-player-4-puuid",
-            "gameName": "Axel",
-            "tagLine": "3458",
+            "gameName": "Player 4",
+            "tagLine": "tag",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -1033,8 +1033,8 @@
         },
         {
             "subject": "test-player-5-puuid",
-            "gameName": "Tsuki",
-            "tagLine": "sabi",
+            "gameName": "Player 5",
+            "tagLine": "tag",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -1231,8 +1231,8 @@
         },
         {
             "subject": "test-player-6-puuid",
-            "gameName": "Freysev",
-            "tagLine": "2148",
+            "gameName": "Player 6",
+            "tagLine": "tag",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -1449,8 +1449,8 @@
         },
         {
             "subject": "test-player-7-puuid",
-            "gameName": "LeXecutor",
-            "tagLine": "9992",
+            "gameName": "Player 7",
+            "tagLine": "tag",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -1711,8 +1711,8 @@
         },
         {
             "subject": "test-player-8-puuid",
-            "gameName": "stan",
-            "tagLine": "dog",
+            "gameName": "Player 8",
+            "tagLine": "tag",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -1914,8 +1914,8 @@
         },
         {
             "subject": "test-player-9-puuid",
-            "gameName": "JOPA tigra",
-            "tagLine": "JOpa",
+            "gameName": "Player 9",
+            "tagLine": "tag",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -2142,8 +2142,8 @@
         },
         {
             "subject": "test-player-10-puuid",
-            "gameName": "K1nGebet",
-            "tagLine": "3743",
+            "gameName": "Player 10",
+            "tagLine": "tag",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",

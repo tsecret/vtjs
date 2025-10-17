@@ -68,7 +68,7 @@ export const MatchPage = () => {
       const parties = Object.keys(match.matchInfo.partyRRPenalties || {})
 
       setMatch({
-        mapName: utils.getMap(match.matchInfo.mapId)?.displayName || '',
+        mapName: utils.getMap(match.matchInfo.mapId).displayName,
         date: match.matchInfo.gameStartMillis,
         type: match.matchInfo.queueID,
         players: match.players.map(player => {

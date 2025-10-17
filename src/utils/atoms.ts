@@ -18,6 +18,7 @@ const puuid = atom<string>()
 const player = atom<PlayerAccount>()
 const table = atom<{ [key: PlayerRow['puuid']]: PlayerRow }>({})
 
+const prefetching = atom<boolean>(false)
 const gameState = atom<{ state: GameState, matchId: string | null }>({ state: 'MENUS', matchId: null })
 const matchProcessing = atom<{ isProcessing: boolean, currentPlayer: string | null, progress: { step: number, total: number } }>({
   isProcessing: false,
@@ -54,6 +55,7 @@ export default {
   gameState,
   matchProcessing,
   currentMatch,
+  prefetching,
 
   // Settings
   store,
