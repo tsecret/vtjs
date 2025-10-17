@@ -336,6 +336,9 @@ export const getStoreItemInfo = (offers:
   StorefrontResponse['BonusStore']['BonusStoreOffers'])
   : { uuid: string, price: number, type: 'weaponskin' | 'spray' | 'playercard' | 'buddy' }[] => {
 
+  if (!offers)
+    return []
+
   return offers.map(offer => {
     const rawOffer = "Offer" in offer ? offer.Offer : offer
 
