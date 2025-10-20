@@ -28,6 +28,8 @@ export class TestSharedAPI extends SharedAPI {
   }
 
   async getCurrentGameMatch(_matchId: string): Promise<CurrentGameMatchResponse> {
+    await sleep(2000)
+
     // @ts-ignore
     return currentMatch
   }

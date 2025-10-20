@@ -1,15 +1,14 @@
+import { PenaltyAlert } from '@/components/PenaltyAlert';
 import { useAptabase } from '@aptabase/react';
 import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
-import * as utils from '../utils/utils';
 import atoms from "../utils/atoms";
-import { PenaltyAlert } from '@/components/PenaltyAlert';
+import * as utils from '../utils/utils';
 
 
 export const Main = () => {
     const [error, setError] = useState<string | null>(null);
-    const [, setVersusStats] = useState<{ teamMMR: number, enemyMMR: number }>()
 
     const [puuid] = useAtom(atoms.puuid);
     const [player] = useAtom(atoms.player);
@@ -70,24 +69,9 @@ export const Main = () => {
         };
     };
 
-    useEffect(() => {
-      if (Object.keys(table).length < 10) return
-
-      let teamMMR = 0
-      let enemyMMR = 0
-
-      for (const player of Object.values(table)) {
-        player.enemy ? enemyMMR += player.mmr : teamMMR += player.mmr
-      }
-
-      teamMMR /= 5
-      enemyMMR /= 5
-
-      setVersusStats({ teamMMR, enemyMMR })
-
-    }, [table])
-
     const matchDisplayInfo = getMatchDisplayInfo();
+
+    console.log('matchDisplayInfo', matchDisplayInfo)
 
     return (
         <div className="p-2 flex flex-col">
@@ -132,27 +116,6 @@ export const Main = () => {
                 </section>
             )}
 
-            {/* {
-              versusStats &&
-                <section className="m-auto text-center p-2 rounded-md min-w-96">
-
-                  <div className="flex flex-row items-center justify-between">
-                    <div className="flex flex-col">
-                      <span>Team</span>
-                      <span>{versusStats.teamMMR}</span>
-                    </div>
-
-                    <p>MMR Difference</p>
-
-                    <div className="flex flex-col">
-                      <span>Enemy</span>
-                      <span>{versusStats.enemyMMR}</span>
-                    </div>
-                  </div>
-
-                </section>
-            } */}
-
             {/* Players Table */}
             <PlayersTable table={table} puuid={puuid as string} mapId={matchDisplayInfo?.mapId} />
 
@@ -172,8 +135,6 @@ export const Main = () => {
                     </p>
                 </section>
             )}
-
-
 
             {/* Manual Recheck Button */}
             {Object.keys(table).length > 1 && <button className="btn btn-primary m-auto btn-sm" onClick={manualCheck}>Recheck</button>}

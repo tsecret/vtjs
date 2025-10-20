@@ -237,21 +237,21 @@ export const MatchHandler = () => {
     useEffect(() => {
         if (!sharedapi || !puuid) return;
 
-        if (gameState.state === 'PREGAME') {
+        switch(gameState.state){
+          case 'PREGAME':
             sharedapi.getCurrentPreGamePlayer(puuid)
             .then(match => {
               if (match) handleMatch(match.MatchID, true, 'check_pregame')
             })
-        }
-
-        if (gameState.state === 'INGAME') {
+            break;
+          case 'INGAME':
             sharedapi.getCurrentGamePlayer(puuid)
             .then(match => {
               if (match) handleMatch(match.MatchID, false, 'check_game')
             })
-        }
-
-        if (gameState.state === 'MENUS') {
+            break;
+          case 'MENUS':
+          default:
             handleGameEnd();
         }
 

@@ -1,4 +1,4 @@
-import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, GameSettingsResponse, MatchDetailsResponse, PenaltiesResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
+import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, GameSettingsResponse, MatchDetailsResponse, PartyResponse, PenaltiesResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
 import { BaseAPI } from './base';
 
 export class SharedAPI extends BaseAPI {
@@ -55,6 +55,10 @@ export class SharedAPI extends BaseAPI {
 
   async getPenalties(): Promise<PenaltiesResponse> {
     return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, '/restrictions/v3/penalties', { noCache: true })
+  }
+
+  async getParty(partyId: string): Promise<PartyResponse> {
+    return this.fetch(`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`, `/parties/v1/parties/${partyId}`, { noCache: true })
   }
 
 }
