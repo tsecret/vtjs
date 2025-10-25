@@ -10,8 +10,8 @@ import atoms from '../utils/atoms';
 
 export const Header = () => {
   const [update, setUpdate] = useState<Update|null>()
-  const [player] = useAtom(atoms.player)
   const [puuid] = useAtom(atoms.puuid)
+  const [party] = useAtom(atoms.party)
   const [prefetching] = useAtom(atoms.prefetching)
 
   const location = useLocation()
@@ -65,17 +65,18 @@ export const Header = () => {
 
         <div className="ml-auto flex flex-row items-center space-x-2">
           { update && <button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}><Download size={16}/> Update available</button> }
-          <span>{player?.game_name}{' '}
-            <div className="relative group inline-block">
-              <span className="block group-hover:hidden select-none tracking-widest">
-                ****
-              </span>
-              <span className="hidden group-hover:block select-none">
-                #{player?.tag_line}
-              </span>
-            </div>
-          </span>
           { prefetching && <div className='btn btn-soft btn-info btn-sm'><RefreshCw size={16} className='animate-spin' /> Fetching player data</div> }
+
+          <div className="avatar-group -space-x-6">
+            {party.map(p => (
+              <div key={p.puuid} className="avatar">
+                <div className="w-8 rounded-full">
+                  <img src={`https://media.valorant-api.com/playercards/${p.playerCardId}/displayicon.png`} />
+                </div>
+              </div>
+            ))}
+          </div>
+
           <button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate(`/player/${puuid}`)}><User size={20} /> My Profile</button>
           <button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate('/store')}><Store size={20} /> Store</button>
           <button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate('/friends')}><Users size={20} /> Friends</button>

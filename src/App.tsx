@@ -30,6 +30,7 @@ import { TestPage } from './pages/Test.page';
 import { RateLimitNotification } from './components/RateLimitAlert';
 import { AvoidListPage } from './pages/AvoidList.page';
 import { Sync } from './components/Sync';
+import { TestDial } from './components/TestDial';
 
 function App() {
 
@@ -155,6 +156,7 @@ function App() {
     <RateLimitNotification />
     <MatchHandler />
     <Sync />
+    <TestDial />
     <Routes>
       <Route path="/" element={<InitPage status={initStatus} error={error} />} />
       <Route path="/welcome" element={<WelcomePage />} />

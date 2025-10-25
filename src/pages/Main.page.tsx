@@ -71,8 +71,6 @@ export const Main = () => {
 
     const matchDisplayInfo = getMatchDisplayInfo();
 
-    console.log('matchDisplayInfo', matchDisplayInfo)
-
     return (
         <div className="p-2 flex flex-col">
             {error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div> }

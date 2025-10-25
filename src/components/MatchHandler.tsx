@@ -222,15 +222,14 @@ export const MatchHandler = () => {
                     JSON.stringify(match)
                 ]);
             }
-
-            setTable({});
-            setCurrentMatch(null);
-            setMatchProcessing({ isProcessing: false, currentPlayer: null, progress: { step: 0, total: 0 } });
-            currentMatchRef.current = { matchId: null, isProcessing: false };
-
             console.log('Match ended, data cleared');
         } catch (error) {
             console.error('Error handling game end:', error);
+        } finally{
+          setTable({});
+          setCurrentMatch(null);
+          setMatchProcessing({ isProcessing: false, currentPlayer: null, progress: { step: 0, total: 0 } });
+          currentMatchRef.current = { matchId: null, isProcessing: false };
         }
     }
 
