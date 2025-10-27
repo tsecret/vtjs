@@ -48,9 +48,6 @@ export class TestSharedAPI extends SharedAPI {
   }
 
   async getMatchDetails(matchId: string): Promise<MatchDetailsResponse> {
-    await sleep(200)
-
-
     const match = JSON.parse(JSON.stringify(matchDetails))
 
     match.matchInfo.matchId = matchId

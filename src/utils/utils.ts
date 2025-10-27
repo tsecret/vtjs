@@ -456,3 +456,25 @@ export const extractEncounters = (puuid: string, matches: MatchDetailsResponse[]
     }
   })
 }
+
+export const sortPlayersForProcessing = (players: PlayerNamesReponse[], table: Record<string, PlayerRow>): PlayerNamesReponse[] => {
+    const playersObj: Record<string, PlayerNamesReponse> = {}
+    for (const player of players){
+      playersObj[player.Subject] = player
+    }
+
+    const tableAsArray = Object.values(table)
+      .sort((a, b) => {
+          if (a.enemy !== b.enemy) {
+            return +a.enemy - +b.enemy
+          }
+
+          if (a.accountLevel && b.accountLevel) return a.accountLevel - b.accountLevel;
+          if (a.accountLevel) return -1;
+          if (b.accountLevel) return 1;
+          return 0;
+      });
+
+
+    return tableAsArray.map(p => playersObj[p.puuid])
+}

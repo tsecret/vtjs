@@ -95,8 +95,7 @@ export const MatchHandler = () => {
                     const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
                     const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
 
-                    const playerInfo = players.find(p => p.Subject === player.Subject);
-                    if (!playerInfo) continue;
+                    const playerInfo = players.find(p => p.Subject === player.Subject)!
 
                     const { GameName, TagLine } = playerInfo;
                     const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.CharacterID as string)
@@ -134,7 +133,7 @@ export const MatchHandler = () => {
             setTable(updatedTable);
             setCurrentMatch(match);
 
-            processPlayers(players, match);
+            processPlayers(utils.sortPlayersForProcessing(players, updatedTable), match);
 
         } catch (error) {
             console.error('Error processing match:', error);
