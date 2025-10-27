@@ -212,7 +212,7 @@ export const ProfilePage = () => {
       const [{ GameName, TagLine }] = await sharedapi.getPlayerNames([puuid])
 
       const competitiveUpdates = await sharedapi.getCompetitiveUpdates(puuid)
-      const { TierAfterUpdate: currentRank, RankedRatingAfterUpdate: currentRR } = competitiveUpdates.Matches[0]
+      const { TierAfterUpdate: currentRank, RankedRatingAfterUpdate: currentRR } = competitiveUpdates.Matches.length > 0 ? competitiveUpdates.Matches[0] : { TierAfterUpdate: 1, RankedRatingAfterUpdate: 1 }
       const peakRank = 1
 
 

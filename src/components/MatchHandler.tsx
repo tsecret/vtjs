@@ -84,7 +84,11 @@ export const MatchHandler = () => {
                       TierAfterUpdate: currentRank,
                       RankedRatingAfterUpdate: currentRR,
                       RankedRatingEarned: lastGameMMRDiff,
-                    } = compUpdates.Matches[0]
+                    } = compUpdates.Matches.length > 0 ? compUpdates.Matches[0] : {
+                      TierAfterUpdate: 1,
+                      RankedRatingAfterUpdate: 1,
+                      RankedRatingEarned: 1,
+                    }
                     const peakRank = 1
                     const mmr = 0
 
