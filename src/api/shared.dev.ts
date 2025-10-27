@@ -66,8 +66,12 @@ export class TestSharedAPI extends SharedAPI {
   }
 
   async getCompetitiveUpdates(_puuid: string): Promise<CompetitiveUpdatesResponse> {
+    const updates: CompetitiveUpdatesResponse = JSON.parse(JSON.stringify(competitiveUpdates))
+
+    updates.Matches[0].TierAfterUpdate = randomInt(3, 28)
+
     // @ts-ignore
-    return competitiveUpdates
+    return updates
   }
 
   async getPlayerMMR(_puuid: string): Promise<PlayerMMRResponse> {
