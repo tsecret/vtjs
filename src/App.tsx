@@ -63,7 +63,7 @@ function App() {
       };
 
       // Settings
-      const store = await load('settings.json', { autoSave: true });
+      const store = await load('settings.json');
       const allowAnalytics = await store.get('allowAnalytics') ? true : false;
       const firstTimeUserKey = await store.get<boolean | undefined>('firstTimeUser');
       const firstTimeUser = firstTimeUserKey || firstTimeUserKey == undefined ? true : false;
