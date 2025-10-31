@@ -8,13 +8,15 @@ import atoms from "../utils/atoms";
 export const SocketListener = () => {
   const [, setGameState] = useAtom(atoms.gameState)
   const [puuid] = useAtom(atoms.puuid)
+  const [sharedapi] = useAtom(atoms.sharedapi)
+  const [party, setParty] = useAtom(atoms.party)
   const state = useRef<{ state: GameState, matchId: string | null }>({ state: 'MENUS', matchId: null });
 
 
   useEffect(() => {
     if (!puuid) return
 
-    listen<string>('ws_message', (event) => {
+    listen<string>('ws_message', async (event) => {
 
         try {
           const [, , payload]: [null, null, Payload] = JSON.parse(event.payload.replace('///', ''))
@@ -23,6 +25,12 @@ export const SocketListener = () => {
           if (!presence) return
 
           const decoded: PresenceJSON  = JSON.parse(base64Decode(presence.private))
+
+          if (decoded.partyPresenceData.partySize > 1 && party.length != decoded.partyPresenceData.partySize){
+            const party = await sharedapi?.getParty(decoded.partyPresenceData.partyId)
+            if (party)
+              setParty(party?.Members.map(p => ({ puuid: p.Subject, name: '', tag: '', playerCardId: p.PlayerIdentity.PlayerCardID })))
+          }
 
           if (decoded.matchPresenceData.sessionLoopState === state.current.state)
             return

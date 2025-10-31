@@ -16,7 +16,8 @@ const sharedapi = atom<SharedAPI>()
 const storeapi = atom<StoreAPI>()
 const puuid = atom<string>()
 const player = atom<PlayerAccount>()
-const table = atom<{ [key: PlayerRow['puuid']]: PlayerRow }>({})
+const table = atom<Record<PlayerRow['puuid'], PlayerRow>>({})
+const party = atom<{ puuid: string, name: string, tag: string, playerCardId: string }[]>([])
 
 const prefetching = atom<boolean>(false)
 const gameState = atom<{ state: GameState, matchId: string | null }>({ state: 'MENUS', matchId: null })
@@ -51,6 +52,7 @@ export default {
   table,
   penalty,
   rateLimitNotification,
+  party,
 
   gameState,
   matchProcessing,

@@ -1,5 +1,5 @@
-import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PenaltiesResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
-import { randomInt, sleep } from "../utils/utils";
+import { CompetitiveUpdatesResponse, CurrentGameMatchResponse, CurrentGamePlayerResponse, CurrentPreGameMatchResponse, CurrentPreGamePlayerResponse, MatchDetailsResponse, PartyResponse, PenaltiesResponse, PlayerMatchHistoryResponse, PlayerMMRResponse, PlayerNamesReponse } from '../interface';
+import { randomInt } from "../utils/utils";
 import { SharedAPI } from "./shared";
 
 import agents from '../assets/agents.json';
@@ -12,6 +12,7 @@ import currentPreGameMatch from '../../tests/fixtures/shared/current-pregame-mat
 import currentPreGamePlayer from '../../tests/fixtures/shared/current-pregame-player.json';
 import matchDetails from '../../tests/fixtures/shared/match-details.json';
 import matchHistory from '../../tests/fixtures/shared/match-history.json';
+import party from '../../tests/fixtures/shared/parties.json';
 import penaltiesClear from '../../tests/fixtures/shared/penalties-clear.json';
 import playerMMR from '../../tests/fixtures/shared/player-mmr.json';
 import playerNames from '../../tests/fixtures/shared/player-names.json';
@@ -42,13 +43,11 @@ export class TestSharedAPI extends SharedAPI {
   }
 
   async getPlayerMatchHistory(_puuid: string): Promise<PlayerMatchHistoryResponse> {
-    await sleep(50)
     // @ts-ignore
     return matchHistory
   }
 
   async getMatchDetails(matchId: string): Promise<MatchDetailsResponse> {
-
     const match = JSON.parse(JSON.stringify(matchDetails))
 
     match.matchInfo.matchId = matchId
@@ -67,8 +66,12 @@ export class TestSharedAPI extends SharedAPI {
   }
 
   async getCompetitiveUpdates(_puuid: string): Promise<CompetitiveUpdatesResponse> {
+    const updates: CompetitiveUpdatesResponse = JSON.parse(JSON.stringify(competitiveUpdates))
+
+    updates.Matches[0].TierAfterUpdate = randomInt(3, 28)
+
     // @ts-ignore
-    return competitiveUpdates
+    return updates
   }
 
   async getPlayerMMR(_puuid: string): Promise<PlayerMMRResponse> {
@@ -87,5 +90,11 @@ export class TestSharedAPI extends SharedAPI {
     // @ts-ignore
     return penaltiesClear
   }
+
+  async getParty(_partyId: string): Promise<PartyResponse> {
+    // @ts-ignore
+    return party
+  }
+
 
 }

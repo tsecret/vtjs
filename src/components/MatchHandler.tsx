@@ -84,15 +84,18 @@ export const MatchHandler = () => {
                       TierAfterUpdate: currentRank,
                       RankedRatingAfterUpdate: currentRR,
                       RankedRatingEarned: lastGameMMRDiff,
-                    } = compUpdates.Matches[0]
+                    } = compUpdates.Matches.length > 0 ? compUpdates.Matches[0] : {
+                      TierAfterUpdate: 1,
+                      RankedRatingAfterUpdate: 1,
+                      RankedRatingEarned: 1,
+                    }
                     const peakRank = 1
                     const mmr = 0
 
                     const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
                     const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
 
-                    const playerInfo = players.find(p => p.Subject === player.Subject);
-                    if (!playerInfo) continue;
+                    const playerInfo = players.find(p => p.Subject === player.Subject)!
 
                     const { GameName, TagLine } = playerInfo;
                     const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = utils.getAgent(player.CharacterID as string)
@@ -130,7 +133,7 @@ export const MatchHandler = () => {
             setTable(updatedTable);
             setCurrentMatch(match);
 
-            processPlayers(players, match);
+            processPlayers(utils.sortPlayersForProcessing(players, updatedTable), match);
 
         } catch (error) {
             console.error('Error processing match:', error);
@@ -222,36 +225,35 @@ export const MatchHandler = () => {
                     JSON.stringify(match)
                 ]);
             }
-
-            setTable({});
-            setCurrentMatch(null);
-            setMatchProcessing({ isProcessing: false, currentPlayer: null, progress: { step: 0, total: 0 } });
-            currentMatchRef.current = { matchId: null, isProcessing: false };
-
             console.log('Match ended, data cleared');
         } catch (error) {
             console.error('Error handling game end:', error);
+        } finally{
+          setTable({});
+          setCurrentMatch(null);
+          setMatchProcessing({ isProcessing: false, currentPlayer: null, progress: { step: 0, total: 0 } });
+          currentMatchRef.current = { matchId: null, isProcessing: false };
         }
     }
 
     useEffect(() => {
         if (!sharedapi || !puuid) return;
 
-        if (gameState.state === 'PREGAME') {
+        switch(gameState.state){
+          case 'PREGAME':
             sharedapi.getCurrentPreGamePlayer(puuid)
             .then(match => {
               if (match) handleMatch(match.MatchID, true, 'check_pregame')
             })
-        }
-
-        if (gameState.state === 'INGAME') {
+            break;
+          case 'INGAME':
             sharedapi.getCurrentGamePlayer(puuid)
             .then(match => {
               if (match) handleMatch(match.MatchID, false, 'check_game')
             })
-        }
-
-        if (gameState.state === 'MENUS') {
+            break;
+          case 'MENUS':
+          default:
             handleGameEnd();
         }
 

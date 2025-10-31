@@ -203,8 +203,10 @@ export const getMatchResult = (puuid: string, match: MatchDetailsResponse): Matc
 }
 
 export const getAgent = (uuid: string): Agent =>  {
-  const agent = agents.find(agent => agent.uuid === uuid.toLowerCase())
-  return agent || { uuid: '', displayName: 'New Agent', killfeedPortrait: '', displayIcon: '' }
+  if (!uuid)
+    return { uuid: '', displayName: '', killfeedPortrait: '', displayIcon: '' }
+
+  return agents.find(agent => agent.uuid === uuid.toLowerCase()) || { uuid: '', displayName: 'New Agent', killfeedPortrait: '', displayIcon: '' }
 }
 
 export const getRank = (rank: number): Rank => {
@@ -453,4 +455,26 @@ export const extractEncounters = (puuid: string, matches: MatchDetailsResponse[]
       number: encounters[puuid]
     }
   })
+}
+
+export const sortPlayersForProcessing = (players: PlayerNamesReponse[], table: Record<string, PlayerRow>): PlayerNamesReponse[] => {
+    const playersObj: Record<string, PlayerNamesReponse> = {}
+    for (const player of players){
+      playersObj[player.Subject] = player
+    }
+
+    const tableAsArray = Object.values(table)
+      .sort((a, b) => {
+          if (a.enemy !== b.enemy) {
+            return +a.enemy - +b.enemy
+          }
+
+          if (a.accountLevel && b.accountLevel) return a.accountLevel - b.accountLevel;
+          if (a.accountLevel) return -1;
+          if (b.accountLevel) return 1;
+          return 0;
+      });
+
+
+    return tableAsArray.map(p => playersObj[p.puuid])
 }

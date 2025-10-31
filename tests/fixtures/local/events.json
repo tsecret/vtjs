@@ -1,0 +1,206 @@
+[
+  {
+    "desc": "Switch to Comp",
+    "data": {
+      "presences": [
+        {
+          "activePlatform": "windows",
+          "actor": null,
+          "basic": "",
+          "details": null,
+          "game_name": "Player 1",
+          "game_tag": "tag",
+          "location": null,
+          "msg": null,
+          "name": "",
+          "packedData": null,
+          "parties": [],
+          "patchline": null,
+          "pid": "test-player-1-puuid@la1.pvp.net",
+          "platform": "PC",
+          "private": "ewoJImlzVmFsaWQiOiB0cnVlLAoJImlzSWRsZSI6IGZhbHNlLAoJInF1ZXVlSWQiOiAiY29tcGV0aXRpdmUiLAoJInByb3Zpc2lvbmluZ0Zsb3ciOiAiSW52YWxpZCIsCgkicGFydHlJZCI6ICJ0ZXN0LXBhcnR5LTEtcHV1aWQiLAoJInBhcnR5U2l6ZSI6IDEsCgkibWF4UGFydHlTaXplIjogNSwKCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUFsbHlUZWFtIjogMCwKCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUVuZW15VGVhbSI6IDAsCgkicHJlbWllclByZXNlbmNlRGF0YSI6Cgl7CgkJInJvc3RlcklkIjogIiIsCgkJInJvc3Rlck5hbWUiOiAiIiwKCQkicm9zdGVyVGFnIjogIiIsCgkJInJvc3RlclR5cGUiOiAiIiwKCQkiZGl2aXNpb24iOiAwLAoJCSJzY29yZSI6IDAsCgkJInBsYXRpbmciOiAwLAoJCSJzaG93QXVyYSI6IGZhbHNlLAoJCSJzaG93VGFnIjogZmFsc2UsCgkJInNob3dQbGF0aW5nIjogZmFsc2UKCX0sCgkibWF0Y2hQcmVzZW5jZURhdGEiOgoJewoJCSJzZXNzaW9uTG9vcFN0YXRlIjogIk1FTlVTIiwKCQkicHJvdmlzaW9uaW5nRmxvdyI6ICJJbnZhbGlkIiwKCQkibWF0Y2hNYXAiOiAiIiwKCQkicXVldWVJZCI6ICJjb21wZXRpdGl2ZSIKCX0sCgkicGFydHlQcmVzZW5jZURhdGEiOgoJewoJCSJwYXJ0eUlkIjogInRlc3QtcGFydHktMS1wdXVpZCIsCgkJImlzUGFydHlPd25lciI6IHRydWUsCgkJInBhcnR5U3RhdGUiOiAiREVGQVVMVCIsCgkJInBhcnR5QWNjZXNzaWJpbGl0eSI6ICJDTE9TRUQiLAoJCSJwYXJ0eUxGTSI6IGZhbHNlLAoJCSJwYXJ0eUNsaWVudFZlcnNpb24iOiAicmVsZWFzZS0xMS4wOC1zaGlwcGluZy0xOC0zOTE4MDg5IiwKCQkicGFydHlWZXJzaW9uIjogMTc2MTM5MjQ2MzY1NiwKCQkicGFydHlTaXplIjogMSwKCQkicXVldWVFbnRyeVRpbWUiOiAiMDAwMS4wMS4wMS0wMC4wMC4wMCIsCgkJImlzUGFydHlDcm9zc1BsYXlFbmFibGVkIjogZmFsc2UsCgkJImlzUGxheWVyQ3Jvc3NQbGF5RW5hYmxlZCI6IGZhbHNlLAoJCSJwYXJ0eVByZWNpc2VQbGF0Zm9ybVR5cGVzIjogMSwKCQkiY3VzdG9tR2FtZU5hbWUiOiAiIiwKCQkiY3VzdG9tR2FtZVRlYW0iOiAiIiwKCQkibWF4UGFydHlTaXplIjogNSwKCQkidG91cm5hbWVudElkIjogIiIsCgkJInJvc3RlcklkIjogIiIsCgkJInBhcnR5T3duZXJTZXNzaW9uTG9vcFN0YXRlIjogIk1FTlVTIiwKCQkicGFydHlPd25lck1hdGNoTWFwIjogIiIsCgkJInBhcnR5T3duZXJQcm92aXNpb25pbmdGbG93IjogIkludmFsaWQiLAoJCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUFsbHlUZWFtIjogMCwKCQkicGFydHlPd25lck1hdGNoU2NvcmVFbmVteVRlYW0iOiAwCgl9LAoJInBsYXllclByZXNlbmNlRGF0YSI6Cgl7CgkJInBsYXllckNhcmRJZCI6ICI5Zjc2OTU3Yy00YjA3LTUzMjEtODVhMS0yYThjZGEzMjMwNWIiLAoJCSJwbGF5ZXJUaXRsZUlkIjogImQxM2U1NzljLTQzNWUtNDRkNC1jZWMyLTZlYWU1YTNjNWVkNCIsCgkJImFjY291bnRMZXZlbCI6IDEwNSwKCQkiY29tcGV0aXRpdmVUaWVyIjogMjEsCgkJImxlYWRlcmJvYXJkUG9zaXRpb24iOiAwCgl9Cn0=",
+          "privateJwt": null,
+          "product": "valorant",
+          "puuid": "test-player-1-puuid",
+          "region": "la1",
+          "resource": "RC-1724710148",
+          "state": "chat",
+          "summary": "",
+          "time": 1761392469120
+        }
+      ]
+    },
+    "eventType": "Update",
+    "uri": "/chat/v4/presences"
+  },
+  {
+    "desc": "Switch to Unrated",
+    "data": {
+      "presences": [
+        {
+          "activePlatform": "windows",
+          "actor": null,
+          "basic": "",
+          "details": null,
+          "game_name": "Player 1",
+          "game_tag": "tag",
+          "location": null,
+          "msg": null,
+          "name": "",
+          "packedData": null,
+          "parties": [],
+          "patchline": null,
+          "pid": "test-player-1-puuid@la1.pvp.net",
+          "platform": "PC",
+          "private": "ewoJImlzVmFsaWQiOiB0cnVlLAoJImlzSWRsZSI6IGZhbHNlLAoJInF1ZXVlSWQiOiAidW5yYXRlZCIsCgkicHJvdmlzaW9uaW5nRmxvdyI6ICJJbnZhbGlkIiwKCSJwYXJ0eUlkIjogInRlc3QtcGFydHktMS1wdXVpZCIsCgkicGFydHlTaXplIjogMSwKCSJtYXhQYXJ0eVNpemUiOiA1LAoJInBhcnR5T3duZXJNYXRjaFNjb3JlQWxseVRlYW0iOiAwLAoJInBhcnR5T3duZXJNYXRjaFNjb3JlRW5lbXlUZWFtIjogMCwKCSJwcmVtaWVyUHJlc2VuY2VEYXRhIjoKCXsKCQkicm9zdGVySWQiOiAiIiwKCQkicm9zdGVyTmFtZSI6ICIiLAoJCSJyb3N0ZXJUYWciOiAiIiwKCQkicm9zdGVyVHlwZSI6ICIiLAoJCSJkaXZpc2lvbiI6IDAsCgkJInNjb3JlIjogMCwKCQkicGxhdGluZyI6IDAsCgkJInNob3dBdXJhIjogZmFsc2UsCgkJInNob3dUYWciOiBmYWxzZSwKCQkic2hvd1BsYXRpbmciOiBmYWxzZQoJfSwKCSJtYXRjaFByZXNlbmNlRGF0YSI6Cgl7CgkJInNlc3Npb25Mb29wU3RhdGUiOiAiTUVOVVMiLAoJCSJwcm92aXNpb25pbmdGbG93IjogIkludmFsaWQiLAoJCSJtYXRjaE1hcCI6ICIiLAoJCSJxdWV1ZUlkIjogImNvbXBldGl0aXZlIgoJfSwKCSJwYXJ0eVByZXNlbmNlRGF0YSI6Cgl7CgkJInBhcnR5SWQiOiAidGVzdC1wYXJ0eS0xLXB1dWlkIiwKCQkiaXNQYXJ0eU93bmVyIjogdHJ1ZSwKCQkicGFydHlTdGF0ZSI6ICJERUZBVUxUIiwKCQkicGFydHlBY2Nlc3NpYmlsaXR5IjogIkNMT1NFRCIsCgkJInBhcnR5TEZNIjogZmFsc2UsCgkJInBhcnR5Q2xpZW50VmVyc2lvbiI6ICJyZWxlYXNlLTExLjA4LXNoaXBwaW5nLTE4LTM5MTgwODkiLAoJCSJwYXJ0eVZlcnNpb24iOiAxNzYxMzkyNDYzNjU2LAoJCSJwYXJ0eVNpemUiOiAxLAoJCSJxdWV1ZUVudHJ5VGltZSI6ICIwMDAxLjAxLjAxLTAwLjAwLjAwIiwKCQkiaXNQYXJ0eUNyb3NzUGxheUVuYWJsZWQiOiBmYWxzZSwKCQkiaXNQbGF5ZXJDcm9zc1BsYXlFbmFibGVkIjogZmFsc2UsCgkJInBhcnR5UHJlY2lzZVBsYXRmb3JtVHlwZXMiOiAxLAoJCSJjdXN0b21HYW1lTmFtZSI6ICIiLAoJCSJjdXN0b21HYW1lVGVhbSI6ICIiLAoJCSJtYXhQYXJ0eVNpemUiOiA1LAoJCSJ0b3VybmFtZW50SWQiOiAiIiwKCQkicm9zdGVySWQiOiAiIiwKCQkicGFydHlPd25lclNlc3Npb25Mb29wU3RhdGUiOiAiTUVOVVMiLAoJCSJwYXJ0eU93bmVyTWF0Y2hNYXAiOiAiIiwKCQkicGFydHlPd25lclByb3Zpc2lvbmluZ0Zsb3ciOiAiSW52YWxpZCIsCgkJInBhcnR5T3duZXJNYXRjaFNjb3JlQWxseVRlYW0iOiAwLAoJCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUVuZW15VGVhbSI6IDAKCX0sCgkicGxheWVyUHJlc2VuY2VEYXRhIjoKCXsKCQkicGxheWVyQ2FyZElkIjogIjlmNzY5NTdjLTRiMDctNTMyMS04NWExLTJhOGNkYTMyMzA1YiIsCgkJInBsYXllclRpdGxlSWQiOiAiZDEzZTU3OWMtNDM1ZS00NGQ0LWNlYzItNmVhZTVhM2M1ZWQ0IiwKCQkiYWNjb3VudExldmVsIjogMTA1LAoJCSJjb21wZXRpdGl2ZVRpZXIiOiAyMSwKCQkibGVhZGVyYm9hcmRQb3NpdGlvbiI6IDAKCX0KfQ==",
+          "privateJwt": null,
+          "product": "valorant",
+          "puuid": "test-player-1-puuid",
+          "region": "la1",
+          "resource": "RC-1724710148",
+          "state": "chat",
+          "summary": "",
+          "time": 1761392469120
+        }
+      ]
+    },
+    "eventType": "Update",
+    "uri": "/chat/v4/presences"
+  },
+  {
+    "desc": "pregame",
+    "data": {
+      "presences": [
+        {
+          "activePlatform": "windows",
+          "actor": null,
+          "basic": "",
+          "details": null,
+          "game_name": "Player 1",
+          "game_tag": "tag",
+          "location": null,
+          "msg": null,
+          "name": "",
+          "packedData": null,
+          "parties": [],
+          "patchline": null,
+          "pid": "test-player-1-puuid@la1.pvp.net",
+          "platform": "PC",
+          "private": "ewoJImlzVmFsaWQiOiB0cnVlLAoJImlzSWRsZSI6IGZhbHNlLAoJInF1ZXVlSWQiOiAidW5yYXRlZCIsCgkicHJvdmlzaW9uaW5nRmxvdyI6ICJJbnZhbGlkIiwKCSJwYXJ0eUlkIjogInRlc3QtcGFydHktMS1wdXVpZCIsCgkicGFydHlTaXplIjogMSwKCSJtYXhQYXJ0eVNpemUiOiAxMiwKCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUFsbHlUZWFtIjogMCwKCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUVuZW15VGVhbSI6IDAsCgkicHJlbWllclByZXNlbmNlRGF0YSI6Cgl7CgkJInJvc3RlcklkIjogIiIsCgkJInJvc3Rlck5hbWUiOiAiIiwKCQkicm9zdGVyVGFnIjogIiIsCgkJInJvc3RlclR5cGUiOiAiIiwKCQkiZGl2aXNpb24iOiAwLAoJCSJzY29yZSI6IDAsCgkJInBsYXRpbmciOiAwLAoJCSJzaG93QXVyYSI6IGZhbHNlLAoJCSJzaG93VGFnIjogZmFsc2UsCgkJInNob3dQbGF0aW5nIjogZmFsc2UKCX0sCgkibWF0Y2hQcmVzZW5jZURhdGEiOgoJewoJCSJzZXNzaW9uTG9vcFN0YXRlIjogIlBSRUdBTUUiLAoJCSJwcm92aXNpb25pbmdGbG93IjogIkludmFsaWQiLAoJCSJtYXRjaE1hcCI6ICIvR2FtZS9NYXBzL0FzY2VudC9Bc2NlbnQiLAoJCSJxdWV1ZUlkIjogInVucmF0ZWQiCgl9LAoJInBhcnR5UHJlc2VuY2VEYXRhIjoKCXsKCQkicGFydHlJZCI6ICJ0ZXN0LXBhcnR5LTEtcHV1aWQiLAoJCSJpc1BhcnR5T3duZXIiOiB0cnVlLAoJCSJwYXJ0eVN0YXRlIjogIkNVU1RPTV9HQU1FX1NFVFVQIiwKCQkicGFydHlBY2Nlc3NpYmlsaXR5IjogIkNMT1NFRCIsCgkJInBhcnR5TEZNIjogZmFsc2UsCgkJInBhcnR5Q2xpZW50VmVyc2lvbiI6ICJyZWxlYXNlLTExLjA4LXNoaXBwaW5nLTE4LTM5MTgwODkiLAoJCSJwYXJ0eVZlcnNpb24iOiAxNzYxMzkyNjE4MjY2LAoJCSJwYXJ0eVNpemUiOiAxLAoJCSJxdWV1ZUVudHJ5VGltZSI6ICIwMDAxLjAxLjAxLTAwLjAwLjAwIiwKCQkiaXNQYXJ0eUNyb3NzUGxheUVuYWJsZWQiOiBmYWxzZSwKCQkiaXNQbGF5ZXJDcm9zc1BsYXlFbmFibGVkIjogZmFsc2UsCgkJInBhcnR5UHJlY2lzZVBsYXRmb3JtVHlwZXMiOiAxLAoJCSJjdXN0b21HYW1lTmFtZSI6ICIiLAoJCSJjdXN0b21HYW1lVGVhbSI6ICJUZWFtT25lIiwKCQkibWF4UGFydHlTaXplIjogMTIsCgkJInRvdXJuYW1lbnRJZCI6ICIiLAoJCSJyb3N0ZXJJZCI6ICIiLAoJCSJwYXJ0eU93bmVyU2Vzc2lvbkxvb3BTdGF0ZSI6ICJQUkVHQU1FIiwKCQkicGFydHlPd25lck1hdGNoTWFwIjogIi9HYW1lL01hcHMvQXNjZW50L0FzY2VudCIsCgkJInBhcnR5T3duZXJQcm92aXNpb25pbmdGbG93IjogIkludmFsaWQiLAoJCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUFsbHlUZWFtIjogMCwKCQkicGFydHlPd25lck1hdGNoU2NvcmVFbmVteVRlYW0iOiAwCgl9LAoJInBsYXllclByZXNlbmNlRGF0YSI6Cgl7CgkJInBsYXllckNhcmRJZCI6ICI5Zjc2OTU3Yy00YjA3LTUzMjEtODVhMS0yYThjZGEzMjMwNWIiLAoJCSJwbGF5ZXJUaXRsZUlkIjogImQxM2U1NzljLTQzNWUtNDRkNC1jZWMyLTZlYWU1YTNjNWVkNCIsCgkJImFjY291bnRMZXZlbCI6IDEwNSwKCQkiY29tcGV0aXRpdmVUaWVyIjogMjEsCgkJImxlYWRlcmJvYXJkUG9zaXRpb24iOiAwCgl9Cn0=",
+          "privateJwt": null,
+          "product": "valorant",
+          "puuid": "test-player-1-puuid",
+          "region": "la1",
+          "resource": "RC-1724710148",
+          "state": "dnd",
+          "summary": "",
+          "time": 1761392624134
+        }
+      ]
+    },
+    "eventType": "Update",
+    "uri": "/chat/v4/presences"
+  },
+  {
+    "desc": "game",
+    "data": {
+      "presences": [
+        {
+          "activePlatform": "windows",
+          "actor": null,
+          "basic": "",
+          "details": null,
+          "game_name": "Player 1",
+          "game_tag": "tag",
+          "location": null,
+          "msg": null,
+          "name": "",
+          "packedData": null,
+          "parties": [],
+          "patchline": null,
+          "pid": "test-player-1-puuid@la1.pvp.net",
+          "platform": "PC",
+          "private": "ewoJImlzVmFsaWQiOiB0cnVlLAoJImlzSWRsZSI6IGZhbHNlLAoJInF1ZXVlSWQiOiAiIiwKCSJwcm92aXNpb25pbmdGbG93IjogIkN1c3RvbUdhbWUiLAoJInBhcnR5SWQiOiAidGVzdC1wYXJ0eS0xLXB1dWlkIiwKCSJwYXJ0eVNpemUiOiAxLAoJIm1heFBhcnR5U2l6ZSI6IDEyLAoJInBhcnR5T3duZXJNYXRjaFNjb3JlQWxseVRlYW0iOiAwLAoJInBhcnR5T3duZXJNYXRjaFNjb3JlRW5lbXlUZWFtIjogMCwKCSJwcmVtaWVyUHJlc2VuY2VEYXRhIjoKCXsKCQkicm9zdGVySWQiOiAiIiwKCQkicm9zdGVyTmFtZSI6ICIiLAoJCSJyb3N0ZXJUYWciOiAiIiwKCQkicm9zdGVyVHlwZSI6ICIiLAoJCSJkaXZpc2lvbiI6IDAsCgkJInNjb3JlIjogMCwKCQkicGxhdGluZyI6IDAsCgkJInNob3dBdXJhIjogZmFsc2UsCgkJInNob3dUYWciOiBmYWxzZSwKCQkic2hvd1BsYXRpbmciOiBmYWxzZQoJfSwKCSJtYXRjaFByZXNlbmNlRGF0YSI6Cgl7CgkJInNlc3Npb25Mb29wU3RhdGUiOiAiSU5HQU1FIiwKCQkicHJvdmlzaW9uaW5nRmxvdyI6ICJDdXN0b21HYW1lIiwKCQkibWF0Y2hNYXAiOiAiL0dhbWUvTWFwcy9Bc2NlbnQvQXNjZW50IiwKCQkicXVldWVJZCI6ICIiCgl9LAoJInBhcnR5UHJlc2VuY2VEYXRhIjoKCXsKCQkicGFydHlJZCI6ICJ0ZXN0LXBhcnR5LTEtcHV1aWQiLAoJCSJpc1BhcnR5T3duZXIiOiB0cnVlLAoJCSJwYXJ0eVN0YXRlIjogIkNVU1RPTV9HQU1FX1NFVFVQIiwKCQkicGFydHlBY2Nlc3NpYmlsaXR5IjogIkNMT1NFRCIsCgkJInBhcnR5TEZNIjogZmFsc2UsCgkJInBhcnR5Q2xpZW50VmVyc2lvbiI6ICJyZWxlYXNlLTExLjA4LXNoaXBwaW5nLTE4LTM5MTgwODkiLAoJCSJwYXJ0eVZlcnNpb24iOiAxNzYxMzkyNTYyNjk0LAoJCSJwYXJ0eVNpemUiOiAxLAoJCSJxdWV1ZUVudHJ5VGltZSI6ICIwMDAxLjAxLjAxLTAwLjAwLjAwIiwKCQkiaXNQYXJ0eUNyb3NzUGxheUVuYWJsZWQiOiBmYWxzZSwKCQkiaXNQbGF5ZXJDcm9zc1BsYXlFbmFibGVkIjogZmFsc2UsCgkJInBhcnR5UHJlY2lzZVBsYXRmb3JtVHlwZXMiOiAxLAoJCSJjdXN0b21HYW1lTmFtZSI6ICIiLAoJCSJjdXN0b21HYW1lVGVhbSI6ICJUZWFtT25lIiwKCQkibWF4UGFydHlTaXplIjogMTIsCgkJInRvdXJuYW1lbnRJZCI6ICIiLAoJCSJyb3N0ZXJJZCI6ICIiLAoJCSJwYXJ0eU93bmVyU2Vzc2lvbkxvb3BTdGF0ZSI6ICJJTkdBTUUiLAoJCSJwYXJ0eU93bmVyTWF0Y2hNYXAiOiAiL0dhbWUvTWFwcy9Bc2NlbnQvQXNjZW50IiwKCQkicGFydHlPd25lclByb3Zpc2lvbmluZ0Zsb3ciOiAiQ3VzdG9tR2FtZSIsCgkJInBhcnR5T3duZXJNYXRjaFNjb3JlQWxseVRlYW0iOiAwLAoJCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUVuZW15VGVhbSI6IDAKCX0sCgkicGxheWVyUHJlc2VuY2VEYXRhIjoKCXsKCQkicGxheWVyQ2FyZElkIjogIjlmNzY5NTdjLTRiMDctNTMyMS04NWExLTJhOGNkYTMyMzA1YiIsCgkJInBsYXllclRpdGxlSWQiOiAiZDEzZTU3OWMtNDM1ZS00NGQ0LWNlYzItNmVhZTVhM2M1ZWQ0IiwKCQkiYWNjb3VudExldmVsIjogMTA1LAoJCSJjb21wZXRpdGl2ZVRpZXIiOiAyMSwKCQkibGVhZGVyYm9hcmRQb3NpdGlvbiI6IDAKCX0KfQ==",
+          "privateJwt": null,
+          "product": "valorant",
+          "puuid": "test-player-1-puuid",
+          "region": "la1",
+          "resource": "RC-1724710148",
+          "state": "dnd",
+          "summary": "",
+          "time": 1761392581211
+        }
+      ]
+    },
+    "eventType": "Update",
+    "uri": "/chat/v4/presences"
+  },
+  {
+    "desc": "idle",
+    "data": {
+      "presences": [
+        {
+          "activePlatform": "windows",
+          "actor": null,
+          "basic": "",
+          "details": null,
+          "game_name": "Player 1",
+          "game_tag": "tag",
+          "location": null,
+          "msg": null,
+          "name": "",
+          "packedData": null,
+          "parties": [],
+          "patchline": null,
+          "pid": "test-player-1-puuid@la1.pvp.net",
+          "platform": "PC",
+          "private": "ewoJImlzVmFsaWQiOiB0cnVlLAoJImlzSWRsZSI6IGZhbHNlLAoJInF1ZXVlSWQiOiAidW5yYXRlZCIsCgkicHJvdmlzaW9uaW5nRmxvdyI6ICJJbnZhbGlkIiwKCSJwYXJ0eUlkIjogInRlc3QtcGFydHktMS1wdXVpZCIsCgkicGFydHlTaXplIjogMSwKCSJtYXhQYXJ0eVNpemUiOiAxMiwKCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUFsbHlUZWFtIjogMCwKCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUVuZW15VGVhbSI6IDAsCgkicHJlbWllclByZXNlbmNlRGF0YSI6Cgl7CgkJInJvc3RlcklkIjogIiIsCgkJInJvc3Rlck5hbWUiOiAiIiwKCQkicm9zdGVyVGFnIjogIiIsCgkJInJvc3RlclR5cGUiOiAiIiwKCQkiZGl2aXNpb24iOiAwLAoJCSJzY29yZSI6IDAsCgkJInBsYXRpbmciOiAwLAoJCSJzaG93QXVyYSI6IGZhbHNlLAoJCSJzaG93VGFnIjogZmFsc2UsCgkJInNob3dQbGF0aW5nIjogZmFsc2UKCX0sCgkibWF0Y2hQcmVzZW5jZURhdGEiOgoJewoJCSJzZXNzaW9uTG9vcFN0YXRlIjogIk1FTlVTIiwKCQkicHJvdmlzaW9uaW5nRmxvdyI6ICJJbnZhbGlkIiwKCQkibWF0Y2hNYXAiOiAiL0dhbWUvTWFwcy9Bc2NlbnQvQXNjZW50IiwKCQkicXVldWVJZCI6ICJ1bnJhdGVkIgoJfSwKCSJwYXJ0eVByZXNlbmNlRGF0YSI6Cgl7CgkJInBhcnR5SWQiOiAidGVzdC1wYXJ0eS0xLXB1dWlkIiwKCQkiaXNQYXJ0eU93bmVyIjogdHJ1ZSwKCQkicGFydHlTdGF0ZSI6ICJDVVNUT01fR0FNRV9TRVRVUCIsCgkJInBhcnR5QWNjZXNzaWJpbGl0eSI6ICJDTE9TRUQiLAoJCSJwYXJ0eUxGTSI6IGZhbHNlLAoJCSJwYXJ0eUNsaWVudFZlcnNpb24iOiAicmVsZWFzZS0xMS4wOC1zaGlwcGluZy0xOC0zOTE4MDg5IiwKCQkicGFydHlWZXJzaW9uIjogMTc2MTM5MjU2MjY5NCwKCQkicGFydHlTaXplIjogMSwKCQkicXVldWVFbnRyeVRpbWUiOiAiMDAwMS4wMS4wMS0wMC4wMC4wMCIsCgkJImlzUGFydHlDcm9zc1BsYXlFbmFibGVkIjogZmFsc2UsCgkJImlzUGxheWVyQ3Jvc3NQbGF5RW5hYmxlZCI6IGZhbHNlLAoJCSJwYXJ0eVByZWNpc2VQbGF0Zm9ybVR5cGVzIjogMSwKCQkiY3VzdG9tR2FtZU5hbWUiOiAiIiwKCQkiY3VzdG9tR2FtZVRlYW0iOiAiVGVhbU9uZSIsCgkJIm1heFBhcnR5U2l6ZSI6IDEyLAoJCSJ0b3VybmFtZW50SWQiOiAiIiwKCQkicm9zdGVySWQiOiAiIiwKCQkicGFydHlPd25lclNlc3Npb25Mb29wU3RhdGUiOiAiTUVOVVMiLAoJCSJwYXJ0eU93bmVyTWF0Y2hNYXAiOiAiL0dhbWUvTWFwcy9Bc2NlbnQvQXNjZW50IiwKCQkicGFydHlPd25lclByb3Zpc2lvbmluZ0Zsb3ciOiAiSW52YWxpZCIsCgkJInBhcnR5T3duZXJNYXRjaFNjb3JlQWxseVRlYW0iOiAwLAoJCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUVuZW15VGVhbSI6IDAKCX0sCgkicGxheWVyUHJlc2VuY2VEYXRhIjoKCXsKCQkicGxheWVyQ2FyZElkIjogIjlmNzY5NTdjLTRiMDctNTMyMS04NWExLTJhOGNkYTMyMzA1YiIsCgkJInBsYXllclRpdGxlSWQiOiAiZDEzZTU3OWMtNDM1ZS00NGQ0LWNlYzItNmVhZTVhM2M1ZWQ0IiwKCQkiYWNjb3VudExldmVsIjogMTA1LAoJCSJjb21wZXRpdGl2ZVRpZXIiOiAyMSwKCQkibGVhZGVyYm9hcmRQb3NpdGlvbiI6IDAKCX0KfQ==",
+          "privateJwt": null,
+          "product": "valorant",
+          "puuid": "test-player-1-puuid",
+          "region": "la1",
+          "resource": "RC-1724710148",
+          "state": "chat",
+          "summary": "",
+          "time": 1761392610518
+        }
+      ]
+    },
+    "eventType": "Update",
+    "uri": "/chat/v4/presences"
+  },
+  {
+    "desc": "party join",
+    "data": {
+      "presences": [
+        {
+          "activePlatform": "windows",
+          "actor": null,
+          "basic": "",
+          "details": null,
+          "game_name": "Player 1",
+          "game_tag": "tag",
+          "location": null,
+          "msg": null,
+          "name": "",
+          "packedData": null,
+          "parties": [],
+          "patchline": null,
+          "pid": "test-player-1-puuid@la1.pvp.net",
+          "platform": "PC",
+          "private": "ewoJImlzVmFsaWQiOiB0cnVlLAoJImlzSWRsZSI6IGZhbHNlLAoJInF1ZXVlSWQiOiAiY29tcGV0aXRpdmUiLAoJInByb3Zpc2lvbmluZ0Zsb3ciOiAiSW52YWxpZCIsCgkicGFydHlJZCI6ICJ0ZXN0LXBhcnR5LTEtcHV1aWQiLAoJInBhcnR5U2l6ZSI6IDIsCgkibWF4UGFydHlTaXplIjogNSwKCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUFsbHlUZWFtIjogMCwKCSJwYXJ0eU93bmVyTWF0Y2hTY29yZUVuZW15VGVhbSI6IDAsCgkicHJlbWllclByZXNlbmNlRGF0YSI6Cgl7CgkJInJvc3RlcklkIjogIiIsCgkJInJvc3Rlck5hbWUiOiAiIiwKCQkicm9zdGVyVGFnIjogIiIsCgkJInJvc3RlclR5cGUiOiAiIiwKCQkiZGl2aXNpb24iOiAwLAoJCSJzY29yZSI6IDAsCgkJInBsYXRpbmciOiAwLAoJCSJzaG93QXVyYSI6IGZhbHNlLAoJCSJzaG93VGFnIjogZmFsc2UsCgkJInNob3dQbGF0aW5nIjogZmFsc2UKCX0sCgkibWF0Y2hQcmVzZW5jZURhdGEiOgoJewoJCSJzZXNzaW9uTG9vcFN0YXRlIjogIk1FTlVTIiwKCQkicHJvdmlzaW9uaW5nRmxvdyI6ICJJbnZhbGlkIiwKCQkibWF0Y2hNYXAiOiAiIiwKCQkicXVldWVJZCI6ICJjb21wZXRpdGl2ZSIKCX0sCgkicGFydHlQcmVzZW5jZURhdGEiOgoJewoJCSJwYXJ0eUlkIjogInRlc3QtcGFydHktMS1wdXVpZCIsCgkJImlzUGFydHlPd25lciI6IHRydWUsCgkJInBhcnR5U3RhdGUiOiAiREVGQVVMVCIsCgkJInBhcnR5QWNjZXNzaWJpbGl0eSI6ICJDTE9TRUQiLAoJCSJwYXJ0eUxGTSI6IGZhbHNlLAoJCSJwYXJ0eUNsaWVudFZlcnNpb24iOiAicmVsZWFzZS0xMS4wOC1zaGlwcGluZy0xOC0zOTE4MDg5IiwKCQkicGFydHlWZXJzaW9uIjogMTc2MTM5NDU5MjY2OSwKCQkicGFydHlTaXplIjogMiwKCQkicXVldWVFbnRyeVRpbWUiOiAiMDAwMS4wMS4wMS0wMC4wMC4wMCIsCgkJImlzUGFydHlDcm9zc1BsYXlFbmFibGVkIjogZmFsc2UsCgkJImlzUGxheWVyQ3Jvc3NQbGF5RW5hYmxlZCI6IGZhbHNlLAoJCSJwYXJ0eVByZWNpc2VQbGF0Zm9ybVR5cGVzIjogMSwKCQkiY3VzdG9tR2FtZU5hbWUiOiAiIiwKCQkiY3VzdG9tR2FtZVRlYW0iOiAiVGVhbU9uZSIsCgkJIm1heFBhcnR5U2l6ZSI6IDUsCgkJInRvdXJuYW1lbnRJZCI6ICIiLAoJCSJyb3N0ZXJJZCI6ICIiLAoJCSJwYXJ0eU93bmVyU2Vzc2lvbkxvb3BTdGF0ZSI6ICJNRU5VUyIsCgkJInBhcnR5T3duZXJNYXRjaE1hcCI6ICIiLAoJCSJwYXJ0eU93bmVyUHJvdmlzaW9uaW5nRmxvdyI6ICJJbnZhbGlkIiwKCQkicGFydHlPd25lck1hdGNoU2NvcmVBbGx5VGVhbSI6IDAsCgkJInBhcnR5T3duZXJNYXRjaFNjb3JlRW5lbXlUZWFtIjogMAoJfSwKCSJwbGF5ZXJQcmVzZW5jZURhdGEiOgoJewoJCSJwbGF5ZXJDYXJkSWQiOiAiOWY3Njk1N2MtNGIwNy01MzIxLTg1YTEtMmE4Y2RhMzIzMDViIiwKCQkicGxheWVyVGl0bGVJZCI6ICJkMTNlNTc5Yy00MzVlLTQ0ZDQtY2VjMi02ZWFlNWEzYzVlZDQiLAoJCSJhY2NvdW50TGV2ZWwiOiAxMDUsCgkJImNvbXBldGl0aXZlVGllciI6IDIxLAoJCSJsZWFkZXJib2FyZFBvc2l0aW9uIjogMAoJfQp9",
+          "privateJwt": null,
+          "product": "valorant",
+          "puuid": "test-player-1-puuid",
+          "region": "la1",
+          "resource": "RC-1724710148",
+          "state": "chat",
+          "summary": "",
+          "time": 1761394598242
+        }
+      ]
+    },
+    "eventType": "Update",
+    "uri": "/chat/v4/presences"
+  }
+]
