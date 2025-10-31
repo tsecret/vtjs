@@ -45,14 +45,14 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
         <td>
           <div className="flex flex-row space-x-2">
             {player.bestAgents?.map(agent => (
-              <div key={agent.agentId} className="tooltip tooltip-left">
+              <div key={agent.agentId} className={clsx('tooltip tooltip-left p-0.5 rounded-md', agent.avgKd >= 1 ? 'bg-success/25' : 'bg-error/25')}>
                 <div className="tooltip-content flex flex-col items-start">
                   <span>Avg Kills: {agent.avgKills}</span>
                   <span>Avg Deaths: {agent.avgDeaths}</span>
                   <span>Avg K/D: {agent.avgKd}</span>
                   <span>Games Played: {agent.games}</span>
                 </div>
-                <img className="w-6" src={agent.agentUrl} />
+                <img className="w-6 rounded-md" src={agent.agentUrl} />
               </div>
             ))}
           </div>

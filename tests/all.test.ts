@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SharedAPI } from '../src/api/shared';
-import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PenaltiesResponse, PlayerMMRResponse } from '../src/interface';
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PenaltiesResponse, PlayerMMRResponse, PlayerNamesReponse, PlayerRow } from '../src/interface';
 import type { MostPlayedServer, Penalties } from '../src/interface/utils.interface'
 import * as utils from '../src/utils';
 
@@ -240,6 +240,68 @@ describe('utils', () => {
       expect(utils.calculateMostPlayedServer([matchDetails as MatchDetailsResponse])).toEqual(expected)
     })
 
+  })
+
+  describe('sortPlayersForProcessing', () => {
+    it('sorts players by level', () => {
+      const table: Record<string, Partial<PlayerRow>> = {
+        "test-player-1-puuid": { puuid: "test-player-1-puuid", accountLevel: 1 },
+        "test-player-2-puuid": { puuid: "test-player-2-puuid", accountLevel: 2 },
+        "test-player-3-puuid": { puuid: "test-player-3-puuid", accountLevel: 3 },
+        "test-player-4-puuid": { puuid: "test-player-4-puuid", accountLevel: 4 },
+        "test-player-5-puuid": { puuid: "test-player-5-puuid", accountLevel: 5 },
+        "test-player-6-puuid": { puuid: "test-player-6-puuid", accountLevel: 6 },
+        "test-player-7-puuid": { puuid: "test-player-7-puuid", accountLevel: 7 },
+        "test-player-8-puuid": { puuid: "test-player-8-puuid", accountLevel: 8 },
+        "test-player-9-puuid": { puuid: "test-player-9-puuid", accountLevel: 9 },
+        "test-player-10-puuid": { puuid: "test-player-10-puuid", accountLevel: 10 },
+      }
+      const expected = playerNames as PlayerNamesReponse[]
+      expect(utils.sortPlayersForProcessing(playerNames, table as Record<string, PlayerRow>)).toStrictEqual(expected)
+    })
+
+    it('sorts players by level and enemy', () => {
+      const playerNames = [
+        { Subject: "test-player-1-puuid" },
+        { Subject: "test-player-2-puuid" },
+        { Subject: "test-player-3-puuid" },
+        { Subject: "test-player-4-puuid" },
+        { Subject: "test-player-5-puuid" },
+        { Subject: "test-player-6-puuid" },
+        { Subject: "test-player-7-puuid" },
+        { Subject: "test-player-8-puuid" },
+        { Subject: "test-player-9-puuid" },
+        { Subject: "test-player-10-puuid" },
+      ] as Partial<PlayerNamesReponse>[]
+
+      const table: Record<string, Partial<PlayerRow>> = {
+        "test-player-2-puuid": { puuid: "test-player-2-puuid", accountLevel: 2, enemy: false },
+        "test-player-3-puuid": { puuid: "test-player-3-puuid", accountLevel: 3, enemy: false },
+        "test-player-9-puuid": { puuid: "test-player-9-puuid", accountLevel: 9, enemy: true },
+        "test-player-4-puuid": { puuid: "test-player-4-puuid", accountLevel: 4, enemy: false },
+        "test-player-6-puuid": { puuid: "test-player-6-puuid", accountLevel: 6, enemy: true },
+        "test-player-5-puuid": { puuid: "test-player-5-puuid", accountLevel: 5, enemy: false },
+        "test-player-7-puuid": { puuid: "test-player-7-puuid", accountLevel: 7, enemy: true },
+        "test-player-1-puuid": { puuid: "test-player-1-puuid", accountLevel: 80, enemy: false },
+        "test-player-8-puuid": { puuid: "test-player-8-puuid", accountLevel: 8, enemy: true },
+        "test-player-10-puuid": { puuid: "test-player-10-puuid", accountLevel: 1, enemy: true },
+      }
+
+      const expected = [
+        { Subject: "test-player-2-puuid" },
+        { Subject: "test-player-3-puuid" },
+        { Subject: "test-player-4-puuid" },
+        { Subject: "test-player-5-puuid" },
+        { Subject: "test-player-1-puuid" },
+        { Subject: "test-player-10-puuid" },
+        { Subject: "test-player-6-puuid" },
+        { Subject: "test-player-7-puuid" },
+        { Subject: "test-player-8-puuid" },
+        { Subject: "test-player-9-puuid" }
+      ] as Partial<PlayerNamesReponse>[]
+
+      expect(utils.sortPlayersForProcessing(playerNames as PlayerNamesReponse[], table as Record<string, PlayerRow>)).toStrictEqual(expected)
+    })
   })
 })
 

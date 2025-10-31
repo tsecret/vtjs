@@ -30,6 +30,7 @@ import { TestPage } from './pages/Test.page';
 import { RateLimitNotification } from './components/RateLimitAlert';
 import { AvoidListPage } from './pages/AvoidList.page';
 import { Sync } from './components/Sync';
+import { TestDial } from './components/TestDial';
 
 function App() {
 
@@ -62,7 +63,7 @@ function App() {
       };
 
       // Settings
-      const store = await load('settings.json', { autoSave: true });
+      const store = await load('settings.json');
       const allowAnalytics = await store.get('allowAnalytics') ? true : false;
       const firstTimeUserKey = await store.get<boolean | undefined>('firstTimeUser');
       const firstTimeUser = firstTimeUserKey || firstTimeUserKey == undefined ? true : false;
@@ -155,6 +156,7 @@ function App() {
     <RateLimitNotification />
     <MatchHandler />
     <Sync />
+    <TestDial />
     <Routes>
       <Route path="/" element={<InitPage status={initStatus} error={error} />} />
       <Route path="/welcome" element={<WelcomePage />} />

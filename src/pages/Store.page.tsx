@@ -4,6 +4,7 @@ import atoms from "../utils/atoms"
 import { useAptabase } from "@aptabase/react"
 import { getStoreItemInfo } from "@/utils"
 import Countdown from 'react-countdown';
+import clsx from "clsx"
 
 export const StorePage = () => {
   const [storeapi] = useAtom(atoms.storeapi)
@@ -182,7 +183,7 @@ export const StorePage = () => {
     </section>
 
     {/* Night Market */}
-    <section id="nightmarket" className="w-full">
+    <section id="nightmarket" className={clsx('w-full', !nightMarket?.length && 'hidden')}>
       <div className="flex flex-row items-center justify-between">
         <h2>Night Market</h2>
         { skinsResetTime && <p>Resets in <Countdown date={skinsResetTime} /></p> }

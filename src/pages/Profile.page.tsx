@@ -1,4 +1,3 @@
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { BestAgent, BestMaps, Rank } from "@/interface/utils.interface"
 import clsx from "clsx"
 import { useAtom } from "jotai"
@@ -6,7 +5,6 @@ import { ChevronsDown, ChevronsUp, ExternalLink } from "lucide-react"
 import moment from "moment"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams, useSearchParams } from "react-router"
-import { Dot, LabelList, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts"
 import { MatchDetailsResponse, Result, } from "../interface"
 import atoms from "../utils/atoms"
 import * as utils from '../utils/utils'
@@ -56,8 +54,6 @@ type ChartData = {
   hs: number
 }[]
 
-type ChartType = 'kills/deaths' | 'kd' | 'adr' | 'hs'
-
 export const ProfilePage = () => {
   const [error, setError] = useState<string|null>(null)
 
@@ -74,7 +70,7 @@ export const ProfilePage = () => {
   const [bestMaps, setBestMaps] = useState<(BestMaps & { mapName: string, mapUrl: string })[]>()
 
   const [chartData, setChartData] = useState<ChartData>()
-  const [chartType, setChartType] = useState<ChartType>('kills/deaths')
+  // const [, setChartType] = useState<ChartType>('kills/deaths')
 
   const { puuid } = useParams()
   const navigate = useNavigate()
@@ -82,17 +78,6 @@ export const ProfilePage = () => {
   const refMatchId = searchParams.get('refMatchId')
   const refMapId = searchParams.get('mapId')
   const refAgentId = searchParams.get('agentId')
-
-  const chartConfig = {
-    kills: {
-      label: "Kills",
-      color: "#00d390",
-    },
-    deaths: {
-      label: "Deaths",
-      color: "#ff637d",
-    },
-  } satisfies ChartConfig
 
   const onDodgeChange = async (state: boolean) => {
     if (!playerCard) return
@@ -212,7 +197,7 @@ export const ProfilePage = () => {
       const [{ GameName, TagLine }] = await sharedapi.getPlayerNames([puuid])
 
       const competitiveUpdates = await sharedapi.getCompetitiveUpdates(puuid)
-      const { TierAfterUpdate: currentRank, RankedRatingAfterUpdate: currentRR } = competitiveUpdates.Matches[0]
+      const { TierAfterUpdate: currentRank, RankedRatingAfterUpdate: currentRR } = competitiveUpdates.Matches.length > 0 ? competitiveUpdates.Matches[0] : { TierAfterUpdate: 1, RankedRatingAfterUpdate: 1 }
       const peakRank = 1
 
 
@@ -372,205 +357,6 @@ export const ProfilePage = () => {
             </tbody>
 
           </table>
-        </section>
-
-        <div className="divider px-32" />
-
-        {/* Kills Death, KD and ADR Charts */}
-        <section className="card w-full max-w-3xl">
-          <div className="card-body">
-            <div className="flex flex-row justify-between">
-              <h2 className="card-title">Performance over last 20 matches</h2>
-              <div className="join join-vertical sm:join-horizontal">
-                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('kills/deaths')} defaultChecked={true} name="options" aria-label="Kills and Deaths" />
-                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('kd')} name="options" aria-label="K/D Ratio" />
-                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('adr')} name="options" aria-label="ADR" />
-                <input className="join-item btn btn-soft btn-xs text-[0.5rem] sm:text-xs" type="radio" onClick={() => setChartType('hs')} name="options" aria-label="HS%" />
-              </div>
-            </div>
-
-            <ChartContainer config={chartConfig} className="min-h-[200px]">
-              <LineChart accessibilityLayer data={chartData}>
-                <XAxis
-                  dataKey="i"
-                  tickLine={true}
-                  axisLine={true}
-                  padding={{ left: 16, right: 16 }}
-                  tickFormatter={(_, i) => {
-                    return i === 0 ? 'Oldest':
-                          i === (chartData!.length-1) ? 'Recent':
-                          ''
-                  }}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent indicator="dot" color="#00d390" />}
-                />
-                {
-                  chartType === 'kills/deaths' ?
-                  <>
-                    <YAxis
-                      type="number"
-                      domain={[0, 'dataMax + 2']}
-                      tickCount={30}
-                      allowDecimals={false}
-                      padding={{ bottom: 32, top: 32 }}
-                    />
-                    <Line
-                      dataKey="kills"
-                      type="linear"
-                      stroke="var(--color-kills)"
-                      strokeWidth={2}
-                      dot={{ fill: "var(--color-kills)" }}
-                      activeDot={{ r: 6 }}
-                      isAnimationActive={false}
-                    >
-                      <LabelList
-                        position="top"
-                        offset={12}
-                        className="fill-foreground"
-                        fontSize={12}
-                      />
-                    </Line>
-                    <Line
-                        dataKey="deaths"
-                        type="linear"
-                        stroke="var(--color-deaths)"
-                        strokeWidth={2}
-                        dot={{ fill: "var(--color-deaths)" }}
-                        activeDot={{ r: 6 }}
-                        isAnimationActive={false}
-                      >
-                        <LabelList
-                          position="top"
-                          offset={12}
-                          className="fill-foreground"
-                          fontSize={12}
-                        />
-                    </Line>
-                  </>:
-                  chartType === 'kd' ?
-                  <>
-                    <YAxis
-                      type="number"
-                      domain={[0, (dataMax: number) => (Math.round(dataMax) + 0.5)]}
-                      allowDecimals={false}
-                      ticks={Array.from({length: Math.floor(3 / 0.5) + 1}, (_, i) => i * 0.5)}
-                      padding={{ bottom: 32, top: 32 }}
-                    />
-                    <ReferenceLine y={playerStats?.kd} stroke="gray" strokeDasharray="4 1" />
-                    { playerStats && chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: playerStats.kd }, { x: data.i, y: data.kd }]} strokeWidth={1} stroke={ data.kd >= playerStats.kd ? '#00d390' : '#ff637d' } />) }
-                    <Line
-                        dataKey="kd"
-                        type="natural"
-                        dot={({ payload, ...props }) => (
-                          <Dot
-                            key={payload.i}
-                            r={4}
-                            cx={props.cx}
-                            cy={props.cy}
-                            fill={ playerStats && props.value >= playerStats.kd ? '#00d390' : '#ff637d' }
-                            stroke={payload.fill}
-                          />
-                        )}
-                        strokeWidth={0}
-                        activeDot={false}
-                        isAnimationActive={false}
-                      >
-                        <LabelList
-                          position="top"
-                          offset={16}
-                          className="fill-foreground"
-                          fontSize={10}
-                          content={({ value, x, y, offset }: any) => (
-                            <text
-                              x={Number.isInteger(value) ? x - 2 : x - 10}
-                              y={playerStats && value > playerStats.kd ? y - offset + 4: y + offset}
-                              fill="#666"
-                            >
-                              {value}
-                            </text>
-                          )}
-                        />
-                    </Line>
-                  </>:
-                  chartType === 'adr' ?
-                  <>
-                      <YAxis
-                        type="number"
-                        domain={[(dataMin: number) => dataMin - 50, (dataMax: number) => dataMax + 50]}
-                        allowDecimals={false}
-                        ticks={Array.from({ length: 12 }, (_, i) => i * 25)}
-                        padding={{ bottom: 32, top: 32 }}
-                      />
-                      <ReferenceLine y={playerStats?.adr} stroke="gray" strokeDasharray="4 1" />
-                      { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.adr }, { x: data.i, y: playerStats?.adr }]} strokeWidth={1} stroke={ playerStats && data.adr >= playerStats?.adr ? '#00d390' : '#ff637d' } />) }
-                      <Line
-                          dataKey="adr"
-                          type="natural"
-                          dot={({ payload, ...props }) => (
-                            <Dot
-                              key={payload.i}
-                              r={4}
-                              cx={props.cx}
-                              cy={props.cy}
-                              fill={ playerStats && props.value >= playerStats?.adr ? '#00d390' : '#ff637d' }
-                              stroke={payload.fill}
-                            />
-                          )}
-                          strokeWidth={0}
-                          activeDot={false}
-                          isAnimationActive={false}
-                        >
-                          <LabelList
-                            offset={16}
-                            className="fill-foreground"
-                            fontSize={10}
-                            content={({ value, x, y, offset }: any) => (
-                              <text
-                                x={playerStats && value > playerStats?.adr ? x - 10 : x - 8}
-                                y={playerStats && value > playerStats?.adr ? y - offset + 4: y + offset}
-                                fill="#666"
-                              >
-                                {value}
-                              </text>
-                            )}
-                          />
-                      </Line>
-                  </> :
-                  chartType === 'hs' ?
-                  <>
-                      <YAxis
-                        type="number"
-                        domain={[0, 100]}
-                        allowDecimals={false}
-                        ticks={Array.from({ length: 5 }, (_, i) => i * 25)}
-                        padding={{ bottom: 32, top: 32 }}
-                      />
-                      {/* { chartData?.map(data => <ReferenceLine key={data.i} segment={[{ x: data.i, y: data.hs }, { x: data.i, y: 100 }]} strokeWidth={1} stroke={ data.hs >= 100 ? '#00d390' : '#ff637d' } />) } */}
-                      <Line
-                        dataKey="hs"
-                        type="linear"
-                        stroke="var(--color-kills)"
-                        strokeWidth={2}
-                        dot={{ fill: "var(--color-kills)" }}
-                        activeDot={{ r: 6 }}
-                        isAnimationActive={false}
-                      >
-                        <LabelList
-                          position="top"
-                          offset={12}
-                          className="fill-foreground"
-                          fontSize={12}
-                        />
-                      </Line>
-                  </> :
-                  <></>
-                }
-              </LineChart>
-            </ChartContainer>
-
-          </div>
         </section>
 
         <div className="divider px-32" />
