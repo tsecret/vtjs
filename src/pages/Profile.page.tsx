@@ -54,8 +54,6 @@ type ChartData = {
   hs: number
 }[]
 
-type ChartType = 'kills/deaths' | 'kd' | 'adr' | 'hs'
-
 export const ProfilePage = () => {
   const [error, setError] = useState<string|null>(null)
 
@@ -72,7 +70,7 @@ export const ProfilePage = () => {
   const [bestMaps, setBestMaps] = useState<(BestMaps & { mapName: string, mapUrl: string })[]>()
 
   const [chartData, setChartData] = useState<ChartData>()
-  const [, setChartType] = useState<ChartType>('kills/deaths')
+  // const [, setChartType] = useState<ChartType>('kills/deaths')
 
   const { puuid } = useParams()
   const navigate = useNavigate()
