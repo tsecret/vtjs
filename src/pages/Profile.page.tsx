@@ -31,6 +31,7 @@ type PlayerCard = {
   name: string
   tag: string
   currentRank: string
+  currentTier: number
   currentRR: number
   currentRankColor: string
   peakRank: string
@@ -210,6 +211,7 @@ export const ProfilePage = () => {
         name: GameName,
         tag: TagLine,
         currentRank: utils.getRank(currentRank).rankName,
+        currentTier: currentRank,
         currentRR,
         currentRankColor: utils.getRank(currentRank).rankColor,
         peakRank: utils.getRank(peakRank).rankName,
@@ -254,8 +256,8 @@ export const ProfilePage = () => {
 
         <div className="mt-4">
           <p className="text-sm text-gray-300 mb-1">Rank Progress</p>
-          <progress className="progress progress-primary w-full" value={playerCard?.currentRR} max="100"></progress>
-          <p className="text-xs text-gray-400 mt-1">{playerCard?.currentRR} / 100</p>
+          <progress className="progress progress-primary w-full" value={playerCard?.currentRR} max={playerCard?.currentTier && playerCard?.currentTier >= 24 ? 500 : 100}></progress>
+          <p className="text-xs text-gray-400 mt-1">{playerCard?.currentRR} / {playerCard?.currentTier && playerCard?.currentTier >= 24 ? 500 : 100}</p>
         </div>
 
         <div className="stats shadow">
