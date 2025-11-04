@@ -1,16 +1,16 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use std::collections::HashMap;
-use std::thread;
-use tauri::{AppHandle};
-use tauri::Emitter;
-use tungstenite::{Message};
-use url::Url;
-use native_tls::TlsConnector;
 use base64;
+use native_tls::TlsConnector;
+use once_cell::sync::Lazy;
+use std::collections::HashMap;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::thread;
+use tauri::AppHandle;
+use tauri::Emitter;
 use tungstenite::client::IntoClientRequest;
 use tungstenite::http::header::{HeaderName, HeaderValue};
-use once_cell::sync::Lazy;
-use std::sync::atomic::{AtomicBool, Ordering};
+use tungstenite::Message;
+use url::Url;
 
 // Global flag to track if a WebSocket connection is active
 static WS_ACTIVE: Lazy<AtomicBool> = Lazy::new(|| AtomicBool::new(false));
@@ -66,14 +66,19 @@ fn start_ws(
             }
         }
         // Disable SSL verification
-        let tls = TlsConnector::builder().danger_accept_invalid_certs(true).build().unwrap();
+        let tls = TlsConnector::builder()
+            .danger_accept_invalid_certs(true)
+            .build()
+            .unwrap();
         let domain = url.host_str().unwrap_or("");
-        let stream = std::net::TcpStream::connect((domain, url.port_or_known_default().unwrap_or(443)));
+        let stream =
+            std::net::TcpStream::connect((domain, url.port_or_known_default().unwrap_or(443)));
         let stream = match stream {
             Ok(s) => s,
             Err(e) => {
                 println!("[tauri-backend] TCP connect error: {}", e);
-                app.emit("ws_error", format!("TCP connect error: {}", e)).ok();
+                app.emit("ws_error", format!("TCP connect error: {}", e))
+                    .ok();
                 WS_ACTIVE.store(false, Ordering::SeqCst);
                 return;
             }
@@ -91,10 +96,11 @@ fn start_ws(
             Ok(s) => {
                 println!("[tauri-backend] WebSocket connected");
                 s
-            },
+            }
             Err(e) => {
                 println!("[tauri-backend] WebSocket handshake error: {}", e);
-                app.emit("ws_error", format!("WebSocket handshake error: {}", e)).ok();
+                app.emit("ws_error", format!("WebSocket handshake error: {}", e))
+                    .ok();
                 WS_ACTIVE.store(false, Ordering::SeqCst);
                 return;
             }
@@ -102,7 +108,8 @@ fn start_ws(
         // Send initial message after connecting
         let initial_msg = serde_json::json!([5, "OnJsonApiEvent_chat_v4_presences"]).to_string();
         if let Err(e) = socket.send(Message::Text(initial_msg)) {
-            app.emit("ws_error", format!("Failed to send initial message: {}", e)).ok();
+            app.emit("ws_error", format!("Failed to send initial message: {}", e))
+                .ok();
             WS_ACTIVE.store(false, Ordering::SeqCst);
             return;
         }
@@ -122,6 +129,7 @@ fn start_ws(
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_store::Builder::new().build())

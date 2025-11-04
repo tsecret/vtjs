@@ -16,6 +16,7 @@
     "global-shortcut:allow-unregister-all",
     "fs:default",
     "opener:allow-open-url",
+    "clipboard-manager:allow-write-text",
     {
       "identifier": "fs:allow-read-text-file",
       "allow": [
