@@ -1,5 +1,5 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use base64;
+use base64::{engine::general_purpose::STANDARD, Engine as _};
 use native_tls::TlsConnector;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
@@ -117,7 +117,7 @@ fn start_ws(
             if let Message::Text(txt) = msg {
                 app.emit("ws_message", txt).ok();
             } else if let Message::Binary(bin) = msg {
-                app.emit("ws_message", base64::encode(bin)).ok();
+                app.emit("ws_message", STANDARD.encode(bin)).ok();
             }
         }
         // Reset the flag when the connection ends
