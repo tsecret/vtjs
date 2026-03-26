@@ -1,18 +1,21 @@
 import { GameSettingsResponse } from "@/interface"
+import { useServices } from "@/lib/services"
 import clsx from "clsx"
-import { useAtom } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import { Heart } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router"
 import atoms from "../utils/atoms"
 
 export const Settings = () => {
-  const [appInfo] = useAtom(atoms.appInfo)
-  const [cache] = useAtom(atoms.cache)
-  const [store] = useAtom(atoms.store)
-  const [allowAnalytics, setAllowAnalytics] = useAtom(atoms.allowAnalytics)
-  const [sharedapi] = useAtom(atoms.sharedapi)
-  const [player] = useAtom(atoms.player)
+  const services = useServices()
+  const cache = services?.cache
+  const store = services?.store
+  const sharedapi = services?.sharedapi
+
+  const appInfo = useAtomValue(atoms.appInfo)
+  const player = useAtomValue(atoms.player)
+  const [allowAnalytics,setAllowAnalytics] = useAtom(atoms.allowAnalytics)
 
   const [clearingCache, setClearingCache] = useState<boolean>(false)
   const [savedRequests, setSavedRequests] = useState<number>()

@@ -1,19 +1,11 @@
-import Database from '@tauri-apps/plugin-sql'
-import { Store } from '@tauri-apps/plugin-store'
 import { atom } from 'jotai'
-import { LocalAPI, SharedAPI } from '../api'
 import { GameState, PlayerAccount, PlayerRow } from '../interface'
-import { StoreAPI } from '../api/store'
 import { Penalties } from '@/interface/utils.interface'
 
 
 const appInfo = atom<{ appVersion: string, tauriVersion: string, identifier: string }>()
-const cache = atom<Database>()
 const announcement = atom<string|null>()
 
-const localapi = atom<LocalAPI>()
-const sharedapi = atom<SharedAPI>()
-const storeapi = atom<StoreAPI>()
 const puuid = atom<string>()
 const player = atom<PlayerAccount>()
 const table = atom<Record<PlayerRow['puuid'], PlayerRow>>({})
@@ -36,17 +28,12 @@ const rateLimitNotification = atom<{ isActive: boolean, retryAfter: number }>({
 
 
 // Settings
-const store = atom<Store>()
 const allowAnalytics = atom<boolean>(false)
 const firstTimeUser = atom<boolean>(true)
 
 export default {
   appInfo,
-  cache,
   announcement,
-  localapi,
-  sharedapi,
-  storeapi,
   puuid,
   player,
   table,
@@ -60,7 +47,6 @@ export default {
   prefetching,
 
   // Settings
-  store,
   allowAnalytics,
   firstTimeUser
 }

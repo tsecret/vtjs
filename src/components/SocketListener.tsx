@@ -1,4 +1,5 @@
 import { base64Decode } from "@/utils";
+import { useServices } from "@/lib/services";
 import { listen } from "@tauri-apps/api/event";
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
@@ -6,9 +7,10 @@ import { GameState, Payload, PresenceJSON } from "../interface";
 import atoms from "../utils/atoms";
 
 export const SocketListener = () => {
+  const services = useServices()
+  const sharedapi = services?.sharedapi
   const [, setGameState] = useAtom(atoms.gameState)
   const [puuid] = useAtom(atoms.puuid)
-  const [sharedapi] = useAtom(atoms.sharedapi)
   const [party, setParty] = useAtom(atoms.party)
   const state = useRef<{ state: GameState, matchId: string | null }>({ state: 'MENUS', matchId: null });
 
@@ -56,7 +58,7 @@ export const SocketListener = () => {
     });
 
     return () => {};
-  }, [puuid])
+  }, [party.length, puuid, setGameState, setParty, sharedapi])
 
   return null
 }

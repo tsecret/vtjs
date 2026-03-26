@@ -1,6 +1,7 @@
 import { BestAgent, BestMaps, Rank } from "@/interface/utils.interface"
+import { useServices } from "@/lib/services"
 import clsx from "clsx"
-import { useAtom } from "jotai"
+import { useAtomValue } from "jotai"
 import { ChevronsDown, ChevronsUp, ExternalLink } from "lucide-react"
 import moment from "moment"
 import { useEffect, useState } from "react"
@@ -56,11 +57,13 @@ type ChartData = {
 }[]
 
 export const ProfilePage = () => {
+  const services = useServices()
+  const sharedapi = services?.sharedapi
+  const cache = services?.cache
+
   const [error, setError] = useState<string|null>(null)
 
-  const [sharedapi] = useAtom(atoms.sharedapi)
-  const [cache] = useAtom(atoms.cache)
-  const [ownPuuid] = useAtom(atoms.puuid)
+  const ownPuuid = useAtomValue(atoms.puuid)
 
   const [table, setTable] = useState<Row[]>([])
   const [loading, setLoading] = useState<boolean>(false)

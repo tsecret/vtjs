@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
 import Database from '@tauri-apps/plugin-sql';
 import { load } from '@tauri-apps/plugin-store';
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router";
 import { LocalAPI, SharedAPI } from "./api";
@@ -28,28 +28,25 @@ import { Settings } from "./pages/Settings.page";
 import { StorePage } from './pages/Store.page';
 import { TestPage } from './pages/Test.page';
 import { WelcomePage } from './pages/Welcome.page';
+import { AppServices, ServicesProvider } from './lib/services';
 import atoms from './utils/atoms';
 import { CACHE_NAME } from './utils/constants';
 import * as utils from './utils/utils';
 
 function App() {
 
-  const [, setAppInfo] = useAtom(atoms.appInfo)
-  const [, setPlayer] = useAtom(atoms.player)
-  const [, setLocalapi] = useAtom(atoms.localapi)
-  const [, setSharedapi] = useAtom(atoms.sharedapi)
-  const [, setStoreapi] = useAtom(atoms.storeapi)
-  const [, setpuuid] = useAtom(atoms.puuid)
-  const [, setcache] = useAtom(atoms.cache)
-  const [, setstore] = useAtom(atoms.store)
-  const [, setAllowAnalytics] = useAtom(atoms.allowAnalytics)
-  const [, setFirstTimeUser] = useAtom(atoms.firstTimeUser)
-  const [, setAnnouncement] = useAtom(atoms.announcement)
-  const [, setPenalty] = useAtom(atoms.penalty)
-  const [, setRateLimitNotification] = useAtom(atoms.rateLimitNotification)
+  const setAppInfo = useSetAtom(atoms.appInfo)
+  const setPlayer = useSetAtom(atoms.player)
+  const setpuuid = useSetAtom(atoms.puuid)
+  const setAllowAnalytics = useSetAtom(atoms.allowAnalytics)
+  const setFirstTimeUser = useSetAtom(atoms.firstTimeUser)
+  const setAnnouncement = useSetAtom(atoms.announcement)
+  const setPenalty = useSetAtom(atoms.penalty)
+  const setRateLimitNotification = useSetAtom(atoms.rateLimitNotification)
 
   const [initStatus, setInitStatus] = useState<string>('Preparing app')
   const [error, setError] = useState<string|null>(null)
+  const [services, setServices] = useState<AppServices | null>(null)
 
   const navigate = useNavigate();
   const { trackEvent } = useAptabase();
@@ -112,15 +109,11 @@ function App() {
         })
 
         setAppInfo(appInfo);
-        setstore(store);
         setAllowAnalytics(allowAnalytics);
         setFirstTimeUser(firstTimeUser);
-        setcache(db);
         setPlayer(player);
         setpuuid(puuid);
-        setLocalapi(localapi);
-        setSharedapi(sharedapi);
-        setStoreapi(storeapi);
+        setServices({ cache: db, localapi, sharedapi, storeapi, store })
 
         console.log('localapi', localapi);
         console.log('player', player);
@@ -144,27 +137,29 @@ function App() {
     })();
   }, [])
 
-  return <main className="relative select-none cursor-default">
-    <Announcement />
-    <Header />
-    <SocketListener />
-    <RateLimitNotification />
-    <MatchHandler />
-    <Sync />
-    <TestDial />
-    <Routes>
-      <Route path="/" element={<InitPage status={initStatus} error={error} />} />
-      <Route path="/welcome" element={<WelcomePage />} />
-      <Route path="/dashboard" element={<Main />} />
-      <Route path="/test" element={<TestPage />} />
-      <Route path="/settings" element={<Settings />} />
-      <Route path="/store" element={<StorePage />} />
-      <Route path="/friends" element={<FriendsPage />} />
-      <Route path="/player/:puuid" element={<ProfilePage />} />
-      <Route path="/match/:matchId" element={<MatchPage />} />
-      <Route path="/avoid-list" element={<AvoidListPage />} />
-    </Routes>
-  </main>
+  return <ServicesProvider value={services}>
+    <main className="relative select-none cursor-default">
+      <Announcement />
+      <Header />
+      <SocketListener />
+      <RateLimitNotification />
+      <MatchHandler />
+      <Sync />
+      <TestDial />
+      <Routes>
+        <Route path="/" element={<InitPage status={initStatus} error={error} />} />
+        <Route path="/welcome" element={<WelcomePage />} />
+        <Route path="/dashboard" element={<Main />} />
+        <Route path="/test" element={<TestPage />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/store" element={<StorePage />} />
+        <Route path="/friends" element={<FriendsPage />} />
+        <Route path="/player/:puuid" element={<ProfilePage />} />
+        <Route path="/match/:matchId" element={<MatchPage />} />
+        <Route path="/avoid-list" element={<AvoidListPage />} />
+      </Routes>
+    </main>
+  </ServicesProvider>
 }
 
 export default App;
