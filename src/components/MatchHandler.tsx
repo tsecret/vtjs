@@ -215,19 +215,10 @@ export const MatchHandler = () => {
     }
 
     async function handleGameEnd() {
-        if (!cache || !currentMatchRef.current.matchId) return;
+        if (!currentMatchRef.current.matchId) return;
 
         try {
-            const match = await sharedapi?.getMatchDetails(currentMatchRef.current.matchId);
-            if (match) {
-                await cache.execute('INSERT into matches (matchId, data) VALUES ($1, $2)', [
-                    match.matchInfo.matchId,
-                    JSON.stringify(match)
-                ]);
-            }
             console.log('Match ended, data cleared');
-        } catch (error) {
-            console.error('Error handling game end:', error);
         } finally{
           setTable({});
           setCurrentMatch(null);

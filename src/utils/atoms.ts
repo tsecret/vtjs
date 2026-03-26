@@ -7,7 +7,7 @@ import { StoreAPI } from '../api/store'
 import { Penalties } from '@/interface/utils.interface'
 
 
-const appInfo = atom<{ version: string, tauriVersion: string, identifier: string }>()
+const appInfo = atom<{ appVersion: string, tauriVersion: string, identifier: string }>()
 const cache = atom<Database>()
 const announcement = atom<string|null>()
 

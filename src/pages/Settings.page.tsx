@@ -3,8 +3,8 @@ import clsx from "clsx"
 import { useAtom } from "jotai"
 import { Heart } from "lucide-react"
 import { useEffect, useState } from "react"
-import atoms from "../utils/atoms"
 import { Link } from "react-router"
+import atoms from "../utils/atoms"
 
 export const Settings = () => {
   const [appInfo] = useAtom(atoms.appInfo)
@@ -16,7 +16,6 @@ export const Settings = () => {
 
   const [clearingCache, setClearingCache] = useState<boolean>(false)
   const [savedRequests, setSavedRequests] = useState<number>()
-  const [savedMatches, setSavedMatces] = useState<number>()
   const [dodgedPlayers, setDodgedPlayers] = useState<number>()
 
   const [savedGameSettings, setGameSettings] = useState<{ name: string, data: GameSettingsResponse } |null>(null)
@@ -45,13 +44,9 @@ export const Settings = () => {
     setClearingCache(true)
 
     const requests = await cache?.execute('DELETE FROM requests')
-    const matches = await cache?.execute('DELETE FROM matches')
 
     if (savedRequests && requests)
       setSavedRequests(savedRequests - requests?.rowsAffected)
-
-    if (savedMatches && matches)
-    setSavedMatces(savedMatches - matches?.rowsAffected)
 
     setClearingCache(false)
   }
@@ -89,9 +84,6 @@ export const Settings = () => {
       const requests: any = await cache?.select('SELECT COUNT(*) from requests')
       setSavedRequests(requests[0]['COUNT(*)'])
 
-      const matches: any = await cache?.select('SELECT COUNT(*) from matches')
-      setSavedMatces(matches[0]['COUNT(*)'])
-
       const retards: any  = await cache?.select('SELECT COUNT(*) from players WHERE dodge = "true"')
       setDodgedPlayers(retards[0]['COUNT(*)'])
 
@@ -110,22 +102,12 @@ export const Settings = () => {
   return <div className="flex flex-col space-y-4 p-4 max-w-md m-auto">
 
     <section className="flex flex-row items-center space-x-2 text-xs">
-      <div className="border-2 rounded-md p-2">App version {appInfo?.version}</div>
+      <div className="border-2 rounded-md p-2">App version {appInfo?.appVersion}</div>
       <div className="border-2 rounded-md p-2">Tauri version {appInfo?.tauriVersion}</div>
       <div className="border-2 rounded-md p-2">Identifier {appInfo?.identifier}</div>
     </section>
 
     <div className="divider" />
-
-    {/* App Settings */}
-    {/* <section className="flex flex-col space-y-4">
-      <h2>App Settings</h2>
-
-      <label className="label space-x-4">
-        <input name="allowAnalytics" type="checkbox" className="toggle" defaultChecked={allowAnalytics} onChange={onChange} />
-        <span>Show Hidden Player Names</span>
-      </label>
-    </section> */}
 
     <Link to='/avoid-list' className="btn">View Avoid List</Link>
 
@@ -164,7 +146,6 @@ export const Settings = () => {
 
       <div>
         <div className="flex flex-row items-center space-x-2"><span>Saved requests: {savedRequests}</span></div>
-        <div className="flex flex-row items-center space-x-2"><span>Saved matches: {savedMatches}</span></div>
         <div className="flex flex-row items-center space-x-2"><span>Avoid list: {dodgedPlayers}</span></div>
       </div>
 

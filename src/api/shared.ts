@@ -31,7 +31,7 @@ export class SharedAPI extends BaseAPI {
   }
 
   async getMatchDetails(matchId: string): Promise<MatchDetailsResponse> {
-    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/match-details/v1/matches/${matchId}`, { ttl: 30 * 24 * 60 * 60 * 1000 })
+    return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/match-details/v1/matches/${matchId}`, { ttl: 7 * 24 * 60 * 60 * 1000 })
   }
 
   async getCompetitiveUpdates(puuid: string): Promise<CompetitiveUpdatesResponse> {
