@@ -1,7 +1,6 @@
 import { MatchDetailsResponse } from "@/interface"
-import atoms from "@/utils/atoms"
+import { useServices } from "@/lib/services"
 import clsx from "clsx"
-import { useAtom } from "jotai"
 import { ExternalLink } from "lucide-react"
 import moment from "moment"
 import { useEffect, useState } from "react"
@@ -44,7 +43,8 @@ type Match = {
 }
 
 export const MatchPage = () => {
-  const [sharedapi] = useAtom(atoms.sharedapi)
+  const services = useServices()
+  const sharedapi = services?.sharedapi
   const [error, setError] = useState<string|null>(null)
   const [match, setMatch] = useState<Match>()
 
@@ -111,7 +111,7 @@ export const MatchPage = () => {
 
     })();
 
-  }, [matchId])
+  }, [matchId, sharedapi])
 
   if (!match)
     return <div></div>

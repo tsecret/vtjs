@@ -1,14 +1,14 @@
 import { AvoidedPlayer } from "@/interface"
-import atoms from "@/utils/atoms"
-import { useAtom } from "jotai"
+import { useServices } from "@/lib/services"
 import { SquareArrowOutUpRight } from "lucide-react"
 import moment from "moment"
 import { useEffect, useState } from "react"
 import { Link } from "react-router"
 
 export const AvoidListPage = () => {
-  const [cache] = useAtom(atoms.cache)
-  const [sharedapi] = useAtom(atoms.sharedapi)
+  const services = useServices()
+  const cache = services?.cache
+  const sharedapi = services?.sharedapi
   const [players, setPlayers] = useState<(AvoidedPlayer & { name: string, tag: string })[]>()
 
   useEffect(() => {

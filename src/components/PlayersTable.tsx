@@ -1,12 +1,17 @@
-import clsx from "clsx"
-import { ExternalLink, Users } from "lucide-react"
-import { useNavigate } from "react-router"
-import { PlayerRow } from "../interface"
-import * as utils from '../utils/utils'
+import { writeText } from '@tauri-apps/plugin-clipboard-manager';
+import clsx from "clsx";
+import { ExternalLink, Users } from "lucide-react";
+import { useNavigate } from "react-router";
+import { PlayerRow } from "../interface";
+import * as utils from '../utils/utils';
 
 export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow['puuid']]: PlayerRow }, puuid: string, mapId: string }) => {
 
   const navigate = useNavigate()
+
+  const onCopyName = async (event: any) => {
+    await writeText(event.target.textContent)
+  }
 
   const Row = ({ player }: { player: PlayerRow }) => {
       return <tr key={player.puuid} className={clsx(player.enemy ? 'bg-error/5' : 'bg-success/5', 'text-center')}>
@@ -20,10 +25,10 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
           {
             player.name === '' ? null :
             player.puuid === puuid ? <span>You</span> :
-            <>
+            <div className="tooltip cursor-pointer px-1 rounded-md hover:bg-neutral-700/75" onClick={onCopyName} data-tip="Click to copy">
               <span>{player.name}</span>
               <span className="text-gray-500">#<span>{player.tag}</span></span>
-            </>
+            </div>
           }
         </th>
         <th><span style={{ color: `#${player.currentRankColor}` }}>{player.currentRank} (RR {player.currentRR})</span></th>
@@ -78,7 +83,7 @@ export const PlayersTable = ({ table, puuid, mapId }: { table: { [key: PlayerRow
         </td>
         <td><button className="btn btn-xs btn-ghost" onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}><ExternalLink size={14} /></button></td>
       </tr>
-    }
+  }
 
   if (!Object.keys(table).length)
     return null

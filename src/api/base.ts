@@ -3,16 +3,19 @@ import Database from "@tauri-apps/plugin-sql";
 import { CACHE_NAME } from "../utils/constants";
 
 type RateLimitCallback = (retryAfter: number) => void;
+type RefreshAuthTokens = { accessToken: string, entToken: string }
+type RefreshAuthCallback = () => Promise<RefreshAuthTokens>
 
 export class BaseAPI {
   private HEADERS = {};
   public REGION: string
   public SHARD: string
   private rateLimitCallback?: RateLimitCallback;
+  private refreshAuthCallback?: RefreshAuthCallback;
+  private refreshPromise: Promise<void> | null = null;
 
 
-  // @ts-ignore
-  private cache: Database
+  private cache?: Database
   public cacheTTL = 30 * 60 * 1000
 
   constructor({ entToken, accessToken, region, shard }: { entToken: string, accessToken: string, region: string, shard: string }){
@@ -35,6 +38,39 @@ export class BaseAPI {
     this.rateLimitCallback = callback;
   }
 
+  setRefreshAuthCallback(callback: RefreshAuthCallback) {
+    this.refreshAuthCallback = callback;
+  }
+
+  private updateAuthHeaders({ accessToken, entToken }: RefreshAuthTokens) {
+    this.HEADERS = {
+      ...this.HEADERS,
+      'X-Riot-Entitlements-JWT': entToken,
+      'Authorization': `Bearer ${accessToken}`,
+    }
+  }
+
+  private async refreshAuthIfNeeded() {
+    if (!this.refreshAuthCallback)
+      return false
+
+    if (!this.refreshPromise) {
+      this.refreshPromise = (async () => {
+        const tokens = await this.refreshAuthCallback!()
+        this.updateAuthHeaders(tokens)
+      })().finally(() => {
+        this.refreshPromise = null
+      })
+    }
+
+    try {
+      await this.refreshPromise
+      return true
+    } catch {
+      return false
+    }
+  }
+
   protected async fetch(
     hostname: string,
     endpoint: string,
@@ -44,6 +80,7 @@ export class BaseAPI {
       method?: 'GET' | 'PUT' | 'POST',
       noCache?: boolean
       ttl?: number
+      _authRetried?: boolean
     } = { body: null, headers: null, method: 'GET', ttl: this.cacheTTL },
   ): Promise<any>{
 
@@ -78,13 +115,29 @@ export class BaseAPI {
 
     if (res.status === 200){
       const response = await res.json()
-      if (!options.noCache && options.ttl !== undefined) {
+      if (!options.noCache && options.ttl !== undefined && this.cache) {
         await this.cache.execute(
           'INSERT or REPLACE into requests (endpoint, ttl, data) VALUES ($1, $2, $3)',
           [endpoint, +new Date() + options.ttl, response]
         )
       }
       return response
+    }
+
+    if (res.status === 401 || res.status === 403){
+      if (options._authRetried)
+        return null
+
+      const refreshed = await this.refreshAuthIfNeeded()
+
+      if (!refreshed)
+        return null
+
+      return this.fetch(hostname, endpoint, {
+        ...options,
+        headers: null,
+        _authRetried: true,
+      })
     }
 
     if (res.status === 429){
