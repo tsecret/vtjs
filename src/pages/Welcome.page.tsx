@@ -1,11 +1,13 @@
-import { useAtom } from "jotai"
-import { useNavigate } from "react-router"
-import atoms from "../utils/atoms"
+import { useAtom, useSetAtom } from "jotai"
 import { Heart } from "lucide-react"
+import { useNavigate } from "react-router"
+import { useServices } from "@/lib/services"
+import atoms from "../utils/atoms"
 
 export const WelcomePage = () => {
-  const [store] = useAtom(atoms.store)
-  const [, setFirstTimeUser] = useAtom(atoms.firstTimeUser)
+  const services = useServices()
+  const store = services?.store
+  const setFirstTimeUser = useSetAtom(atoms.firstTimeUser)
   const [allowAnalytics, setAllowAnalytics] = useAtom(atoms.allowAnalytics)
 
   const navigate = useNavigate()

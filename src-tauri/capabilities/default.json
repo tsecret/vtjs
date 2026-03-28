@@ -16,6 +16,7 @@
     "global-shortcut:allow-unregister-all",
     "fs:default",
     "opener:allow-open-url",
+    "clipboard-manager:allow-write-text",
     {
       "identifier": "fs:allow-read-text-file",
       "allow": [
@@ -56,10 +57,10 @@
       "identifier": "http:default",
       "allow": [
         {
-          "url": "https://192.168.31.173:*"
+          "url": "https://192.168.31.193:*"
         },
         {
-          "url": "http://192.168.31.173:*"
+          "url": "http://192.168.31.193:*"
         },
         {
           "url": "https://localhost:*"

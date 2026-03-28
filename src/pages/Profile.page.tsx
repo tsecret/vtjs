@@ -1,6 +1,7 @@
 import { BestAgent, BestMaps, Rank } from "@/interface/utils.interface"
+import { useServices } from "@/lib/services"
 import clsx from "clsx"
-import { useAtom } from "jotai"
+import { useAtomValue } from "jotai"
 import { ChevronsDown, ChevronsUp, ExternalLink } from "lucide-react"
 import moment from "moment"
 import { useEffect, useState } from "react"
@@ -31,6 +32,7 @@ type PlayerCard = {
   name: string
   tag: string
   currentRank: string
+  currentTier: number
   currentRR: number
   currentRankColor: string
   peakRank: string
@@ -55,11 +57,13 @@ type ChartData = {
 }[]
 
 export const ProfilePage = () => {
+  const services = useServices()
+  const sharedapi = services?.sharedapi
+  const cache = services?.cache
+
   const [error, setError] = useState<string|null>(null)
 
-  const [sharedapi] = useAtom(atoms.sharedapi)
-  const [cache] = useAtom(atoms.cache)
-  const [ownPuuid] = useAtom(atoms.puuid)
+  const ownPuuid = useAtomValue(atoms.puuid)
 
   const [table, setTable] = useState<Row[]>([])
   const [loading, setLoading] = useState<boolean>(false)
@@ -210,6 +214,7 @@ export const ProfilePage = () => {
         name: GameName,
         tag: TagLine,
         currentRank: utils.getRank(currentRank).rankName,
+        currentTier: currentRank,
         currentRR,
         currentRankColor: utils.getRank(currentRank).rankColor,
         peakRank: utils.getRank(peakRank).rankName,
@@ -254,8 +259,8 @@ export const ProfilePage = () => {
 
         <div className="mt-4">
           <p className="text-sm text-gray-300 mb-1">Rank Progress</p>
-          <progress className="progress progress-primary w-full" value={playerCard?.currentRR} max="100"></progress>
-          <p className="text-xs text-gray-400 mt-1">{playerCard?.currentRR} / 100</p>
+          <progress className="progress progress-primary w-full" value={playerCard?.currentRR} max={playerCard?.currentTier && playerCard?.currentTier >= 24 ? 500 : 100}></progress>
+          <p className="text-xs text-gray-400 mt-1">{playerCard?.currentRR} / {playerCard?.currentTier && playerCard?.currentTier >= 24 ? 500 : 100}</p>
         </div>
 
         <div className="stats shadow">

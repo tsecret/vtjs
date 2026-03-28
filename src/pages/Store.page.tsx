@@ -1,15 +1,17 @@
-import { useAtom } from "jotai"
-import { useEffect, useState } from "react"
-import atoms from "../utils/atoms"
-import { useAptabase } from "@aptabase/react"
 import { getStoreItemInfo } from "@/utils"
-import Countdown from 'react-countdown';
+import { useServices } from "@/lib/services"
+import { useAptabase } from "@aptabase/react"
 import clsx from "clsx"
+import { useAtomValue } from "jotai"
+import { useEffect, useState } from "react"
+import Countdown from 'react-countdown'
+import atoms from "../utils/atoms"
 
 export const StorePage = () => {
-  const [storeapi] = useAtom(atoms.storeapi)
-  const [puuid] = useAtom(atoms.puuid)
-  const [allowAnalytics] = useAtom(atoms.allowAnalytics)
+  const services = useServices()
+  const storeapi = services?.storeapi
+  const puuid = useAtomValue(atoms.puuid)
+  const allowAnalytics = useAtomValue(atoms.allowAnalytics)
 
   const [skins, setSkins] = useState<{ price: number, name: string, url: string, uuid: string }[]>()
   const [bundles, setBundles] = useState<{ price: number, name: string, url: string, uuid: string }[]>()
@@ -114,7 +116,7 @@ export const StorePage = () => {
     }
 
     init()
-  }, [])
+  }, [allowAnalytics, puuid, storeapi, trackEvent])
 
   return <div className="flex flex-col p-8 space-y-4 max-w-6xl m-auto">
 

@@ -1,4 +1,5 @@
-import { useAtom } from "jotai"
+import { useServices } from "@/lib/services"
+import { useAtomValue } from "jotai"
 import { SquareArrowOutUpRight } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
@@ -7,8 +8,9 @@ import atoms from "../utils/atoms"
 import { base64Decode } from "../utils/utils"
 
 export const FriendsPage = () => {
-  const [puuid] = useAtom(atoms.puuid)
-  const [localapi] = useAtom(atoms.localapi)
+  const services = useServices()
+  const localapi = services?.localapi
+  const puuid = useAtomValue(atoms.puuid)
   const [friends, setFriends] = useState<FriendsResponse['friends']>()
   const [presences, setPresences] = useState<PresenceResponse['presences']>()
 
@@ -24,7 +26,7 @@ export const FriendsPage = () => {
       if (presences) setPresences(presences.presences.filter(p => p.private).map(p => ({...p, presence: p.private ? JSON.parse(base64Decode(p.private)) : null })))
 
     })()
-  }, [])
+  }, [localapi])
 
   return <div>
 

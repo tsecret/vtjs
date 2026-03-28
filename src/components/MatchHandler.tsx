@@ -1,4 +1,5 @@
 import { useAptabase } from '@aptabase/react';
+import { useServices } from '@/lib/services';
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, PlayerNamesReponse } from "../interface";
@@ -7,12 +8,14 @@ import * as utils from '../utils/utils';
 
 
 export const MatchHandler = () => {
+    const services = useServices()
+    const sharedapi = services?.sharedapi
+    const cache = services?.cache
+
     const [puuid] = useAtom(atoms.puuid)
-    const [sharedapi] = useAtom(atoms.sharedapi)
     const [table, setTable] = useAtom(atoms.table)
     const [allowAnalytics] = useAtom(atoms.allowAnalytics)
     const [gameState] = useAtom(atoms.gameState)
-    const [cache] = useAtom(atoms.cache)
     const [, setMatchProcessing] = useAtom(atoms.matchProcessing)
     const [, setCurrentMatch] = useAtom(atoms.currentMatch)
 
@@ -215,19 +218,10 @@ export const MatchHandler = () => {
     }
 
     async function handleGameEnd() {
-        if (!cache || !currentMatchRef.current.matchId) return;
+        if (!currentMatchRef.current.matchId) return;
 
         try {
-            const match = await sharedapi?.getMatchDetails(currentMatchRef.current.matchId);
-            if (match) {
-                await cache.execute('INSERT into matches (matchId, data) VALUES ($1, $2)', [
-                    match.matchInfo.matchId,
-                    JSON.stringify(match)
-                ]);
-            }
             console.log('Match ended, data cleared');
-        } catch (error) {
-            console.error('Error handling game end:', error);
         } finally{
           setTable({});
           setCurrentMatch(null);

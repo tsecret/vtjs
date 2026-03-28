@@ -1,6 +1,7 @@
 import { PenaltyAlert } from '@/components/PenaltyAlert';
+import { useServices } from '@/lib/services';
 import { useAptabase } from '@aptabase/react';
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
 import atoms from "../utils/atoms";
@@ -8,17 +9,18 @@ import * as utils from '../utils/utils';
 
 
 export const Main = () => {
+    const services = useServices();
     const [error, setError] = useState<string | null>(null);
 
-    const [puuid] = useAtom(atoms.puuid);
-    const [player] = useAtom(atoms.player);
-    const [sharedapi] = useAtom(atoms.sharedapi);
-    const [table] = useAtom(atoms.table);
+    const puuid = useAtomValue(atoms.puuid);
+    const player = useAtomValue(atoms.player);
+    const sharedapi = services?.sharedapi;
+    const table = useAtomValue(atoms.table);
+    const allowAnalytics = useAtomValue(atoms.allowAnalytics);
+    const matchProcessing = useAtomValue(atoms.matchProcessing);
+    const currentMatch = useAtomValue(atoms.currentMatch);
+    const penalty = useAtomValue(atoms.penalty);
     const [gameState, setGameState] = useAtom(atoms.gameState);
-    const [allowAnalytics] = useAtom(atoms.allowAnalytics);
-    const [matchProcessing] = useAtom(atoms.matchProcessing);
-    const [currentMatch] = useAtom(atoms.currentMatch);
-    const [penalty] = useAtom(atoms.penalty);
 
     const { trackEvent } = useAptabase();
 

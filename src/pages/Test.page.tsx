@@ -1,9 +1,9 @@
-import atoms from "@/utils/atoms";
-import { useAtom } from "jotai";
+import { useServices } from "@/lib/services";
 import { useEffect } from "react"
 
 export const TestPage = () => {
-  const [cache] = useAtom(atoms.cache)
+  const services = useServices()
+  const cache = services?.cache
 
   useEffect(() => {
     (async () => {
@@ -13,7 +13,7 @@ export const TestPage = () => {
       console.log('requests', requests)
 
     })();
-  }, [])
+  }, [cache])
 
   return <div className="p-4">
 

@@ -1,10 +1,12 @@
+import { useServices } from "@/lib/services"
 import atoms from "@/utils/atoms"
 import { useAtom } from "jotai"
 import { useEffect } from "react"
 
 export const Sync = () => {
+  const services = useServices()
+  const sharedapi = services?.sharedapi
   const [puuid] = useAtom(atoms.puuid)
-  const [sharedapi] = useAtom(atoms.sharedapi)
   const [party] = useAtom(atoms.party)
   const [, setPrefetching] = useAtom(atoms.prefetching)
 
@@ -29,7 +31,7 @@ export const Sync = () => {
       }
     })()
 
-  }, [puuid])
+  }, [puuid, setPrefetching, sharedapi])
 
   useEffect(() => {
     if (!sharedapi) return
@@ -57,7 +59,7 @@ export const Sync = () => {
     }
     })()
 
-  }, [party])
+  }, [party, puuid, setPrefetching, sharedapi])
 
   return null
 }
