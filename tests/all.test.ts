@@ -343,19 +343,20 @@ describe('request caching', () => {
     expect(Object.keys(globalThis.requestCache).length).toEqual(1)
   })
 
-  it('checks cache after 30 days', async () => {
+  it('checks cache after 7 days', async () => {
+    const matchDetailsTTL = 7 * 24 * 60 * 60 * 1000
     const timestampBefore = +new Date(2025, 1, 1, 13, 0, 0)
     vi.setSystemTime(new Date(2025, 1, 1, 13, 0, 0))
 
     await sharedapi.getMatchDetails('')
     expect(Object.keys(globalThis.requestCache).length).toEqual(1)
-    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampBefore + 30 * 24 * 60 * 60 * 1000)
+    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampBefore + matchDetailsTTL)
 
     const timestampAfter = +new Date(2025, 1, 30, 13, 30, 1)
     vi.setSystemTime(+new Date(2025, 1, 30, 13, 30, 1))
 
     await sharedapi.getMatchDetails('')
-    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampAfter + 30 * 24 * 60 * 60 * 1000)
+    expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(timestampAfter + matchDetailsTTL)
   })
 
 })
