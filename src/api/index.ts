@@ -1,2 +1,2 @@
-export * from './local'
-export * from './shared'
+export * from "./local";
+export * from "./shared";
