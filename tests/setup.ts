@@ -91,9 +91,7 @@ beforeAll(async () => {
 		}),
 	}));
 
-	vi.spyOn(utils, "readLockfile").mockImplementation(
-		async () => "Riot Test Client:1111:12345:test-password:https",
-	);
+	vi.spyOn(utils, "readLockfile").mockImplementation(async () => "Riot Test Client:1111:12345:test-password:https");
 
 	mockIPC((cmd, pld) => {
 		// Store
@@ -141,8 +139,7 @@ beforeAll(async () => {
 			}
 
 			if (cmd === "plugin:sql|select") {
-				if (payload.values[0] in globalThis.requestCache)
-					return [globalThis.requestCache[payload.values[0]]];
+				if (payload.values[0] in globalThis.requestCache) return [globalThis.requestCache[payload.values[0]]];
 
 				return [];
 			}
@@ -154,9 +151,7 @@ beforeAll(async () => {
 				}
 
 				if (payload.query.startsWith("DELETE")) {
-					Object.values(
-						globalThis.requestCache as { [key: string]: any },
-					).forEach((cache) => {
+					Object.values(globalThis.requestCache as { [key: string]: any }).forEach((cache) => {
 						if (cache[1] === payload.values[0]) {
 						}
 						delete globalThis.requestCache[cache[0]];

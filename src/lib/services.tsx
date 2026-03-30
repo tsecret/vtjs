@@ -15,18 +15,8 @@ export type AppServices = {
 
 const ServicesContext = createContext<AppServices | null>(null);
 
-export const ServicesProvider = ({
-	value,
-	children,
-}: {
-	value: AppServices | null;
-	children: ReactNode;
-}) => {
-	return (
-		<ServicesContext.Provider value={value}>
-			{children}
-		</ServicesContext.Provider>
-	);
+export const ServicesProvider = ({ value, children }: { value: AppServices | null; children: ReactNode }) => {
+	return <ServicesContext.Provider value={value}>{children}</ServicesContext.Provider>;
 };
 
 export const useServices = () => useContext(ServicesContext);

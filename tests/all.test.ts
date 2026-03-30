@@ -9,10 +9,7 @@ import {
 	PlayerNamesReponse,
 	PlayerRow,
 } from "../src/interface";
-import type {
-	MostPlayedServer,
-	Penalties,
-} from "../src/interface/utils.interface";
+import type { MostPlayedServer, Penalties } from "../src/interface/utils.interface";
 import * as utils from "../src/utils";
 
 import maps from "../src/assets/maps.json";
@@ -47,28 +44,21 @@ describe("utils", () => {
 
 	describe("extractPlayers", () => {
 		it("extractPlayers from pre-game match", () => {
-			expect(
-				utils.extractPlayers(
-					currentPreGameMatch as CurrentPreGameMatchResponse,
-				),
-			).toStrictEqual(
+			expect(utils.extractPlayers(currentPreGameMatch as CurrentPreGameMatchResponse)).toStrictEqual(
 				currentPreGameMatch.AllyTeam.Players.map((player) => player.Subject),
 			);
 		});
 
 		it("extractPlayers from game match", () => {
-			expect(
-				utils.extractPlayers(currentGameMatch as CurrentGameMatchResponse),
-			).toStrictEqual(currentGameMatch.Players.map((player) => player.Subject));
+			expect(utils.extractPlayers(currentGameMatch as CurrentGameMatchResponse)).toStrictEqual(
+				currentGameMatch.Players.map((player) => player.Subject),
+			);
 		});
 	});
 
 	describe("calculateStatsForPlayer", () => {
 		it("execution time", () => {
-			utils.calculateStatsForPlayer(
-				"test-player-1-puuid",
-				Array(1000).fill(matchDetails),
-			);
+			utils.calculateStatsForPlayer("test-player-1-puuid", Array(1000).fill(matchDetails));
 		});
 
 		it("no matches", () => {
@@ -84,9 +74,7 @@ describe("utils", () => {
 				ties: 0,
 				winrate: 0,
 			};
-			expect(
-				utils.calculateStatsForPlayer("test-player-1-puuid", [] as any),
-			).toEqual(expected);
+			expect(utils.calculateStatsForPlayer("test-player-1-puuid", [] as any)).toEqual(expected);
 		});
 
 		it("player has 0 deaths", () => {
@@ -123,9 +111,7 @@ describe("utils", () => {
 				ties: 0,
 				winrate: 0,
 			};
-			expect(
-				utils.calculateStatsForPlayer("test-player-1-puuid", [input] as any),
-			).toEqual(expected);
+			expect(utils.calculateStatsForPlayer("test-player-1-puuid", [input] as any)).toEqual(expected);
 		});
 
 		it("all good", () => {
@@ -141,11 +127,7 @@ describe("utils", () => {
 				ties: 0,
 				winrate: 0,
 			};
-			expect(
-				utils.calculateStatsForPlayer("test-player-1-puuid", [
-					matchDetails,
-				] as any),
-			).toEqual(expected);
+			expect(utils.calculateStatsForPlayer("test-player-1-puuid", [matchDetails] as any)).toEqual(expected);
 		});
 	});
 
@@ -182,9 +164,7 @@ describe("utils", () => {
 				lastGameMMRDiff: -13,
 				mmr: 2028,
 			};
-			expect(utils.calculateRanking(playerMMR as PlayerMMRResponse)).toEqual(
-				expected,
-			);
+			expect(utils.calculateRanking(playerMMR as PlayerMMRResponse)).toEqual(expected);
 		});
 	});
 
@@ -198,28 +178,17 @@ describe("utils", () => {
 				avgKills: 25,
 				avgKd: 1.56,
 				games: 1,
-				agentUrl:
-					"https://media.valorant-api.com/agents/cc8b64c8-4b25-4ff9-6e7f-37b4da43d235/displayicon.png",
+				agentUrl: "https://media.valorant-api.com/agents/cc8b64c8-4b25-4ff9-6e7f-37b4da43d235/displayicon.png",
 			},
 		];
 
 		it("1 game", () => {
-			expect(
-				utils.getPlayerBestAgent(
-					puuid,
-					[matchDetails] as MatchDetailsResponse[],
-					mapUrl,
-				),
-			).toStrictEqual(expected);
+			expect(utils.getPlayerBestAgent(puuid, [matchDetails] as MatchDetailsResponse[], mapUrl)).toStrictEqual(expected);
 		});
 
 		it("2 games", () => {
 			expect(
-				utils.getPlayerBestAgent(
-					puuid,
-					[matchDetails, matchDetails] as MatchDetailsResponse[],
-					mapUrl,
-				),
+				utils.getPlayerBestAgent(puuid, [matchDetails, matchDetails] as MatchDetailsResponse[], mapUrl),
 			).toStrictEqual([{ ...expected[0], games: 2 }]);
 		});
 	});
@@ -248,9 +217,7 @@ describe("utils", () => {
 					uuid: "a0a399da-4322-83f0-e734-49a81ab6e820",
 				},
 			];
-			expect(
-				utils.getStoreItemInfo(storefront.AccessoryStore.AccessoryStoreOffers),
-			).toStrictEqual(expected);
+			expect(utils.getStoreItemInfo(storefront.AccessoryStore.AccessoryStoreOffers)).toStrictEqual(expected);
 		});
 
 		it("gets item info", () => {
@@ -276,11 +243,7 @@ describe("utils", () => {
 					uuid: "46048768-4499-72f7-820b-7cbe1d4ad844",
 				},
 			];
-			expect(
-				utils.getStoreItemInfo(
-					storefront.SkinsPanelLayout.SingleItemStoreOffers,
-				),
-			).toStrictEqual(expected);
+			expect(utils.getStoreItemInfo(storefront.SkinsPanelLayout.SingleItemStoreOffers)).toStrictEqual(expected);
 		});
 	});
 
@@ -292,9 +255,7 @@ describe("utils", () => {
 				reason: ["INAPPROPRIATE_TEXT", "INAPPROPRIATE_VOICE"],
 				matchId: "test-match-id-1",
 			} as Penalties;
-			expect(utils.extractPenalties(penalties as PenaltiesResponse)).toEqual(
-				expected,
-			);
+			expect(utils.extractPenalties(penalties as PenaltiesResponse)).toEqual(expected);
 		});
 
 		it("with no penalties", async () => {
@@ -314,9 +275,7 @@ describe("utils", () => {
 			const expected = {
 				frankfurt: 1,
 			} as MostPlayedServer;
-			expect(
-				utils.calculateMostPlayedServer([matchDetails as MatchDetailsResponse]),
-			).toEqual(expected);
+			expect(utils.calculateMostPlayedServer([matchDetails as MatchDetailsResponse])).toEqual(expected);
 		});
 	});
 
@@ -365,12 +324,7 @@ describe("utils", () => {
 				},
 			};
 			const expected = playerNames as PlayerNamesReponse[];
-			expect(
-				utils.sortPlayersForProcessing(
-					playerNames,
-					table as Record<string, PlayerRow>,
-				),
-			).toStrictEqual(expected);
+			expect(utils.sortPlayersForProcessing(playerNames, table as Record<string, PlayerRow>)).toStrictEqual(expected);
 		});
 
 		it("sorts players by level and enemy", () => {
@@ -454,10 +408,7 @@ describe("utils", () => {
 			] as Partial<PlayerNamesReponse>[];
 
 			expect(
-				utils.sortPlayersForProcessing(
-					playerNames as PlayerNamesReponse[],
-					table as Record<string, PlayerRow>,
-				),
+				utils.sortPlayersForProcessing(playerNames as PlayerNamesReponse[], table as Record<string, PlayerRow>),
 			).toStrictEqual(expected);
 		});
 	});
@@ -513,20 +464,16 @@ describe("request caching", () => {
 
 		await sharedapi.getMatchDetails("");
 		expect(Object.keys(globalThis.requestCache).length).toEqual(1);
-		expect(
-			Object.values(
-				globalThis.requestCache as { [key: string]: [string, number, any] },
-			)[0][1],
-		).toEqual(timestampBefore + matchDetailsTTL);
+		expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(
+			timestampBefore + matchDetailsTTL,
+		);
 
 		const timestampAfter = +new Date(2025, 1, 30, 13, 30, 1);
 		vi.setSystemTime(+new Date(2025, 1, 30, 13, 30, 1));
 
 		await sharedapi.getMatchDetails("");
-		expect(
-			Object.values(
-				globalThis.requestCache as { [key: string]: [string, number, any] },
-			)[0][1],
-		).toEqual(timestampAfter + matchDetailsTTL);
+		expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(
+			timestampAfter + matchDetailsTTL,
+		);
 	});
 });

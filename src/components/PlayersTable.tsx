@@ -22,20 +22,10 @@ export const PlayersTable = ({
 
 	const Row = ({ player }: { player: PlayerRow }) => {
 		return (
-			<tr
-				key={player.puuid}
-				className={clsx(
-					player.enemy ? "bg-error/5" : "bg-success/5",
-					"text-center",
-				)}
-			>
+			<tr key={player.puuid} className={clsx(player.enemy ? "bg-error/5" : "bg-success/5", "text-center")}>
 				<td>
 					<div className="flex flex-row items-center">
-						<img
-							src={player.agentImage || undefined}
-							className="h-6 mr-4"
-							draggable={false}
-						/>
+						<img src={player.agentImage || undefined} className="h-6 mr-4" draggable={false} />
 						<span>{player.agentName}</span>
 					</div>
 				</td>
@@ -68,17 +58,7 @@ export const PlayersTable = ({
 					<span>{player.accountLevel}</span>
 				</th>
 				<td>
-					<span
-						className={clsx(
-							!player.kd
-								? null
-								: player.kd >= 1
-									? "text-success"
-									: "text-error",
-						)}
-					>
-						{player.kd}
-					</span>
+					<span className={clsx(!player.kd ? null : player.kd >= 1 ? "text-success" : "text-error")}>{player.kd}</span>
 				</td>
 				<td>
 					<span>
@@ -92,11 +72,7 @@ export const PlayersTable = ({
 				<td>
 					<span
 						className={clsx(
-							player.lastGameResult === "won"
-								? "text-success"
-								: player.lastGameResult === "loss"
-									? "text-error"
-									: null,
+							player.lastGameResult === "won" ? "text-success" : player.lastGameResult === "loss" ? "text-error" : null,
 						)}
 					>
 						{player.lastGameScore}
@@ -106,11 +82,7 @@ export const PlayersTable = ({
 					</span>
 				</td>
 				<td>
-					<span
-						className={clsx(
-							player.streak?.type === "won" ? "text-success" : "text-error",
-						)}
-					>
+					<span className={clsx(player.streak?.type === "won" ? "text-success" : "text-error")}>
 						{player.streak ? player.streak.number : null}
 					</span>
 				</td>
@@ -136,9 +108,7 @@ export const PlayersTable = ({
 					</div>
 				</td>
 				<td>
-					{utils.isSmurf(player) && (
-						<div className="badge badge-soft badge-warning">Possible Smurf</div>
-					)}
+					{utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div>}
 					{player.dodge && (
 						<div
 							className="tooltip badge badge-soft badge-warning"
@@ -166,11 +136,7 @@ export const PlayersTable = ({
 				<td>
 					<button
 						className="btn btn-xs btn-ghost"
-						onClick={() =>
-							navigate(
-								`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`,
-							)
-						}
+						onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}
 					>
 						<ExternalLink size={14} />
 					</button>

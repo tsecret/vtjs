@@ -1,9 +1,5 @@
 import { useAptabase } from "@aptabase/react";
-import {
-	getIdentifier,
-	getTauriVersion,
-	getVersion,
-} from "@tauri-apps/api/app";
+import { getIdentifier, getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { fetch as httpfetch } from "@tauri-apps/plugin-http";
 import Database from "@tauri-apps/plugin-sql";
@@ -66,22 +62,15 @@ function App() {
 			// Settings
 			const store = await load("settings.json");
 			const allowAnalytics = (await store.get("allowAnalytics")) ? true : false;
-			const firstTimeUserKey = await store.get<boolean | undefined>(
-				"firstTimeUser",
-			);
-			const firstTimeUser =
-				firstTimeUserKey || firstTimeUserKey == undefined ? true : false;
+			const firstTimeUserKey = await store.get<boolean | undefined>("firstTimeUser");
+			const firstTimeUser = firstTimeUserKey || firstTimeUserKey == undefined ? true : false;
 
 			if (allowAnalytics) await trackEvent("app_init");
 
 			setInitStatus("Loading database");
 			const db = await Database.load(CACHE_NAME);
-			await db.execute(
-				"CREATE TABLE IF NOT EXISTS requests (endpoint str PRIMARY KEY, ttl int, data JSON)",
-			);
-			await db.execute(
-				"CREATE TABLE IF NOT EXISTS players (puuid str PRIMARY KEY, dodge boolean, dodgeTimestamp int)",
-			);
+			await db.execute("CREATE TABLE IF NOT EXISTS requests (endpoint str PRIMARY KEY, ttl int, data JSON)");
+			await db.execute("CREATE TABLE IF NOT EXISTS players (puuid str PRIMARY KEY, dodge boolean, dodgeTimestamp int)");
 
 			setInitStatus("Cleaning cache");
 			await db.execute("DELETE FROM requests WHERE ttl <= $1", [+new Date()]);
@@ -89,9 +78,7 @@ function App() {
 			try {
 				const ANNOUNCEMENT_URL =
 					"https://gist.githubusercontent.com/tsecret/0b5f7094000f4063d72276c5e05824aa/raw/announcement.txt";
-				const announcement = await httpfetch(ANNOUNCEMENT_URL).then((res) =>
-					res.text(),
-				);
+				const announcement = await httpfetch(ANNOUNCEMENT_URL).then((res) => res.text());
 				if (announcement) setAnnouncement(announcement);
 			} catch (err) {
 				console.error("Failed to fetch announcement: ", err);
@@ -99,9 +86,7 @@ function App() {
 
 			try {
 				setInitStatus("Reading lockfile");
-				const { port, password } = utils.parseLockFile(
-					await utils.readLockfile(),
-				);
+				const { port, password } = utils.parseLockFile(await utils.readLockfile());
 
 				setInitStatus("Reading logs");
 				const [region, shard] = await utils.readLog();
@@ -113,11 +98,7 @@ function App() {
 				const player = await localapi.getPlayerAccount();
 
 				setInitStatus("Loading Player");
-				const {
-					accessToken,
-					token: entToken,
-					subject: puuid,
-				} = await localapi.getEntitlementToken();
+				const { accessToken, token: entToken, subject: puuid } = await localapi.getEntitlementToken();
 				const sharedapi =
 					import.meta.env.VITE_FROM_JSON === "true"
 						? new TestSharedAPI({ entToken, accessToken, region, shard })
@@ -156,9 +137,7 @@ function App() {
 				navigate(firstTimeUser ? "/welcome" : "/dashboard");
 			} catch (err) {
 				console.log("err", err);
-				setError(
-					"Make sure Riot Client is open, and you have logged into your account",
-				);
+				setError("Make sure Riot Client is open, and you have logged into your account");
 				navigate("/");
 			}
 		})();
@@ -175,10 +154,7 @@ function App() {
 				<Sync />
 				<TestDial />
 				<Routes>
-					<Route
-						path="/"
-						element={<InitPage status={initStatus} error={error} />}
-					/>
+					<Route path="/" element={<InitPage status={initStatus} error={error} />} />
 					<Route path="/welcome" element={<WelcomePage />} />
 					<Route path="/dashboard" element={<Main />} />
 					<Route path="/test" element={<TestPage />} />

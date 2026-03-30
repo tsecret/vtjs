@@ -70,10 +70,8 @@ export const ProfilePage = () => {
 	const [playerCard, setPlayerCard] = useState<PlayerCard>();
 	const [playerStats, setPlayerStats] = useState<PlayerStats>();
 	const [accountLevel, setAccountLevel] = useState<number>();
-	const [bestAgents, setBestAgents] =
-		useState<(BestAgent & { agentName: string; agentUrl: string })[]>();
-	const [bestMaps, setBestMaps] =
-		useState<(BestMaps & { mapName: string; mapUrl: string })[]>();
+	const [bestAgents, setBestAgents] = useState<(BestAgent & { agentName: string; agentUrl: string })[]>();
+	const [bestMaps, setBestMaps] = useState<(BestMaps & { mapName: string; mapUrl: string })[]>();
 
 	const [chartData, setChartData] = useState<ChartData>();
 	// const [, setChartType] = useState<ChartType>('kills/deaths')
@@ -112,8 +110,7 @@ export const ProfilePage = () => {
 
 			try {
 				const { History } = await sharedapi.getPlayerMatchHistory(puuid);
-				const { Matches: mmrUpdates } =
-					await sharedapi.getCompetitiveUpdates(puuid);
+				const { Matches: mmrUpdates } = await sharedapi.getCompetitiveUpdates(puuid);
 
 				const matches: MatchDetailsResponse[] = [];
 
@@ -121,21 +118,13 @@ export const ProfilePage = () => {
 					matches.push(await sharedapi.getMatchDetails(match.MatchID));
 				}
 
-				const {
-					hs: avgHS,
-					adr: avgAdr,
-					kd: avgKd,
-				} = utils.calculateStatsForPlayer(puuid, matches);
+				const { hs: avgHS, adr: avgAdr, kd: avgKd } = utils.calculateStatsForPlayer(puuid, matches);
 
 				for (const i in matches) {
 					const match = matches[i];
-					const mmrUpdate = mmrUpdates.find(
-						(update) => update.MatchID === match.matchInfo.matchId,
-					);
+					const mmrUpdate = mmrUpdates.find((update) => update.MatchID === match.matchInfo.matchId);
 
-					const player = match.players.find(
-						(player) => player.subject === puuid,
-					) as MatchDetailsResponse["players"][0];
+					const player = match.players.find((player) => player.subject === puuid) as MatchDetailsResponse["players"][0];
 					const {
 						uuid: agentId,
 						displayName: agentName,
@@ -144,15 +133,10 @@ export const ProfilePage = () => {
 
 					const { result, score } = utils.getMatchResult(player.subject, match);
 
-					const { kills, deaths, assists, hs, adr, kd } =
-						utils.calculateStatsForPlayer(puuid, [match]);
+					const { kills, deaths, assists, hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match]);
 
-					const rankBefore = mmrUpdate?.TierBeforeUpdate
-						? utils.getRank(mmrUpdate?.TierBeforeUpdate)
-						: null;
-					const rankAfter = mmrUpdate?.TierAfterUpdate
-						? utils.getRank(mmrUpdate?.TierAfterUpdate)
-						: null;
+					const rankBefore = mmrUpdate?.TierBeforeUpdate ? utils.getRank(mmrUpdate?.TierBeforeUpdate) : null;
+					const rankAfter = mmrUpdate?.TierAfterUpdate ? utils.getRank(mmrUpdate?.TierAfterUpdate) : null;
 
 					if (!accountLevel) accountLevel = player.accountLevel;
 
@@ -185,19 +169,14 @@ export const ProfilePage = () => {
 				}
 
 				// Top Agents
-				const bestAgents = utils
-					.calculateBestAgents(puuid, matches)
-					.map((agent) => {
-						const { displayName: agentName, displayIcon: agentUrl } =
-							utils.getAgent(agent.agentId);
-						return { ...agent, agentName, agentUrl };
-					});
+				const bestAgents = utils.calculateBestAgents(puuid, matches).map((agent) => {
+					const { displayName: agentName, displayIcon: agentUrl } = utils.getAgent(agent.agentId);
+					return { ...agent, agentName, agentUrl };
+				});
 
 				// Top Maps
 				const bestMaps = utils.calculateBestMaps(puuid, matches).map((map) => {
-					const { displayName: mapName, listViewIcon: mapUrl } = utils.getMap(
-						map.mapId,
-					);
+					const { displayName: mapName, listViewIcon: mapUrl } = utils.getMap(map.mapId);
 					return { ...map, mapName, mapUrl };
 				});
 
@@ -226,10 +205,7 @@ export const ProfilePage = () => {
 			const [{ GameName, TagLine }] = await sharedapi.getPlayerNames([puuid]);
 
 			const competitiveUpdates = await sharedapi.getCompetitiveUpdates(puuid);
-			const {
-				TierAfterUpdate: currentRank,
-				RankedRatingAfterUpdate: currentRR,
-			} =
+			const { TierAfterUpdate: currentRank, RankedRatingAfterUpdate: currentRR } =
 				competitiveUpdates.Matches.length > 0
 					? competitiveUpdates.Matches[0]
 					: { TierAfterUpdate: 1, RankedRatingAfterUpdate: 1 };
@@ -268,12 +244,10 @@ export const ProfilePage = () => {
 		return (
 			<div className="flex flex-col items-center space-y-4">
 				<p>
-					<span className="loading loading-spinner loading-xs mr-2"></span>{" "}
-					Loading matches
+					<span className="loading loading-spinner loading-xs mr-2"></span> Loading matches
 				</p>
 				<p className="alert max-w-md text-center text-xs">
-					If loading takes too long, you probably hit the Riot's rate limit and
-					matches will load in a minute or so
+					If loading takes too long, you probably hit the Riot's rate limit and matches will load in a minute or so
 				</p>
 			</div>
 		);
@@ -291,17 +265,11 @@ export const ProfilePage = () => {
 					<p className="text-gray-400">Account Level: {accountLevel}</p>
 
 					<div className="mt-4 flex flex-row items-center justify-between">
-						<span
-							className="badge badge-lg"
-							style={{ color: "#" + playerCard?.currentRankColor }}
-						>
+						<span className="badge badge-lg" style={{ color: "#" + playerCard?.currentRankColor }}>
 							{playerCard?.currentRank}
 						</span>
 						<p className="text-sm text-gray-400">
-							Peak:{" "}
-							<span style={{ color: "#" + playerCard?.peakRankColor }}>
-								{playerCard?.peakRank}
-							</span>
+							Peak: <span style={{ color: "#" + playerCard?.peakRankColor }}>{playerCard?.peakRank}</span>
 						</p>
 					</div>
 
@@ -310,17 +278,10 @@ export const ProfilePage = () => {
 						<progress
 							className="progress progress-primary w-full"
 							value={playerCard?.currentRR}
-							max={
-								playerCard?.currentTier && playerCard?.currentTier >= 24
-									? 500
-									: 100
-							}
+							max={playerCard?.currentTier && playerCard?.currentTier >= 24 ? 500 : 100}
 						></progress>
 						<p className="text-xs text-gray-400 mt-1">
-							{playerCard?.currentRR} /{" "}
-							{playerCard?.currentTier && playerCard?.currentTier >= 24
-								? 500
-								: 100}
+							{playerCard?.currentRR} / {playerCard?.currentTier && playerCard?.currentTier >= 24 ? 500 : 100}
 						</p>
 					</div>
 
@@ -342,11 +303,7 @@ export const ProfilePage = () => {
 							<div className="stat-title">Winrate %</div>
 							<div className="stat-value">
 								{table.length
-									? (
-											(table.filter((match) => match.result === "won").length /
-												table.length) *
-											100
-										).toFixed(0)
+									? ((table.filter((match) => match.result === "won").length / table.length) * 100).toFixed(0)
 									: 0}
 								%
 							</div>
@@ -356,14 +313,7 @@ export const ProfilePage = () => {
 					<div className="stats shadow">
 						<div className="stat">
 							<div className="stat-title">K/D</div>
-							<div
-								className={clsx(
-									"stat-value",
-									playerStats && playerStats?.kd >= 1
-										? "text-success"
-										: "text-error",
-								)}
-							>
+							<div className={clsx("stat-value", playerStats && playerStats?.kd >= 1 ? "text-success" : "text-error")}>
 								{playerStats?.kd}
 							</div>
 						</div>
@@ -371,12 +321,7 @@ export const ProfilePage = () => {
 						<div className="stat">
 							<div className="stat-title">Average Damage / Round</div>
 							<div
-								className={clsx(
-									"stat-value",
-									playerStats && playerStats?.adr >= 150
-										? "text-success"
-										: "text-error",
-								)}
+								className={clsx("stat-value", playerStats && playerStats?.adr >= 150 ? "text-success" : "text-error")}
 							>
 								{playerStats?.adr}
 							</div>
@@ -392,19 +337,16 @@ export const ProfilePage = () => {
 				{puuid !== ownPuuid && (
 					<div className="flex flex-col space-y-4 p-4 rounded-md max-w-64">
 						<p>
-							If this player ruined the game, trolled or played like dogshit,
-							you can add this animal to your avoid list
+							If this player ruined the game, trolled or played like dogshit, you can add this animal to your avoid list
 						</p>
 						<p className="text-xs text-gray-400">
-							This avoid list is saved locally, meaning you still have a chance
-							to queue with this player, but the warning will be displayed next
-							to their name
+							This avoid list is saved locally, meaning you still have a chance to queue with this player, but the
+							warning will be displayed next to their name
 						</p>
 
 						{playerCard?.dodgeTimestamp ? (
 							<p className="text-xs text-gray-400">
-								Dodge from{" "}
-								{moment(playerCard.dodgeTimestamp).format("DD-MM-YYYY")}
+								Dodge from {moment(playerCard.dodgeTimestamp).format("DD-MM-YYYY")}
 							</p>
 						) : null}
 
@@ -446,51 +388,28 @@ export const ProfilePage = () => {
 									<tr
 										key={match.matchId}
 										className={clsx(
-											match.result === "won"
-												? "bg-success/5"
-												: match.result === "loss"
-													? "bg-error/5"
-													: "bg-white/5",
+											match.result === "won" ? "bg-success/5" : match.result === "loss" ? "bg-error/5" : "bg-white/5",
 											"text-center",
 											refMatchId === match.matchId && "border-2 border-primary",
 										)}
 									>
 										<td className="text-left">
 											{moment(match.date).format("HH:mm DD/MM/YY")}{" "}
-											<span className="opacity-25">
-												({moment(match.date).fromNow()})
-											</span>
+											<span className="opacity-25">({moment(match.date).fromNow()})</span>
 										</td>
 										<td>
-											<img
-												src={match.agentImage || undefined}
-												className="max-h-6"
-											/>
+											<img src={match.agentImage || undefined} className="max-h-6" />
 										</td>
 										<td>{match.mapName}</td>
 										<td>
-											<div
-												className="tooltip flex flex-row items-center"
-												data-tip={match.rankBefore?.rankName}
-											>
-												<img
-													className="w-6 mr-2"
-													src={match.rankBefore?.rankImg}
-												/>
+											<div className="tooltip flex flex-row items-center" data-tip={match.rankBefore?.rankName}>
+												<img className="w-6 mr-2" src={match.rankBefore?.rankImg} />
 												<span
 													className={clsx(
-														match.mmrUpdate
-															? match.mmrUpdate > 0
-																? "text-success"
-																: "text-error"
-															: null,
+														match.mmrUpdate ? (match.mmrUpdate > 0 ? "text-success" : "text-error") : null,
 													)}
 												>
-													{match.mmrUpdate
-														? match.mmrUpdate > 0
-															? `+${match.mmrUpdate}`
-															: match.mmrUpdate
-														: null}
+													{match.mmrUpdate ? (match.mmrUpdate > 0 ? `+${match.mmrUpdate}` : match.mmrUpdate) : null}
 												</span>
 												{match.rankBefore &&
 													match.rankAfter &&
@@ -506,36 +425,21 @@ export const ProfilePage = () => {
 										</td>
 										<td
 											className={clsx(
-												match.result === "won"
-													? "text-success"
-													: match.result === "loss"
-														? "text-error"
-														: null,
+												match.result === "won" ? "text-success" : match.result === "loss" ? "text-error" : null,
 											)}
 										>
-											{match.result === "won"
-												? "Win"
-												: match.result === "loss"
-													? "Loss"
-													: "Draw"}
+											{match.result === "won" ? "Win" : match.result === "loss" ? "Loss" : "Draw"}
 										</td>
 										<td
 											className={clsx(
-												match.result === "won"
-													? "text-success"
-													: match.result === "loss"
-														? "text-error"
-														: null,
+												match.result === "won" ? "text-success" : match.result === "loss" ? "text-error" : null,
 											)}
 										>
 											{match.score}
 										</td>
 										<td>{match.hs ? match.hs + "%" : null}</td>
 										<td>
-											<button
-												className="btn btn-xs btn-ghost"
-												onClick={() => navigate(`/match/${match.matchId}`)}
-											>
+											<button className="btn btn-xs btn-ghost" onClick={() => navigate(`/match/${match.matchId}`)}>
 												<ExternalLink size={14} />
 											</button>
 										</td>
@@ -569,35 +473,16 @@ export const ProfilePage = () => {
 										{bestAgents?.map((agent) => (
 											<tr
 												key={agent.agentId}
-												className={clsx(
-													refAgentId === agent.agentId &&
-														"border-2 border-primary",
-												)}
+												className={clsx(refAgentId === agent.agentId && "border-2 border-primary")}
 											>
 												<th className="flex flex-row items-center space-x-2">
-													<img
-														src={agent.agentUrl}
-														className="max-h-6"
-														draggable={false}
-													/>
+													<img src={agent.agentUrl} className="max-h-6" draggable={false} />
 													<span>{agent.agentName}</span>
 												</th>
 												<td>{agent.matches}</td>
-												<td
-													className={clsx(
-														agent.kd >= 1 ? "text-success" : "text-error",
-													)}
-												>
-													{agent.kd}
-												</td>
+												<td className={clsx(agent.kd >= 1 ? "text-success" : "text-error")}>{agent.kd}</td>
 												<td>{agent.hs}%</td>
-												<td
-													className={clsx(
-														agent.adr >= 150 ? "text-success" : "text-error",
-													)}
-												>
-													{agent.adr}
-												</td>
+												<td className={clsx(agent.adr >= 150 ? "text-success" : "text-error")}>{agent.adr}</td>
 												<td className="space-x-0.5">
 													<span className="text-success">{agent.wins}</span>
 													<span className="opacity-50">-</span>
@@ -605,13 +490,7 @@ export const ProfilePage = () => {
 													<span className="opacity-50">-</span>
 													<span className="text-error">{agent.losses}</span>
 												</td>
-												<td
-													className={clsx(
-														agent.winrate > 50 ? "text-success" : "text-error",
-													)}
-												>
-													{agent.winrate}%
-												</td>
+												<td className={clsx(agent.winrate > 50 ? "text-success" : "text-error")}>{agent.winrate}%</td>
 											</tr>
 										))}
 									</tbody>
@@ -637,38 +516,15 @@ export const ProfilePage = () => {
 									</thead>
 									<tbody>
 										{bestMaps?.map((map) => (
-											<tr
-												key={map.mapId}
-												className={clsx(
-													refMapId === map.mapId && "border-2 border-primary",
-												)}
-											>
+											<tr key={map.mapId} className={clsx(refMapId === map.mapId && "border-2 border-primary")}>
 												<th className="flex flex-row items-center space-x-2">
-													<img
-														src={map.mapUrl}
-														className="max-h-6 blur-[1px] brightness-50"
-														draggable={false}
-													/>
-													<span className="z-10 absolute left-4">
-														{map.mapName}
-													</span>
+													<img src={map.mapUrl} className="max-h-6 blur-[1px] brightness-50" draggable={false} />
+													<span className="z-10 absolute left-4">{map.mapName}</span>
 												</th>
 												<td>{map.matches}</td>
-												<td
-													className={clsx(
-														map.kd >= 1 ? "text-success" : "text-error",
-													)}
-												>
-													{map.kd}
-												</td>
+												<td className={clsx(map.kd >= 1 ? "text-success" : "text-error")}>{map.kd}</td>
 												<td>{map.hs}%</td>
-												<td
-													className={clsx(
-														map.adr >= 150 ? "text-success" : "text-error",
-													)}
-												>
-													{map.adr}
-												</td>
+												<td className={clsx(map.adr >= 150 ? "text-success" : "text-error")}>{map.adr}</td>
 												<td className="space-x-0.5">
 													<span className="text-success">{map.wins}</span>
 													<span className="opacity-50">-</span>
@@ -676,13 +532,7 @@ export const ProfilePage = () => {
 													<span className="opacity-50">-</span>
 													<span className="text-error">{map.losses}</span>
 												</td>
-												<td
-													className={clsx(
-														map.winrate > 50 ? "text-success" : "text-error",
-													)}
-												>
-													{map.winrate}%
-												</td>
+												<td className={clsx(map.winrate > 50 ? "text-success" : "text-error")}>{map.winrate}%</td>
 											</tr>
 										))}
 									</tbody>

@@ -73,14 +73,9 @@ export const MatchPage = () => {
 				type: match.matchInfo.queueID,
 				players: match.players
 					.map((player) => {
-						const { kd, hs } = utils.calculateStatsForPlayer(player.subject, [
-							match,
-						]);
-						const { displayIcon: agentImg, displayName: agentName } =
-							utils.getAgent(player.characterId);
-						const { rankName, rankColor } = utils.getRank(
-							player.competitiveTier,
-						);
+						const { kd, hs } = utils.calculateStatsForPlayer(player.subject, [match]);
+						const { displayIcon: agentImg, displayName: agentName } = utils.getAgent(player.characterId);
+						const { rankName, rankColor } = utils.getRank(player.competitiveTier);
 
 						return {
 							puuid: player.subject,
@@ -138,9 +133,7 @@ export const MatchPage = () => {
 
 					<div className="stat">
 						<div className="stat-title">Date</div>
-						<div className="stat-value">
-							{moment(match.date).format("DD/MM/YY")}
-						</div>
+						<div className="stat-value">{moment(match.date).format("DD/MM/YY")}</div>
 					</div>
 				</div>
 			</section>
@@ -178,10 +171,7 @@ export const MatchPage = () => {
 						{match.players.map((player) => (
 							<tr
 								key={player.puuid}
-								className={clsx(
-									player.team === "Blue" ? "bg-info/10" : "bg-error/5",
-									"text-center",
-								)}
+								className={clsx(player.team === "Blue" ? "bg-info/10" : "bg-error/5", "text-center")}
 							>
 								<td>{player.partyNumber}</td>
 								<td className="flex flex-row items-center">
@@ -192,10 +182,7 @@ export const MatchPage = () => {
 									<span className="text-xs opacity-50">#{player.tag}</span>
 								</td>
 								<td>
-									<span
-										className="text-xs font-bold"
-										style={{ color: `#${player.rankColor}` }}
-									>
+									<span className="text-xs font-bold" style={{ color: `#${player.rankColor}` }}>
 										{player.rankName}
 									</span>
 								</td>
@@ -204,19 +191,13 @@ export const MatchPage = () => {
 									{player.kills} / {player.deaths} / {player.assists}
 								</td>
 								<td>
-									<span
-										className={player.kd >= 1 ? "text-success" : "text-error"}
-									>
-										{player.kd}
-									</span>
+									<span className={player.kd >= 1 ? "text-success" : "text-error"}>{player.kd}</span>
 								</td>
 								<td>{player.hs}%</td>
 								<td>
 									<button
 										className="btn btn-ghost btn-sm"
-										onClick={() =>
-											navigate(`/player/${player.puuid}?refMatchId=${matchId}`)
-										}
+										onClick={() => navigate(`/player/${player.puuid}?refMatchId=${matchId}`)}
 									>
 										<ExternalLink size={16} />
 									</button>

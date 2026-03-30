@@ -22,24 +22,15 @@ export const SocketListener = () => {
 
 		listen<string>("ws_message", async (event) => {
 			try {
-				const [, , payload]: [null, null, Payload] = JSON.parse(
-					event.payload.replace("///", ""),
-				);
+				const [, , payload]: [null, null, Payload] = JSON.parse(event.payload.replace("///", ""));
 
 				const presence = payload.data.presences.find((p) => p.puuid === puuid);
 				if (!presence) return;
 
-				const decoded: PresenceJSON = JSON.parse(
-					base64Decode(presence.private),
-				);
+				const decoded: PresenceJSON = JSON.parse(base64Decode(presence.private));
 
-				if (
-					decoded.partyPresenceData.partySize > 1 &&
-					party.length != decoded.partyPresenceData.partySize
-				) {
-					const party = await sharedapi?.getParty(
-						decoded.partyPresenceData.partyId,
-					);
+				if (decoded.partyPresenceData.partySize > 1 && party.length != decoded.partyPresenceData.partySize) {
+					const party = await sharedapi?.getParty(decoded.partyPresenceData.partyId);
 					if (party)
 						setParty(
 							party?.Members.map((p) => ({
@@ -51,8 +42,7 @@ export const SocketListener = () => {
 						);
 				}
 
-				if (decoded.matchPresenceData.sessionLoopState === state.current.state)
-					return;
+				if (decoded.matchPresenceData.sessionLoopState === state.current.state) return;
 
 				if (decoded.matchPresenceData.sessionLoopState === "PREGAME") {
 					state.current = {

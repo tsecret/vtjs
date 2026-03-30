@@ -12,9 +12,7 @@ const announcement = atom<string | null>();
 const puuid = atom<string>();
 const player = atom<PlayerAccount>();
 const table = atom<Record<PlayerRow["puuid"], PlayerRow>>({});
-const party = atom<
-	{ puuid: string; name: string; tag: string; playerCardId: string }[]
->([]);
+const party = atom<{ puuid: string; name: string; tag: string; playerCardId: string }[]>([]);
 
 const prefetching = atom<boolean>(false);
 const gameState = atom<{ state: GameState; matchId: string | null }>({

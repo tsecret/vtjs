@@ -37,20 +37,15 @@ export const WelcomePage = () => {
 
 						<div id="analytics-prompt" className="alert my-10">
 							<span>
-								<span className="text-primary font-bold">
-									Enable analytics?
-								</span>{" "}
-								This helps us improve the app and provide better experience
+								<span className="text-primary font-bold">Enable analytics?</span> This helps us improve the app and
+								provide better experience
 							</span>
 							{allowAnalytics ? (
 								<button className="btn btn-success btn-sm btn-soft">
 									<Heart size={16} /> Enabled
 								</button>
 							) : (
-								<button
-									className="btn btn-primary btn-sm btn-soft"
-									onClick={() => onAnalyticsChange(true)}
-								>
+								<button className="btn btn-primary btn-sm btn-soft" onClick={() => onAnalyticsChange(true)}>
 									Enable
 								</button>
 							)}

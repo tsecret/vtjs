@@ -1,9 +1,5 @@
 import { localDataDir } from "@tauri-apps/api/path";
-import {
-	readDir,
-	readTextFile,
-	readTextFileLines,
-} from "@tauri-apps/plugin-fs";
+import { readDir, readTextFile, readTextFileLines } from "@tauri-apps/plugin-fs";
 import base64 from "base-64";
 import { Buffer } from "buffer";
 import pako from "pako";
@@ -43,8 +39,7 @@ import type {
 	StorefrontResponse,
 } from "../interface";
 
-export const sleep = (ms: number = 2000) =>
-	new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const isMac = () => navigator.platform.toUpperCase().indexOf("MAC") >= 0;
 
@@ -53,15 +48,11 @@ export const base64Decode = (input: string): string => {
 };
 
 export const zdecode = (input: string): any => {
-	return JSON.parse(
-		pako.inflateRaw(Buffer.from(input, "base64"), { to: "string" }),
-	);
+	return JSON.parse(pako.inflateRaw(Buffer.from(input, "base64"), { to: "string" }));
 };
 
 export const zencode = (input: any): string => {
-	return Buffer.from(
-		pako.deflateRaw(Buffer.from(JSON.stringify(input), "utf-8")),
-	).toString("base64");
+	return Buffer.from(pako.deflateRaw(Buffer.from(JSON.stringify(input), "utf-8"))).toString("base64");
 };
 
 export const randomInt = (min: number, max: number): number => {
@@ -75,9 +66,7 @@ export const readLockfile = async (): Promise<string> => {
 		return lockfile;
 	} else {
 		const path = await localDataDir();
-		const file = await readTextFile(
-			path + "\\Riot Games\\Riot Client\\Config\\lockfile",
-		);
+		const file = await readTextFile(path + "\\Riot Games\\Riot Client\\Config\\lockfile");
 		return file.toString();
 	}
 };
@@ -88,9 +77,7 @@ export const readConfigs = async (): Promise<string[]> => {
 	} else {
 		const path = await localDataDir();
 		const files = await readDir(path + "\\Valorant\\Saved\\Config");
-		return files
-			.map((file) => file.name)
-			.filter((name) => name.match(/(.*)-(.*)-(.*)-(.*)-(.*)/));
+		return files.map((file) => file.name).filter((name) => name.match(/(.*)-(.*)-(.*)-(.*)-(.*)/));
 	}
 };
 
@@ -102,9 +89,7 @@ export const readLog = async () => {
 		}
 	} else {
 		const path = await localDataDir();
-		const lines = await readTextFileLines(
-			path + "\\Valorant\\Saved\\Logs\\ShooterGame.log",
-		);
+		const lines = await readTextFileLines(path + "\\Valorant\\Saved\\Logs\\ShooterGame.log");
 		for await (const line of lines) {
 			const res = parseShardFromLogline(line);
 			if (res) return res;
@@ -114,46 +99,33 @@ export const readLog = async () => {
 	return ["", ""];
 };
 
-export const parseShardFromLogline = (
-	line: string,
-): [string, string] | undefined => {
+export const parseShardFromLogline = (line: string): [string, string] | undefined => {
 	if (!line.includes("https://glz")) return;
 
 	const urlMatch = line.match(/URL \[GET (https?:\/\/[^\]]+)\]/);
 	if (!urlMatch) return;
 
-	const regionMatch = urlMatch[1].match(
-		/glz-([a-zA-Z]+)-\d+\.([a-zA-Z]+)\.a\.pvp\.net/,
-	);
+	const regionMatch = urlMatch[1].match(/glz-([a-zA-Z]+)-\d+\.([a-zA-Z]+)\.a\.pvp\.net/);
 	if (regionMatch) return [regionMatch[1], regionMatch[2]];
 };
 
-export const parseLockFile = (
-	content: string,
-): { port: string; password: string } => {
+export const parseLockFile = (content: string): { port: string; password: string } => {
 	const [_, __, port, password, ___] = content.split(":");
 
 	return { port, password: base64.encode(`riot:${password}`) };
 };
 
 export const extractPlayers = (
-	match:
-		| CurrentPreGameMatchResponse
-		| CurrentGameMatchResponse
-		| MatchDetailsResponse,
+	match: CurrentPreGameMatchResponse | CurrentGameMatchResponse | MatchDetailsResponse,
 ): string[] => {
-	if ("AllyTeam" in match)
-		return match.AllyTeam?.Players.map((player) => player.Subject) || [];
+	if ("AllyTeam" in match) return match.AllyTeam?.Players.map((player) => player.Subject) || [];
 
 	if ("Players" in match) return match.Players.map((player) => player.Subject);
 
 	return match.players.map((player) => player.subject);
 };
 
-export const calculateStatsForPlayer = (
-	puuid: string,
-	matches: MatchDetailsResponse[],
-): PlayerMatchStats => {
+export const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]): PlayerMatchStats => {
 	let validMatches = 0;
 	const stats = {
 		kills: 0,
@@ -193,9 +165,7 @@ export const calculateStatsForPlayer = (
 			let damagePerRound = 0;
 
 			for (const roundResult of match.roundResults) {
-				for (const damage of roundResult.playerStats.find(
-					(result) => result.subject === puuid,
-				)!.damage) {
+				for (const damage of roundResult.playerStats.find((result) => result.subject === puuid)!.damage) {
 					shots.legshots += damage.legshots;
 					shots.bodyshots += damage.bodyshots;
 					shots.headshots += damage.headshots;
@@ -204,8 +174,7 @@ export const calculateStatsForPlayer = (
 			}
 
 			stats.adr += damagePerRound / match.roundResults.length;
-			stats.hs +=
-				shots.headshots / (shots.headshots + shots.bodyshots + shots.legshots);
+			stats.hs += shots.headshots / (shots.headshots + shots.bodyshots + shots.legshots);
 		}
 	}
 
@@ -225,22 +194,19 @@ export const calculateStatsForPlayer = (
 	};
 };
 
-export const calculateRanking = (
-	playerMMR: PlayerMMRResponse,
-): PlayerRanking => {
+export const calculateRanking = (playerMMR: PlayerMMRResponse): PlayerRanking => {
 	return {
 		currentRank: playerMMR?.LatestCompetitiveUpdate?.TierAfterUpdate || 0,
 		currentRR: playerMMR?.LatestCompetitiveUpdate?.RankedRatingAfterUpdate || 0,
 		peakRank: playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID
-			? Object.values(
-					playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID,
-				).sort((a, b) => b.CompetitiveTier - a.CompetitiveTier)[0]
-					.CompetitiveTier
+			? Object.values(playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID).sort(
+					(a, b) => b.CompetitiveTier - a.CompetitiveTier,
+				)[0].CompetitiveTier
 			: 0,
 		peakRankSeasonId: playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID
-			? Object.values(
-					playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID,
-				).sort((a, b) => b.CompetitiveTier - a.CompetitiveTier)[0].SeasonID
+			? Object.values(playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID).sort(
+					(a, b) => b.CompetitiveTier - a.CompetitiveTier,
+				)[0].SeasonID
 			: null,
 		lastGameMMRDiff: playerMMR?.LatestCompetitiveUpdate?.RankedRatingEarned,
 		mmr:
@@ -249,12 +215,8 @@ export const calculateRanking = (
 	};
 };
 
-export const getMatchResult = (
-	puuid: string,
-	match: MatchDetailsResponse,
-): MatchResult => {
-	if (!match || !match.teams)
-		return { result: "N/A", score: "", accountLevel: 0 };
+export const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult => {
+	if (!match || !match.teams) return { result: "N/A", score: "", accountLevel: 0 };
 
 	const player = match.players.find((player) => player.subject === puuid)!;
 	const team = match.teams.find((team) => team.teamId === player.teamId)!;
@@ -274,8 +236,7 @@ export const getMatchResult = (
 };
 
 export const getAgent = (uuid: string): Agent => {
-	if (!uuid)
-		return { uuid: "", displayName: "", killfeedPortrait: "", displayIcon: "" };
+	if (!uuid) return { uuid: "", displayName: "", killfeedPortrait: "", displayIcon: "" };
 
 	return (
 		agents.find((agent) => agent.uuid === uuid.toLowerCase()) || {
@@ -299,9 +260,7 @@ export const getRank = (rank: number): Rank => {
 
 export const getMap = (uuid: string): Map => {
 	const map = maps.find((map) => map.mapUrl === uuid);
-	return (
-		map || { uuid, displayName: "New Map", displayIcon: "", listViewIcon: "" }
-	);
+	return map || { uuid, displayName: "New Map", displayIcon: "", listViewIcon: "" };
 };
 
 export const getSeasonDateById = (seasonId: string): Date | null => {
@@ -312,19 +271,10 @@ export const getSeasonDateById = (seasonId: string): Date | null => {
 };
 
 export const isSmurf = (player: PlayerRow) => {
-	return Boolean(
-		player.accountLevel &&
-			player.accountLevel < 100 &&
-			player.kd &&
-			player.kd > 1.5,
-	);
+	return Boolean(player.accountLevel && player.accountLevel < 100 && player.kd && player.kd > 1.5);
 };
 
-export const getPlayerBestAgent = (
-	puuid: string,
-	matches: MatchDetailsResponse[],
-	mapUrl: string,
-): AgentStats[] => {
+export const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[], mapUrl: string): AgentStats[] => {
 	matches = matches.filter((match) => match.matchInfo.mapId === mapUrl);
 
 	const agents: {
@@ -349,15 +299,9 @@ export const getPlayerBestAgent = (
 	}
 
 	for (const characterId in agents) {
-		agents[characterId].k = Math.round(
-			agents[characterId].k / agents[characterId].games,
-		);
-		agents[characterId].d = Math.round(
-			agents[characterId].d / agents[characterId].games,
-		);
-		agents[characterId].kd = parseFloat(
-			(agents[characterId].k / agents[characterId].d).toFixed(2),
-		);
+		agents[characterId].k = Math.round(agents[characterId].k / agents[characterId].games);
+		agents[characterId].d = Math.round(agents[characterId].d / agents[characterId].games);
+		agents[characterId].kd = parseFloat((agents[characterId].k / agents[characterId].d).toFixed(2));
 	}
 
 	return Object.keys(agents)
@@ -372,10 +316,7 @@ export const getPlayerBestAgent = (
 		.sort((a, b) => b.avgKd - a.avgKd);
 };
 
-export const calculateBestAgents = (
-	puuid: string,
-	matches: MatchDetailsResponse[],
-): BestAgent[] => {
+export const calculateBestAgents = (puuid: string, matches: MatchDetailsResponse[]): BestAgent[] => {
 	const bestAgents: BestAgent[] = [];
 
 	const agents: { [key: string]: MatchDetailsResponse[] } = {};
@@ -402,10 +343,7 @@ export const calculateBestAgents = (
 	return bestAgents.sort((a, b) => (b.matches || 1) - (a.matches || 0));
 };
 
-export const calculateBestMaps = (
-	puuid: string,
-	matches: MatchDetailsResponse[],
-): BestMaps[] => {
+export const calculateBestMaps = (puuid: string, matches: MatchDetailsResponse[]): BestMaps[] => {
 	const bestMaps: BestMaps[] = [];
 
 	const maps: { [key: string]: MatchDetailsResponse[] } = {};
@@ -449,44 +387,32 @@ export const getStoreItemInfo = (
 			uuid: rawOffer.Rewards[0]["ItemID"],
 			price: Object.values(rawOffer.Cost)[0],
 			type:
-				rawOffer.Rewards[0]["ItemTypeID"] ===
-				"e7c63390-eda7-46e0-bb7a-a6abdacd2433"
+				rawOffer.Rewards[0]["ItemTypeID"] === "e7c63390-eda7-46e0-bb7a-a6abdacd2433"
 					? "weaponskin"
-					: rawOffer.Rewards[0]["ItemTypeID"] ===
-							"d5f120f8-ff8c-4aac-92ea-f2b5acbe9475"
+					: rawOffer.Rewards[0]["ItemTypeID"] === "d5f120f8-ff8c-4aac-92ea-f2b5acbe9475"
 						? "spray"
-						: rawOffer.Rewards[0]["ItemTypeID"] ===
-								"3f296c07-64c3-494c-923b-fe692a4fa1bd"
+						: rawOffer.Rewards[0]["ItemTypeID"] === "3f296c07-64c3-494c-923b-fe692a4fa1bd"
 							? "playercard"
 							: "buddy",
 		};
 	});
 };
 
-export const extractPenalties = (
-	penalties: PenaltiesResponse,
-): Penalties | null => {
+export const extractPenalties = (penalties: PenaltiesResponse): Penalties | null => {
 	if (!penalties.Infractions.length) return null;
 
-	penalties.Penalties = penalties.Penalties.filter(
-		(p) => p.RiotRestrictionEffect,
-	);
+	penalties.Penalties = penalties.Penalties.filter((p) => p.RiotRestrictionEffect);
 
 	const penalty = penalties.Penalties.find(
-		(penalty) =>
-			penalty.RiotRestrictionEffect.RestrictionType === "PBE_LOGIN_TIME_BAN",
+		(penalty) => penalty.RiotRestrictionEffect.RestrictionType === "PBE_LOGIN_TIME_BAN",
 	);
 
 	if (!penalty) return null;
 
 	return {
 		freeTimestamp: +new Date(penalty.Expiry),
-		type: penalties.Penalties.map(
-			(p) => p.RiotRestrictionEffect.RestrictionType,
-		),
-		reason: penalties.Penalties.map(
-			(p) => p.RiotRestrictionEffect.RestrictionReason,
-		).filter((p) => p.length),
+		type: penalties.Penalties.map((p) => p.RiotRestrictionEffect.RestrictionType),
+		reason: penalties.Penalties.map((p) => p.RiotRestrictionEffect.RestrictionReason).filter((p) => p.length),
 		matchId: penalty.IssuingMatchID,
 	};
 };
@@ -499,15 +425,12 @@ export const extractPlayerName = (
 		const player = match.players.find((player) => player.subject === puuid);
 		if (!player) continue;
 
-		if (player.subject !== "" && player.tagLine !== "")
-			return { name: player.gameName, tag: player.tagLine };
+		if (player.subject !== "" && player.tagLine !== "") return { name: player.gameName, tag: player.tagLine };
 	}
 	return null;
 };
 
-export const calculateMostPlayedServer = (
-	matches: MatchDetailsResponse[],
-): MostPlayedServer => {
+export const calculateMostPlayedServer = (matches: MatchDetailsResponse[]): MostPlayedServer => {
 	const servers: MostPlayedServer = {};
 
 	for (const match of matches) {
@@ -521,10 +444,7 @@ export const calculateMostPlayedServer = (
 	return servers;
 };
 
-export const calculateStreak = (
-	puuid: string,
-	matches: MatchDetailsResponse[],
-): Streak | null => {
+export const calculateStreak = (puuid: string, matches: MatchDetailsResponse[]): Streak | null => {
 	if (!matches.length) return null;
 
 	const results: Result[] = [];
@@ -594,8 +514,7 @@ export const sortPlayersForProcessing = (
 			return +a.enemy - +b.enemy;
 		}
 
-		if (a.accountLevel && b.accountLevel)
-			return a.accountLevel - b.accountLevel;
+		if (a.accountLevel && b.accountLevel) return a.accountLevel - b.accountLevel;
 		if (a.accountLevel) return -1;
 		if (b.accountLevel) return 1;
 		return 0;

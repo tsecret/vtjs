@@ -15,12 +15,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/background.png",
-		"backgroundGradientColors": [
-			"c7f458ff",
-			"d56324ff",
-			"3a2656ff",
-			"3a7233ff"
-		],
+		"backgroundGradientColors": ["c7f458ff", "d56324ff", "3a2656ff", "3a7233ff"],
 		"assetPath": "ShooterGame/Content/Characters/AggroBot/AggroBot_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -78,12 +73,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/dade69b4-4f5a-8528-247b-219e5a1facd6/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/dade69b4-4f5a-8528-247b-219e5a1facd6/background.png",
-		"backgroundGradientColors": [
-			"b1414cff",
-			"5589bdff",
-			"18344cff",
-			"66376cff"
-		],
+		"backgroundGradientColors": ["b1414cff", "5589bdff", "18344cff", "66376cff"],
 		"assetPath": "ShooterGame/Content/Characters/BountyHunter/BountyHunter_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -141,12 +131,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/5f8d3a7f-467b-97f3-062c-13acf203c006/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/5f8d3a7f-467b-97f3-062c-13acf203c006/background.png",
-		"backgroundGradientColors": [
-			"ff9c33ff",
-			"b04621ff",
-			"523a23ff",
-			"44412eff"
-		],
+		"backgroundGradientColors": ["ff9c33ff", "b04621ff", "523a23ff", "44412eff"],
 		"assetPath": "ShooterGame/Content/Characters/Breach/Breach_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -204,12 +189,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/cc8b64c8-4b25-4ff9-6e7f-37b4da43d235/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/cc8b64c8-4b25-4ff9-6e7f-37b4da43d235/background.png",
-		"backgroundGradientColors": [
-			"bcc2ffff",
-			"4d64c4ff",
-			"221c3dff",
-			"22224bff"
-		],
+		"backgroundGradientColors": ["bcc2ffff", "4d64c4ff", "221c3dff", "22224bff"],
 		"assetPath": "ShooterGame/Content/Characters/Cable/Cable_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -275,12 +255,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/b444168c-4e35-8076-db47-ef9bf368f384/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/b444168c-4e35-8076-db47-ef9bf368f384/background.png",
-		"backgroundGradientColors": [
-			"ffb573ff",
-			"c4611fff",
-			"60291eff",
-			"462821ff"
-		],
+		"backgroundGradientColors": ["ffb573ff", "c4611fff", "60291eff", "462821ff"],
 		"assetPath": "ShooterGame/Content/Characters/Cashew/Cashew_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -346,12 +321,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/f94c3b30-42be-e959-889c-5aa313dba261/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/f94c3b30-42be-e959-889c-5aa313dba261/background.png",
-		"backgroundGradientColors": [
-			"feac45ff",
-			"d64f35ff",
-			"2c5942ff",
-			"2b474bff"
-		],
+		"backgroundGradientColors": ["feac45ff", "d64f35ff", "2c5942ff", "2b474bff"],
 		"assetPath": "ShooterGame/Content/Characters/Clay/Clay_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -409,12 +379,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/22697a3d-45bf-8dd7-4fec-84a9e28c69d7/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/22697a3d-45bf-8dd7-4fec-84a9e28c69d7/background.png",
-		"backgroundGradientColors": [
-			"ffce6fff",
-			"7b4d21ff",
-			"372d2bff",
-			"163555ff"
-		],
+		"backgroundGradientColors": ["ffce6fff", "7b4d21ff", "372d2bff", "163555ff"],
 		"assetPath": "ShooterGame/Content/Characters/Deadeye/Deadeye_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -472,12 +437,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/601dbbe7-43ce-be57-2a40-4abd24953621/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/601dbbe7-43ce-be57-2a40-4abd24953621/background.png",
-		"backgroundGradientColors": [
-			"4afaffff",
-			"4da6e1ff",
-			"1a1e4bff",
-			"391a61ff"
-		],
+		"backgroundGradientColors": ["4afaffff", "4da6e1ff", "1a1e4bff", "391a61ff"],
 		"assetPath": "ShooterGame/Content/Characters/Grenadier/Grenadier_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -535,12 +495,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/6f2a04ca-43e0-be17-7f36-b3908627744d/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/6f2a04ca-43e0-be17-7f36-b3908627744d/background.png",
-		"backgroundGradientColors": [
-			"94e789ff",
-			"aa8a49ff",
-			"4f1413ff",
-			"314d48ff"
-		],
+		"backgroundGradientColors": ["94e789ff", "aa8a49ff", "4f1413ff", "314d48ff"],
 		"assetPath": "ShooterGame/Content/Characters/Guide/Guide_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -598,12 +553,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/117ed9e3-49f3-6512-3ccf-0cada7e3823b/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/117ed9e3-49f3-6512-3ccf-0cada7e3823b/background.png",
-		"backgroundGradientColors": [
-			"db9b75ff",
-			"4268b3ff",
-			"3f3f6cff",
-			"2b527cff"
-		],
+		"backgroundGradientColors": ["db9b75ff", "4268b3ff", "3f3f6cff", "2b527cff"],
 		"assetPath": "ShooterGame/Content/Characters/Gumshoe/Gumshoe_PrimaryAsset",
 		"isFullPortraitRightFacing": true,
 		"isPlayableCharacter": true,
@@ -661,12 +611,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/320b2a48-4d9b-a075-30f1-1f93a9b638fa/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/320b2a48-4d9b-a075-30f1-1f93a9b638fa/background.png",
-		"backgroundGradientColors": [
-			"f7c7a5ff",
-			"392931ff",
-			"101c47ff",
-			"082652ff"
-		],
+		"backgroundGradientColors": ["f7c7a5ff", "392931ff", "101c47ff", "082652ff"],
 		"assetPath": "ShooterGame/Content/Characters/Hunter/Hunter_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -730,12 +675,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/1e58de9c-4950-5125-93e9-a0aee9f98746/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/1e58de9c-4950-5125-93e9-a0aee9f98746/background.png",
-		"backgroundGradientColors": [
-			"ffc300ff",
-			"b87b00ff",
-			"413950ff",
-			"614414ff"
-		],
+		"backgroundGradientColors": ["ffc300ff", "b87b00ff", "413950ff", "614414ff"],
 		"assetPath": "ShooterGame/Content/Characters/Killjoy/Killjoy_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -793,12 +733,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/95b78ed7-4637-86d9-7e41-71ba8c293152/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/95b78ed7-4637-86d9-7e41-71ba8c293152/background.png",
-		"backgroundGradientColors": [
-			"f2d6a3ff",
-			"136c6bff",
-			"11434eff",
-			"0c262cff"
-		],
+		"backgroundGradientColors": ["f2d6a3ff", "136c6bff", "11434eff", "0c262cff"],
 		"assetPath": "ShooterGame/Content/Characters/Mage/Mage_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -856,12 +791,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/efba5359-4016-a1e5-7626-b1ae76895940/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/efba5359-4016-a1e5-7626-b1ae76895940/background.png",
-		"backgroundGradientColors": [
-			"f147ffff",
-			"823697ff",
-			"6153b7ff",
-			"3b3c4aff"
-		],
+		"backgroundGradientColors": ["f147ffff", "823697ff", "6153b7ff", "3b3c4aff"],
 		"assetPath": "ShooterGame/Content/Characters/Nox/Nox_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -927,12 +857,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/707eab51-4836-f488-046a-cda6bf494859/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/707eab51-4836-f488-046a-cda6bf494859/background.png",
-		"backgroundGradientColors": [
-			"89f476ff",
-			"347334ff",
-			"2c4f5eff",
-			"493a7cff"
-		],
+		"backgroundGradientColors": ["89f476ff", "347334ff", "2c4f5eff", "493a7cff"],
 		"assetPath": "ShooterGame/Content/Characters/Pandemic/Pandemic_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -996,12 +921,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/eb93336a-449b-9c1b-0a54-a891f7921d69/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/eb93336a-449b-9c1b-0a54-a891f7921d69/background.png",
-		"backgroundGradientColors": [
-			"f7bf60ff",
-			"ea6d4eff",
-			"262423ff",
-			"363b42ff"
-		],
+		"backgroundGradientColors": ["f7bf60ff", "ea6d4eff", "262423ff", "363b42ff"],
 		"assetPath": "ShooterGame/Content/Characters/Phoenix/Phoenix_PrimaryAsset",
 		"isFullPortraitRightFacing": true,
 		"isPlayableCharacter": true,
@@ -1065,12 +985,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/92eeef5d-43b5-1d4a-8d03-b3927a09034b/minimapportrait.png",
 		"homeScreenPromoTileImage": "https://media.valorant-api.com/agents/92eeef5d-43b5-1d4a-8d03-b3927a09034b/homescreenpromotileimage.png",
 		"background": "https://media.valorant-api.com/agents/92eeef5d-43b5-1d4a-8d03-b3927a09034b/background.png",
-		"backgroundGradientColors": [
-			"1f6178ff",
-			"0e2c41ff",
-			"05e2e9ff",
-			"1a5d65ff"
-		],
+		"backgroundGradientColors": ["1f6178ff", "0e2c41ff", "05e2e9ff", "1a5d65ff"],
 		"assetPath": "ShooterGame/Content/Characters/Pine/Pine_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -1136,12 +1051,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/41fb69c1-4189-7b37-f117-bcaf1e96f1bf/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/41fb69c1-4189-7b37-f117-bcaf1e96f1bf/background.png",
-		"backgroundGradientColors": [
-			"f47dc9ff",
-			"a54498ff",
-			"5210c6ff",
-			"372518ff"
-		],
+		"backgroundGradientColors": ["f47dc9ff", "a54498ff", "5210c6ff", "372518ff"],
 		"assetPath": "ShooterGame/Content/Characters/Rift/Rift_PrimaryAsset",
 		"isFullPortraitRightFacing": true,
 		"isPlayableCharacter": true,
@@ -1205,12 +1115,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/9f0d8ba9-4140-b941-57d3-a7ad57c6b417/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/9f0d8ba9-4140-b941-57d3-a7ad57c6b417/background.png",
-		"backgroundGradientColors": [
-			"eb953fff",
-			"892c1bff",
-			"211d21ff",
-			"282b38ff"
-		],
+		"backgroundGradientColors": ["eb953fff", "892c1bff", "211d21ff", "282b38ff"],
 		"assetPath": "ShooterGame/Content/Characters/Sarge/Sarge_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -1268,12 +1173,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/0e38b510-41a8-5780-5e8f-568b2a4f2d6c/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/0e38b510-41a8-5780-5e8f-568b2a4f2d6c/background.png",
-		"backgroundGradientColors": [
-			"c4a1ffff",
-			"3d0fd4ff",
-			"20155dff",
-			"ac52ffff"
-		],
+		"backgroundGradientColors": ["c4a1ffff", "3d0fd4ff", "20155dff", "ac52ffff"],
 		"assetPath": "ShooterGame/Content/Characters/Sequoia/Sequoia_BasePrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -1339,12 +1239,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
-		"backgroundGradientColors": [
-			"f17cadff",
-			"062261ff",
-			"c347c7ff",
-			"f1db6fff"
-		],
+		"backgroundGradientColors": ["f17cadff", "062261ff", "c347c7ff", "f1db6fff"],
 		"assetPath": "ShooterGame/Content/Characters/Smonk/Smonk_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -1410,12 +1305,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/bb2a4828-46eb-8cd1-e765-15848195d751/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/bb2a4828-46eb-8cd1-e765-15848195d751/background.png",
-		"backgroundGradientColors": [
-			"ba89ffff",
-			"6241ccff",
-			"38328eff",
-			"2c4799ff"
-		],
+		"backgroundGradientColors": ["ba89ffff", "6241ccff", "38328eff", "2c4799ff"],
 		"assetPath": "ShooterGame/Content/Characters/Sprinter/Sprinter_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -1473,12 +1363,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/7f94d92c-4234-0a36-9646-3a87eb8b5c89/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/7f94d92c-4234-0a36-9646-3a87eb8b5c89/background.png",
-		"backgroundGradientColors": [
-			"66a8ffff",
-			"3b37a7ff",
-			"261e4fff",
-			"101042ff"
-		],
+		"backgroundGradientColors": ["66a8ffff", "3b37a7ff", "261e4fff", "101042ff"],
 		"assetPath": "ShooterGame/Content/Characters/Stealth/Stealth_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -1536,12 +1421,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/df1cb487-4902-002e-5c17-d28e83e78588/minimapportrait.png",
 		"homeScreenPromoTileImage": "https://media.valorant-api.com/agents/df1cb487-4902-002e-5c17-d28e83e78588/homescreenpromotileimage.png",
 		"background": "https://media.valorant-api.com/agents/df1cb487-4902-002e-5c17-d28e83e78588/background.png",
-		"backgroundGradientColors": [
-			"affb9bff",
-			"ac53acff",
-			"5b477eff",
-			"298786ff"
-		],
+		"backgroundGradientColors": ["affb9bff", "ac53acff", "5b477eff", "298786ff"],
 		"assetPath": "ShooterGame/Content/Characters/Terra/Terra_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -1607,12 +1487,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/background.png",
-		"backgroundGradientColors": [
-			"7bfedeff",
-			"41819aff",
-			"102d23ff",
-			"226071ff"
-		],
+		"backgroundGradientColors": ["7bfedeff", "41819aff", "102d23ff", "226071ff"],
 		"assetPath": "ShooterGame/Content/Characters/Thorne/Thorne_PrimaryAsset",
 		"isFullPortraitRightFacing": true,
 		"isPlayableCharacter": true,
@@ -1670,12 +1545,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/a3bfb853-43b2-7238-a4f1-ad90e9e46bcc/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/a3bfb853-43b2-7238-a4f1-ad90e9e46bcc/background.png",
-		"backgroundGradientColors": [
-			"e46e77ff",
-			"c44d9fff",
-			"2f2664ff",
-			"2f203fff"
-		],
+		"backgroundGradientColors": ["e46e77ff", "c44d9fff", "2f2664ff", "2f203fff"],
 		"assetPath": "ShooterGame/Content/Characters/Vampire/Vampire_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -1733,12 +1603,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/background.png",
-		"backgroundGradientColors": [
-			"2fdddeff",
-			"4f53afff",
-			"344673ff",
-			"193b3dff"
-		],
+		"backgroundGradientColors": ["2fdddeff", "4f53afff", "344673ff", "193b3dff"],
 		"assetPath": "ShooterGame/Content/Characters/Wraith/Wraith_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,
@@ -1796,12 +1661,7 @@
 		"minimapPortrait": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/minimapportrait.png",
 		"homeScreenPromoTileImage": null,
 		"background": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/background.png",
-		"backgroundGradientColors": [
-			"90e3fdff",
-			"557f8cff",
-			"2b4e7cff",
-			"1e3344ff"
-		],
+		"backgroundGradientColors": ["90e3fdff", "557f8cff", "2b4e7cff", "1e3344ff"],
 		"assetPath": "ShooterGame/Content/Characters/Wushu/Wushu_PrimaryAsset",
 		"isFullPortraitRightFacing": false,
 		"isPlayableCharacter": true,

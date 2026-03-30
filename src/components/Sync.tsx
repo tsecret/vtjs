@@ -39,9 +39,7 @@ export const Sync = () => {
 				for (const member of party) {
 					if (member.puuid === puuid) continue;
 
-					const { History } = await sharedapi.getPlayerMatchHistory(
-						member.puuid,
-					);
+					const { History } = await sharedapi.getPlayerMatchHistory(member.puuid);
 
 					for (const match of History) {
 						await sharedapi.getMatchDetails(match.MatchID);

@@ -13,10 +13,8 @@ export const StorePage = () => {
 	const puuid = useAtomValue(atoms.puuid);
 	const allowAnalytics = useAtomValue(atoms.allowAnalytics);
 
-	const [skins, setSkins] =
-		useState<{ price: number; name: string; url: string; uuid: string }[]>();
-	const [bundles, setBundles] =
-		useState<{ price: number; name: string; url: string; uuid: string }[]>();
+	const [skins, setSkins] = useState<{ price: number; name: string; url: string; uuid: string }[]>();
+	const [bundles, setBundles] = useState<{ price: number; name: string; url: string; uuid: string }[]>();
 	const [accessories, setAccessories] =
 		useState<
 			{
@@ -29,8 +27,7 @@ export const StorePage = () => {
 				urlTall: string;
 			}[]
 		>();
-	const [nightMarket, setNightMarket] =
-		useState<{ price: number; name: string; url: string; uuid: string }[]>();
+	const [nightMarket, setNightMarket] = useState<{ price: number; name: string; url: string; uuid: string }[]>();
 
 	const [bundlesResetTime, setBundlesResetTime] = useState<number[]>();
 	const [skinsResetTime, setSkinsResetTime] = useState<number>();
@@ -46,23 +43,15 @@ export const StorePage = () => {
 
 			// Bundle
 			const bundleInfo = await Promise.all(
-				storeInfo.FeaturedBundle.Bundles.map((bundle) =>
-					storeapi.getBundleById(bundle.DataAssetID),
-				),
+				storeInfo.FeaturedBundle.Bundles.map((bundle) => storeapi.getBundleById(bundle.DataAssetID)),
 			);
 
 			// Skins
-			const skins = getStoreItemInfo(
-				storeInfo.SkinsPanelLayout.SingleItemStoreOffers,
-			);
-			const skinsData = await Promise.all(
-				skins.map((skin) => storeapi.getSkinByLevelId(skin.uuid)),
-			);
+			const skins = getStoreItemInfo(storeInfo.SkinsPanelLayout.SingleItemStoreOffers);
+			const skinsData = await Promise.all(skins.map((skin) => storeapi.getSkinByLevelId(skin.uuid)));
 
 			// Accessories
-			const accessories = getStoreItemInfo(
-				storeInfo.AccessoryStore.AccessoryStoreOffers,
-			);
+			const accessories = getStoreItemInfo(storeInfo.AccessoryStore.AccessoryStoreOffers);
 			const accessoriesData = await Promise.all(
 				accessories.map((item) =>
 					item.type === "spray"
@@ -77,9 +66,7 @@ export const StorePage = () => {
 
 			// Night Market
 			const market = getStoreItemInfo(storeInfo.BonusStore?.BonusStoreOffers);
-			const marketData = await Promise.all(
-				market.map((skin) => storeapi.getSkinByLevelId(skin.uuid)),
-			);
+			const marketData = await Promise.all(market.map((skin) => storeapi.getSkinByLevelId(skin.uuid)));
 
 			setBundles(
 				bundleInfo
@@ -89,9 +76,8 @@ export const StorePage = () => {
 						url: bundle.data.displayIcon,
 						uuid: bundle.data.uuid,
 						price: Object.values(
-							storeInfo.FeaturedBundle.Bundles.find(
-								(_bundle) => _bundle.DataAssetID === bundle.data.uuid,
-							)!.TotalDiscountedCost as any,
+							storeInfo.FeaturedBundle.Bundles.find((_bundle) => _bundle.DataAssetID === bundle.data.uuid)!
+								.TotalDiscountedCost as any,
 						)[0] as number,
 					})),
 			);
@@ -115,15 +101,11 @@ export const StorePage = () => {
 			setSkins(
 				skins
 					.filter((skin) =>
-						skinsData
-							.filter((__skin) => __skin && __skin.data)
-							.find((_skin) => _skin.data.uuid === skin.uuid),
+						skinsData.filter((__skin) => __skin && __skin.data).find((_skin) => _skin.data.uuid === skin.uuid),
 					)
 					.map((skin) => ({
 						...skin,
-						...skinsData.find(
-							(_skin) => _skin && _skin.data.uuid === skin.uuid,
-						)!.data,
+						...skinsData.find((_skin) => _skin && _skin.data.uuid === skin.uuid)!.data,
 					}))
 					.map((skin) => ({
 						uuid: skin.uuid,
@@ -136,9 +118,7 @@ export const StorePage = () => {
 				market
 					.map((skin) => ({
 						...skin,
-						...marketData.find(
-							(_skin) => _skin && _skin.data.uuid === skin.uuid,
-						)!.data,
+						...marketData.find((_skin) => _skin && _skin.data.uuid === skin.uuid)!.data,
 					}))
 					.map((skin) => ({
 						uuid: skin.uuid,
@@ -148,21 +128,10 @@ export const StorePage = () => {
 					})),
 			);
 			setBundlesResetTime(
-				storeInfo.FeaturedBundle.Bundles.map(
-					(bundle) => +new Date() + bundle.DurationRemainingInSeconds * 1000,
-				),
+				storeInfo.FeaturedBundle.Bundles.map((bundle) => +new Date() + bundle.DurationRemainingInSeconds * 1000),
 			);
-			setSkinsResetTime(
-				+new Date() +
-					storeInfo.SkinsPanelLayout
-						.SingleItemOffersRemainingDurationInSeconds *
-						1000,
-			);
-			setAccessoriesResetTime(
-				+new Date() +
-					storeInfo.AccessoryStore.AccessoryStoreRemainingDurationInSeconds *
-						1000,
-			);
+			setSkinsResetTime(+new Date() + storeInfo.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds * 1000);
+			setAccessoriesResetTime(+new Date() + storeInfo.AccessoryStore.AccessoryStoreRemainingDurationInSeconds * 1000);
 
 			if (allowAnalytics) trackEvent("store_open");
 		};
@@ -175,11 +144,7 @@ export const StorePage = () => {
 			<section id="bundles" className="max-w-2xl rounded-md m-auto">
 				<div className="carousel w-full">
 					{bundles?.map((bundle, i) => (
-						<div
-							key={bundle.uuid}
-							id={`bundle${i}`}
-							className="carousel-item relative w-full"
-						>
+						<div key={bundle.uuid} id={`bundle${i}`} className="carousel-item relative w-full">
 							<img className="w-full rounded-md" src={bundle.url} />
 							<div className="absolute left-5 bottom-5">
 								<p className="font-bold">{bundle.name}</p>
@@ -227,11 +192,7 @@ export const StorePage = () => {
 							key={skin.uuid}
 							className="flex flex-1 flex-col border-2 border-primary rounded-md p-4 h-48 max-w-64 justify-between"
 						>
-							<img
-								className="max-h-24 object-contain"
-								src={skin.url}
-								draggable={false}
-							/>
+							<img className="max-h-24 object-contain" src={skin.url} draggable={false} />
 							<div>
 								<p className="font-bold">{skin.name}</p>
 								<p className="text-sm">{skin.price}</p>
@@ -259,25 +220,13 @@ export const StorePage = () => {
 						>
 							<div className="tooltip-content">
 								{skin.urlFull ? (
-									<img
-										className="max-h-96 object-contain"
-										src={skin.urlFull}
-										draggable={false}
-									/>
+									<img className="max-h-96 object-contain" src={skin.urlFull} draggable={false} />
 								) : skin.urlWide ? (
-									<img
-										className="max-h-96 object-contain"
-										src={skin.urlWide}
-										draggable={false}
-									/>
+									<img className="max-h-96 object-contain" src={skin.urlWide} draggable={false} />
 								) : null}
 							</div>
 
-							<img
-								className="size-24 object-contain m-auto rounded-md"
-								src={skin.url}
-								draggable={false}
-							/>
+							<img className="size-24 object-contain m-auto rounded-md" src={skin.url} draggable={false} />
 
 							<div>
 								<p className="font-bold">{skin.name}</p>
@@ -289,10 +238,7 @@ export const StorePage = () => {
 			</section>
 
 			{/* Night Market */}
-			<section
-				id="nightmarket"
-				className={clsx("w-full", !nightMarket?.length && "hidden")}
-			>
+			<section id="nightmarket" className={clsx("w-full", !nightMarket?.length && "hidden")}>
 				<div className="flex flex-row items-center justify-between">
 					<h2>Night Market</h2>
 					{skinsResetTime && (
@@ -307,11 +253,7 @@ export const StorePage = () => {
 							key={skin.uuid}
 							className="flex flex-1 flex-col border-2 border-primary rounded-md p-4 h-48 max-w-64 justify-between"
 						>
-							<img
-								className="max-h-24 object-contain"
-								src={skin.url}
-								draggable={false}
-							/>
+							<img className="max-h-24 object-contain" src={skin.url} draggable={false} />
 							<div>
 								<p className="font-bold">{skin.name}</p>
 								<p className="text-sm">{skin.price}</p>

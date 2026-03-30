@@ -8,10 +8,7 @@ export const TestPage = () => {
 	useEffect(() => {
 		(async () => {
 			console.log("Loading requests");
-			const requests = await cache?.select(
-				"SELECT endpoint, ttl from requests",
-				[+new Date()],
-			);
+			const requests = await cache?.select("SELECT endpoint, ttl from requests", [+new Date()]);
 			console.log("requests", requests);
 		})();
 	}, [cache]);

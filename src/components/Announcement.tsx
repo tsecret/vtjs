@@ -7,10 +7,7 @@ export const Announcement = ({}) => {
 
 	if (announcement)
 		return (
-			<div
-				onClick={() => setAnnouncement(null)}
-				className="toast toast-top toast-end z-10 cursor-pointer"
-			>
+			<div onClick={() => setAnnouncement(null)} className="toast toast-top toast-end z-10 cursor-pointer">
 				<div className="alert alert-warning">
 					<p>{announcement}</p>
 					<X size={16} />

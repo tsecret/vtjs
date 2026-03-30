@@ -4,9 +4,7 @@ import { Clock, X } from "lucide-react";
 import { useEffect } from "react";
 
 export const RateLimitNotification = () => {
-	const [rateLimitNotification, setRateLimitNotification] = useAtom(
-		atoms.rateLimitNotification,
-	);
+	const [rateLimitNotification, setRateLimitNotification] = useAtom(atoms.rateLimitNotification);
 
 	// Auto-hide notification after retry time + buffer
 	useEffect(() => {
@@ -20,11 +18,7 @@ export const RateLimitNotification = () => {
 
 			return () => clearTimeout(hideTimeout);
 		}
-	}, [
-		rateLimitNotification.isActive,
-		rateLimitNotification.retryAfter,
-		setRateLimitNotification,
-	]);
+	}, [rateLimitNotification.isActive, rateLimitNotification.retryAfter, setRateLimitNotification]);
 
 	if (!rateLimitNotification.isActive) return null;
 
@@ -35,15 +29,13 @@ export const RateLimitNotification = () => {
 				<div className="flex flex-col">
 					<span className="font-semibold">Rate Limit Hit</span>
 					<span>
-						API requests are being throttled. Process will continue
-						automatically in {rateLimitNotification.retryAfter} seconds.
+						API requests are being throttled. Process will continue automatically in {rateLimitNotification.retryAfter}{" "}
+						seconds.
 					</span>
 				</div>
 				<button
 					className="btn btn-sm btn-ghost btn-circle"
-					onClick={() =>
-						setRateLimitNotification({ isActive: false, retryAfter: 0 })
-					}
+					onClick={() => setRateLimitNotification({ isActive: false, retryAfter: 0 })}
 				>
 					<X size={16} />
 				</button>

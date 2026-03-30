@@ -2,11 +2,7 @@ import { Penalties } from "@/interface/utils.interface";
 import moment from "moment";
 import { Link } from "react-router";
 
-export const PenaltyAlert = ({
-	penalty,
-}: {
-	penalty: Penalties | undefined;
-}) => {
+export const PenaltyAlert = ({ penalty }: { penalty: Penalties | undefined }) => {
 	const types = {
 		TEXT_CHAT_MUTED: "text chat mute",
 		VOICE_CHAT_MUTED: "voice chat mute",
@@ -33,8 +29,7 @@ export const PenaltyAlert = ({
 			<p className="wrap-normal">
 				This account has <strong>{getTypes()}</strong> until{" "}
 				<strong>
-					{moment(penalty.freeTimestamp).format("HH:MM DD-MM-YY")} (
-					{moment(penalty.freeTimestamp).fromNow()})
+					{moment(penalty.freeTimestamp).format("HH:MM DD-MM-YY")} ({moment(penalty.freeTimestamp).fromNow()})
 				</strong>{" "}
 				because of <strong>{getReasons()}</strong> in{" "}
 				<Link className="font-bold" to={`/match/${penalty.matchId}`}>

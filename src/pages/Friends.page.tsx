@@ -39,38 +39,26 @@ export const FriendsPage = () => {
 		<div>
 			<section className="max-w-1/2 m-auto">
 				<ul className="list bg-base-100 rounded-box shadow-md">
-					<li className="p-4 pb-2 text-xs opacity-60 tracking-wide">
-						Friends in Valorant
-					</li>
+					<li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Friends in Valorant</li>
 
 					{presences?.length ? (
 						presences
 							.filter((p) => p.product === "valorant")
 							.filter((p) => p.puuid !== puuid)
 							.map((p) => (
-								<IngameFriendRow
-									key={p.puuid}
-									friend={p}
-									onExternalLinkClick={() => navigate(`/player/${p.puuid}`)}
-								/>
+								<IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />
 							))
 					) : (
 						<span className="p-4">No friends online</span>
 					)}
 
-					<li className="p-4 pb-2 text-xs opacity-60 tracking-wide">
-						Other Friends
-					</li>
+					<li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Other Friends</li>
 
 					{presences?.length ? (
 						presences
 							.filter((p) => p.product !== "valorant")
 							.map((p) => (
-								<IngameFriendRow
-									key={p.puuid}
-									friend={p}
-									onExternalLinkClick={() => navigate(`/player/${p.puuid}`)}
-								/>
+								<IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />
 							))
 					) : (
 						<span className="p-4">No friends online</span>
@@ -85,9 +73,7 @@ export const FriendsPage = () => {
 								<FriendRow
 									key={friend.puuid}
 									friend={friend}
-									onExternalLinkClick={() =>
-										navigate(`/player/${friend.puuid}`)
-									}
+									onExternalLinkClick={() => navigate(`/player/${friend.puuid}`)}
 								/>
 							))
 					) : (
@@ -127,10 +113,7 @@ const IngameFriendRow = ({
 					return "In Menu";
 				}
 
-				if (
-					friend.presence?.matchPresenceData.matchMap ===
-					"/Game/Maps/PovegliaV2/RangeV2"
-				) {
+				if (friend.presence?.matchPresenceData.matchMap === "/Game/Maps/PovegliaV2/RangeV2") {
 					return "On Range";
 				}
 
@@ -163,22 +146,16 @@ const IngameFriendRow = ({
 
 			<div>
 				<span className="font-bold">
-					{friend.game_name}{" "}
-					<span className="opacity-25">{friend.game_tag}</span>
+					{friend.game_name} <span className="opacity-25">{friend.game_tag}</span>
 				</span>
 				<div className="text-xs opacity-60">{getDescription()}</div>
 			</div>
 
 			{friend.presence && friend.presence.partySize > 1 ? (
-				<p className="uppercase self-center">
-					+{friend.presence?.partySize - 1} other
-				</p>
+				<p className="uppercase self-center">+{friend.presence?.partySize - 1} other</p>
 			) : null}
 
-			<button
-				className="btn btn-ghost btn-square"
-				onClick={onExternalLinkClick}
-			>
+			<button className="btn btn-ghost btn-square" onClick={onExternalLinkClick}>
 				<SquareArrowOutUpRight />
 			</button>
 		</li>
@@ -204,17 +181,13 @@ const FriendRow = ({
 				<span className="font-bold">
 					{friend.game_name}{" "}
 					<span className="opacity-25">
-						{friend.game_tag}{" "}
-						{friend.note ? <span>({friend.note})</span> : null}
+						{friend.game_tag} {friend.note ? <span>({friend.note})</span> : null}
 					</span>
 				</span>
 				<div className="text-xs opacity-60">OFFLINE</div>
 			</div>
 
-			<button
-				className="btn btn-ghost btn-square"
-				onClick={onExternalLinkClick}
-			>
+			<button className="btn btn-ghost btn-square" onClick={onExternalLinkClick}>
 				<SquareArrowOutUpRight />
 			</button>
 		</li>

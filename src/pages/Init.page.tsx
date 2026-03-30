@@ -1,12 +1,6 @@
 import { useNavigate } from "react-router";
 
-export const InitPage = ({
-	status,
-	error,
-}: {
-	status: string;
-	error: string | null;
-}) => {
+export const InitPage = ({ status, error }: { status: string; error: string | null }) => {
 	const navigate = useNavigate();
 
 	return (

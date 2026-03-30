@@ -1,15 +1,7 @@
 import { relaunch } from "@tauri-apps/plugin-process";
 import { check, Update } from "@tauri-apps/plugin-updater";
 import { useAtom } from "jotai";
-import {
-	ChevronLeft,
-	Download,
-	RefreshCw,
-	Settings,
-	Store,
-	User,
-	Users,
-} from "lucide-react";
+import { ChevronLeft, Download, RefreshCw, Settings, Store, User, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useLongPress } from "use-long-press";
@@ -62,10 +54,7 @@ export const Header = () => {
 
 	if (location.pathname === "/")
 		return update ? (
-			<button
-				className="btn btn-soft btn-primary absolute bottom-8 right-8 z-10"
-				onClick={onUpdate}
-			>
+			<button className="btn btn-soft btn-primary absolute bottom-8 right-8 z-10" onClick={onUpdate}>
 				<Download size={16} /> Update available
 			</button>
 		) : null;
@@ -83,17 +72,13 @@ export const Header = () => {
 
 					<div className="ml-auto flex flex-row items-center space-x-2">
 						{update && (
-							<button
-								className="btn btn-soft btn-primary btn-sm"
-								onClick={onUpdate}
-							>
+							<button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}>
 								<Download size={16} /> Update available
 							</button>
 						)}
 						{prefetching && (
 							<div className="btn btn-soft btn-info btn-sm">
-								<RefreshCw size={16} className="animate-spin" /> Fetching player
-								data
+								<RefreshCw size={16} className="animate-spin" /> Fetching player data
 							</div>
 						)}
 
@@ -101,46 +86,29 @@ export const Header = () => {
 							{party.map((p) => (
 								<div key={p.puuid} className="avatar">
 									<div className="w-8 rounded-full">
-										<img
-											src={`https://media.valorant-api.com/playercards/${p.playerCardId}/displayicon.png`}
-										/>
+										<img src={`https://media.valorant-api.com/playercards/${p.playerCardId}/displayicon.png`} />
 									</div>
 								</div>
 							))}
 						</div>
 
-						<button
-							className="btn btn-soft btn-sm btn-primary rounded-md"
-							onClick={() => navigate(`/player/${puuid}`)}
-						>
+						<button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate(`/player/${puuid}`)}>
 							<User size={20} /> My Profile
 						</button>
-						<button
-							className="btn btn-soft btn-sm btn-primary rounded-md"
-							onClick={() => navigate("/store")}
-						>
+						<button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate("/store")}>
 							<Store size={20} /> Store
 						</button>
-						<button
-							className="btn btn-soft btn-sm btn-primary rounded-md"
-							onClick={() => navigate("/friends")}
-						>
+						<button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate("/friends")}>
 							<Users size={20} /> Friends
 						</button>
-						<button
-							className="btn btn-soft btn-sm btn-primary btn-circle"
-							onClick={() => navigate("/settings")}
-						>
+						<button className="btn btn-soft btn-sm btn-primary btn-circle" onClick={() => navigate("/settings")}>
 							<Settings size={20} />
 						</button>
 					</div>
 				</>
 			) : location.pathname === "/settings" ? (
 				<>
-					<button
-						className="btn btn-primary btn-sm"
-						onClick={() => navigate(-1)}
-					>
+					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
 						<ChevronLeft />
 					</button>
 
@@ -148,10 +116,7 @@ export const Header = () => {
 				</>
 			) : location.pathname.startsWith("/player/") ? (
 				<>
-					<button
-						className="btn btn-primary btn-sm"
-						onClick={() => navigate(-1)}
-					>
+					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
 						<ChevronLeft />
 					</button>
 
@@ -159,10 +124,7 @@ export const Header = () => {
 				</>
 			) : location.pathname.startsWith("/match/") ? (
 				<>
-					<button
-						className="btn btn-primary btn-sm"
-						onClick={() => navigate(-1)}
-					>
+					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
 						<ChevronLeft />
 					</button>
 
@@ -170,10 +132,7 @@ export const Header = () => {
 				</>
 			) : location.pathname.startsWith("/store") ? (
 				<>
-					<button
-						className="btn btn-primary btn-sm"
-						onClick={() => navigate(-1)}
-					>
+					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
 						<ChevronLeft />
 					</button>
 
@@ -181,10 +140,7 @@ export const Header = () => {
 				</>
 			) : location.pathname.startsWith("/friends") ? (
 				<>
-					<button
-						className="btn btn-primary btn-sm"
-						onClick={() => navigate(-1)}
-					>
+					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
 						<ChevronLeft />
 					</button>
 
@@ -192,10 +148,7 @@ export const Header = () => {
 				</>
 			) : location.pathname.startsWith("/test") ? (
 				<>
-					<button
-						className="btn btn-primary btn-sm"
-						onClick={() => navigate(-1)}
-					>
+					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
 						<ChevronLeft />
 					</button>
 
@@ -203,10 +156,7 @@ export const Header = () => {
 				</>
 			) : location.pathname.startsWith("/avoid-list") ? (
 				<>
-					<button
-						className="btn btn-primary btn-sm"
-						onClick={() => navigate(-1)}
-					>
+					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
 						<ChevronLeft />
 					</button>
 				</>

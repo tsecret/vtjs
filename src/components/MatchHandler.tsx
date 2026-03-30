@@ -2,11 +2,7 @@ import { useAptabase } from "@aptabase/react";
 import { useServices } from "@/lib/services";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
-import {
-	CurrentGameMatchResponse,
-	CurrentPreGameMatchResponse,
-	PlayerNamesReponse,
-} from "../interface";
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, PlayerNamesReponse } from "../interface";
 import atoms from "../utils/atoms";
 import * as utils from "../utils/utils";
 
@@ -32,11 +28,7 @@ export const MatchHandler = () => {
 		isProcessing: false,
 	});
 
-	async function handleMatch(
-		matchId: string,
-		isPreGame: boolean,
-		trackEventName: string,
-	) {
+	async function handleMatch(matchId: string, isPreGame: boolean, trackEventName: string) {
 		if (!sharedapi || !puuid) return;
 		if (currentMatchRef.current.isProcessing) return;
 
@@ -81,9 +73,9 @@ export const MatchHandler = () => {
 
 			const playerTeamId = isPreGame
 				? null
-				: ((match as CurrentGameMatchResponse).Players.find(
-						(player: any) => player.Subject === puuid,
-					)?.TeamID as "RED" | "BLUE");
+				: ((match as CurrentGameMatchResponse).Players.find((player: any) => player.Subject === puuid)?.TeamID as
+						| "RED"
+						| "BLUE");
 
 			const playersToProcess = isPreGame
 				? (match as CurrentPreGameMatchResponse).AllyTeam?.Players || []
@@ -94,9 +86,7 @@ export const MatchHandler = () => {
 					// const playerMMR = await sharedapi.getPlayerMMR(player.Subject);
 					// const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff, mmr } = utils.calculateRanking(playerMMR);
 
-					const compUpdates = await sharedapi.getCompetitiveUpdates(
-						player.Subject,
-					);
+					const compUpdates = await sharedapi.getCompetitiveUpdates(player.Subject);
 					const {
 						TierAfterUpdate: currentRank,
 						RankedRatingAfterUpdate: currentRR,
@@ -111,10 +101,8 @@ export const MatchHandler = () => {
 					const peakRank = 1;
 					const mmr = 0;
 
-					const { rankName: currentRankName, rankColor: currentRankColor } =
-						utils.getRank(currentRank);
-					const { rankName: rankPeakName, rankColor: rankPeakColor } =
-						utils.getRank(peakRank);
+					const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
+					const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
 
 					const playerInfo = players.find((p) => p.Subject === player.Subject)!;
 
@@ -124,15 +112,12 @@ export const MatchHandler = () => {
 						displayName: agentName,
 						killfeedPortrait: agentImage,
 					} = utils.getAgent(player.CharacterID as string);
-					const isEnemy = isPreGame
-						? false
-						: (player as any).TeamID !== playerTeamId;
+					const isEnemy = isPreGame ? false : (player as any).TeamID !== playerTeamId;
 
 					const retard = await cache
-						?.select<{ dodge: boolean }[]>(
-							'SELECT * FROM players WHERE puuid = $1 AND dodge = "true"',
-							[player.Subject],
-						)
+						?.select<{ dodge: boolean }[]>('SELECT * FROM players WHERE puuid = $1 AND dodge = "true"', [
+							player.Subject,
+						])
 						.then((players) => players[0]);
 
 					updatedTable[player.Subject] = {
@@ -163,10 +148,7 @@ export const MatchHandler = () => {
 			setTable(updatedTable);
 			setCurrentMatch(match);
 
-			processPlayers(
-				utils.sortPlayersForProcessing(players, updatedTable),
-				match,
-			);
+			processPlayers(utils.sortPlayersForProcessing(players, updatedTable), match);
 		} catch (error) {
 			console.error("Error processing match:", error);
 		} finally {
@@ -201,34 +183,19 @@ export const MatchHandler = () => {
 					progress: { step: parseInt(i) + 1, total: players.length },
 				});
 
-				const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(
-					player.Subject,
-				);
-				const matches = await Promise.all(
-					matchHistory.map((match) => sharedapi.getMatchDetails(match.MatchID)),
-				);
+				const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject);
+				const matches = await Promise.all(matchHistory.map((match) => sharedapi.getMatchDetails(match.MatchID)));
 
-				const { kd, hs, adr } = utils.calculateStatsForPlayer(
-					player.Subject,
-					matches,
-				);
+				const { kd, hs, adr } = utils.calculateStatsForPlayer(player.Subject, matches);
 				const {
 					result: lastGameResult,
 					score: lastGameScore,
 					accountLevel,
 				} = utils.getMatchResult(player.Subject, matches[0]);
-				const bestAgents = utils.getPlayerBestAgent(
-					player.Subject,
-					matches,
-					match.MapID,
-				);
+				const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID);
 
 				const streak = utils.calculateStreak(player.Subject, matches);
-				const encounters = utils.extractEncounters(
-					player.Subject,
-					matches,
-					players,
-				);
+				const encounters = utils.extractEncounters(player.Subject, matches, players);
 
 				let data = {
 					kd,

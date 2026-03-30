@@ -28,11 +28,8 @@ export const Main = () => {
 		if (!puuid || !sharedapi) return;
 
 		try {
-			const currentPreGamePlayer =
-				await sharedapi.getCurrentPreGamePlayer(puuid);
-			const currentGamePlayer = currentPreGamePlayer
-				? null
-				: await sharedapi.getCurrentGamePlayer(puuid);
+			const currentPreGamePlayer = await sharedapi.getCurrentPreGamePlayer(puuid);
+			const currentGamePlayer = currentPreGamePlayer ? null : await sharedapi.getCurrentGamePlayer(puuid);
 
 			if (!currentPreGamePlayer && !currentGamePlayer) {
 				setError("No current game found");
@@ -52,8 +49,7 @@ export const Main = () => {
 					matchId: currentPreGamePlayer.MatchID,
 				});
 
-			if (currentGamePlayer)
-				setGameState({ state: "INGAME", matchId: currentGamePlayer.MatchID });
+			if (currentGamePlayer) setGameState({ state: "INGAME", matchId: currentGamePlayer.MatchID });
 		} catch (err) {
 			console.error("Manual check failed:", err);
 			setError("Failed to check for current game");
@@ -70,9 +66,7 @@ export const Main = () => {
 			mapName: utils.getMap(currentMatch.MapID).displayName,
 			mapId: currentMatch.MapID,
 			gameServer: currentMatch.GamePodID
-				? currentMatch.GamePodID.split(".")[
-						currentMatch.GamePodID.split(".").length - 1
-					]
+				? currentMatch.GamePodID.split(".")[currentMatch.GamePodID.split(".").length - 1]
 				: "Unknown",
 		};
 	};
@@ -81,9 +75,7 @@ export const Main = () => {
 
 	return (
 		<div className="p-2 flex flex-col">
-			{error && (
-				<div className="alert alert-error my-4 w-1/2 m-auto">{error}</div>
-			)}
+			{error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div>}
 
 			<PenaltyAlert penalty={penalty} />
 
@@ -98,9 +90,7 @@ export const Main = () => {
 					<div className="flex flex-row items-center space-x-4">
 						<span className="loading loading-spinner loading-xs"></span>
 						<span className="w-full">
-							{matchProcessing.currentPlayer
-								? `Checking ${matchProcessing.currentPlayer}`
-								: "Processing match data..."}
+							{matchProcessing.currentPlayer ? `Checking ${matchProcessing.currentPlayer}` : "Processing match data..."}
 						</span>
 					</div>
 				</div>
@@ -108,51 +98,36 @@ export const Main = () => {
 
 			{/* Match Info */}
 			{matchDisplayInfo && Object.keys(table).length > 0 && (
-				<section
-					id="match-info"
-					className="flex flex-row items-center my-10 space-x-4 m-auto"
-				>
-					<div className="badge badge-soft badge-primary badge-lg">
-						Server: {matchDisplayInfo.gameServer}
-					</div>
-					<div className="badge badge-soft badge-primary badge-lg">
-						Map: {matchDisplayInfo.mapName}
-					</div>
+				<section id="match-info" className="flex flex-row items-center my-10 space-x-4 m-auto">
+					<div className="badge badge-soft badge-primary badge-lg">Server: {matchDisplayInfo.gameServer}</div>
+					<div className="badge badge-soft badge-primary badge-lg">Map: {matchDisplayInfo.mapName}</div>
 					{matchDisplayInfo.state !== "MENUS" && (
 						<div className="badge badge-soft badge-secondary badge-lg">
-							{matchDisplayInfo.state === "PREGAME"
-								? "Agent Select"
-								: "In Game"}
+							{matchDisplayInfo.state === "PREGAME" ? "Agent Select" : "In Game"}
 						</div>
 					)}
 				</section>
 			)}
 
 			{/* Players Table */}
-			<PlayersTable
-				table={table}
-				puuid={puuid as string}
-				mapId={matchDisplayInfo?.mapId}
-			/>
+			<PlayersTable table={table} puuid={puuid as string} mapId={matchDisplayInfo?.mapId} />
 
 			{/* Waiting State */}
-			{player &&
-				Object.keys(table).length === 0 &&
-				gameState.state === "MENUS" && (
-					<section className="m-auto text-center mt-20">
-						<span className="loading loading-ring loading-lg my-4" />
-						<h2 className="font-bold">Waiting for match</h2>
-						<p className="text-xs text-slate-400">
-							The check should start automatically when a match is found.
-							<br />
-							If it didn't work, click{" "}
-							<button className="underline" onClick={manualCheck}>
-								here
-							</button>{" "}
-							to check manually.
-						</p>
-					</section>
-				)}
+			{player && Object.keys(table).length === 0 && gameState.state === "MENUS" && (
+				<section className="m-auto text-center mt-20">
+					<span className="loading loading-ring loading-lg my-4" />
+					<h2 className="font-bold">Waiting for match</h2>
+					<p className="text-xs text-slate-400">
+						The check should start automatically when a match is found.
+						<br />
+						If it didn't work, click{" "}
+						<button className="underline" onClick={manualCheck}>
+							here
+						</button>{" "}
+						to check manually.
+					</p>
+				</section>
+			)}
 
 			{/* Manual Recheck Button */}
 			{Object.keys(table).length > 1 && (

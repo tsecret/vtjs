@@ -165,13 +165,7 @@
 			"GameBanEffect": null,
 			"QueueDelayEffect": null,
 			"QueueRestrictionEffect": {
-				"QueueIDs": [
-					"premier",
-					"premier-seasonmatch",
-					"premier-tournament",
-					"premier-weeklypatient",
-					"premier-scrim"
-				],
+				"QueueIDs": ["premier", "premier-seasonmatch", "premier-tournament", "premier-weeklypatient", "premier-scrim"],
 				"RecordID": ""
 			},
 			"RankedRatingPenaltyEffect": null,
@@ -203,13 +197,7 @@
 			"GameBanEffect": null,
 			"QueueDelayEffect": null,
 			"QueueRestrictionEffect": {
-				"QueueIDs": [
-					"premier",
-					"premier-seasonmatch",
-					"premier-tournament",
-					"premier-weeklypatient",
-					"premier-scrim"
-				],
+				"QueueIDs": ["premier", "premier-seasonmatch", "premier-tournament", "premier-weeklypatient", "premier-scrim"],
 				"RecordID": ""
 			},
 			"RankedRatingPenaltyEffect": null,

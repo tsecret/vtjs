@@ -30,29 +30,21 @@ import playerMMR from "../../tests/fixtures/shared/player-mmr.json";
 import playerNames from "../../tests/fixtures/shared/player-names.json";
 
 export class TestSharedAPI extends SharedAPI {
-	async getCurrentGamePlayer(
-		_puuid: string,
-	): Promise<CurrentGamePlayerResponse> {
+	async getCurrentGamePlayer(_puuid: string): Promise<CurrentGamePlayerResponse> {
 		return currentGamePlayer;
 	}
 
-	async getCurrentPreGamePlayer(
-		_puuid: string,
-	): Promise<CurrentPreGamePlayerResponse | null> {
+	async getCurrentPreGamePlayer(_puuid: string): Promise<CurrentPreGamePlayerResponse | null> {
 		return null;
 		return currentPreGamePlayer;
 	}
 
-	async getCurrentGameMatch(
-		_matchId: string,
-	): Promise<CurrentGameMatchResponse> {
+	async getCurrentGameMatch(_matchId: string): Promise<CurrentGameMatchResponse> {
 		// @ts-ignore
 		return currentMatch;
 	}
 
-	async getCurrentPreGameMatch(
-		_matchId: string,
-	): Promise<CurrentPreGameMatchResponse> {
+	async getCurrentPreGameMatch(_matchId: string): Promise<CurrentPreGameMatchResponse> {
 		// @ts-ignore
 		return currentPreGameMatch;
 	}
@@ -61,9 +53,7 @@ export class TestSharedAPI extends SharedAPI {
 		return playerNames.slice(0, puuids.length);
 	}
 
-	async getPlayerMatchHistory(
-		_puuid: string,
-	): Promise<PlayerMatchHistoryResponse> {
+	async getPlayerMatchHistory(_puuid: string): Promise<PlayerMatchHistoryResponse> {
 		// @ts-ignore
 		return matchHistory;
 	}
@@ -72,33 +62,22 @@ export class TestSharedAPI extends SharedAPI {
 		const match = JSON.parse(JSON.stringify(matchDetails));
 
 		match.matchInfo.matchId = matchId;
-		match.matchInfo.gameStartMillis = randomInt(
-			+new Date() - 365 * 24 * 60 * 60 * 1000,
-			+new Date(),
-		);
-		match.matchInfo.mapId = maps.map((map) => map.mapUrl)[
-			randomInt(0, maps.length)
-		];
+		match.matchInfo.gameStartMillis = randomInt(+new Date() - 365 * 24 * 60 * 60 * 1000, +new Date());
+		match.matchInfo.mapId = maps.map((map) => map.mapUrl)[randomInt(0, maps.length)];
 
 		for (const player of match.players) {
 			player.stats.kills = randomInt(0, 30);
 			player.stats.deaths = randomInt(10, 20);
 			player.stats.assists = randomInt(0, 10);
-			player.characterId = agents.map((agent) => agent.uuid)[
-				randomInt(0, agents.length)
-			];
+			player.characterId = agents.map((agent) => agent.uuid)[randomInt(0, agents.length)];
 		}
 
 		// @ts-ignore
 		return match;
 	}
 
-	async getCompetitiveUpdates(
-		_puuid: string,
-	): Promise<CompetitiveUpdatesResponse> {
-		const updates: CompetitiveUpdatesResponse = JSON.parse(
-			JSON.stringify(competitiveUpdates),
-		);
+	async getCompetitiveUpdates(_puuid: string): Promise<CompetitiveUpdatesResponse> {
+		const updates: CompetitiveUpdatesResponse = JSON.parse(JSON.stringify(competitiveUpdates));
 
 		updates.Matches[0].TierAfterUpdate = randomInt(3, 28);
 
@@ -111,9 +90,10 @@ export class TestSharedAPI extends SharedAPI {
 
 		mmr.LatestCompetitiveUpdate.TierAfterUpdate = randomInt(3, 28);
 		// @ts-ignore
-		mmr.QueueSkills.competitive.SeasonalInfoBySeasonID[
-			mmr.LatestCompetitiveUpdate.SeasonID
-		].Rank = randomInt(mmr.LatestCompetitiveUpdate.TierAfterUpdate, 28);
+		mmr.QueueSkills.competitive.SeasonalInfoBySeasonID[mmr.LatestCompetitiveUpdate.SeasonID].Rank = randomInt(
+			mmr.LatestCompetitiveUpdate.TierAfterUpdate,
+			28,
+		);
 
 		// @ts-ignore
 		return mmr;

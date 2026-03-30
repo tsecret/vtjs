@@ -487,12 +487,7 @@ export type MatchDetailsResponse = {
 	roundResults:
 		| {
 				roundNum: number;
-				roundResult:
-					| "Eliminated"
-					| "Bomb detonated"
-					| "Bomb defused"
-					| "Surrendered"
-					| "Round timer expired";
+				roundResult: "Eliminated" | "Bomb detonated" | "Bomb defused" | "Surrendered" | "Round timer expired";
 				roundCeremony:
 					| "CeremonyDefault"
 					| "CeremonyTeamAce"
@@ -568,27 +563,9 @@ export type MatchDetailsResponse = {
 							};
 						}[];
 						finishingDamage: {
-							damageType:
-								| "Weapon"
-								| "Bomb"
-								| "Ability"
-								| "Fall"
-								| "Melee"
-								| "Invalid"
-								| "";
+							damageType: "Weapon" | "Bomb" | "Ability" | "Fall" | "Melee" | "Invalid" | "";
 							/** Item ID of the weapon used to kill the player. Empty string if the player was killed by the spike, fall damage, or melee. */
-							damageItem:
-								| (
-										| string
-										| (
-												| "Ultimate"
-												| "Ability1"
-												| "Ability2"
-												| "GrenadeAbility"
-												| "Primary"
-										  )
-								  )
-								| "";
+							damageItem: (string | ("Ultimate" | "Ability1" | "Ability2" | "GrenadeAbility" | "Primary")) | "";
 							isSecondaryFireMode: boolean;
 						};
 					}[];
@@ -621,12 +598,7 @@ export type MatchDetailsResponse = {
 					stayedInSpawn: boolean;
 				}[];
 				/** Empty string if the timer expired */
-				roundResultCode:
-					| "Elimination"
-					| "Detonate"
-					| "Defuse"
-					| "Surrendered"
-					| "";
+				roundResultCode: "Elimination" | "Detonate" | "Defuse" | "Surrendered" | "";
 				playerEconomies:
 					| {
 							/** Player UUID */
@@ -674,27 +646,9 @@ export type MatchDetailsResponse = {
 					};
 				}[];
 				finishingDamage: {
-					damageType:
-						| "Weapon"
-						| "Bomb"
-						| "Ability"
-						| "Fall"
-						| "Melee"
-						| "Invalid"
-						| "";
+					damageType: "Weapon" | "Bomb" | "Ability" | "Fall" | "Melee" | "Invalid" | "";
 					/** Item ID of the weapon used to kill the player. Empty string if the player was killed by the spike, fall damage, or melee. */
-					damageItem:
-						| (
-								| string
-								| (
-										| "Ultimate"
-										| "Ability1"
-										| "Ability2"
-										| "GrenadeAbility"
-										| "Primary"
-								  )
-						  )
-						| "";
+					damageItem: (string | ("Ultimate" | "Ability1" | "Ability2" | "GrenadeAbility" | "Primary")) | "";
 					isSecondaryFireMode: boolean;
 				};
 				round: number;
@@ -1031,10 +985,7 @@ export type PenaltiesResponse = {
 		IssuingMatchID: string;
 		IsAutomatedDetection: boolean;
 		RiotRestrictionEffect: {
-			RestrictionType:
-				| "TEXT_CHAT_MUTED"
-				| "VOICE_CHAT_MUTED"
-				| "PBE_LOGIN_TIME_BAN";
+			RestrictionType: "TEXT_CHAT_MUTED" | "VOICE_CHAT_MUTED" | "PBE_LOGIN_TIME_BAN";
 			RestrictionReason: "INAPPROPRIATE_VOICE" | "INAPPROPRIATE_TEXT";
 		};
 	}[];

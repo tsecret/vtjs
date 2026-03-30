@@ -15,57 +15,39 @@ import {
 import { BaseAPI } from "./base";
 
 export class SharedAPI extends BaseAPI {
-	async getCurrentPreGamePlayer(
-		puuid: string,
-	): Promise<CurrentPreGamePlayerResponse | null> {
-		return this.fetch(
-			`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`,
-			`/pregame/v1/players/${puuid}`,
-			{ noCache: true },
-		);
+	async getCurrentPreGamePlayer(puuid: string): Promise<CurrentPreGamePlayerResponse | null> {
+		return this.fetch(`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`, `/pregame/v1/players/${puuid}`, {
+			noCache: true,
+		});
 	}
 
-	async getCurrentGamePlayer(
-		puuid: string,
-	): Promise<CurrentGamePlayerResponse | null> {
-		return this.fetch(
-			`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`,
-			`/core-game/v1/players/${puuid}`,
-			{ noCache: true },
-		);
+	async getCurrentGamePlayer(puuid: string): Promise<CurrentGamePlayerResponse | null> {
+		return this.fetch(`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`, `/core-game/v1/players/${puuid}`, {
+			noCache: true,
+		});
 	}
 
-	async getCurrentPreGameMatch(
-		matchId: string,
-	): Promise<CurrentPreGameMatchResponse> {
-		return this.fetch(
-			`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`,
-			`/pregame/v1/matches/${matchId}`,
-			{ noCache: true },
-		);
+	async getCurrentPreGameMatch(matchId: string): Promise<CurrentPreGameMatchResponse> {
+		return this.fetch(`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`, `/pregame/v1/matches/${matchId}`, {
+			noCache: true,
+		});
 	}
 
-	async getCurrentGameMatch(
-		matchId: string,
-	): Promise<CurrentGameMatchResponse> {
-		return this.fetch(
-			`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`,
-			`/core-game/v1/matches/${matchId}`,
-			{ noCache: true },
-		);
+	async getCurrentGameMatch(matchId: string): Promise<CurrentGameMatchResponse> {
+		return this.fetch(`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`, `/core-game/v1/matches/${matchId}`, {
+			noCache: true,
+		});
 	}
 
 	async getPlayerNames(puuids: string[]): Promise<PlayerNamesReponse[]> {
-		return this.fetch(
-			`https://pd.${this.SHARD}.a.pvp.net`,
-			"/name-service/v2/players",
-			{ body: JSON.stringify(puuids), method: "PUT", noCache: true },
-		);
+		return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, "/name-service/v2/players", {
+			body: JSON.stringify(puuids),
+			method: "PUT",
+			noCache: true,
+		});
 	}
 
-	async getPlayerMatchHistory(
-		puuid: string,
-	): Promise<PlayerMatchHistoryResponse> {
+	async getPlayerMatchHistory(puuid: string): Promise<PlayerMatchHistoryResponse> {
 		const startIndex = 0;
 		const endIndex = 20;
 		const queue = "competitive";
@@ -77,16 +59,12 @@ export class SharedAPI extends BaseAPI {
 	}
 
 	async getMatchDetails(matchId: string): Promise<MatchDetailsResponse> {
-		return this.fetch(
-			`https://pd.${this.SHARD}.a.pvp.net`,
-			`/match-details/v1/matches/${matchId}`,
-			{ ttl: 7 * 24 * 60 * 60 * 1000 },
-		);
+		return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/match-details/v1/matches/${matchId}`, {
+			ttl: 7 * 24 * 60 * 60 * 1000,
+		});
 	}
 
-	async getCompetitiveUpdates(
-		puuid: string,
-	): Promise<CompetitiveUpdatesResponse> {
+	async getCompetitiveUpdates(puuid: string): Promise<CompetitiveUpdatesResponse> {
 		const startIndex = 0;
 		const endIndex = 20;
 		const queue = "competitive";
@@ -97,10 +75,7 @@ export class SharedAPI extends BaseAPI {
 	}
 
 	async getPlayerMMR(puuid: string): Promise<PlayerMMRResponse> {
-		return this.fetch(
-			`https://pd.${this.SHARD}.a.pvp.net`,
-			`/mmr/v1/players/${puuid}`,
-		);
+		return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/mmr/v1/players/${puuid}`);
 	}
 
 	async getGameSettings(): Promise<GameSettingsResponse> {
@@ -111,29 +86,21 @@ export class SharedAPI extends BaseAPI {
 		);
 	}
 
-	async setGameSettings(
-		data: GameSettingsResponse,
-	): Promise<GameSettingsResponse> {
-		return this.fetch(
-			"https://player-preferences-usw2.pp.sgp.pvp.net",
-			"/playerPref/v3/savePreference",
-			{ noCache: true, body: JSON.stringify(data), method: "PUT" },
-		);
+	async setGameSettings(data: GameSettingsResponse): Promise<GameSettingsResponse> {
+		return this.fetch("https://player-preferences-usw2.pp.sgp.pvp.net", "/playerPref/v3/savePreference", {
+			noCache: true,
+			body: JSON.stringify(data),
+			method: "PUT",
+		});
 	}
 
 	async getPenalties(): Promise<PenaltiesResponse> {
-		return this.fetch(
-			`https://pd.${this.SHARD}.a.pvp.net`,
-			"/restrictions/v3/penalties",
-			{ noCache: true },
-		);
+		return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, "/restrictions/v3/penalties", { noCache: true });
 	}
 
 	async getParty(partyId: string): Promise<PartyResponse> {
-		return this.fetch(
-			`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`,
-			`/parties/v1/parties/${partyId}`,
-			{ noCache: true },
-		);
+		return this.fetch(`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`, `/parties/v1/parties/${partyId}`, {
+			noCache: true,
+		});
 	}
 }

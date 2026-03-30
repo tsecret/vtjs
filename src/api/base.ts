@@ -94,9 +94,10 @@ export class BaseAPI {
 		if (!this.cache) this.cache = await Database.load(CACHE_NAME);
 
 		if (!options.noCache && this.cache) {
-			const [response] = await this.cache.select<
-				[{ endpoint: string; ttl: number; data: any }]
-			>("SELECT * FROM requests WHERE endpoint=$1 LIMIT 1", [endpoint]);
+			const [response] = await this.cache.select<[{ endpoint: string; ttl: number; data: any }]>(
+				"SELECT * FROM requests WHERE endpoint=$1 LIMIT 1",
+				[endpoint],
+			);
 
 			if (response && response.data) {
 				if (+new Date() < response.ttl) {
@@ -115,10 +116,11 @@ export class BaseAPI {
 		if (res.status === 200) {
 			const response = await res.json();
 			if (!options.noCache && options.ttl !== undefined && this.cache) {
-				await this.cache.execute(
-					"INSERT or REPLACE into requests (endpoint, ttl, data) VALUES ($1, $2, $3)",
-					[endpoint, +new Date() + options.ttl, response],
-				);
+				await this.cache.execute("INSERT or REPLACE into requests (endpoint, ttl, data) VALUES ($1, $2, $3)", [
+					endpoint,
+					+new Date() + options.ttl,
+					response,
+				]);
 			}
 			return response;
 		}

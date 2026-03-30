@@ -43,12 +43,8 @@ export const Settings = () => {
 	async function clearCache() {
 		setClearingCache(true);
 
-		const response = await cache?.execute(
-			"DELETE FROM requests WHERE ttl <= $1",
-			[+new Date()],
-		);
-		if (savedRequests && response)
-			setSavedRequests(savedRequests - response.rowsAffected);
+		const response = await cache?.execute("DELETE FROM requests WHERE ttl <= $1", [+new Date()]);
+		if (savedRequests && response) setSavedRequests(savedRequests - response.rowsAffected);
 
 		setClearingCache(false);
 	}
@@ -58,8 +54,7 @@ export const Settings = () => {
 
 		const requests = await cache?.execute("DELETE FROM requests");
 
-		if (savedRequests && requests)
-			setSavedRequests(savedRequests - requests?.rowsAffected);
+		if (savedRequests && requests) setSavedRequests(savedRequests - requests?.rowsAffected);
 
 		setClearingCache(false);
 	}
@@ -105,20 +100,15 @@ export const Settings = () => {
 
 	useEffect(() => {
 		(async () => {
-			const requests: any = await cache?.select(
-				"SELECT COUNT(*) from requests",
-			);
+			const requests: any = await cache?.select("SELECT COUNT(*) from requests");
 			setSavedRequests(requests[0]["COUNT(*)"]);
 
-			const retards: any = await cache?.select(
-				'SELECT COUNT(*) from players WHERE dodge = "true"',
-			);
+			const retards: any = await cache?.select('SELECT COUNT(*) from players WHERE dodge = "true"');
 			setDodgedPlayers(retards[0]["COUNT(*)"]);
 		})();
 
 		(async () => {
-			const settings: { name: string; data: GameSettingsResponse } | undefined =
-				await store?.get("gamesettings");
+			const settings: { name: string; data: GameSettingsResponse } | undefined = await store?.get("gamesettings");
 			if (settings) setGameSettings(settings);
 		})();
 	}, []);
@@ -126,15 +116,9 @@ export const Settings = () => {
 	return (
 		<div className="flex flex-col space-y-4 p-4 max-w-md m-auto">
 			<section className="flex flex-row items-center space-x-2 text-xs">
-				<div className="border-2 rounded-md p-2">
-					App version {appInfo?.appVersion}
-				</div>
-				<div className="border-2 rounded-md p-2">
-					Tauri version {appInfo?.tauriVersion}
-				</div>
-				<div className="border-2 rounded-md p-2">
-					Identifier {appInfo?.identifier}
-				</div>
+				<div className="border-2 rounded-md p-2">App version {appInfo?.appVersion}</div>
+				<div className="border-2 rounded-md p-2">Tauri version {appInfo?.tauriVersion}</div>
+				<div className="border-2 rounded-md p-2">Identifier {appInfo?.identifier}</div>
 			</section>
 
 			<div className="divider" />
@@ -150,48 +134,36 @@ export const Settings = () => {
 				<h2>Game Settings</h2>
 
 				<p className="">
-					VTJS allows you to easily copy and paste game settings like Mouse and
-					ADS sensitivity, minimap config and keybinds from one account to
-					another
+					VTJS allows you to easily copy and paste game settings like Mouse and ADS sensitivity, minimap config and
+					keybinds from one account to another
 				</p>
 
 				<div className="alert alert-dash">
 					<ol className="text-sm">
 						<li>1. Log into account you want to copy the settings from</li>
 						<li>
-							2. Press{" "}
-							<span className="badge badge-sm">Save Current Settings</span>{" "}
-							button
+							2. Press <span className="badge badge-sm">Save Current Settings</span> button
 						</li>
 						<li>3. Log into account you want to paste the settings to</li>
 						<li>
-							4. Press{" "}
-							<span className="badge badge-sm">Load Saved Settings</span>
+							4. Press <span className="badge badge-sm">Load Saved Settings</span>
 						</li>
 						<li>5. Launch Valorant and check</li>
 					</ol>
 				</div>
 
-				{savedGameSettings && (
-					<p>Settings saved for account: {savedGameSettings.name}</p>
-				)}
+				{savedGameSettings && <p>Settings saved for account: {savedGameSettings.name}</p>}
 
 				<div className="flex flex-row items-center space-x-2">
 					<button
-						className={clsx(
-							"btn flex-1 btn-sm",
-							gameSettingsState.copied && "btn-success",
-						)}
+						className={clsx("btn flex-1 btn-sm", gameSettingsState.copied && "btn-success")}
 						disabled={gameSettingsState.modifying}
 						onClick={copyGameSettings}
 					>
 						{gameSettingsState.copied ? "Saved" : "Save Current Settings"}
 					</button>
 					<button
-						className={clsx(
-							"btn flex-1 btn-sm",
-							gameSettingsState.pasted && "btn-success",
-						)}
+						className={clsx("btn flex-1 btn-sm", gameSettingsState.pasted && "btn-success")}
 						disabled={gameSettingsState.modifying || !savedGameSettings}
 						onClick={pasteGameSettings}
 					>
@@ -216,23 +188,15 @@ export const Settings = () => {
 				</div>
 
 				<p>
-					Its okay to have lots of requests cached, especially if you play
-					daily. But if you feel like the app is lagging, try clearing the cache
+					Its okay to have lots of requests cached, especially if you play daily. But if you feel like the app is
+					lagging, try clearing the cache
 				</p>
 
 				<div className="flex flex-row items-center space-x-2">
-					<button
-						className="btn flex-1 btn-sm btn-warning"
-						disabled={clearingCache}
-						onClick={clearCache}
-					>
+					<button className="btn flex-1 btn-sm btn-warning" disabled={clearingCache} onClick={clearCache}>
 						Clear Old Cache
 					</button>
-					<button
-						className="btn flex-1 btn-sm btn-error"
-						disabled={clearingCache}
-						onClick={clearAllCache}
-					>
+					<button className="btn flex-1 btn-sm btn-error" disabled={clearingCache} onClick={clearAllCache}>
 						Clear All Cache
 					</button>
 				</div>
@@ -257,9 +221,8 @@ export const Settings = () => {
 
 				<div className="alert alert-dash text-sm">
 					<Heart />
-					Enabling analytics allows us to better understand how you use the app
-					and helps us make the app better for everyone. We are NOT interested
-					in your personal information, cookies, etc. Only app usage is tracked
+					Enabling analytics allows us to better understand how you use the app and helps us make the app better for
+					everyone. We are NOT interested in your personal information, cookies, etc. Only app usage is tracked
 				</div>
 			</section>
 		</div>

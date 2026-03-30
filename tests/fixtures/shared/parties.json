@@ -197,14 +197,7 @@
 		"ErroredPlayers": null
 	},
 	"RestrictedSeconds": 0,
-	"EligibleQueues": [
-		"unrated",
-		"swiftplay",
-		"spikerush",
-		"deathmatch",
-		"ggteam",
-		"hurm"
-	],
+	"EligibleQueues": ["unrated", "swiftplay", "spikerush", "deathmatch", "ggteam", "hurm"],
 	"QueueIneligibilities": [],
 	"CheatData": {
 		"GamePodOverride": "",
