@@ -21,6 +21,10 @@ export const PlayersTable = ({
 	};
 
 	const Row = ({ player }: { player: PlayerRow }) => {
+		const partyMembers = player.partyId
+			? Object.values(table).filter((member) => member.partyId === player.partyId)
+			: [];
+
 		return (
 			<tr key={player.puuid} className={clsx(player.enemy ? "bg-error/5" : "bg-success/5", "text-center")}>
 				<td>
@@ -119,13 +123,14 @@ export const PlayersTable = ({
 					)}
 				</td>
 				<td>
-					{player.encounters && player.encounters.length > 1 ? (
+					{player.inParty ? (
 						<div className="tooltip tooltip-left">
 							<div className="tooltip-content flex flex-col items-start">
-								<p className="mb-2">Played with those players before:</p>
-								{player.encounters?.map((e) => (
-									<p>
-										{e.name}#{e.tag} - {e.number} matches
+								<p className="mb-2">Party #{player.partyId}</p>
+								{partyMembers.map((member) => (
+									<p key={member.puuid}>
+										{member.name || "Unknown"}
+										{member.tag ? `#${member.tag}` : ""}
 									</p>
 								))}
 							</div>

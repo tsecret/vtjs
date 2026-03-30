@@ -2,7 +2,7 @@ import { useAptabase } from "@aptabase/react";
 import { useServices } from "@/lib/services";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
-import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, PlayerNamesReponse } from "../interface";
+import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PlayerNamesReponse } from "../interface";
 import atoms from "../utils/atoms";
 import * as utils from "../utils/utils";
 
@@ -139,6 +139,8 @@ export const MatchHandler = () => {
 						enemy: isEnemy,
 						accountLevel: player.PlayerIdentity.AccountLevel || null,
 						dodge: retard?.dodge || false,
+						inParty: false,
+						partyId: null,
 					};
 				} catch (error) {
 					console.error(`Failed to process player ${player.Subject}:`, error);
@@ -168,6 +170,8 @@ export const MatchHandler = () => {
 		if (!sharedapi) return;
 
 		try {
+			const partyInput: { puuid: string; matches: MatchDetailsResponse[] }[] = [];
+
 			setMatchProcessing({
 				isProcessing: true,
 				currentPlayer: null,
@@ -185,6 +189,7 @@ export const MatchHandler = () => {
 
 				const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject);
 				const matches = await Promise.all(matchHistory.map((match) => sharedapi.getMatchDetails(match.MatchID)));
+				partyInput.push({ puuid: player.Subject, matches });
 
 				const { kd, hs, adr } = utils.calculateStatsForPlayer(player.Subject, matches);
 				const {
@@ -195,7 +200,6 @@ export const MatchHandler = () => {
 				const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID);
 
 				const streak = utils.calculateStreak(player.Subject, matches);
-				const encounters = utils.extractEncounters(player.Subject, matches, players);
 
 				let data = {
 					kd,
@@ -206,7 +210,6 @@ export const MatchHandler = () => {
 					accountLevel,
 					bestAgents,
 					streak,
-					encounters,
 				};
 
 				if (player.GameName === "") {
@@ -227,6 +230,29 @@ export const MatchHandler = () => {
 					},
 				}));
 			}
+
+			const parties = utils.extractParties(partyInput);
+			const partyLookup: Record<string, number> = {};
+
+			for (const party of parties) {
+				for (const partyMember of party.puuids) {
+					partyLookup[partyMember] = party.partyId;
+				}
+			}
+
+			setTable((prevTable) => {
+				const nextTable = { ...prevTable };
+
+				for (const player of players) {
+					nextTable[player.Subject] = {
+						...nextTable[player.Subject],
+						inParty: player.Subject in partyLookup,
+						partyId: partyLookup[player.Subject] ?? null,
+					};
+				}
+
+				return nextTable;
+			});
 
 			setMatchProcessing({
 				isProcessing: false,

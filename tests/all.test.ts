@@ -56,6 +56,173 @@ describe("utils", () => {
 		});
 	});
 
+	describe("exctractParties", () => {
+		it("exctractParties simple", () => {
+			const input = [
+				{
+					puuid: "player-1",
+					matches: [
+						{
+							players: [
+								{
+									subject: "player-1",
+									partyId: "wolves"
+								},
+								{
+									subject: "player-2",
+									partyId: "wolves"
+								},
+								{
+									subject: "player-3",
+									partyId: "tigers"
+								},
+							]
+						}
+					]
+				},
+				{
+					puuid: "player-2",
+					matches: [
+						{
+							players: [
+								{
+									subject: "player-1",
+									partyId: "wolves"
+								},
+								{
+									subject: "player-2",
+									partyId: "wolves"
+								},
+								{
+									subject: "player-3",
+									partyId: "tigers"
+								},
+							]
+						}
+					]
+				},
+			] as unknown as { puuid: string, matches: MatchDetailsResponse[] }[]
+
+			const output = [
+				{
+					partyId: 1,
+					puuids: ["player-1", "player-2"]
+				}
+			]
+
+			expect(utils.extractParties(input)).toStrictEqual(output);
+		})
+
+		it("exctractParties A-B, B-C = A-B-C", () => {
+			const input = [
+				{
+					puuid: "player-1",
+					matches: [
+						{
+							players: [
+								{
+									subject: "player-1",
+									partyId: "wolves"
+								},
+								{
+									subject: "player-2",
+									partyId: "wolves"
+								},
+								{
+									subject: "player-3",
+									partyId: "tigers"
+								},
+							]
+						},
+						{
+							players: [
+								{
+									subject: "player-1",
+									partyId: "wolves"
+								},
+								{
+									subject: "player-2",
+									partyId: "wolves"
+								},
+								{
+									subject: "player-3",
+									partyId: "foxes"
+								},
+							]
+						}
+					]
+				},
+				{
+					puuid: "player-2",
+					matches: [
+						{
+							players: [
+								{
+									subject: "player-1",
+									partyId: "boars"
+								},
+								{
+									subject: "player-2",
+									partyId: "bears"
+								},
+								{
+									subject: "player-3",
+									partyId: "bears"
+								},
+							]
+						},
+						{
+							players: [
+								{
+									subject: "player-1",
+									partyId: "wolves"
+								},
+								{
+									subject: "player-2",
+									partyId: "wolves"
+								},
+								{
+									subject: "player-3",
+									partyId: "tigers"
+								},
+							]
+						},
+					]
+				},
+				{
+					puuid: "player-3",
+					matches: [
+						{
+							players: [
+								{
+									subject: "player-1",
+									partyId: "foxes"
+								},
+								{
+									subject: "player-2",
+									partyId: "bears"
+								},
+								{
+									subject: "player-3",
+									partyId: "bears"
+								},
+							]
+						}
+					]
+				},
+			] as unknown as { puuid: string, matches: MatchDetailsResponse[] }[]
+
+			const output = [
+				{
+					partyId: 1,
+					puuids: ["player-1", "player-2", "player-3"]
+				}
+			]
+
+			expect(utils.extractParties(input)).toStrictEqual(output);
+		})
+	});
+
 	describe("calculateStatsForPlayer", () => {
 		it("execution time", () => {
 			utils.calculateStatsForPlayer("test-player-1-puuid", Array(1000).fill(matchDetails));

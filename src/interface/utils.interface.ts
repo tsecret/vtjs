@@ -88,3 +88,8 @@ export type Encounters = {
 	tag: string;
 	number: number;
 };
+
+export type Parties = {
+	partyId: number
+	puuids: string[]
+}[]
