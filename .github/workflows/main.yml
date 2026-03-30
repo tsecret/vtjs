@@ -19,8 +19,8 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: Install pnpm
-        run: npm i -g pnpm
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Create lockfile
         run: echo '"Riot Client:1888:12345:6VCDFORUm1nbDfZ4EReVqw:https"' > lockfile.json
@@ -38,7 +38,7 @@ jobs:
 
       - name: Install frontend dependencies
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
-        run: pnpm install # change this to npm or pnpm depending on which one you use.
+        run: bun install
 
       - uses: tauri-apps/tauri-action@v0
         env:

@@ -1,65 +1,57 @@
-import { useServices } from "@/lib/services"
-import atoms from "@/utils/atoms"
-import { useAtom } from "jotai"
-import { useEffect } from "react"
+import { useServices } from "@/lib/services";
+import atoms from "@/utils/atoms";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
 
 export const Sync = () => {
-  const services = useServices()
-  const sharedapi = services?.sharedapi
-  const [puuid] = useAtom(atoms.puuid)
-  const [party] = useAtom(atoms.party)
-  const [, setPrefetching] = useAtom(atoms.prefetching)
+	const services = useServices();
+	const sharedapi = services?.sharedapi;
+	const [puuid] = useAtom(atoms.puuid);
+	const [party] = useAtom(atoms.party);
+	const [, setPrefetching] = useAtom(atoms.prefetching);
 
+	useEffect(() => {
+		if (!puuid || !sharedapi) return;
 
-  useEffect(() => {
-    if (!puuid || !sharedapi) return
+		(async () => {
+			try {
+				setPrefetching(true);
+				const { History } = await sharedapi.getPlayerMatchHistory(puuid);
 
-    (async () => {
+				for (const match of History) {
+					await sharedapi.getMatchDetails(match.MatchID);
+				}
+			} catch (err) {
+				console.error("Failed to sync: ", err);
+			} finally {
+				setPrefetching(false);
+			}
+		})();
+	}, [puuid, setPrefetching, sharedapi]);
 
-      try {
-        setPrefetching(true)
-        const { History } = await sharedapi.getPlayerMatchHistory(puuid)
+	useEffect(() => {
+		if (!sharedapi) return;
 
-        for (const match of History){
-          await sharedapi.getMatchDetails(match.MatchID)
-        }
+		(async () => {
+			try {
+				setPrefetching(true);
 
-      } catch (err) {
-        console.error('Failed to sync: ', err)
-      } finally {
-        setPrefetching(false)
-      }
-    })()
+				for (const member of party) {
+					if (member.puuid === puuid) continue;
 
-  }, [puuid, setPrefetching, sharedapi])
+					const { History } = await sharedapi.getPlayerMatchHistory(member.puuid);
 
-  useEffect(() => {
-    if (!sharedapi) return
+					for (const match of History) {
+						await sharedapi.getMatchDetails(match.MatchID);
+					}
+				}
+			} catch (err) {
+				console.error("Failed to sync: ", err);
+			} finally {
+				setPrefetching(false);
+			}
+		})();
+	}, [party, puuid, setPrefetching, sharedapi]);
 
-    (async () => {
-
-    try {
-      setPrefetching(true)
-
-      for (const member of party){
-        if (member.puuid === puuid) continue
-
-        const { History } = await sharedapi.getPlayerMatchHistory(member.puuid)
-
-        for (const match of History){
-          await sharedapi.getMatchDetails(match.MatchID)
-        }
-      }
-
-
-    } catch (err) {
-      console.error('Failed to sync: ', err)
-    } finally {
-      setPrefetching(false)
-    }
-    })()
-
-  }, [party, puuid, setPrefetching, sharedapi])
-
-  return null
-}
+	return null;
+};

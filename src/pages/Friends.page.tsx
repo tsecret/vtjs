@@ -1,154 +1,195 @@
-import { useServices } from "@/lib/services"
-import { useAtomValue } from "jotai"
-import { SquareArrowOutUpRight } from "lucide-react"
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router"
-import { FriendsResponse, PresenceResponse, QueueId } from "../interface"
-import atoms from "../utils/atoms"
-import { base64Decode } from "../utils/utils"
+import { useServices } from "@/lib/services";
+import { useAtomValue } from "jotai";
+import { SquareArrowOutUpRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { FriendsResponse, PresenceResponse, QueueId } from "../interface";
+import atoms from "../utils/atoms";
+import { base64Decode } from "../utils/utils";
 
 export const FriendsPage = () => {
-  const services = useServices()
-  const localapi = services?.localapi
-  const puuid = useAtomValue(atoms.puuid)
-  const [friends, setFriends] = useState<FriendsResponse['friends']>()
-  const [presences, setPresences] = useState<PresenceResponse['presences']>()
+	const services = useServices();
+	const localapi = services?.localapi;
+	const puuid = useAtomValue(atoms.puuid);
+	const [friends, setFriends] = useState<FriendsResponse["friends"]>();
+	const [presences, setPresences] = useState<PresenceResponse["presences"]>();
 
-  const navigate = useNavigate()
-  const ingameFriendsPuuids = presences?.map(p => p.puuid)
+	const navigate = useNavigate();
+	const ingameFriendsPuuids = presences?.map((p) => p.puuid);
 
-  useEffect(() => {
-    (async () => {
-      const friends = await localapi?.getFriends()
-      if (friends) setFriends(friends.friends)
+	useEffect(() => {
+		(async () => {
+			const friends = await localapi?.getFriends();
+			if (friends) setFriends(friends.friends);
 
-      const presences = await localapi?.getPresences()
-      if (presences) setPresences(presences.presences.filter(p => p.private).map(p => ({...p, presence: p.private ? JSON.parse(base64Decode(p.private)) : null })))
+			const presences = await localapi?.getPresences();
+			if (presences)
+				setPresences(
+					presences.presences
+						.filter((p) => p.private)
+						.map((p) => ({
+							...p,
+							presence: p.private ? JSON.parse(base64Decode(p.private)) : null,
+						})),
+				);
+		})();
+	}, [localapi]);
 
-    })()
-  }, [localapi])
+	return (
+		<div>
+			<section className="max-w-1/2 m-auto">
+				<ul className="list bg-base-100 rounded-box shadow-md">
+					<li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Friends in Valorant</li>
 
-  return <div>
+					{presences?.length ? (
+						presences
+							.filter((p) => p.product === "valorant")
+							.filter((p) => p.puuid !== puuid)
+							.map((p) => (
+								<IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />
+							))
+					) : (
+						<span className="p-4">No friends online</span>
+					)}
 
-    <section className="max-w-1/2 m-auto">
-      <ul className="list bg-base-100 rounded-box shadow-md">
-        <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Friends in Valorant</li>
+					<li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Other Friends</li>
 
-        {
-          presences?.length ?
-            presences
-              .filter(p => p.product === 'valorant')
-              .filter(p => p.puuid !== puuid)
-              .map(p => <IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />) :
-            <span className="p-4">No friends online</span>
-        }
+					{presences?.length ? (
+						presences
+							.filter((p) => p.product !== "valorant")
+							.map((p) => (
+								<IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />
+							))
+					) : (
+						<span className="p-4">No friends online</span>
+					)}
 
-        <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Other Friends</li>
+					{friends?.length ? (
+						friends
+							.filter((friend) => !ingameFriendsPuuids?.includes(friend.puuid))
+							.filter((p) => p.puuid !== puuid)
+							.sort((a, b) => a.game_name.localeCompare(b.game_name))
+							.map((friend) => (
+								<FriendRow
+									key={friend.puuid}
+									friend={friend}
+									onExternalLinkClick={() => navigate(`/player/${friend.puuid}`)}
+								/>
+							))
+					) : (
+						<span className="p-4">No friends online</span>
+					)}
+				</ul>
+			</section>
+		</div>
+	);
+};
 
-        {
-          presences?.length ?
-            presences.filter(p => p.product !== 'valorant').map(p => <IngameFriendRow key={p.puuid} friend={p} onExternalLinkClick={() => navigate(`/player/${p.puuid}`)} />) :
-            <span className="p-4">No friends online</span>
-        }
+const IngameFriendRow = ({
+	friend,
+	onExternalLinkClick,
+}: {
+	friend: PresenceResponse["presences"][0];
+	onExternalLinkClick: () => void;
+}) => {
+	const getDescription = () => {
+		const queues: Record<QueueId, string> = {
+			competitive: "Competitive",
+			deathmatch: "Deathmatch",
+			swiftplay: "Swiftplay",
+			hurm: "Team Deathmatch",
+			spikerush: "Spike Rush",
+			unrated: "Unrated",
+			ggteam: "Escalation",
+		};
 
-        {
-          friends?.length ?
-            friends
-              .filter(friend => !ingameFriendsPuuids?.includes(friend.puuid))
-              .filter(p => p.puuid !== puuid)
-              .sort((a, b) => a.game_name.localeCompare(b.game_name))
-              .map(friend => <FriendRow key={friend.puuid} friend={friend} onExternalLinkClick={() => navigate(`/player/${friend.puuid}`)} />) :
-            <span className="p-4">No friends online</span>
-        }
+		switch (friend.product) {
+			case "valorant":
+				if (!friend.presence) return "";
 
-      </ul>
-    </section>
+				if (friend.presence.isIdle) return "Away";
 
-  </div>
-}
+				if (friend.presence?.matchPresenceData.sessionLoopState === "MENUS") {
+					return "In Menu";
+				}
 
-const IngameFriendRow = ({ friend, onExternalLinkClick }: { friend: PresenceResponse['presences'][0], onExternalLinkClick: () => void }) => {
+				if (friend.presence?.matchPresenceData.matchMap === "/Game/Maps/PovegliaV2/RangeV2") {
+					return "On Range";
+				}
 
-  const getDescription = () => {
+				return `${queues[friend.presence?.queueId] || "Playing"} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam}s`;
+			case "league_of_legends":
+				return "Playing League of Legends";
+			default:
+				break;
+		}
+	};
 
-    const queues: Record<QueueId, string> = {
-      'competitive': "Competitive",
-      'deathmatch': 'Deathmatch',
-      'swiftplay': 'Swiftplay',
-      'hurm': 'Team Deathmatch',
-      'spikerush': "Spike Rush",
-      'unrated': "Unrated",
-      'ggteam': 'Escalation'
-    }
+	// @ts-ignore
+	const getUrl = () => {
+		if (friend.product === "valorant")
+			return `https://media.valorant-api.com/playercards/${friend.presence?.playerPresenceData.playerCardId}/displayicon.png`;
 
-    switch (friend.product) {
-      case 'valorant':
+		if (friend.product === "league_of_legends")
+			return "https://wiki.leagueoflegends.com/en-us/images/League_of_Legends_icon.svg?b3310";
 
-        if (!friend.presence)
-          return ''
+		return "";
+	};
 
-        if (friend.presence.isIdle)
-          return 'Away'
+	return (
+		<li className="list-row">
+			<div className="avatar avatar-placeholder">
+				<div className="bg-neutral size-10 rounded-box">
+					<span>{friend.game_name.slice(0, 1).toUpperCase()}</span>
+				</div>
+			</div>
 
-        if (friend.presence?.matchPresenceData.sessionLoopState === 'MENUS'){
-          return 'In Menu'
-        }
+			<div>
+				<span className="font-bold">
+					{friend.game_name} <span className="opacity-25">{friend.game_tag}</span>
+				</span>
+				<div className="text-xs opacity-60">{getDescription()}</div>
+			</div>
 
-        if (friend.presence?.matchPresenceData.matchMap === '/Game/Maps/PovegliaV2/RangeV2'){
-          return 'On Range'
-        }
+			{friend.presence && friend.presence.partySize > 1 ? (
+				<p className="uppercase self-center">+{friend.presence?.partySize - 1} other</p>
+			) : null}
 
-        return `${queues[friend.presence?.queueId] || 'Playing'} ${friend.presence?.partyOwnerMatchScoreAllyTeam}-${friend.presence?.partyOwnerMatchScoreEnemyTeam}s`
-      case 'league_of_legends':
-        return 'Playing League of Legends'
-      default:
-        break;
-    }
-  }
+			<button className="btn btn-ghost btn-square" onClick={onExternalLinkClick}>
+				<SquareArrowOutUpRight />
+			</button>
+		</li>
+	);
+};
 
-  // @ts-ignore
-  const getUrl = () => {
-    if (friend.product === 'valorant')
-      return `https://media.valorant-api.com/playercards/${friend.presence?.playerPresenceData.playerCardId}/displayicon.png`
+const FriendRow = ({
+	friend,
+	onExternalLinkClick,
+}: {
+	friend: FriendsResponse["friends"][0];
+	onExternalLinkClick: () => void;
+}) => {
+	return (
+		<li className="list-row">
+			<div className="avatar avatar-placeholder">
+				<div className="bg-neutral size-10 rounded-box">
+					<span>{friend.game_name.slice(0, 1).toUpperCase()}</span>
+				</div>
+			</div>
 
-    if (friend.product === 'league_of_legends')
-      return 'https://wiki.leagueoflegends.com/en-us/images/League_of_Legends_icon.svg?b3310'
+			<div>
+				<span className="font-bold">
+					{friend.game_name}{" "}
+					<span className="opacity-25">
+						{friend.game_tag} {friend.note ? <span>({friend.note})</span> : null}
+					</span>
+				</span>
+				<div className="text-xs opacity-60">OFFLINE</div>
+			</div>
 
-    return ''
-  }
-
-  return <li className="list-row">
-      <div className="avatar avatar-placeholder">
-        <div className="bg-neutral size-10 rounded-box">
-          <span>{friend.game_name.slice(0,1).toUpperCase()}</span>
-        </div>
-      </div>
-
-      <div>
-        <span className="font-bold">{friend.game_name} <span className="opacity-25">{friend.game_tag}</span></span>
-        <div className="text-xs opacity-60">{getDescription()}</div>
-      </div>
-
-      { friend.presence && friend.presence.partySize > 1 ? <p className="uppercase self-center">+{friend.presence?.partySize-1} other</p> : null }
-
-      <button className="btn btn-ghost btn-square" onClick={onExternalLinkClick}><SquareArrowOutUpRight /></button>
-
-  </li>
-}
-
-const FriendRow = ({ friend, onExternalLinkClick }: { friend: FriendsResponse['friends'][0], onExternalLinkClick: () => void }) => {
-  return <li className="list-row">
-     <div className="avatar avatar-placeholder">
-        <div className="bg-neutral size-10 rounded-box">
-          <span>{friend.game_name.slice(0,1).toUpperCase()}</span>
-        </div>
-      </div>
-
-      <div>
-        <span className="font-bold">{friend.game_name} <span className="opacity-25">{friend.game_tag} {friend.note ? <span>({friend.note})</span> : null}</span></span>
-        <div className="text-xs opacity-60">OFFLINE</div>
-      </div>
-
-      <button className="btn btn-ghost btn-square" onClick={onExternalLinkClick}><SquareArrowOutUpRight /></button>
-  </li>
-}
+			<button className="btn btn-ghost btn-square" onClick={onExternalLinkClick}>
+				<SquareArrowOutUpRight />
+			</button>
+		</li>
+	);
+};

@@ -1,3 +1,3 @@
 declare global {
-    let testRequestCache: { [key: string]: { value: any, ttl: number } };
+	let testRequestCache: { [key: string]: { value: any; ttl: number } };
 }

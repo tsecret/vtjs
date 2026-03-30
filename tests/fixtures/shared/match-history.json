@@ -1,108 +1,108 @@
 {
-    "Subject": "test-player-1-puuid",
-    "BeginIndex": 0,
-    "EndIndex": 20,
-    "Total": 34,
-    "History": [
-        {
-            "MatchID": "test-match-id-1",
-            "GameStartTime": 1749759442793,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-2",
-            "GameStartTime": 1749756145755,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-3",
-            "GameStartTime": 1749746986696,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-4",
-            "GameStartTime": 1749743097352,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-5",
-            "GameStartTime": 1749596297646,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-6",
-            "GameStartTime": 1749594012078,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-7",
-            "GameStartTime": 1749591018706,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-8",
-            "GameStartTime": 1749507233196,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-9",
-            "GameStartTime": 1749504717219,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-10",
-            "GameStartTime": 1749502145370,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-11",
-            "GameStartTime": 1749499136080,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-12",
-            "GameStartTime": 1749496618914,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-13",
-            "GameStartTime": 1749494241751,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-14",
-            "GameStartTime": 1749399698498,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-15",
-            "GameStartTime": 1749397230128,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-16",
-            "GameStartTime": 1749394580123,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-17",
-            "GameStartTime": 1749339384333,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-18",
-            "GameStartTime": 1749337394551,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-19",
-            "GameStartTime": 1749334957051,
-            "QueueID": "competitive"
-        },
-        {
-            "MatchID": "test-match-id-20",
-            "GameStartTime": 1749332114665,
-            "QueueID": "competitive"
-        }
-    ]
+	"Subject": "test-player-1-puuid",
+	"BeginIndex": 0,
+	"EndIndex": 20,
+	"Total": 34,
+	"History": [
+		{
+			"MatchID": "test-match-id-1",
+			"GameStartTime": 1749759442793,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-2",
+			"GameStartTime": 1749756145755,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-3",
+			"GameStartTime": 1749746986696,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-4",
+			"GameStartTime": 1749743097352,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-5",
+			"GameStartTime": 1749596297646,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-6",
+			"GameStartTime": 1749594012078,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-7",
+			"GameStartTime": 1749591018706,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-8",
+			"GameStartTime": 1749507233196,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-9",
+			"GameStartTime": 1749504717219,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-10",
+			"GameStartTime": 1749502145370,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-11",
+			"GameStartTime": 1749499136080,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-12",
+			"GameStartTime": 1749496618914,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-13",
+			"GameStartTime": 1749494241751,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-14",
+			"GameStartTime": 1749399698498,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-15",
+			"GameStartTime": 1749397230128,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-16",
+			"GameStartTime": 1749394580123,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-17",
+			"GameStartTime": 1749339384333,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-18",
+			"GameStartTime": 1749337394551,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-19",
+			"GameStartTime": 1749334957051,
+			"QueueID": "competitive"
+		},
+		{
+			"MatchID": "test-match-id-20",
+			"GameStartTime": 1749332114665,
+			"QueueID": "competitive"
+		}
+	]
 }
