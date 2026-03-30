@@ -41,7 +41,10 @@ export interface PlayerRow {
   dodge?: boolean
   mostPlayedServers?: MostPlayedServer
   streak?: Streak | null
+	inParty: boolean
+	partyId?: number | null
   encounters?: Encounters[]
+
 }
 
 export type Payload = {

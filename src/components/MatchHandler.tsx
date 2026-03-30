@@ -1,6 +1,6 @@
 import { useAptabase } from '@aptabase/react';
 import { useServices } from '@/lib/services';
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, PlayerNamesReponse } from "../interface";
 import atoms from "../utils/atoms";
@@ -12,12 +12,12 @@ export const MatchHandler = () => {
     const sharedapi = services?.sharedapi
     const cache = services?.cache
 
-    const [puuid] = useAtom(atoms.puuid)
     const [table, setTable] = useAtom(atoms.table)
-    const [allowAnalytics] = useAtom(atoms.allowAnalytics)
-    const [gameState] = useAtom(atoms.gameState)
-    const [, setMatchProcessing] = useAtom(atoms.matchProcessing)
-    const [, setCurrentMatch] = useAtom(atoms.currentMatch)
+    const puuid = useAtomValue(atoms.puuid)
+    const allowAnalytics = useAtomValue(atoms.allowAnalytics)
+    const gameState = useAtomValue(atoms.gameState)
+    const setMatchProcessing = useSetAtom(atoms.matchProcessing)
+    const setCurrentMatch = useSetAtom(atoms.currentMatch)
 
     const { trackEvent } = useAptabase();
 

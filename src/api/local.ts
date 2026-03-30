@@ -1,12 +1,13 @@
 import { Lockfile, EntitlementsTokenResponse, PlayerAccount, HelpResponse, FriendsResponse, PresenceResponse } from '../interface'
 import { fetch as httpfetch } from '@tauri-apps/plugin-http';
+import { RIOT_CLIENT_HOST } from '../utils/constants';
 
 export class LocalAPI {
   private HOSTNAME: string;
   private HEADERS = {};
 
   constructor({ port, password }: Lockfile){
-    this.HOSTNAME = `https://${import.meta.env.DEV ? import.meta.env.VITE_REMOTE_PC_IP : 'localhost'}:${port}`
+    this.HOSTNAME = `https://${RIOT_CLIENT_HOST}:${port}`
     this.HEADERS = { 'Authorization': `Basic ${password}` }
   }
 

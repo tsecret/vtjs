@@ -57,13 +57,16 @@
       "identifier": "http:default",
       "allow": [
         {
-          "url": "https://192.168.31.193:*"
+          "url": "https://192.168.31.4:*"
         },
         {
-          "url": "http://192.168.31.193:*"
+          "url": "http://192.168.31.4:*"
         },
         {
           "url": "https://localhost:*"
+        },
+        {
+          "url": "http://localhost:*"
         },
         {
           "url": "https://glz-eu-1.eu.a.pvp.net:*"

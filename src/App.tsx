@@ -30,7 +30,7 @@ import { TestPage } from './pages/Test.page';
 import { WelcomePage } from './pages/Welcome.page';
 import { AppServices, ServicesProvider } from './lib/services';
 import atoms from './utils/atoms';
-import { CACHE_NAME } from './utils/constants';
+import { CACHE_NAME, RIOT_CLIENT_HOST } from './utils/constants';
 import * as utils from './utils/utils';
 
 function App() {
@@ -119,7 +119,7 @@ function App() {
         console.log('player', player);
 
         invoke('start_ws', {
-          wsUrl: `wss://${import.meta.env.VITE_DEV === 'true' ? import.meta.env.VITE_REMOTE_PC_IP : 'localhost'}:${port}`,
+          wsUrl: `wss://${RIOT_CLIENT_HOST}:${port}`,
           headers: {
             Authorization: `Basic ${password}`,
           },
