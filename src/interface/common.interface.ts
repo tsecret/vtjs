@@ -27,7 +27,6 @@ export interface PlayerRow {
 	lastGameResult?: Result;
 	lastGameScore?: string;
 	lastGameMMRDiff?: number;
-	mmr: number;
 	gameHistory?: string[];
 	currentRank?: string;
 	currentRankColor?: string;

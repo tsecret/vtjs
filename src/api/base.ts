@@ -26,7 +26,7 @@ export class BaseAPI {
 		this.HEADERS = {
 			"X-Riot-ClientPlatform":
 				"ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9",
-			"X-Riot-ClientVersion": "release-10.11-shipping-6-3556814",
+			"X-Riot-ClientVersion": "release-12.05-shipping-22-4360629",
 			"X-Riot-Entitlements-JWT": entToken,
 			Authorization: `Bearer ${accessToken}`,
 			"Content-Type": "application/json",
@@ -112,6 +112,15 @@ export class BaseAPI {
 			method: options.method,
 			danger: { acceptInvalidCerts: true, acceptInvalidHostnames: true },
 		});
+
+		if (res.status === 404) {
+			console.log(hostname + endpoint, {
+				body: options?.body,
+				headers: options.headers || this.HEADERS,
+				method: options.method,
+				danger: { acceptInvalidCerts: true, acceptInvalidHostnames: true },
+			})
+		}
 
 		if (res.status === 200) {
 			const response = await res.json();

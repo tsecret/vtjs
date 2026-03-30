@@ -318,7 +318,6 @@ describe("utils", () => {
 				peakRank: 0,
 				peakRankSeasonId: null,
 				lastGameMMRDiff: 0,
-				mmr: 0,
 			});
 		});
 
@@ -329,7 +328,6 @@ describe("utils", () => {
 				peakRank: 20,
 				peakRankSeasonId: "aef237a0-494d-3a14-a1c8-ec8de84e309c",
 				lastGameMMRDiff: -13,
-				mmr: 2028,
 			};
 			expect(utils.calculateRanking(playerMMR as PlayerMMRResponse)).toEqual(expected);
 		});

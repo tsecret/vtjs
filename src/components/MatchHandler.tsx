@@ -83,23 +83,9 @@ export const MatchHandler = () => {
 
 			for (const player of playersToProcess) {
 				try {
-					// const playerMMR = await sharedapi.getPlayerMMR(player.Subject);
-					// const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff, mmr } = utils.calculateRanking(playerMMR);
+					const playerMMR = await sharedapi.getPlayerMMR(player.Subject);
 
-					const compUpdates = await sharedapi.getCompetitiveUpdates(player.Subject);
-					const {
-						TierAfterUpdate: currentRank,
-						RankedRatingAfterUpdate: currentRR,
-						RankedRatingEarned: lastGameMMRDiff,
-					} = compUpdates.Matches.length > 0
-						? compUpdates.Matches[0]
-						: {
-								TierAfterUpdate: 1,
-								RankedRatingAfterUpdate: 1,
-								RankedRatingEarned: 1,
-							};
-					const peakRank = 1;
-					const mmr = 0;
+					const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff } = utils.calculateRanking(playerMMR);
 
 					const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
 					const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
@@ -130,11 +116,9 @@ export const MatchHandler = () => {
 						currentRank: currentRankName,
 						currentRankColor,
 						currentRR,
-						mmr,
 						rankPeak: rankPeakName,
 						rankPeakColor: rankPeakColor,
-						rankPeakDate: null,
-						// rankPeakDate: !isPreGame && peakRankSeasonId ? utils.getSeasonDateById(peakRankSeasonId) : null,
+						rankPeakDate: !isPreGame && peakRankSeasonId ? utils.getSeasonDateById(peakRankSeasonId) : null,
 						lastGameMMRDiff,
 						enemy: isEnemy,
 						accountLevel: player.PlayerIdentity.AccountLevel || null,

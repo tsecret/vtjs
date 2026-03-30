@@ -50,7 +50,6 @@ export type PlayerRanking = {
 	peakRank: number;
 	peakRankSeasonId: string | null;
 	lastGameMMRDiff: number;
-	mmr: number;
 };
 
 export type Rank = {

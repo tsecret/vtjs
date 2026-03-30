@@ -54,10 +54,10 @@ export const PlayersTable = ({
 						{player.currentRank} (RR {player.currentRR})
 					</span>
 				</th>
-				{/* <th className="flex flex-col">
+				 <th className="flex flex-col">
           <span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span>
           {player.rankPeakDate ? <span className="text-mini text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span> : null}
-        </th> */}
+        </th>
 				<th>
 					<span>{player.accountLevel}</span>
 				</th>
@@ -160,7 +160,7 @@ export const PlayersTable = ({
 						<th>Agent</th>
 						<th>Player</th>
 						<th>Rank</th>
-						{/* <th>Peak Rank</th> */}
+					  <th>Peak Rank</th>
 						<th>LVL</th>
 						<th>K/D</th>
 						<th>HS%</th>
