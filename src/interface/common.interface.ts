@@ -1,4 +1,39 @@
-import { Encounters, MostPlayedServer, Streak } from "./utils.interface";
+export type PenaltiesResponse = {
+	Subject: string;
+	Penalties: {
+		Expiry: string;
+		ID: string;
+		InfractionID: string;
+		IssuingMatchID: string;
+		IsAutomatedDetection: boolean;
+		RiotRestrictionEffect: {
+			RestrictionType: "TEXT_CHAT_MUTED" | "VOICE_CHAT_MUTED" | "PBE_LOGIN_TIME_BAN";
+			RestrictionReason: "INAPPROPRIATE_VOICE" | "INAPPROPRIATE_TEXT";
+		};
+	}[];
+	Version: number;
+	Infractions: {
+		ID: string;
+		Name: string;
+		RatingName: string;
+	}[];
+};
+
+export type MostPlayedServer = {
+	[key: string]: number;
+};
+
+export type Streak = {
+	type: Result;
+	number: number;
+};
+
+export type Encounters = {
+	puuid: string;
+	name: string;
+	tag: string;
+	number: number;
+};
 
 export interface Lockfile {
 	port: string;
