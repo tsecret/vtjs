@@ -1,20 +1,18 @@
-const sleep = (ms: number = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
-
 import base64 from "base-64";
+import { Buffer } from "buffer";
+import pako from "pako";
+
+const sleep = (ms: number = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const base64Decode = (input: string): string => {
 	return base64.decode(input);
 };
 
-const zdecode = async (input: string): Promise<any> => {
-	const { Buffer } = await import("buffer");
-	const pako = await import("pako");
+const zdecode = (input: string): any => {
 	return JSON.parse(pako.inflateRaw(Buffer.from(input, "base64"), { to: "string" }));
 };
 
-const zencode = async (input: any): Promise<string> => {
-	const { Buffer } = await import("buffer");
-	const pako = await import("pako");
+const zencode = (input: any): string => {
 	return Buffer.from(pako.deflateRaw(Buffer.from(JSON.stringify(input), "utf-8"))).toString("base64");
 };
 
