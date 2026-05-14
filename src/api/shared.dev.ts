@@ -1,4 +1,16 @@
-import {
+import competitiveUpdates from "../../tests/fixtures/shared/competitive-updates.json";
+import currentMatch from "../../tests/fixtures/shared/current-game-match.json";
+import currentGamePlayer from "../../tests/fixtures/shared/current-game-player.json";
+import currentPreGameMatch from "../../tests/fixtures/shared/current-pregame-match.json";
+import matchDetails from "../../tests/fixtures/shared/match-details.json";
+import matchHistory from "../../tests/fixtures/shared/match-history.json";
+import party from "../../tests/fixtures/shared/parties.json";
+import penaltiesClear from "../../tests/fixtures/shared/penalties-clear.json";
+import playerMMR from "../../tests/fixtures/shared/player-mmr.json";
+import playerNames from "../../tests/fixtures/shared/player-names.json";
+import agents from "../assets/agents.json";
+import maps from "../assets/maps.json";
+import type {
 	CompetitiveUpdatesResponse,
 	CurrentGameMatchResponse,
 	CurrentGamePlayerResponse,
@@ -14,21 +26,6 @@ import {
 import { randomInt } from "../utils";
 import { SharedAPI } from "./shared";
 
-import agents from "../assets/agents.json";
-import maps from "../assets/maps.json";
-
-import competitiveUpdates from "../../tests/fixtures/shared/competitive-updates.json";
-import currentMatch from "../../tests/fixtures/shared/current-game-match.json";
-import currentGamePlayer from "../../tests/fixtures/shared/current-game-player.json";
-import currentPreGameMatch from "../../tests/fixtures/shared/current-pregame-match.json";
-import currentPreGamePlayer from "../../tests/fixtures/shared/current-pregame-player.json";
-import matchDetails from "../../tests/fixtures/shared/match-details.json";
-import matchHistory from "../../tests/fixtures/shared/match-history.json";
-import party from "../../tests/fixtures/shared/parties.json";
-import penaltiesClear from "../../tests/fixtures/shared/penalties-clear.json";
-import playerMMR from "../../tests/fixtures/shared/player-mmr.json";
-import playerNames from "../../tests/fixtures/shared/player-names.json";
-
 export class TestSharedAPI extends SharedAPI {
 	async getCurrentGamePlayer(_puuid: string): Promise<CurrentGamePlayerResponse> {
 		return currentGamePlayer;
@@ -36,16 +33,15 @@ export class TestSharedAPI extends SharedAPI {
 
 	async getCurrentPreGamePlayer(_puuid: string): Promise<CurrentPreGamePlayerResponse | null> {
 		return null;
-		return currentPreGamePlayer;
 	}
 
 	async getCurrentGameMatch(_matchId: string): Promise<CurrentGameMatchResponse> {
-		// @ts-ignore
+		// @ts-expect-error
 		return currentMatch;
 	}
 
 	async getCurrentPreGameMatch(_matchId: string): Promise<CurrentPreGameMatchResponse> {
-		// @ts-ignore
+		// @ts-expect-error
 		return currentPreGameMatch;
 	}
 
@@ -54,7 +50,7 @@ export class TestSharedAPI extends SharedAPI {
 	}
 
 	async getPlayerMatchHistory(_puuid: string): Promise<PlayerMatchHistoryResponse> {
-		// @ts-ignore
+		// @ts-expect-error
 		return matchHistory;
 	}
 
@@ -62,7 +58,7 @@ export class TestSharedAPI extends SharedAPI {
 		const match = JSON.parse(JSON.stringify(matchDetails));
 
 		match.matchInfo.matchId = matchId;
-		match.matchInfo.gameStartMillis = randomInt(+new Date() - 365 * 24 * 60 * 60 * 1000, +new Date());
+		match.matchInfo.gameStartMillis = randomInt(Date.now() - 365 * 24 * 60 * 60 * 1000, Date.now());
 		match.matchInfo.mapId = maps.map((map) => map.mapUrl)[randomInt(0, maps.length)];
 
 		for (const player of match.players) {
@@ -89,7 +85,7 @@ export class TestSharedAPI extends SharedAPI {
 		const mmr = { ...playerMMR };
 
 		mmr.LatestCompetitiveUpdate.TierAfterUpdate = randomInt(3, 28);
-		// @ts-ignore
+		// @ts-expect-error
 		mmr.QueueSkills.competitive.SeasonalInfoBySeasonID[mmr.LatestCompetitiveUpdate.SeasonID].Rank = randomInt(
 			mmr.LatestCompetitiveUpdate.TierAfterUpdate,
 			28,

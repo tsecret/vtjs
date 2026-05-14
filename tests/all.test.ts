@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SharedAPI } from "../src/api/shared";
-import {
+import type {
 	CurrentGameMatchResponse,
 	CurrentPreGameMatchResponse,
 	MatchDetailsResponse,
@@ -11,15 +11,13 @@ import {
 } from "../src/interface";
 import type { Penalties } from "../src/interface/utils.interface";
 import * as utils from "../src/utils";
-
-import maps from "../src/assets/maps.json";
-import playerNames from "./fixtures/shared/player-names.json";
 import currentGameMatch from "./fixtures/shared/current-game-match.json";
 import currentPreGameMatch from "./fixtures/shared/current-pregame-match.json";
 import matchDetails from "./fixtures/shared/match-details.json";
-import playerMMR from "./fixtures/shared/player-mmr.json";
-import storefront from "./fixtures/shared/storefront.json";
 import penalties from "./fixtures/shared/penalties.json";
+import playerMMR from "./fixtures/shared/player-mmr.json";
+import playerNames from "./fixtures/shared/player-names.json";
+import storefront from "./fixtures/shared/storefront.json";
 
 describe("utils", () => {
 	it("lockfile parse", async () => {
@@ -66,19 +64,19 @@ describe("utils", () => {
 							players: [
 								{
 									subject: "player-1",
-									partyId: "wolves"
+									partyId: "wolves",
 								},
 								{
 									subject: "player-2",
-									partyId: "wolves"
+									partyId: "wolves",
 								},
 								{
 									subject: "player-3",
-									partyId: "tigers"
+									partyId: "tigers",
 								},
-							]
-						}
-					]
+							],
+						},
+					],
 				},
 				{
 					puuid: "player-2",
@@ -87,31 +85,31 @@ describe("utils", () => {
 							players: [
 								{
 									subject: "player-1",
-									partyId: "wolves"
+									partyId: "wolves",
 								},
 								{
 									subject: "player-2",
-									partyId: "wolves"
+									partyId: "wolves",
 								},
 								{
 									subject: "player-3",
-									partyId: "tigers"
+									partyId: "tigers",
 								},
-							]
-						}
-					]
+							],
+						},
+					],
 				},
-			] as unknown as { puuid: string, matches: MatchDetailsResponse[] }[]
+			] as unknown as { puuid: string; matches: MatchDetailsResponse[] }[];
 
 			const output = [
 				{
 					partyId: 1,
-					puuids: ["player-1", "player-2"]
-				}
-			]
+					puuids: ["player-1", "player-2"],
+				},
+			];
 
 			expect(utils.extractParties(input)).toStrictEqual(output);
-		})
+		});
 
 		it("exctractParties A-B, B-C = A-B-C", () => {
 			const input = [
@@ -122,35 +120,35 @@ describe("utils", () => {
 							players: [
 								{
 									subject: "player-1",
-									partyId: "wolves"
+									partyId: "wolves",
 								},
 								{
 									subject: "player-2",
-									partyId: "wolves"
+									partyId: "wolves",
 								},
 								{
 									subject: "player-3",
-									partyId: "tigers"
+									partyId: "tigers",
 								},
-							]
+							],
 						},
 						{
 							players: [
 								{
 									subject: "player-1",
-									partyId: "wolves"
+									partyId: "wolves",
 								},
 								{
 									subject: "player-2",
-									partyId: "wolves"
+									partyId: "wolves",
 								},
 								{
 									subject: "player-3",
-									partyId: "foxes"
+									partyId: "foxes",
 								},
-							]
-						}
-					]
+							],
+						},
+					],
 				},
 				{
 					puuid: "player-2",
@@ -159,35 +157,35 @@ describe("utils", () => {
 							players: [
 								{
 									subject: "player-1",
-									partyId: "boars"
+									partyId: "boars",
 								},
 								{
 									subject: "player-2",
-									partyId: "bears"
+									partyId: "bears",
 								},
 								{
 									subject: "player-3",
-									partyId: "bears"
+									partyId: "bears",
 								},
-							]
+							],
 						},
 						{
 							players: [
 								{
 									subject: "player-1",
-									partyId: "wolves"
+									partyId: "wolves",
 								},
 								{
 									subject: "player-2",
-									partyId: "wolves"
+									partyId: "wolves",
 								},
 								{
 									subject: "player-3",
-									partyId: "tigers"
+									partyId: "tigers",
 								},
-							]
+							],
 						},
-					]
+					],
 				},
 				{
 					puuid: "player-3",
@@ -196,31 +194,31 @@ describe("utils", () => {
 							players: [
 								{
 									subject: "player-1",
-									partyId: "foxes"
+									partyId: "foxes",
 								},
 								{
 									subject: "player-2",
-									partyId: "bears"
+									partyId: "bears",
 								},
 								{
 									subject: "player-3",
-									partyId: "bears"
+									partyId: "bears",
 								},
-							]
-						}
-					]
+							],
+						},
+					],
 				},
-			] as unknown as { puuid: string, matches: MatchDetailsResponse[] }[]
+			] as unknown as { puuid: string; matches: MatchDetailsResponse[] }[];
 
 			const output = [
 				{
 					partyId: 1,
-					puuids: ["player-1", "player-2", "player-3"]
-				}
-			]
+					puuids: ["player-1", "player-2", "player-3"],
+				},
+			];
 
 			expect(utils.extractParties(input)).toStrictEqual(output);
-		})
+		});
 	});
 
 	describe("calculateStatsForPlayer", () => {
@@ -594,7 +592,7 @@ describe("api", () => {
 
 describe("request caching", () => {
 	let sharedapi: SharedAPI;
-	const puuid = "test-player";
+	const _puuid = "test-player";
 
 	beforeEach(async () => {
 		sharedapi = new SharedAPI({

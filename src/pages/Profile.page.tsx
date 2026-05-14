@@ -1,14 +1,14 @@
-import { BestAgent, BestMaps, Rank } from "@/interface/utils.interface";
-import { useServices } from "@/lib/services";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { ChevronsDown, ChevronsUp, ExternalLink } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
-import { MatchDetailsResponse, Result } from "../interface";
-import atoms from "../utils/atoms";
+import type { BestAgent, BestMaps, Rank } from "@/interface/utils.interface";
+import { useServices } from "@/lib/services";
+import type { MatchDetailsResponse, Result } from "../interface";
 import * as utils from "../utils";
+import atoms from "../utils/atoms";
 
 interface Row {
 	matchId: string;
@@ -88,14 +88,14 @@ export const ProfilePage = () => {
 
 		const res = await cache?.execute(
 			"INSERT into players (puuid, dodge, dodgeTimestamp) VALUES ($1, $2, $3) ON CONFLICT(puuid) DO UPDATE SET dodge = $2, dodgeTimestamp = $3 WHERE puuid = $1",
-			[puuid, state, +new Date()],
+			[puuid, state, Date.now()],
 		);
 
-		if (res?.rowsAffected == 1)
+		if (res?.rowsAffected === 1)
 			setPlayerCard({
 				...playerCard,
 				dodge: state,
-				dodgeTimestamp: state ? +new Date() : 0,
+				dodgeTimestamp: state ? Date.now() : 0,
 			});
 	};
 
@@ -141,7 +141,7 @@ export const ProfilePage = () => {
 					if (!accountLevel) accountLevel = player.accountLevel;
 
 					_chartData.push({
-						i: parseInt(i),
+						i: parseInt(i, 10),
 						kills,
 						deaths,
 						kd,
@@ -193,7 +193,7 @@ export const ProfilePage = () => {
 				});
 			} catch (err) {
 				console.error(err);
-				setError("Faled to load matches:" + err);
+				setError(`Faled to load matches:${err}`);
 			}
 		})();
 	}, []);
@@ -265,11 +265,11 @@ export const ProfilePage = () => {
 					<p className="text-gray-400">Account Level: {accountLevel}</p>
 
 					<div className="mt-4 flex flex-row items-center justify-between">
-						<span className="badge badge-lg" style={{ color: "#" + playerCard?.currentRankColor }}>
+						<span className="badge badge-lg" style={{ color: `#${playerCard?.currentRankColor}` }}>
 							{playerCard?.currentRank}
 						</span>
 						<p className="text-sm text-gray-400">
-							Peak: <span style={{ color: "#" + playerCard?.peakRankColor }}>{playerCard?.peakRank}</span>
+							Peak: <span style={{ color: `#${playerCard?.peakRankColor}` }}>{playerCard?.peakRank}</span>
 						</p>
 					</div>
 
@@ -350,10 +350,7 @@ export const ProfilePage = () => {
 							</p>
 						) : null}
 
-						<button
-							className="btn btn-soft btn-sm btn-warning"
-							onClick={() => onDodgeChange(playerCard?.dodge ? false : true)}
-						>
+						<button className="btn btn-soft btn-sm btn-warning" onClick={() => onDodgeChange(!playerCard?.dodge)}>
 							{playerCard?.dodge ? "Remove from Avoid list" : "Avoid Player"}
 						</button>
 					</div>
@@ -437,7 +434,7 @@ export const ProfilePage = () => {
 										>
 											{match.score}
 										</td>
-										<td>{match.hs ? match.hs + "%" : null}</td>
+										<td>{match.hs ? `${match.hs}%` : null}</td>
 										<td>
 											<button className="btn btn-xs btn-ghost" onClick={() => navigate(`/match/${match.matchId}`)}>
 												<ExternalLink size={14} />

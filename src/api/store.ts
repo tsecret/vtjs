@@ -1,4 +1,4 @@
-import { SkinResponse, StorefrontResponse, WalletResponse } from "../interface";
+import type { SkinResponse, StorefrontResponse, WalletResponse } from "../interface";
 import { BaseAPI } from "./base";
 
 export class StoreAPI extends BaseAPI {

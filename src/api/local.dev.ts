@@ -1,11 +1,10 @@
-import { LocalAPI } from "./local";
-
 import entToken from "../../tests/fixtures/local/ent-token.json";
 import friends from "../../tests/fixtures/local/friends.json";
 import help from "../../tests/fixtures/local/help.json";
 import playerAccount from "../../tests/fixtures/local/player-alias.json";
 import presences from "../../tests/fixtures/local/presence.json";
-import { FriendsResponse, PresenceResponse } from "../interface";
+import type { FriendsResponse, PresenceResponse } from "../interface";
+import { LocalAPI } from "./local";
 
 export class TestLocalAPI extends LocalAPI {
 	async getEntitlementToken() {
@@ -25,7 +24,7 @@ export class TestLocalAPI extends LocalAPI {
 	}
 
 	async getPresences(): Promise<PresenceResponse> {
-		// @ts-ignore
+		// @ts-expect-error
 		return presences;
 	}
 }

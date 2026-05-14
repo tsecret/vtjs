@@ -1,4 +1,4 @@
-import { GameState, ProvisioningFlow, QueueId } from "./common.interface";
+import type { GameState, ProvisioningFlow, QueueId } from "./common.interface";
 
 export interface PlayerAccount {
 	game_name: string;

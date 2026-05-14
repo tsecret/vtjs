@@ -1,4 +1,4 @@
-import { PenaltiesResponse, Result, Encounters, MostPlayedServer, Streak } from "./common.interface";
+import type { Encounters, MostPlayedServer, PenaltiesResponse, Result, Streak } from "./common.interface";
 
 export type BestAgent = {
 	agentId: string;
@@ -72,9 +72,9 @@ export type MatchResult = {
 };
 
 export type Parties = {
-	partyId: number
-	puuids: string[]
-}[]
+	partyId: number;
+	puuids: string[];
+}[];
 
 // Re-export from common.interface for backwards compatibility
 export type { Encounters, MostPlayedServer, Streak };

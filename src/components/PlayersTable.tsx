@@ -2,7 +2,7 @@ import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import clsx from "clsx";
 import { ExternalLink, Users } from "lucide-react";
 import { useNavigate } from "react-router";
-import { PlayerRow } from "../interface";
+import type { PlayerRow } from "../interface";
 import * as utils from "../utils";
 
 export const PlayersTable = ({
@@ -54,10 +54,12 @@ export const PlayersTable = ({
 						{player.currentRank} (RR {player.currentRR})
 					</span>
 				</th>
-				 <th className="flex flex-col">
-          <span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span>
-          {player.rankPeakDate ? <span className="text-mini text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span> : null}
-        </th>
+				<th className="flex flex-col">
+					<span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span>
+					{player.rankPeakDate ? (
+						<span className="text-mini text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span>
+					) : null}
+				</th>
 				<th>
 					<span>{player.accountLevel}</span>
 				</th>
@@ -81,7 +83,7 @@ export const PlayersTable = ({
 					>
 						{player.lastGameScore}
 						{player.lastGameMMRDiff && player.lastGameScore
-							? ` (${player.lastGameMMRDiff > 0 ? "+" + player.lastGameMMRDiff : player.lastGameMMRDiff})`
+							? ` (${player.lastGameMMRDiff > 0 ? `+${player.lastGameMMRDiff}` : player.lastGameMMRDiff})`
 							: null}
 					</span>
 				</td>
@@ -160,7 +162,7 @@ export const PlayersTable = ({
 						<th>Agent</th>
 						<th>Player</th>
 						<th>Rank</th>
-					  <th>Peak Rank</th>
+						<th>Peak Rank</th>
 						<th>LVL</th>
 						<th>K/D</th>
 						<th>HS%</th>

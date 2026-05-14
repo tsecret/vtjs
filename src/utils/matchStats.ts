@@ -1,8 +1,8 @@
-import type { PlayerMatchStats, MatchResult, Streak } from "@/interface/utils.interface";
 import type { MatchDetailsResponse, Result } from "@/interface";
+import type { MatchResult, PlayerMatchStats, Streak } from "@/interface/utils.interface";
 
 const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult => {
-	if (!match || !match.teams) return { result: "N/A", score: "", accountLevel: 0 };
+	if (!match?.teams) return { result: "N/A", score: "", accountLevel: 0 };
 
 	const player = match.players.find((player) => player.subject === puuid);
 	const team = match.teams.find((team) => team.teamId === player?.teamId);
@@ -15,7 +15,7 @@ const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult
 		};
 
 	return {
-		result: team?.won ? "won" as Result : "loss" as Result,
+		result: team?.won ? ("won" as Result) : ("loss" as Result),
 		score: `${team?.roundsWon ?? 0}:${team?.roundsPlayed ?? 0 - (team?.roundsWon ?? 0)}`,
 		accountLevel: player?.accountLevel || 0,
 	};
@@ -65,7 +65,7 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 	for (const match of matches) {
 		const player = match.players.find((player) => player.subject === puuid);
 
-		if (!player || !player.stats) continue;
+		if (!player?.stats) continue;
 
 		validMatches += 1;
 		stats.kills += player.stats.kills;
@@ -114,4 +114,4 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 	};
 };
 
-export { getMatchResult, calculateStreak, calculateStatsForPlayer };
+export { calculateStatsForPlayer, calculateStreak, getMatchResult };

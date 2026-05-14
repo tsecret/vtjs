@@ -1,12 +1,12 @@
-import {
-	Lockfile,
+import { fetch as httpfetch } from "@tauri-apps/plugin-http";
+import type {
 	EntitlementsTokenResponse,
-	PlayerAccount,
-	HelpResponse,
 	FriendsResponse,
+	HelpResponse,
+	Lockfile,
+	PlayerAccount,
 	PresenceResponse,
 } from "../interface";
-import { fetch as httpfetch } from "@tauri-apps/plugin-http";
 import { RIOT_CLIENT_HOST } from "../utils/constants";
 
 export class LocalAPI {

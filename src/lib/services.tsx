@@ -1,9 +1,9 @@
-import Database from "@tauri-apps/plugin-sql";
-import { Store } from "@tauri-apps/plugin-store";
-import { createContext, useContext } from "react";
+import type Database from "@tauri-apps/plugin-sql";
+import type { Store } from "@tauri-apps/plugin-store";
 import type { ReactNode } from "react";
-import { LocalAPI, SharedAPI } from "@/api";
-import { StoreAPI } from "@/api/store";
+import { createContext, useContext } from "react";
+import type { LocalAPI, SharedAPI } from "@/api";
+import type { StoreAPI } from "@/api/store";
 
 export type AppServices = {
 	cache: Database;

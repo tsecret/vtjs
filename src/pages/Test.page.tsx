@@ -1,5 +1,5 @@
-import { useServices } from "@/lib/services";
 import { useEffect } from "react";
+import { useServices } from "@/lib/services";
 
 export const TestPage = () => {
 	const services = useServices();
@@ -8,7 +8,7 @@ export const TestPage = () => {
 	useEffect(() => {
 		(async () => {
 			console.log("Loading requests");
-			const requests = await cache?.select("SELECT endpoint, ttl from requests", [+new Date()]);
+			const requests = await cache?.select("SELECT endpoint, ttl from requests", [Date.now()]);
 			console.log("requests", requests);
 		})();
 	}, [cache]);

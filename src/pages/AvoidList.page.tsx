@@ -1,9 +1,9 @@
-import { AvoidedPlayer } from "@/interface";
-import { useServices } from "@/lib/services";
 import { SquareArrowOutUpRight } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import type { AvoidedPlayer } from "@/interface";
+import { useServices } from "@/lib/services";
 
 export const AvoidListPage = () => {
 	const services = useServices();
@@ -28,7 +28,7 @@ export const AvoidListPage = () => {
 				}),
 			);
 		})();
-	}, []);
+	}, [sharedapi?.getPlayerNames, cache?.select]);
 
 	return (
 		<div>

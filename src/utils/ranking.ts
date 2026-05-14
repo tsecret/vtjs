@@ -1,5 +1,5 @@
-import type { PlayerRanking } from "@/interface/utils.interface";
 import type { PlayerMMRResponse } from "@/interface";
+import type { PlayerRanking } from "@/interface/utils.interface";
 
 const calculateRanking = (playerMMR: PlayerMMRResponse): PlayerRanking => {
 	const seasonalInfo = playerMMR?.QueueSkills.competitive.SeasonalInfoBySeasonID
@@ -7,7 +7,9 @@ const calculateRanking = (playerMMR: PlayerMMRResponse): PlayerRanking => {
 		: [];
 
 	const getSeasonPeakTier = (season: (typeof seasonalInfo)[number]) =>
-		season.WinsByTier ? Math.max(...Object.keys(season.WinsByTier).map((tier) => Number(tier))) : season.CompetitiveTier;
+		season.WinsByTier
+			? Math.max(...Object.keys(season.WinsByTier).map((tier) => Number(tier)))
+			: season.CompetitiveTier;
 
 	const peakSeason = seasonalInfo.reduce<(typeof seasonalInfo)[number] | null>((best, season) => {
 		if (!best) return season;

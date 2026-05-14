@@ -1,11 +1,11 @@
-import { useServices } from "@/lib/services";
 import { useAtomValue } from "jotai";
 import { SquareArrowOutUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { FriendsResponse, PresenceResponse, QueueId } from "../interface";
-import atoms from "../utils/atoms";
+import { useServices } from "@/lib/services";
+import type { FriendsResponse, PresenceResponse, QueueId } from "../interface";
 import { base64Decode } from "../utils";
+import atoms from "../utils/atoms";
 
 export const FriendsPage = () => {
 	const services = useServices();
@@ -125,8 +125,8 @@ const IngameFriendRow = ({
 		}
 	};
 
-	// @ts-ignore
-	const getUrl = () => {
+	// @ts-expect-error
+	const _getUrl = () => {
 		if (friend.product === "valorant")
 			return `https://media.valorant-api.com/playercards/${friend.presence?.playerPresenceData.playerCardId}/displayicon.png`;
 

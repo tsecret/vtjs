@@ -40,4 +40,4 @@ const getSeasonDateById = (seasonId: string): Date | null => {
 	return new Date(season.endTime);
 };
 
-export { getAgent, getRank, getMap, getSeasonDateById };
+export { getAgent, getMap, getRank, getSeasonDateById };

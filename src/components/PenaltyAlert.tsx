@@ -1,6 +1,6 @@
-import { Penalties } from "@/interface/utils.interface";
 import moment from "moment";
 import { Link } from "react-router";
+import type { Penalties } from "@/interface/utils.interface";
 
 export const PenaltyAlert = ({ penalty }: { penalty: Penalties | undefined }) => {
 	const types = {

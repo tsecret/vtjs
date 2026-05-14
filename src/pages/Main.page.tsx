@@ -1,11 +1,12 @@
+import { useAptabase } from "@aptabase/react";
+import { useAtomValue } from "jotai";
+import { useState } from "react";
 import { PenaltyAlert } from "@/components/PenaltyAlert";
 import { useServices } from "@/lib/services";
-import { useAptabase } from "@aptabase/react";
-import { useAtom, useAtomValue } from "jotai";
-import { useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
-import atoms from "../utils/atoms";
+import { gameStateModule } from "../lib/game-state";
 import * as utils from "../utils";
+import atoms from "../utils/atoms";
 
 export const Main = () => {
 	const services = useServices();
@@ -19,7 +20,7 @@ export const Main = () => {
 	const matchProcessing = useAtomValue(atoms.matchProcessing);
 	const currentMatch = useAtomValue(atoms.currentMatch);
 	const penalty = useAtomValue(atoms.penalty);
-	const [gameState, setGameState] = useAtom(atoms.gameState);
+	const gameState = gameStateModule.getState();
 
 	const { trackEvent } = useAptabase();
 
@@ -43,13 +44,9 @@ export const Main = () => {
 				await trackEvent("manual_check");
 			}
 
-			if (currentPreGamePlayer)
-				setGameState({
-					state: "PREGAME",
-					matchId: currentPreGamePlayer.MatchID,
-				});
+			if (currentPreGamePlayer) gameStateModule.setState("PREGAME", currentPreGamePlayer.MatchID);
 
-			if (currentGamePlayer) setGameState({ state: "INGAME", matchId: currentGamePlayer.MatchID });
+			if (currentGamePlayer) gameStateModule.setState("INGAME", currentGamePlayer.MatchID);
 		} catch (err) {
 			console.error("Manual check failed:", err);
 			setError("Failed to check for current game");
@@ -121,7 +118,7 @@ export const Main = () => {
 						The check should start automatically when a match is found.
 						<br />
 						If it didn't work, click{" "}
-						<button className="underline" onClick={manualCheck}>
+						<button type="button" className="underline" onClick={manualCheck}>
 							here
 						</button>{" "}
 						to check manually.
@@ -131,7 +128,7 @@ export const Main = () => {
 
 			{/* Manual Recheck Button */}
 			{Object.keys(table).length > 1 && (
-				<button className="btn btn-primary m-auto btn-sm" onClick={manualCheck}>
+				<button type="button" className="btn btn-primary m-auto btn-sm" onClick={manualCheck}>
 					Recheck
 				</button>
 			)}

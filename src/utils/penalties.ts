@@ -1,5 +1,5 @@
-import type { Penalties } from "@/interface/utils.interface";
 import type { PenaltiesResponse } from "@/interface";
+import type { Penalties } from "@/interface/utils.interface";
 
 const extractPenalties = (penalties: PenaltiesResponse): Penalties | null => {
 	if (!penalties.Infractions.length) return null;

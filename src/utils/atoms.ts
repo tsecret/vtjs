@@ -1,6 +1,6 @@
 import { atom } from "jotai";
-import { GameState, PlayerAccount, PlayerRow } from "../interface";
-import { Penalties } from "@/interface/utils.interface";
+import type { Penalties } from "@/interface/utils.interface";
+import type { GameState, PlayerAccount, PlayerRow } from "../interface";
 
 const appInfo = atom<{
 	appVersion: string;

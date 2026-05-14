@@ -1,5 +1,5 @@
 import { relaunch } from "@tauri-apps/plugin-process";
-import { check, Update } from "@tauri-apps/plugin-updater";
+import { check, type Update } from "@tauri-apps/plugin-updater";
 import { useAtom } from "jotai";
 import { ChevronLeft, Download, RefreshCw, Settings, Store, User, Users } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -50,7 +50,7 @@ export const Header = () => {
 
 	useEffect(() => {
 		checkForUpdate();
-	}, []);
+	}, [checkForUpdate]);
 
 	if (location.pathname === "/")
 		return update ? (
@@ -155,11 +155,9 @@ export const Header = () => {
 					<span className="font-bold">Test</span>
 				</>
 			) : location.pathname.startsWith("/avoid-list") ? (
-				<>
-					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
-						<ChevronLeft />
-					</button>
-				</>
+				<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
+					<ChevronLeft />
+				</button>
 			) : null}
 		</header>
 	);
