@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import { MatchDetailsResponse, Result } from "../interface";
 import atoms from "../utils/atoms";
-import * as utils from "../utils/utils";
+import * as utils from "../utils";
 
 interface Row {
 	matchId: string;

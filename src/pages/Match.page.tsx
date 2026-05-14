@@ -5,7 +5,7 @@ import { ExternalLink } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import * as utils from "../utils/utils";
+import * as utils from "../utils";
 
 type Match = {
 	mapName: string;

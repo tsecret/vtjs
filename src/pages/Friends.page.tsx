@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { FriendsResponse, PresenceResponse, QueueId } from "../interface";
 import atoms from "../utils/atoms";
-import { base64Decode } from "../utils/utils";
+import { base64Decode } from "../utils";
 
 export const FriendsPage = () => {
 	const services = useServices();

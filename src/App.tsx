@@ -31,7 +31,7 @@ import { WelcomePage } from "./pages/Welcome.page";
 import { AppServices, ServicesProvider } from "./lib/services";
 import atoms from "./utils/atoms";
 import { CACHE_NAME, RIOT_CLIENT_HOST } from "./utils/constants";
-import * as utils from "./utils/utils";
+import * as utils from "./utils";
 
 function App() {
 	const setAppInfo = useSetAtom(atoms.appInfo);

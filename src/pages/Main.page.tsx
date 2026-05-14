@@ -5,7 +5,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useState } from "react";
 import { PlayersTable } from "../components/PlayersTable";
 import atoms from "../utils/atoms";
-import * as utils from "../utils/utils";
+import * as utils from "../utils";
 
 export const Main = () => {
 	const services = useServices();
