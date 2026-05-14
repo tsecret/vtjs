@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // ── Reusable Offer cost/reward types ──────────────────────────────────────────
 
-const Cost = z.object({}).passthrough();
+const Cost = z.record(z.string(), z.number());
 
 const Reward = z.object({
 	ItemTypeID: z.string(),
@@ -35,7 +35,7 @@ const BundleItem = z.object({
 
 // ── Bundle item offer ─────────────────────────────────────────────────────────
 
-const DiscountedCost = z.object({}).passthrough();
+const DiscountedCost = z.record(z.string(), z.number());
 
 const BundleItemOffer = z.object({
 	BundleItemOfferID: z.string(),
@@ -52,8 +52,8 @@ const Bundle = z.object({
 	CurrencyID: z.string(),
 	Items: BundleItem.array(),
 	ItemOffers: z.array(BundleItemOffer).nullable(),
-	TotalBaseCost: z.object({}).passthrough().nullable(),
-	TotalDiscountedCost: z.object({}).passthrough().nullable(),
+	TotalBaseCost: z.record(z.string(), z.number()).nullable(),
+	TotalDiscountedCost: z.record(z.string(), z.number()).nullable(),
 	TotalDiscountPercent: z.number(),
 	DurationRemainingInSeconds: z.number(),
 	WholesaleOnly: z.boolean(),
@@ -106,7 +106,7 @@ export const StorefrontResponseSchema = z.object({
 				BonusOfferID: z.string(),
 				Offer,
 				DiscountPercent: z.number(),
-				DiscountCosts: z.object({}).passthrough(),
+				DiscountCosts: z.record(z.string(), z.number()),
 				IsSeen: z.boolean(),
 			}),
 		),
@@ -131,7 +131,7 @@ export const SkinResponseSchema = z.object({
 // ── WalletResponse ────────────────────────────────────────────────────────────
 
 export const WalletResponseSchema = z.object({
-	Balances: z.object({}).passthrough(),
+	Balances: z.record(z.string(), z.number()),
 });
 
 // ── GameSettingsResponse ──────────────────────────────────────────────────────

@@ -6,8 +6,8 @@ import type {
 	BuddyResponse,
 } from "@valpro-labs/valorant-api";
 import { ValorantApi } from "@valpro-labs/valorant-api";
-import type { StorefrontResponse, WalletResponse } from "../interface";
 import { BaseAPI } from "./base";
+import type { StorefrontResponse, WalletResponse } from "./schemas/riot";
 import { StorefrontResponseSchema, WalletResponseSchema } from "./schemas/riot";
 
 // Singleton — static data doesn't need per-request instantiation

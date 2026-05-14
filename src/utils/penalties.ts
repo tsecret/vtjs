@@ -1,4 +1,4 @@
-import type { PenaltiesResponse } from "@/interface";
+import type { PenaltiesResponse } from "@/api/schemas/shared";
 import type { Penalties } from "@/interface/utils.interface";
 
 const extractPenalties = (penalties: PenaltiesResponse): Penalties | null => {

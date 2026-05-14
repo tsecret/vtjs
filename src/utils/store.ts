@@ -1,4 +1,4 @@
-import type { StorefrontResponse } from "@/interface";
+import type { StorefrontResponse } from "@/api/schemas/riot";
 
 const getStoreItemInfo = (
 	offers:

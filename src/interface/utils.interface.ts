@@ -1,4 +1,5 @@
-import type { Encounters, MostPlayedServer, PenaltiesResponse, Result, Streak } from "./common.interface";
+import type { Encounters, MostPlayedServer, Result, Streak } from "./common.interface";
+import type { PenaltiesResponse } from "../api/schemas/shared";
 
 export type BestAgent = {
 	agentId: string;
