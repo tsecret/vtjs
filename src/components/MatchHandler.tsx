@@ -1,14 +1,8 @@
 import { useAptabase } from "@aptabase/react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useServices } from "@/lib/services";
-import type {
-	CurrentGameMatchResponse,
-	CurrentPreGameMatchResponse,
-	MatchDetailsResponse,
-	PlayerNamesReponse,
-} from "../api/schemas/shared";
-import * as utils from "../utils";
+import { MatchProcessing } from "@/lib/match-processing";
 import atoms from "../utils/atoms";
 
 export const MatchHandler = () => {
@@ -22,9 +16,9 @@ export const MatchHandler = () => {
 	const gameState = useAtomValue(atoms.gameState);
 	const setMatchProcessing = useSetAtom(atoms.matchProcessing);
 	const setCurrentMatch = useSetAtom(atoms.currentMatch);
-
 	const { trackEvent } = useAptabase();
 
+	const processingRef = useRef<MatchProcessing | null>(null);
 	const currentMatchRef = useRef<{
 		matchId: string | null;
 		isProcessing: boolean;
@@ -33,230 +27,82 @@ export const MatchHandler = () => {
 		isProcessing: false,
 	});
 
-	async function handleMatch(matchId: string, isPreGame: boolean, trackEventName: string) {
-		if (!sharedapi || !puuid) return;
-		if (currentMatchRef.current.isProcessing) return;
-
-		currentMatchRef.current = { matchId, isProcessing: true };
-		setMatchProcessing({
-			isProcessing: true,
-			currentPlayer: null,
-			progress: { step: 0, total: 0 },
-		});
-
-		try {
-			if (allowAnalytics) await trackEvent(trackEventName);
-
-			const newTable = { ...table };
-			Object.keys(newTable).forEach((key) => {
-				delete newTable[key];
-			});
-			setTable(newTable);
-
-			const match = isPreGame
-				? await sharedapi.getCurrentPreGameMatch(matchId)
-				: await sharedapi.getCurrentGameMatch(matchId);
-
-			if (!match) return;
-
-			const puuids = utils.extractPlayers(match);
-			const players = await sharedapi.getPlayerNames(puuids);
-
-			const updatedTable = { ...table };
-
-			if (isPreGame) {
-				const preGameMatch = match as CurrentPreGameMatchResponse;
-				preGameMatch.AllyTeam?.Players.forEach((player: any) => {
-					updatedTable[player.Subject] = {} as any;
-				});
-			} else {
-				const gameMatch = match as CurrentGameMatchResponse;
-				gameMatch.Players.forEach((player: any) => {
-					updatedTable[player.Subject] = {} as any;
-				});
-			}
-
-			const playerTeamId = isPreGame
-				? null
-				: ((match as CurrentGameMatchResponse).Players.find((player: any) => player.Subject === puuid)?.TeamID as
-						| "RED"
-						| "BLUE");
-
-			const playersToProcess = isPreGame
-				? (match as CurrentPreGameMatchResponse).AllyTeam?.Players || []
-				: (match as CurrentGameMatchResponse).Players;
-
-			for (const player of playersToProcess) {
-				try {
-					const playerMMR = await sharedapi.getPlayerMMR(player.Subject);
-
-					const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff } =
-						utils.calculateRanking(playerMMR);
-
-					const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
-					const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
-
-					const playerInfo = players.find((p) => p.Subject === player.Subject)!;
-
-					const { GameName, TagLine } = playerInfo;
-					const {
-						uuid: agentId,
-						displayName: agentName,
-						killfeedPortrait: agentImage,
-					} = utils.getAgent(player.CharacterID as string);
-					const isEnemy = isPreGame ? false : (player as any).TeamID !== playerTeamId;
-
-					const retard = await cache
-						?.select<{ dodge: boolean }[]>('SELECT * FROM players WHERE puuid = $1 AND dodge = "true"', [
-							player.Subject,
-						])
-						.then((players) => players[0]);
-
-					updatedTable[player.Subject] = {
-						name: GameName,
-						tag: TagLine,
-						puuid: player.Subject,
-						agentId: agentId,
-						agentName: agentName,
-						agentImage: agentImage,
-						currentRank: currentRankName,
-						currentRankColor,
-						currentRR,
-						rankPeak: rankPeakName,
-						rankPeakColor: rankPeakColor,
-						rankPeakDate: !isPreGame && peakRankSeasonId ? utils.getSeasonDateById(peakRankSeasonId) : null,
-						lastGameMMRDiff,
-						enemy: isEnemy,
-						accountLevel: player.PlayerIdentity.AccountLevel || null,
-						dodge: retard?.dodge || false,
-						inParty: false,
-						partyId: null,
-					};
-				} catch (error) {
-					console.error(`Failed to process player ${player.Subject}:`, error);
-				}
-			}
-
-			setTable(updatedTable);
-			setCurrentMatch(match);
-
-			processPlayers(utils.sortPlayersForProcessing(players, updatedTable), match);
-		} catch (error) {
-			console.error("Error processing match:", error);
-		} finally {
-			currentMatchRef.current.isProcessing = false;
-			setMatchProcessing({
-				isProcessing: false,
-				currentPlayer: null,
-				progress: { step: 0, total: 0 },
-			});
+	useEffect(() => {
+		if (sharedapi && cache && !processingRef.current) {
+			processingRef.current = new MatchProcessing({ api: sharedapi, cache });
 		}
-	}
+	}, [sharedapi, cache]);
 
-	async function processPlayers(
-		players: PlayerNamesReponse[],
-		match: CurrentPreGameMatchResponse | CurrentGameMatchResponse,
-	) {
-		if (!sharedapi) return;
+	const handleMatch = useCallback(
+		async (matchId: string, isPreGame: boolean) => {
+			if (!sharedapi || !puuid) return;
+			if (currentMatchRef.current.isProcessing) return;
 
-		try {
-			const partyInput: { puuid: string; matches: MatchDetailsResponse[] }[] = [];
+			const processing = processingRef.current;
+			if (!processing) return;
+
+			currentMatchRef.current = { matchId, isProcessing: true };
 
 			setMatchProcessing({
 				isProcessing: true,
 				currentPlayer: null,
-				progress: { step: 0, total: players.length },
-			});
-
-			for (const i in players) {
-				const player = players[i];
-
-				setMatchProcessing({
-					isProcessing: true,
-					currentPlayer: player.GameName || player.Subject,
-					progress: { step: parseInt(i, 10) + 1, total: players.length },
-				});
-
-				const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject);
-				const matches = await Promise.all(matchHistory.map((match) => sharedapi.getMatchDetails(match.MatchID)));
-				partyInput.push({ puuid: player.Subject, matches });
-
-				const { kd, hs, adr } = utils.calculateStatsForPlayer(player.Subject, matches);
-				const {
-					result: lastGameResult,
-					score: lastGameScore,
-					accountLevel,
-				} = utils.getMatchResult(player.Subject, matches[0]);
-				const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID);
-
-				const streak = utils.calculateStreak(player.Subject, matches);
-
-				let data = {
-					kd,
-					hs,
-					adr,
-					lastGameResult,
-					lastGameScore,
-					accountLevel,
-					bestAgents,
-					streak,
-				};
-
-				if (player.GameName === "") {
-					const name = utils.extractPlayerName(player.Subject, matches);
-					if (name) {
-						data = {
-							...data,
-							...name,
-						};
-					}
-				}
-
-				setTable((prevTable) => ({
-					...prevTable,
-					[player.Subject]: {
-						...prevTable[player.Subject],
-						...data,
-					},
-				}));
-			}
-
-			const parties = utils.extractParties(partyInput);
-			const partyLookup: Record<string, number> = {};
-
-			for (const party of parties) {
-				for (const partyMember of party.puuids) {
-					partyLookup[partyMember] = party.partyId;
-				}
-			}
-
-			setTable((prevTable) => {
-				const nextTable = { ...prevTable };
-
-				for (const player of players) {
-					nextTable[player.Subject] = {
-						...nextTable[player.Subject],
-						inParty: player.Subject in partyLookup,
-						partyId: partyLookup[player.Subject] ?? null,
-					};
-				}
-
-				return nextTable;
-			});
-
-			setMatchProcessing({
-				isProcessing: false,
-				currentPlayer: null,
 				progress: { step: 0, total: 0 },
 			});
 
-			if (allowAnalytics) await trackEvent("check_finish");
-		} catch (error) {
-			console.error("Error processing detailed stats:", error);
-		}
-	}
+			try {
+				if (allowAnalytics) await trackEvent(isPreGame ? "check_pregame" : "check_game");
 
-	async function handleGameEnd() {
+				const newTable = { ...table };
+				Object.keys(newTable).forEach((key) => {
+					delete newTable[key];
+				});
+				setTable(newTable);
+
+				const result = await processing.handleMatch(matchId, isPreGame, puuid);
+
+				setTable(result.table);
+				setCurrentMatch(result.match);
+
+				// Process player stats using the same players array from handleMatch
+				const { stats, partyLookup } = await processing.processPlayers(result.players, result.match);
+
+				setTable((prevTable) => {
+					const nextTable = { ...prevTable };
+
+					for (const puuid of Object.keys(stats)) {
+						nextTable[puuid] = {
+							...nextTable[puuid],
+							...stats[puuid],
+						};
+					}
+
+					for (const player of result.players) {
+						nextTable[player.Subject] = {
+							...nextTable[player.Subject],
+							inParty: player.Subject in partyLookup,
+							partyId: partyLookup[player.Subject] ?? null,
+						};
+					}
+
+					return nextTable;
+				});
+
+				if (allowAnalytics) await trackEvent("check_finish");
+			} catch (error) {
+				console.error("Error processing match:", error);
+			} finally {
+				currentMatchRef.current = { matchId: null, isProcessing: false };
+				setMatchProcessing({
+					isProcessing: false,
+					currentPlayer: null,
+					progress: { step: 0, total: 0 },
+				});
+			}
+		},
+		[sharedapi, puuid, table, setTable, setCurrentMatch, setMatchProcessing, allowAnalytics, trackEvent],
+	);
+
+	const handleGameEnd = useCallback(async () => {
 		if (!currentMatchRef.current.matchId) return;
 
 		try {
@@ -271,7 +117,7 @@ export const MatchHandler = () => {
 			});
 			currentMatchRef.current = { matchId: null, isProcessing: false };
 		}
-	}
+	}, [setTable, setCurrentMatch, setMatchProcessing]);
 
 	useEffect(() => {
 		if (!sharedapi || !puuid) return;
@@ -279,12 +125,12 @@ export const MatchHandler = () => {
 		switch (gameState.state) {
 			case "PREGAME":
 				sharedapi.getCurrentPreGamePlayer(puuid).then((match) => {
-					if (match) handleMatch(match.MatchID, true, "check_pregame");
+					if (match) handleMatch(match.MatchID, true);
 				});
 				break;
 			case "INGAME":
 				sharedapi.getCurrentGamePlayer(puuid).then((match) => {
-					if (match) handleMatch(match.MatchID, false, "check_game");
+					if (match) handleMatch(match.MatchID, false);
 				});
 				break;
 			default:
