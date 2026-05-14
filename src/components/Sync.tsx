@@ -1,7 +1,7 @@
-import { useServices } from "@/lib/services";
-import atoms from "@/utils/atoms";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
+import { useServices } from "@/lib/services";
+import atoms from "@/utils/atoms";
 
 export const Sync = () => {
 	const services = useServices();

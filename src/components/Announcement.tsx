@@ -1,6 +1,6 @@
-import atoms from "@/utils/atoms";
 import { useAtom } from "jotai";
 import { X } from "lucide-react";
+import atoms from "@/utils/atoms";
 
 export const Announcement = ({}) => {
 	const [announcement, setAnnouncement] = useAtom(atoms.announcement);

@@ -1,10 +1,15 @@
 import { useAptabase } from "@aptabase/react";
-import { useServices } from "@/lib/services";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
-import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PlayerNamesReponse } from "../interface";
-import atoms from "../utils/atoms";
+import { useServices } from "@/lib/services";
+import type {
+	CurrentGameMatchResponse,
+	CurrentPreGameMatchResponse,
+	MatchDetailsResponse,
+	PlayerNamesReponse,
+} from "../interface";
 import * as utils from "../utils";
+import atoms from "../utils/atoms";
 
 export const MatchHandler = () => {
 	const services = useServices();
@@ -85,7 +90,8 @@ export const MatchHandler = () => {
 				try {
 					const playerMMR = await sharedapi.getPlayerMMR(player.Subject);
 
-					const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff } = utils.calculateRanking(playerMMR);
+					const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff } =
+						utils.calculateRanking(playerMMR);
 
 					const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
 					const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
@@ -168,7 +174,7 @@ export const MatchHandler = () => {
 				setMatchProcessing({
 					isProcessing: true,
 					currentPlayer: player.GameName || player.Subject,
-					progress: { step: parseInt(i) + 1, total: players.length },
+					progress: { step: parseInt(i, 10) + 1, total: players.length },
 				});
 
 				const { History: matchHistory } = await sharedapi.getPlayerMatchHistory(player.Subject);
@@ -281,11 +287,10 @@ export const MatchHandler = () => {
 					if (match) handleMatch(match.MatchID, false, "check_game");
 				});
 				break;
-			case "MENUS":
 			default:
 				handleGameEnd();
 		}
-	}, [gameState, sharedapi, puuid]);
+	}, [gameState, sharedapi, puuid, handleMatch, handleGameEnd]);
 
 	return null;
 };

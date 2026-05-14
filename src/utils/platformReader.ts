@@ -13,7 +13,7 @@ const readLockfile = async (): Promise<string> => {
 		return lockfile;
 	} else {
 		const path = await localDataDir();
-		const file = await readTextFile(path + "\\Riot Games\\Riot Client\\Config\\lockfile");
+		const file = await readTextFile(`${path}\\Riot Games\\Riot Client\\Config\\lockfile`);
 		return file.toString();
 	}
 };
@@ -23,7 +23,7 @@ const readConfigs = async (): Promise<string[]> => {
 		return configs;
 	} else {
 		const path = await localDataDir();
-		const files = await readDir(path + "\\Valorant\\Saved\\Config");
+		const files = await readDir(`${path}\\Valorant\\Saved\\Config`);
 		return files.map((file) => file.name).filter((name) => name.match(/(.*)-(.*)-(.*)-(.*)-(.*)/));
 	}
 };
@@ -36,7 +36,7 @@ const readLog = async () => {
 		}
 	} else {
 		const path = await localDataDir();
-		const lines = await readTextFileLines(path + "\\Valorant\\Saved\\Logs\\ShooterGame.log");
+		const lines = await readTextFileLines(`${path}\\Valorant\\Saved\\Logs\\ShooterGame.log`);
 		for await (const line of lines) {
 			const res = parseShardFromLogline(line);
 			if (res) return res;
@@ -62,4 +62,4 @@ const parseLockFile = (content: string): { port: string; password: string } => {
 	return { port, password: base64.encode(`riot:${password}`) };
 };
 
-export { readLockfile, readConfigs, readLog, parseShardFromLogline, parseLockFile };
+export { parseLockFile, parseShardFromLogline, readConfigs, readLockfile, readLog };

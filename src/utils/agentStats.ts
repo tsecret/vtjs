@@ -1,6 +1,6 @@
-import type { BestAgent, BestMaps } from "@/interface/utils.interface";
-import type { AgentStats } from "@/interface/common.interface";
 import type { MatchDetailsResponse } from "@/interface";
+import type { AgentStats } from "@/interface/common.interface";
+import type { BestAgent, BestMaps } from "@/interface/utils.interface";
 
 import { getAgent } from "./assetLookup";
 import { calculateStatsForPlayer } from "./matchStats";
@@ -101,4 +101,4 @@ const calculateBestMaps = (puuid: string, matches: MatchDetailsResponse[]): Best
 	return bestMaps.sort((a, b) => (b.matches || 1) - (a.matches || 0));
 };
 
-export { getPlayerBestAgent, calculateBestAgents, calculateBestMaps };
+export { calculateBestAgents, calculateBestMaps, getPlayerBestAgent };

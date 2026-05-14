@@ -1,9 +1,7 @@
-import type { Parties } from "@/interface/utils.interface";
 import type { MatchDetailsResponse } from "@/interface";
+import type { Parties } from "@/interface/utils.interface";
 
-const extractParties = (
-	data: { puuid: string; matches: MatchDetailsResponse[] }[]
-): Parties => {
+const extractParties = (data: { puuid: string; matches: MatchDetailsResponse[] }[]): Parties => {
 	const connections = new Map<string, Set<string>>();
 	const currentLobbyIds = new Set(data.map(({ puuid }) => puuid));
 

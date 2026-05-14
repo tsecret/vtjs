@@ -18,6 +18,7 @@ import { RateLimitNotification } from "./components/RateLimitAlert";
 import { SocketListener } from "./components/SocketListener";
 import { Sync } from "./components/Sync";
 import { TestDial } from "./components/TestDial";
+import { type AppServices, ServicesProvider } from "./lib/services";
 import { AvoidListPage } from "./pages/AvoidList.page";
 import { FriendsPage } from "./pages/Friends.page";
 import { InitPage } from "./pages/Init.page";
@@ -28,10 +29,9 @@ import { Settings } from "./pages/Settings.page";
 import { StorePage } from "./pages/Store.page";
 import { TestPage } from "./pages/Test.page";
 import { WelcomePage } from "./pages/Welcome.page";
-import { AppServices, ServicesProvider } from "./lib/services";
+import * as utils from "./utils";
 import atoms from "./utils/atoms";
 import { CACHE_NAME, RIOT_CLIENT_HOST } from "./utils/constants";
-import * as utils from "./utils";
 
 function App() {
 	const setAppInfo = useSetAtom(atoms.appInfo);
@@ -61,9 +61,9 @@ function App() {
 
 			// Settings
 			const store = await load("settings.json");
-			const allowAnalytics = (await store.get("allowAnalytics")) ? true : false;
+			const allowAnalytics = !!(await store.get("allowAnalytics"));
 			const firstTimeUserKey = await store.get<boolean | undefined>("firstTimeUser");
-			const firstTimeUser = firstTimeUserKey || firstTimeUserKey == undefined ? true : false;
+			const firstTimeUser = !!(firstTimeUserKey || firstTimeUserKey === undefined);
 
 			if (allowAnalytics) await trackEvent("app_init");
 
@@ -73,7 +73,7 @@ function App() {
 			await db.execute("CREATE TABLE IF NOT EXISTS players (puuid str PRIMARY KEY, dodge boolean, dodgeTimestamp int)");
 
 			setInitStatus("Cleaning cache");
-			await db.execute("DELETE FROM requests WHERE ttl <= $1", [+new Date()]);
+			await db.execute("DELETE FROM requests WHERE ttl <= $1", [Date.now()]);
 
 			try {
 				const ANNOUNCEMENT_URL =
@@ -141,7 +141,18 @@ function App() {
 				navigate("/");
 			}
 		})();
-	}, []);
+	}, [
+		trackEvent,
+		setpuuid,
+		setPenalty,
+		setRateLimitNotification,
+		setFirstTimeUser,
+		setAllowAnalytics,
+		setPlayer,
+		setAppInfo,
+		setAnnouncement,
+		navigate,
+	]);
 
 	return (
 		<ServicesProvider value={services}>

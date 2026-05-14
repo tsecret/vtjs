@@ -1,22 +1,20 @@
-import { beforeAll, beforeEach, vi } from "vitest";
 import { mockIPC } from "@tauri-apps/api/mocks";
+import { beforeAll, beforeEach, vi } from "vitest";
 import * as utils from "../src/utils";
-
+import entTokenResponse from "./fixtures/local/ent-token.json";
 // Local
 import helpResponse from "./fixtures/local/help.json";
-import entTokenResponse from "./fixtures/local/ent-token.json";
 import playerAliasResponse from "./fixtures/local/player-alias.json";
-
+import competitiveUpdates from "./fixtures/shared/competitive-updates.json";
+import currentGameMatch from "./fixtures/shared/current-game-match.json";
 // Shared
 import currentGamePlayer from "./fixtures/shared/current-game-player.json";
-import currentPreGamePlayer from "./fixtures/shared/current-pregame-player.json";
-import currentGameMatch from "./fixtures/shared/current-game-match.json";
 import currentPreGameMatch from "./fixtures/shared/current-pregame-match.json";
-import playerNames from "./fixtures/shared/player-names.json";
-import playerMatchHistory from "./fixtures/shared/match-history.json";
+import currentPreGamePlayer from "./fixtures/shared/current-pregame-player.json";
 import matchDetails from "./fixtures/shared/match-details.json";
-import competitiveUpdates from "./fixtures/shared/competitive-updates.json";
+import playerMatchHistory from "./fixtures/shared/match-history.json";
 import penalties from "./fixtures/shared/penalties.json";
+import playerNames from "./fixtures/shared/player-names.json";
 
 globalThis.cache = {} as { [key: string]: [string, number, any] };
 globalThis.requestCache = {};
@@ -61,8 +59,8 @@ const getResponseFromUrl = (url: string) => {
 	if (url.includes("/match-history/v1/history/")) {
 		const [_, params] = url.split("?");
 		const [startIndexStr, endIndexStr] = params.split("&");
-		const startIndex = parseInt(startIndexStr.split("=")[1]);
-		const endIndex = parseInt(endIndexStr.split("=")[1]);
+		const startIndex = parseInt(startIndexStr.split("=")[1], 10);
+		const endIndex = parseInt(endIndexStr.split("=")[1], 10);
 
 		return {
 			...playerMatchHistory,
@@ -101,21 +99,21 @@ beforeAll(async () => {
 		}
 
 		if (cmd === "plugin:store|get") {
-			// @ts-ignore
+			// @ts-expect-error
 			if (payload.key in globalThis.requestCache)
-				// @ts-ignore
+				// @ts-expect-error
 				return [globalThis.requestCache[payload.key], true];
 
 			return [null, false];
 		}
 
 		if (cmd === "plugin:store|set") {
-			// @ts-ignore
+			// @ts-expect-error
 			globalThis.requestCache[payload.key] = payload.value;
 		}
 
 		if (cmd === "plugin:store|delete") {
-			// @ts-ignore
+			// @ts-expect-error
 			delete globalThis.requestCache[payload.key];
 		}
 
