@@ -1,6 +1,7 @@
 import { fetch as httpfetch } from "@tauri-apps/plugin-http";
 import Database from "@tauri-apps/plugin-sql";
 import { CACHE_NAME } from "../utils/constants";
+import { z } from "zod";
 
 type RateLimitCallback = (retryAfter: number) => void;
 type RefreshAuthTokens = { accessToken: string; entToken: string };
@@ -85,6 +86,7 @@ export class BaseAPI {
 			noCache?: boolean;
 			ttl?: number;
 			_authRetried?: boolean;
+			schema?: z.ZodObject<any, any>; // optional schema for validation
 		} = { body: null, headers: null, method: "GET", ttl: this.cacheTTL },
 	): Promise<any> {
 		if (!options.ttl) options.ttl = this.cacheTTL;
@@ -124,6 +126,13 @@ export class BaseAPI {
 
 		if (res.status === 200) {
 			const response = await res.json();
+			if (options.schema) {
+				const result = options.schema.safeParse(response);
+				if (!result.success) {
+					console.error(`Schema validation failed for ${hostname}${endpoint}:`, result.error);
+					throw new Error(`Riot API response validation failed for ${endpoint}: ${result.error.message}`);
+				}
+			}
 			if (!options.noCache && options.ttl !== undefined && this.cache) {
 				await this.cache.execute("INSERT or REPLACE into requests (endpoint, ttl, data) VALUES ($1, $2, $3)", [
 					endpoint,
