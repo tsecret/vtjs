@@ -6,6 +6,7 @@ import Countdown from "react-countdown";
 import { useServices } from "@/lib/services";
 import { getStoreItemInfo } from "@/utils";
 import atoms from "../utils/atoms";
+import type { PlayerCardResponse, SprayResponse, BuddyResponse } from "@valpro-labs/valorant-api";
 
 export const StorePage = () => {
 	const services = useServices();
@@ -72,37 +73,63 @@ export const StorePage = () => {
 				bundleInfo
 					.filter((bundle) => bundle)
 					.map((bundle) => ({
-						name: bundle.data.displayName,
-						url: bundle.data.displayIcon,
-						uuid: bundle.data.uuid,
+						name: bundle.displayName,
+						url: bundle.displayIcon,
+						uuid: bundle.uuid,
 						price: Object.values(
-							storeInfo.FeaturedBundle.Bundles.find((_bundle) => _bundle.DataAssetID === bundle.data.uuid)!.TotalDiscountedCost as any,
+							storeInfo.FeaturedBundle.Bundles.find((_bundle) => _bundle.DataAssetID === bundle.uuid)!.TotalDiscountedCost as any,
 						)[0] as number,
 					})),
 			);
 			setAccessories(
 				accessoriesData
 					.filter((item) => item != null)
-					.map((item) => ({
-						...item.data,
-						...accessories.find((_item) => _item.uuid === item.data.uuid)!,
-					}))
-					.map((item) => ({
-						name: item.displayName,
-						price: item.price,
-						uuid: item.uuid,
-						url: item.displayIcon,
-						urlWide: item.wideArt,
-						urlTall: item.largeArt,
-						urlFull: item.fullTransparentIcon,
-					})),
+					.map((item) => {
+						const accessoryInfo = accessories.find((_item) => _item.uuid === item.uuid) as NonNullable<typeof accessories[number]>;
+						// Narrow by field presence — @valpro-labs types have no `type` field
+						if ("wideArt" in item) {
+							const playerCard = item as PlayerCardResponse;
+							return {
+								...accessoryInfo,
+								uuid: playerCard.uuid,
+								name: playerCard.displayName,
+								url: playerCard.displayIcon,
+								urlWide: playerCard.wideArt,
+								urlTall: playerCard.largeArt,
+								urlFull: playerCard.largeArt,
+							};
+						}
+						if ("fullTransparentIcon" in item) {
+							const spray = item as SprayResponse;
+							return {
+								...accessoryInfo,
+								uuid: spray.uuid,
+								name: spray.displayName,
+								url: spray.displayIcon ?? "",
+								urlWide: "",
+								urlTall: "",
+								urlFull: spray.fullTransparentIcon ?? "",
+							};
+						}
+						// buddy (has `levels` with displayIcon, no wideArt/largeArt/fullTransparentIcon)
+						const buddy = item as BuddyResponse;
+						return {
+							...accessoryInfo,
+							uuid: buddy.uuid,
+							name: buddy.displayName,
+							url: buddy.displayIcon,
+							urlWide: "",
+							urlTall: "",
+							urlFull: "",
+						};
+					}),
 			);
 			setSkins(
 				skins
-					.filter((skin) => skinsData.filter((__skin) => __skin && __skin.data).find((_skin) => _skin.data.uuid === skin.uuid))
+					.filter((skin) => skinsData.filter((__skin) => __skin && __skin.uuid).find((_skin) => _skin.uuid === skin.uuid))
 					.map((skin) => ({
 						...skin,
-						...skinsData.find((_skin) => _skin && _skin.data.uuid === skin.uuid)!.data,
+						...skinsData.find((_skin) => _skin && _skin.uuid === skin.uuid)!,
 					}))
 					.map((skin) => ({
 						uuid: skin.uuid,
@@ -115,7 +142,7 @@ export const StorePage = () => {
 				market
 					.map((skin) => ({
 						...skin,
-						...marketData.find((_skin) => _skin && _skin.data.uuid === skin.uuid)!.data,
+						...marketData.find((_skin) => _skin && _skin.uuid === skin.uuid)!,
 					}))
 					.map((skin) => ({
 						uuid: skin.uuid,

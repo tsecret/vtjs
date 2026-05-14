@@ -1,4 +1,4 @@
-import type { PlayerMMRResponse } from "@/interface";
+import type { PlayerMMRResponse } from "@/api/schemas/shared";
 import type { PlayerRanking } from "@/interface/utils.interface";
 
 const calculateRanking = (playerMMR: PlayerMMRResponse): PlayerRanking => {

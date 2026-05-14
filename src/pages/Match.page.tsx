@@ -3,7 +3,7 @@ import { ExternalLink } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import type { MatchDetailsResponse } from "@/interface";
+import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import { useServices } from "@/lib/services";
 import * as utils from "../utils";
 
