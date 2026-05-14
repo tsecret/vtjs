@@ -3,8 +3,8 @@ import type {
 	CurrentPreGameMatchResponse,
 	MatchDetailsResponse,
 	PlayerNamesReponse,
-	PlayerRow,
-} from "@/interface";
+} from "@/api/schemas/shared";
+import type { PlayerRow } from "@/interface";
 
 const extractPlayers = (
 	match: CurrentPreGameMatchResponse | CurrentGameMatchResponse | MatchDetailsResponse,

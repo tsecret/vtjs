@@ -1,4 +1,5 @@
-import type { MatchDetailsResponse, Result } from "@/interface";
+import type { MatchDetailsResponse } from "@/api/schemas/shared";
+import type { Result } from "@/interface";
 import type { MatchResult, PlayerMatchStats, Streak } from "@/interface/utils.interface";
 
 const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult => {

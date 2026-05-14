@@ -1,4 +1,4 @@
-import type { MatchDetailsResponse } from "@/interface";
+import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import type { Parties } from "@/interface/utils.interface";
 
 const extractParties = (data: { puuid: string; matches: MatchDetailsResponse[] }[]): Parties => {

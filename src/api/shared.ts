@@ -4,14 +4,14 @@ import type {
 	CurrentGamePlayerResponse,
 	CurrentPreGameMatchResponse,
 	CurrentPreGamePlayerResponse,
-	GameSettingsResponse,
 	MatchDetailsResponse,
 	PartyResponse,
 	PenaltiesResponse,
 	PlayerMatchHistoryResponse,
 	PlayerMMRResponse,
 	PlayerNamesReponse,
-} from "../interface";
+} from "./schemas/shared";
+import type { GameSettingsResponse } from "./schemas/riot";
 import { BaseAPI } from "./base";
 
 export class SharedAPI extends BaseAPI {

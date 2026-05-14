@@ -3,7 +3,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import type { GameSettingsResponse } from "@/interface";
+import type { GameSettingsResponse } from "@/api/schemas/riot";
 import { useServices } from "@/lib/services";
 import atoms from "../utils/atoms";
 

@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import type { BestAgent, BestMaps, Rank } from "@/interface/utils.interface";
 import { useServices } from "@/lib/services";
-import type { MatchDetailsResponse, Result } from "../interface";
+import type { MatchDetailsResponse } from "@/api/schemas/shared";
+import type { Result } from "../interface";
 import * as utils from "../utils";
 import atoms from "../utils/atoms";
 

@@ -26,6 +26,7 @@
 		"@tauri-apps/plugin-store": "2.2.1",
 		"@tauri-apps/plugin-updater": "2.8.1",
 		"@tauri-apps/plugin-websocket": "2.3.0",
+		"@valpro-labs/valorant-api": "^1.6.0",
 		"axios": "^1.13.2",
 		"base-64": "^1.0.0",
 		"buffer": "^6.0.3",
@@ -44,7 +45,8 @@
 		"recharts": "3.5.1",
 		"tailwind-merge": "^3.4.0",
 		"tailwindcss": "^4.1.18",
-		"use-long-press": "^3.3.0"
+		"use-long-press": "^3.3.0",
+		"zod": "^4.4.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.10",

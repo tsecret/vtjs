@@ -22,7 +22,7 @@ import type {
 	PlayerMatchHistoryResponse,
 	PlayerMMRResponse,
 	PlayerNamesReponse,
-} from "../interface";
+} from "./schemas/shared";
 import { randomInt } from "../utils";
 import { SharedAPI } from "./shared";
 

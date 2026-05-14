@@ -1,4 +1,4 @@
-import type { MatchDetailsResponse } from "@/interface";
+import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import type { AgentStats } from "@/interface/common.interface";
 import type { BestAgent, BestMaps } from "@/interface/utils.interface";
 

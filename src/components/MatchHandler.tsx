@@ -7,7 +7,7 @@ import type {
 	CurrentPreGameMatchResponse,
 	MatchDetailsResponse,
 	PlayerNamesReponse,
-} from "../interface";
+} from "../api/schemas/shared";
 import * as utils from "../utils";
 import atoms from "../utils/atoms";
 
