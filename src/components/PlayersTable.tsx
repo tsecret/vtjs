@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { ExternalLink, Users } from "lucide-react";
 import { useNavigate } from "react-router";
 import { PlayerRow } from "../interface";
-import * as utils from "../utils/utils";
+import * as utils from "../utils";
 
 export const PlayersTable = ({
 	table,

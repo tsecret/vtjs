@@ -9,7 +9,7 @@ import {
 	PlayerNamesReponse,
 	PlayerRow,
 } from "../src/interface";
-import type { MostPlayedServer, Penalties } from "../src/interface/utils.interface";
+import type { Penalties } from "../src/interface/utils.interface";
 import * as utils from "../src/utils";
 
 import maps from "../src/assets/maps.json";
@@ -435,14 +435,7 @@ describe("utils", () => {
 		});
 	});
 
-	describe("calculateMostPlayedServer", () => {
-		it("", () => {
-			const expected = {
-				frankfurt: 1,
-			} as MostPlayedServer;
-			expect(utils.calculateMostPlayedServer([matchDetails as MatchDetailsResponse])).toEqual(expected);
-		});
-	});
+	// calculateMostPlayedServer removed as dead code — no callers in the codebase
 
 	describe("sortPlayersForProcessing", () => {
 		it("sorts players by level", () => {

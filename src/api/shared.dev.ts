@@ -11,7 +11,7 @@ import {
 	PlayerMMRResponse,
 	PlayerNamesReponse,
 } from "../interface";
-import { randomInt } from "../utils/utils";
+import { randomInt } from "../utils";
 import { SharedAPI } from "./shared";
 
 import agents from "../assets/agents.json";

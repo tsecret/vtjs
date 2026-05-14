@@ -4,7 +4,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import { CurrentGameMatchResponse, CurrentPreGameMatchResponse, MatchDetailsResponse, PlayerNamesReponse } from "../interface";
 import atoms from "../utils/atoms";
-import * as utils from "../utils/utils";
+import * as utils from "../utils";
 
 export const MatchHandler = () => {
 	const services = useServices();
