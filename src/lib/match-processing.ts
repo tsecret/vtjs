@@ -5,6 +5,7 @@ import type {
 	MatchDetailsResponse,
 	PlayerNamesReponse,
 } from "@/api/schemas/shared";
+import type { PlayerRow } from "@/interface/common.interface";
 import type { SharedAPI } from "@/api/shared";
 import * as utils from "@/utils";
 
@@ -13,32 +14,7 @@ export interface MatchProcessingConfig {
 	cache: Database;
 }
 
-export interface PlayerRowData {
-	name: string;
-	tag: string;
-	puuid: string;
-	agentId: string;
-	agentName: string;
-	agentImage: string;
-	currentRank: string;
-	currentRankColor: string;
-	currentRR: number;
-	rankPeak: string;
-	rankPeakColor: string;
-	rankPeakDate: Date | null;
-	lastGameMMRDiff: number;
-	enemy: boolean;
-	accountLevel: number | null;
-	dodge: boolean;
-	inParty: boolean;
-	partyId: number | null;
-	kd?: number;
-	hs?: number;
-	adr?: number;
-	lastGameResult?: string;
-	lastGameScore?: string;
-	bestAgents?: Array<{ agentId: string; agentUrl: string; avgKills: number; avgDeaths: number; avgKd: number; games: number }>;
-	streak?: { type: string; number: number } | null;
+export interface PlayerRowData extends PlayerRow {
 }
 
 export interface MatchProcessingResult {

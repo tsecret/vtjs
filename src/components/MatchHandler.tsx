@@ -3,6 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useEffect, useRef } from "react";
 import { useServices } from "@/lib/services";
 import { MatchProcessing } from "@/lib/match-processing";
+import type { PlayerRow } from "@/interface/common.interface";
 import atoms from "../utils/atoms";
 
 export const MatchHandler = () => {
@@ -60,7 +61,7 @@ export const MatchHandler = () => {
 
 				const result = await processing.handleMatch(matchId, isPreGame, puuid);
 
-				setTable(result.table);
+				setTable(result.table as Record<string, PlayerRow>);
 				setCurrentMatch(result.match);
 
 				// Process player stats using the same players array from handleMatch
@@ -73,7 +74,7 @@ export const MatchHandler = () => {
 						nextTable[puuid] = {
 							...nextTable[puuid],
 							...stats[puuid],
-						};
+						} as PlayerRow;
 					}
 
 					for (const player of result.players) {
