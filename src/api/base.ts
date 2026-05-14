@@ -99,8 +99,8 @@ export class BaseAPI {
 				[endpoint],
 			);
 
-			if (response && response.data) {
-				if (+new Date() < response.ttl) {
+			if (response?.data) {
+				if (Date.now() < response.ttl) {
 					return JSON.parse(response.data);
 				}
 			}
@@ -119,7 +119,7 @@ export class BaseAPI {
 				headers: options.headers || this.HEADERS,
 				method: options.method,
 				danger: { acceptInvalidCerts: true, acceptInvalidHostnames: true },
-			})
+			});
 		}
 
 		if (res.status === 200) {
@@ -127,7 +127,7 @@ export class BaseAPI {
 			if (!options.noCache && options.ttl !== undefined && this.cache) {
 				await this.cache.execute("INSERT or REPLACE into requests (endpoint, ttl, data) VALUES ($1, $2, $3)", [
 					endpoint,
-					+new Date() + options.ttl,
+					Date.now() + options.ttl,
 					response,
 				]);
 			}
@@ -149,7 +149,7 @@ export class BaseAPI {
 		}
 
 		if (res.status === 429) {
-			const retrySeconds = parseInt(res.headers.get("retry-after") || "60");
+			const retrySeconds = parseInt(res.headers.get("retry-after") || "60", 10);
 
 			if (this.rateLimitCallback) {
 				this.rateLimitCallback(retrySeconds);

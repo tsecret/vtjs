@@ -1,10 +1,10 @@
-import { GameSettingsResponse } from "@/interface";
-import { useServices } from "@/lib/services";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import type { GameSettingsResponse } from "@/interface";
+import { useServices } from "@/lib/services";
 import atoms from "../utils/atoms";
 
 export const Settings = () => {
@@ -43,7 +43,7 @@ export const Settings = () => {
 	async function clearCache() {
 		setClearingCache(true);
 
-		const response = await cache?.execute("DELETE FROM requests WHERE ttl <= $1", [+new Date()]);
+		const response = await cache?.execute("DELETE FROM requests WHERE ttl <= $1", [Date.now()]);
 		if (savedRequests && response) setSavedRequests(savedRequests - response.rowsAffected);
 
 		setClearingCache(false);
@@ -111,7 +111,7 @@ export const Settings = () => {
 			const settings: { name: string; data: GameSettingsResponse } | undefined = await store?.get("gamesettings");
 			if (settings) setGameSettings(settings);
 		})();
-	}, []);
+	}, [store?.get, cache?.select]);
 
 	return (
 		<div className="flex flex-col space-y-4 p-4 max-w-md m-auto">

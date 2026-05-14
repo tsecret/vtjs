@@ -1,7 +1,7 @@
-import atoms from "@/utils/atoms";
 import { useAtom } from "jotai";
 import { Clock, X } from "lucide-react";
 import { useEffect } from "react";
+import atoms from "@/utils/atoms";
 
 export const RateLimitNotification = () => {
 	const [rateLimitNotification, setRateLimitNotification] = useAtom(atoms.rateLimitNotification);

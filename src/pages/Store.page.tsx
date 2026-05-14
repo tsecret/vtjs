@@ -1,10 +1,10 @@
-import { getStoreItemInfo } from "@/utils";
-import { useServices } from "@/lib/services";
 import { useAptabase } from "@aptabase/react";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import Countdown from "react-countdown";
+import { useServices } from "@/lib/services";
+import { getStoreItemInfo } from "@/utils";
 import atoms from "../utils/atoms";
 
 export const StorePage = () => {
@@ -76,8 +76,7 @@ export const StorePage = () => {
 						url: bundle.data.displayIcon,
 						uuid: bundle.data.uuid,
 						price: Object.values(
-							storeInfo.FeaturedBundle.Bundles.find((_bundle) => _bundle.DataAssetID === bundle.data.uuid)!
-								.TotalDiscountedCost as any,
+							storeInfo.FeaturedBundle.Bundles.find((_bundle) => _bundle.DataAssetID === bundle.data.uuid)!.TotalDiscountedCost as any,
 						)[0] as number,
 					})),
 			);
@@ -100,9 +99,7 @@ export const StorePage = () => {
 			);
 			setSkins(
 				skins
-					.filter((skin) =>
-						skinsData.filter((__skin) => __skin && __skin.data).find((_skin) => _skin.data.uuid === skin.uuid),
-					)
+					.filter((skin) => skinsData.filter((__skin) => __skin && __skin.data).find((_skin) => _skin.data.uuid === skin.uuid))
 					.map((skin) => ({
 						...skin,
 						...skinsData.find((_skin) => _skin && _skin.data.uuid === skin.uuid)!.data,
@@ -128,10 +125,10 @@ export const StorePage = () => {
 					})),
 			);
 			setBundlesResetTime(
-				storeInfo.FeaturedBundle.Bundles.map((bundle) => +new Date() + bundle.DurationRemainingInSeconds * 1000),
+				storeInfo.FeaturedBundle.Bundles.map((bundle) => Date.now() + bundle.DurationRemainingInSeconds * 1000),
 			);
-			setSkinsResetTime(+new Date() + storeInfo.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds * 1000);
-			setAccessoriesResetTime(+new Date() + storeInfo.AccessoryStore.AccessoryStoreRemainingDurationInSeconds * 1000);
+			setSkinsResetTime(Date.now() + storeInfo.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds * 1000);
+			setAccessoriesResetTime(Date.now() + storeInfo.AccessoryStore.AccessoryStoreRemainingDurationInSeconds * 1000);
 
 			if (allowAnalytics) trackEvent("store_open");
 		};

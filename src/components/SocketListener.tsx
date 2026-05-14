@@ -1,21 +1,18 @@
-import { base64Decode } from "@/utils";
-import { useServices } from "@/lib/services";
 import { listen } from "@tauri-apps/api/event";
-import { useAtom } from "jotai";
-import { useEffect, useRef } from "react";
-import { GameState, Payload, PresenceJSON } from "../interface";
+import { useAtom, useSetAtom } from "jotai";
+import { useEffect } from "react";
+import { useServices } from "@/lib/services";
+import { base64Decode } from "@/utils";
+import type { Payload, PresenceJSON } from "../interface";
+import { gameStateModule } from "../lib/game-state";
 import atoms from "../utils/atoms";
 
 export const SocketListener = () => {
 	const services = useServices();
 	const sharedapi = services?.sharedapi;
-	const [, setGameState] = useAtom(atoms.gameState);
+	const setParty = useSetAtom(atoms.party);
 	const [puuid] = useAtom(atoms.puuid);
-	const [party, setParty] = useAtom(atoms.party);
-	const state = useRef<{ state: GameState; matchId: string | null }>({
-		state: "MENUS",
-		matchId: null,
-	});
+	const [party] = useAtom(atoms.party);
 
 	useEffect(() => {
 		if (!puuid) return;
@@ -29,11 +26,11 @@ export const SocketListener = () => {
 
 				const decoded: PresenceJSON = JSON.parse(base64Decode(presence.private));
 
-				if (decoded.partyPresenceData.partySize > 1 && party.length != decoded.partyPresenceData.partySize) {
-					const party = await sharedapi?.getParty(decoded.partyPresenceData.partyId);
-					if (party)
+				if (decoded.partyPresenceData.partySize > 1 && party.length !== decoded.partyPresenceData.partySize) {
+					const partyData = await sharedapi?.getParty(decoded.partyPresenceData.partyId);
+					if (partyData)
 						setParty(
-							party?.Members.map((p) => ({
+							partyData.Members.map((p) => ({
 								puuid: p.Subject,
 								name: "",
 								tag: "",
@@ -42,38 +39,18 @@ export const SocketListener = () => {
 						);
 				}
 
-				if (decoded.matchPresenceData.sessionLoopState === state.current.state) return;
-
-				if (decoded.matchPresenceData.sessionLoopState === "PREGAME") {
-					state.current = {
-						state: decoded.matchPresenceData.sessionLoopState,
-						matchId: "",
-					};
-					setGameState(state.current);
-				}
-
-				if (decoded.matchPresenceData.sessionLoopState === "INGAME") {
-					state.current = {
-						state: decoded.matchPresenceData.sessionLoopState,
-						matchId: "",
-					};
-					setGameState(state.current);
-				}
-
-				if (decoded.matchPresenceData.sessionLoopState === "MENUS") {
-					state.current = {
-						state: decoded.matchPresenceData.sessionLoopState,
-						matchId: "",
-					};
-					setGameState(state.current);
+				const newState = decoded.matchPresenceData.sessionLoopState;
+				const currentState = gameStateModule.getState();
+				if (newState !== currentState.state) {
+					gameStateModule.setState(newState);
 				}
 			} catch (err) {
 				console.log("err", err);
 			}
 		});
 
-		return () => {};
-	}, [party.length, puuid, setGameState, setParty, sharedapi]);
+		return gameStateModule.unsubscribe;
+	}, [puuid, setParty, party.length, sharedapi]);
 
 	return null;
 };

@@ -1,10 +1,10 @@
-import { MatchDetailsResponse } from "@/interface";
-import { useServices } from "@/lib/services";
 import clsx from "clsx";
 import { ExternalLink } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
+import type { MatchDetailsResponse } from "@/interface";
+import { useServices } from "@/lib/services";
 import * as utils from "../utils";
 
 type Match = {

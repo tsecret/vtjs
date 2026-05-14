@@ -1,19 +1,23 @@
-import type { CurrentPreGameMatchResponse, CurrentGameMatchResponse, MatchDetailsResponse, PlayerNamesReponse, PlayerRow } from "@/interface";
+import type {
+	CurrentGameMatchResponse,
+	CurrentPreGameMatchResponse,
+	MatchDetailsResponse,
+	PlayerNamesReponse,
+	PlayerRow,
+} from "@/interface";
 
 const extractPlayers = (
 	match: CurrentPreGameMatchResponse | CurrentGameMatchResponse | MatchDetailsResponse,
 ): string[] => {
-	if ("AllyTeam" in match && match.AllyTeam?.Players) return match.AllyTeam.Players.map((player) => player.Subject) || [];
+	if ("AllyTeam" in match && match.AllyTeam?.Players)
+		return match.AllyTeam.Players.map((player) => player.Subject) || [];
 
 	if ("Players" in match) return match.Players.map((player) => player.Subject);
 
 	return (match as MatchDetailsResponse).players.map((player) => player.subject);
 };
 
-const extractPlayerName = (
-	puuid: string,
-	matches: MatchDetailsResponse[],
-): { name: string; tag: string } | null => {
+const extractPlayerName = (puuid: string, matches: MatchDetailsResponse[]): { name: string; tag: string } | null => {
 	for (const match of matches) {
 		const player = match.players.find((player) => player.subject === puuid);
 		if (!player) continue;
@@ -46,4 +50,4 @@ const sortPlayersForProcessing = (
 	return tableAsArray.map((p) => playersObj[p.puuid]);
 };
 
-export { extractPlayers, extractPlayerName, sortPlayersForProcessing };
+export { extractPlayerName, extractPlayers, sortPlayersForProcessing };

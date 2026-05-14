@@ -1,6 +1,6 @@
-import { GameState } from "@/interface";
-import { TestTubeDiagonal } from "lucide-react";
 import { emit } from "@tauri-apps/api/event";
+import { TestTubeDiagonal } from "lucide-react";
+import type { GameState } from "@/interface";
 import events from "../../tests/fixtures/local/events.json";
 
 export const TestDial = () => {
@@ -14,7 +14,6 @@ export const TestDial = () => {
 			case "INGAME":
 				message = events[3];
 				break;
-			case "MENUS":
 			default:
 				message = events[4];
 				break;
