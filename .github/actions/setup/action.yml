@@ -1,0 +1,29 @@
+name: 'Setup Environment'
+description: 'Setup Node, Bun, Rust, and install dependencies for Tauri builds'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+
+    - name: Create lockfile
+      shell: bash
+      run: echo '"Riot Client:1888:12345:6VCDFORUm1nbDfZ4EReVqw:https"' > lockfile.json
+
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Rust cache
+      uses: swatinem/rust-cache@v2
+      with:
+        workspaces: './src-tauri -> target'
+
+    - name: Install frontend dependencies
+      shell: bash
+      run: bun install
