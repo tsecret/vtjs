@@ -18,6 +18,8 @@ import penalties from "./fixtures/shared/penalties.json";
 import playerMMR from "./fixtures/shared/player-mmr.json";
 import playerNames from "./fixtures/shared/player-names.json";
 import storefront from "./fixtures/shared/storefront.json";
+import agents from "../src/assets/agents.json";
+import maps from "../src/assets/maps.json";
 
 describe("utils", () => {
 	it("lockfile parse", async () => {
@@ -631,5 +633,65 @@ describe("request caching", () => {
 		expect(Object.values(globalThis.requestCache as { [key: string]: [string, number, any] })[0][1]).toEqual(
 			timestampAfter + matchDetailsTTL,
 		);
+	});
+});
+
+describe("assets", () => {
+	describe("agents.json", () => {
+		it("is non-empty array", () => {
+			expect(Array.isArray(agents)).toBe(true);
+			expect(agents.length).toBeGreaterThan(0);
+		});
+
+		it("has unique uuids", () => {
+			const uuids = agents.map((a) => a.uuid);
+			expect(new Set(uuids).size).toBe(uuids.length);
+		});
+
+		it("has required fields with valid values", () => {
+			for (const agent of agents) {
+				expect(agent.uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+				expect(agent.displayName).toBeTruthy();
+				expect(agent.displayIcon).toMatch(/^https?:\/\//);
+				expect(agent.killfeedPortrait).toMatch(/^https?:\/\//);
+			}
+		});
+
+		it("has no null or empty required fields", () => {
+			for (const agent of agents) {
+				expect(agent.uuid).not.toBe("");
+				expect(agent.displayName).not.toBe("");
+				expect(agent.displayIcon).not.toBe("");
+				expect(agent.killfeedPortrait).not.toBe("");
+			}
+		});
+	});
+
+	describe("maps.json", () => {
+		it("is non-empty array", () => {
+			expect(Array.isArray(maps)).toBe(true);
+			expect(maps.length).toBeGreaterThan(0);
+		});
+
+		it("has unique uuids", () => {
+			const uuids = maps.map((m) => m.uuid);
+			expect(new Set(uuids).size).toBe(uuids.length);
+		});
+
+		it("has required fields with valid values", () => {
+			for (const map of maps) {
+				expect(map.uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+				expect(map.displayName).toBeTruthy();
+				expect(map.mapUrl).toMatch(/^\/Game\/Maps\//);
+			}
+		});
+
+		it("has no null or empty required fields", () => {
+			for (const map of maps) {
+				expect(map.uuid).not.toBe("");
+				expect(map.displayName).not.toBe("");
+				expect(map.mapUrl).not.toBe("");
+			}
+		});
 	});
 });
