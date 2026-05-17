@@ -1,50 +1,54 @@
 import { fetch as httpfetch } from "@tauri-apps/plugin-http";
 import type {
-	EntitlementsTokenResponse,
-	FriendsResponse,
-	HelpResponse,
-	Lockfile,
-	PlayerAccount,
-	PresenceResponse,
+  EntitlementsTokenResponse,
+  FriendsResponse,
+  HelpResponse,
+  Lockfile,
+  PlayerAccount,
+  PresenceResponse,
 } from "../interface";
 import { RIOT_CLIENT_HOST } from "../utils/constants";
 
 export class LocalAPI {
-	private HOSTNAME: string;
-	private HEADERS = {};
+  private HOSTNAME: string;
+  private HEADERS: Record<string, string>;
 
-	constructor({ port, password }: Lockfile) {
-		this.HOSTNAME = `https://${RIOT_CLIENT_HOST}:${port}`;
-		this.HEADERS = { Authorization: `Basic ${password}` };
-	}
+  constructor({ port, password }: Lockfile) {
+    this.HOSTNAME = `https://${RIOT_CLIENT_HOST}:${port}`;
+    this.HEADERS = { Authorization: `Basic ${password}` };
+  }
 
-	private async fetch(endpoint: string) {
-		const res = await httpfetch(this.HOSTNAME + endpoint, {
-			headers: this.HEADERS,
-			method: "GET",
-			danger: { acceptInvalidCerts: true, acceptInvalidHostnames: true },
-		});
+  private async fetch<T>(endpoint: string): Promise<T> {
+    const res = await httpfetch(this.HOSTNAME + endpoint, {
+      headers: this.HEADERS,
+      method: "GET",
+      danger: { acceptInvalidCerts: true, acceptInvalidHostnames: true },
+    });
 
-		if (res.status === 200) return res.json();
-	}
+    if (res.status !== 200) {
+      throw new Error(`LocalAPI request failed: ${endpoint} returned status ${res.status}`);
+    }
 
-	async getEntitlementToken(): Promise<EntitlementsTokenResponse> {
-		return this.fetch("/entitlements/v1/token");
-	}
+    return res.json();
+  }
 
-	async getPlayerAccount(): Promise<PlayerAccount> {
-		return this.fetch("/player-account/aliases/v1/active");
-	}
+  async getEntitlementToken(): Promise<EntitlementsTokenResponse> {
+    return this.fetch("/entitlements/v1/token");
+  }
 
-	async help(): Promise<HelpResponse> {
-		return this.fetch("/help");
-	}
+  async getPlayerAccount(): Promise<PlayerAccount> {
+    return this.fetch("/player-account/aliases/v1/active");
+  }
 
-	async getFriends(): Promise<FriendsResponse> {
-		return this.fetch("/chat/v4/friends");
-	}
+  async help(): Promise<HelpResponse> {
+    return this.fetch("/help");
+  }
 
-	async getPresences(): Promise<PresenceResponse> {
-		return this.fetch("/chat/v4/presences");
-	}
+  async getFriends(): Promise<FriendsResponse> {
+    return this.fetch("/chat/v4/friends");
+  }
+
+  async getPresences(): Promise<PresenceResponse> {
+    return this.fetch("/chat/v4/presences");
+  }
 }
