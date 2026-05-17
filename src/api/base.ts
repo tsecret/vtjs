@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { Fetcher, FetchResult } from "./fetcher";
-import { SQLiteCache, CacheAdapter } from "./cache";
+import { Fetcher } from "./fetcher";
+import { SQLiteCache } from "./cache";
 import { Auth, RefreshAuthCallback } from "./auth";
 
 type RateLimitCallback = (retryAfter: number) => void;
