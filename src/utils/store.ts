@@ -1,4 +1,5 @@
 import type { StorefrontResponse } from "@/api/schemas/riot";
+import { GAME_IDS } from "./constants";
 
 const getStoreItemInfo = (
 	offers:
@@ -19,11 +20,11 @@ const getStoreItemInfo = (
 			uuid: rawOffer.Rewards[0].ItemID,
 			price: Object.values(rawOffer.Cost)[0],
 			type:
-				rawOffer.Rewards[0].ItemTypeID === "e7c63390-eda7-46e0-bb7a-a6abdacd2433"
+				rawOffer.Rewards[0].ItemTypeID === GAME_IDS.WEAPON_SKIN_TYPE_ID
 					? "weaponskin"
-					: rawOffer.Rewards[0].ItemTypeID === "d5f120f8-ff8c-4aac-92ea-f2b5acbe9475"
+					: rawOffer.Rewards[0].ItemTypeID === GAME_IDS.SPRAY_TYPE_ID
 						? "spray"
-						: rawOffer.Rewards[0].ItemTypeID === "3f296c07-64c3-494c-923b-fe692a4fa1bd"
+						: rawOffer.Rewards[0].ItemTypeID === GAME_IDS.PLAYERCARD_TYPE_ID
 							? "playercard"
 							: "buddy",
 		};

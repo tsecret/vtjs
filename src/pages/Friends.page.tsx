@@ -6,6 +6,7 @@ import { useServices } from "@/lib/services";
 import type { FriendsResponse, PresenceResponse, QueueId } from "../interface";
 import { base64Decode } from "../utils";
 import atoms from "../utils/atoms";
+import { GAME_IDS } from "@/utils/constants";
 
 export const FriendsPage = () => {
 	const services = useServices();
@@ -113,7 +114,7 @@ const IngameFriendRow = ({
 					return "In Menu";
 				}
 
-				if (friend.presence?.matchPresenceData.matchMap === "/Game/Maps/PovegliaV2/RangeV2") {
+				if (friend.presence?.matchPresenceData.matchMap === GAME_IDS.RANGE_MAP_ID) {
 					return "On Range";
 				}
 

@@ -31,7 +31,7 @@ import { TestPage } from "./pages/Test.page";
 import { WelcomePage } from "./pages/Welcome.page";
 import { parseLockFile, readLockfile, readLog, extractPenalties } from "./utils";
 import atoms from "./utils/atoms";
-import { CACHE_NAME, RIOT_CLIENT_HOST } from "./utils/constants";
+import { CACHE_NAME, RIOT_CLIENT_HOST, URLS } from "./utils/constants";
 
 function App() {
 	const setAppInfo = useSetAtom(atoms.appInfo);
@@ -76,9 +76,7 @@ function App() {
 			await db.execute("DELETE FROM requests WHERE ttl <= $1", [Date.now()]);
 
 			try {
-				const ANNOUNCEMENT_URL =
-					"https://gist.githubusercontent.com/tsecret/0b5f7094000f4063d72276c5e05824aa/raw/announcement.txt";
-				const announcement = await httpfetch(ANNOUNCEMENT_URL).then((res) => res.text());
+				const announcement = await httpfetch(URLS.ANNOUNCEMENT_URL).then((res) => res.text());
 				if (announcement) setAnnouncement(announcement);
 			} catch (err) {
 				console.error("Failed to fetch announcement: ", err);

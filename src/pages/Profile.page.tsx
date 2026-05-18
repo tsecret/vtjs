@@ -11,6 +11,7 @@ import { findPlayerInMatch } from "@/utils/playerLookup";
 import type { Result } from "../interface";
 import { calculateStatsForPlayer, getAgent, getMatchResult, getRank, getMap, calculateBestAgents, calculateBestMaps } from "../utils";
 import atoms from "../utils/atoms";
+import { THRESHOLDS } from "@/utils/constants";
 
 interface Row {
 	matchId: string;
@@ -282,10 +283,10 @@ export const ProfilePage = () => {
 						<progress
 							className="progress progress-primary w-full"
 							value={playerCard?.currentRR}
-							max={playerCard?.currentTier && playerCard?.currentTier >= 24 ? 500 : 100}
+							max={playerCard?.currentTier && playerCard?.currentTier >= 24 ? THRESHOLDS.IMMORTAL_RR_CAP : THRESHOLDS.DIAMOND_AND_BELOW_RR_CAP}
 						></progress>
 						<p className="text-xs text-gray-400 mt-1">
-							{playerCard?.currentRR} / {playerCard?.currentTier && playerCard?.currentTier >= 24 ? 500 : 100}
+							{playerCard?.currentRR} / {playerCard?.currentTier && playerCard?.currentTier >= 24 ? THRESHOLDS.IMMORTAL_RR_CAP : THRESHOLDS.DIAMOND_AND_BELOW_RR_CAP}
 						</p>
 					</div>
 
