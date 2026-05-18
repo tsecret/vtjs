@@ -208,28 +208,6 @@ export const MatchPage = () => {
 				</table>
 			</section>
 
-			{/* Round Timeline */}
-			{/* <section>
-      <ul className="timeline">
-        {
-          match.roundResults?.map(round => (
-             <li key={round.roundNum}>
-                <div className={clsx('timeline-box', round.winningTeam === 'Red' ? 'timeline-start bg-error/5' : 'timeline-end bg-info/10')}>{}</div>
-                <div className="timeline-middle bg-base-300 rounded-full p-2">
-                  {
-                    round.roundResultCode === 'Defuse' ? <ScissorsLineDashed size={20} />
-                    : round.roundResultCode === 'Elimination' ? <Skull size={20} />
-                    : round.roundResultCode === 'Detonate' ? <Bomb size={20} />
-                    : round.roundResultCode === 'Surrendered' ? <FlagOff size={20} />
-                    : null
-                  }
-                </div>
-                <hr />
-            </li>
-          ))
-        }
-      </ul>
-    </section> */}
 		</div>
 	);
 };
