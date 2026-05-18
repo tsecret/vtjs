@@ -9,7 +9,7 @@ import { useServices } from "@/lib/services";
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import { findPlayerInMatch } from "@/utils/playerLookup";
 import type { Result } from "../interface";
-import * as utils from "../utils";
+import { calculateStatsForPlayer, getAgent, getMatchResult, getRank, getMap, calculateBestAgents, calculateBestMaps } from "../utils";
 import atoms from "../utils/atoms";
 
 interface Row {
@@ -120,7 +120,7 @@ export const ProfilePage = () => {
 					matches.push(await sharedapi.getMatchDetails(match.MatchID));
 				}
 
-				const { hs: avgHS, adr: avgAdr, kd: avgKd } = utils.calculateStatsForPlayer(puuid, matches);
+				const { hs: avgHS, adr: avgAdr, kd: avgKd } = calculateStatsForPlayer(puuid, matches);
 
 				for (const i in matches) {
 					const match = matches[i];
@@ -133,14 +133,14 @@ export const ProfilePage = () => {
 						uuid: agentId,
 						displayName: agentName,
 						killfeedPortrait: agentImage,
-					} = utils.getAgent(player.characterId);
+					} = getAgent(player.characterId);
 
-					const { result, score } = utils.getMatchResult(player.subject, match);
+					const { result, score } = getMatchResult(player.subject, match);
 
-					const { kills, deaths, assists, hs, adr, kd } = utils.calculateStatsForPlayer(puuid, [match]);
+					const { kills, deaths, assists, hs, adr, kd } = calculateStatsForPlayer(puuid, [match]);
 
-					const rankBefore = mmrUpdate?.TierBeforeUpdate ? utils.getRank(mmrUpdate?.TierBeforeUpdate) : null;
-					const rankAfter = mmrUpdate?.TierAfterUpdate ? utils.getRank(mmrUpdate?.TierAfterUpdate) : null;
+					const rankBefore = mmrUpdate?.TierBeforeUpdate ? getRank(mmrUpdate?.TierBeforeUpdate) : null;
+					const rankAfter = mmrUpdate?.TierAfterUpdate ? getRank(mmrUpdate?.TierAfterUpdate) : null;
 
 					if (!accountLevel) accountLevel = player.accountLevel;
 
@@ -155,7 +155,7 @@ export const ProfilePage = () => {
 
 					table.push({
 						matchId: match.matchInfo.matchId,
-						mapName: utils.getMap(match.matchInfo.mapId).displayName,
+						mapName: getMap(match.matchInfo.mapId).displayName,
 						kills,
 						deaths,
 						assists,
@@ -173,14 +173,14 @@ export const ProfilePage = () => {
 				}
 
 				// Top Agents
-				const bestAgents = utils.calculateBestAgents(puuid, matches).map((agent) => {
-					const { displayName: agentName, displayIcon: agentUrl } = utils.getAgent(agent.agentId);
+				const bestAgents = calculateBestAgents(puuid, matches).map((agent) => {
+					const { displayName: agentName, displayIcon: agentUrl } = getAgent(agent.agentId);
 					return { ...agent, agentName, agentUrl };
 				});
 
 				// Top Maps
-				const bestMaps = utils.calculateBestMaps(puuid, matches).map((map) => {
-					const { displayName: mapName, listViewIcon: mapUrl } = utils.getMap(map.mapId);
+				const bestMaps = calculateBestMaps(puuid, matches).map((map) => {
+					const { displayName: mapName, listViewIcon: mapUrl } = getMap(map.mapId);
 					return { ...map, mapName, mapUrl };
 				});
 
@@ -225,12 +225,12 @@ export const ProfilePage = () => {
 			setPlayerCard({
 				name: GameName,
 				tag: TagLine,
-				currentRank: utils.getRank(currentRank).rankName,
+				currentRank: getRank(currentRank).rankName,
 				currentTier: currentRank,
 				currentRR,
-				currentRankColor: utils.getRank(currentRank).rankColor,
-				peakRank: utils.getRank(peakRank).rankName,
-				peakRankColor: utils.getRank(peakRank).rankColor,
+				currentRankColor: getRank(currentRank).rankColor,
+				peakRank: getRank(peakRank).rankName,
+				peakRankColor: getRank(peakRank).rankColor,
 				dodge: player?.dodge,
 				dodgeTimestamp: player?.dodgeTimestamp,
 			});
