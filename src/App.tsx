@@ -29,7 +29,7 @@ import { Settings } from "./pages/Settings.page";
 import { StorePage } from "./pages/Store.page";
 import { TestPage } from "./pages/Test.page";
 import { WelcomePage } from "./pages/Welcome.page";
-import * as utils from "./utils";
+import { parseLockFile, readLockfile, readLog, extractPenalties } from "./utils";
 import atoms from "./utils/atoms";
 import { CACHE_NAME, RIOT_CLIENT_HOST } from "./utils/constants";
 
@@ -86,10 +86,10 @@ function App() {
 
 			try {
 				setInitStatus("Reading lockfile");
-				const { port, password } = utils.parseLockFile(await utils.readLockfile());
+				const { port, password } = parseLockFile(await readLockfile());
 
 				setInitStatus("Reading logs");
-				const [region, shard] = await utils.readLog();
+				const [region, shard] = await readLog();
 
 				const localapi =
 					import.meta.env.VITE_FROM_JSON === "true"
@@ -107,7 +107,7 @@ function App() {
 
 				const penalties = await sharedapi.getPenalties();
 				if (penalties?.Infractions.length) {
-					const penalty = utils.extractPenalties(penalties);
+					const penalty = extractPenalties(penalties);
 					if (penalty) setPenalty(penalty);
 				}
 

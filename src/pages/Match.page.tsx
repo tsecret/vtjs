@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import { useServices } from "@/lib/services";
-import * as utils from "../utils";
+import { getMap, calculateStatsForPlayer, getAgent, getRank } from "../utils";
 
 type Match = {
 	mapName: string;
@@ -68,14 +68,14 @@ export const MatchPage = () => {
 			const parties = Object.keys(match.matchInfo.partyRRPenalties || {});
 
 			setMatch({
-				mapName: utils.getMap(match.matchInfo.mapId).displayName,
+				mapName: getMap(match.matchInfo.mapId).displayName,
 				date: match.matchInfo.gameStartMillis,
 				type: match.matchInfo.queueID,
 				players: match.players
 					.map((player) => {
-						const { kd, hs } = utils.calculateStatsForPlayer(player.subject, [match]);
-						const { displayIcon: agentImg, displayName: agentName } = utils.getAgent(player.characterId);
-						const { rankName, rankColor } = utils.getRank(player.competitiveTier);
+						const { kd, hs } = calculateStatsForPlayer(player.subject, [match]);
+						const { displayIcon: agentImg, displayName: agentName } = getAgent(player.characterId);
+						const { rankName, rankColor } = getRank(player.competitiveTier);
 
 						return {
 							puuid: player.subject,

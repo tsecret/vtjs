@@ -7,7 +7,7 @@ import type {
 } from "@/api/schemas/shared";
 import type { PlayerRow } from "@/interface/common.interface";
 import type { SharedAPI } from "@/api/shared";
-import * as utils from "@/utils";
+import { extractPlayers, calculateRanking, getRank, getAgent, getSeasonDateById, calculateStatsForPlayer, getMatchResult, getPlayerBestAgent, calculateStreak, extractPlayerName, extractParties } from "@/utils";
 
 export interface MatchProcessingConfig {
 	api: SharedAPI;
@@ -61,7 +61,7 @@ export class MatchProcessing {
 			throw new Error(`Failed to fetch match: ${matchId}`);
 		}
 
-		const puuids = utils.extractPlayers(match);
+		const puuids = extractPlayers(match);
 		const players = await this.api.getPlayerNames(puuids);
 
 		const newTable = {} as Record<string, PlayerRowData>;
@@ -102,10 +102,10 @@ export class MatchProcessing {
 			if (!mmr) continue;
 
 			const { currentRank, currentRR, peakRank, peakRankSeasonId, lastGameMMRDiff } =
-				utils.calculateRanking(mmr);
+				calculateRanking(mmr);
 
-			const { rankName: currentRankName, rankColor: currentRankColor } = utils.getRank(currentRank);
-			const { rankName: rankPeakName, rankColor: rankPeakColor } = utils.getRank(peakRank);
+			const { rankName: currentRankName, rankColor: currentRankColor } = getRank(currentRank);
+			const { rankName: rankPeakName, rankColor: rankPeakColor } = getRank(peakRank);
 
 			const playerInfo = players.find((p) => p.Subject === player.Subject)!;
 
@@ -114,7 +114,7 @@ export class MatchProcessing {
 				uuid: agentId,
 				displayName: agentName,
 				killfeedPortrait: agentImage,
-			} = utils.getAgent(player.CharacterID as string);
+			} = getAgent(player.CharacterID as string);
 			const isEnemy = isPreGame ? false : (player as any).TeamID !== playerTeamId;
 
 			const dodgeFlag = await this.cache
@@ -136,7 +136,7 @@ export class MatchProcessing {
 				currentRR,
 				rankPeak: rankPeakName,
 				rankPeakColor: rankPeakColor,
-				rankPeakDate: !isPreGame && peakRankSeasonId ? utils.getSeasonDateById(peakRankSeasonId) : null,
+				rankPeakDate: !isPreGame && peakRankSeasonId ? getSeasonDateById(peakRankSeasonId) : null,
 				lastGameMMRDiff,
 				enemy: isEnemy,
 				accountLevel: player.PlayerIdentity?.AccountLevel ?? null,
@@ -175,15 +175,15 @@ export class MatchProcessing {
 			);
 			partyInput.push({ puuid: player.Subject, matches });
 
-			const { kd, hs, adr } = utils.calculateStatsForPlayer(player.Subject, matches);
+			const { kd, hs, adr } = calculateStatsForPlayer(player.Subject, matches);
 			const {
 				result: lastGameResult,
 				score: lastGameScore,
 				accountLevel,
-			} = utils.getMatchResult(player.Subject, matches[0]);
-			const bestAgents = utils.getPlayerBestAgent(player.Subject, matches, match.MapID);
+			} = getMatchResult(player.Subject, matches[0]);
+			const bestAgents = getPlayerBestAgent(player.Subject, matches, match.MapID);
 
-			const streak = utils.calculateStreak(player.Subject, matches);
+			const streak = calculateStreak(player.Subject, matches);
 
 			const playerStats: typeof stats[string] = {
 				kd,
@@ -197,7 +197,7 @@ export class MatchProcessing {
 			};
 
 			if (player.GameName === "") {
-				const name = utils.extractPlayerName(player.Subject, matches);
+				const name = extractPlayerName(player.Subject, matches);
 				if (name) {
 					playerStats.name = name.name;
 					playerStats.tag = name.tag;
@@ -207,7 +207,7 @@ export class MatchProcessing {
 			stats[player.Subject] = playerStats;
 		}
 
-		const parties = utils.extractParties(partyInput);
+		const parties = extractParties(partyInput);
 		const partyLookup: Record<string, number> = {};
 
 		for (const party of parties) {

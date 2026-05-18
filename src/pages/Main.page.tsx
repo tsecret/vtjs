@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PenaltyAlert } from "@/components/PenaltyAlert";
 import { useServices } from "@/lib/services";
 import { PlayersTable } from "../components/PlayersTable";
-import * as utils from "../utils";
+import { getMap } from "../utils";
 import atoms from "../utils/atoms";
 
 export const Main = () => {
@@ -60,7 +60,7 @@ export const Main = () => {
 		return {
 			matchId: gameState.matchId,
 			state: gameState.state,
-			mapName: utils.getMap(currentMatch.MapID).displayName,
+			mapName: getMap(currentMatch.MapID).displayName,
 			mapId: currentMatch.MapID,
 			gameServer: currentMatch.GamePodID
 				? currentMatch.GamePodID.split(".")[currentMatch.GamePodID.split(".").length - 1]
