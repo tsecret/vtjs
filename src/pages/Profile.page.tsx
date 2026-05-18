@@ -7,6 +7,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router";
 import type { BestAgent, BestMaps, Rank } from "@/interface/utils.interface";
 import { useServices } from "@/lib/services";
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
+import { findPlayerInMatch } from "@/utils/playerLookup";
 import type { Result } from "../interface";
 import * as utils from "../utils";
 import atoms from "../utils/atoms";
@@ -125,7 +126,9 @@ export const ProfilePage = () => {
 					const match = matches[i];
 					const mmrUpdate = mmrUpdates.find((update) => update.MatchID === match.matchInfo.matchId);
 
-					const player = match.players.find((player) => player.subject === puuid) as MatchDetailsResponse["players"][0];
+					const player = findPlayerInMatch(match, puuid);
+					if (!player) continue;
+
 					const {
 						uuid: agentId,
 						displayName: agentName,

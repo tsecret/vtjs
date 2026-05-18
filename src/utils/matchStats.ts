@@ -1,24 +1,27 @@
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
+import { findPlayerInMatch } from "./playerLookup";
 import type { Result } from "@/interface";
 import type { MatchResult, PlayerMatchStats, Streak } from "@/interface/utils.interface";
 
 const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult => {
 	if (!match?.teams) return { result: "N/A", score: "", accountLevel: 0 };
 
-	const player = match.players.find((player) => player.subject === puuid);
-	const team = match.teams.find((team) => team.teamId === player?.teamId);
+	const player = findPlayerInMatch(match, puuid);
+	if (!player) return { result: "N/A" as Result, score: "", accountLevel: 0 };
+
+	const team = match.teams.find((team) => team.teamId === player.teamId);
 
 	if (match.teams[0].roundsWon === match.teams[1].roundsWon)
 		return {
 			result: "tie" as Result,
 			score: `${match.teams[0].roundsWon}:${match.teams[1].roundsWon}`,
-			accountLevel: player?.accountLevel || 0,
+			accountLevel: player.accountLevel || 0,
 		};
 
 	return {
 		result: team?.won ? ("won" as Result) : ("loss" as Result),
 		score: `${team?.roundsWon ?? 0}:${team?.roundsPlayed ?? 0 - (team?.roundsWon ?? 0)}`,
-		accountLevel: player?.accountLevel || 0,
+		accountLevel: player.accountLevel || 0,
 	};
 };
 
@@ -64,7 +67,7 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 	};
 
 	for (const match of matches) {
-		const player = match.players.find((player) => player.subject === puuid);
+		const player = findPlayerInMatch(match, puuid);
 
 		if (!player?.stats) continue;
 

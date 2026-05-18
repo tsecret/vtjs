@@ -4,6 +4,7 @@ import type {
 	MatchDetailsResponse,
 	PlayerNamesReponse,
 } from "@/api/schemas/shared";
+import { findPlayerInMatch } from "./playerLookup";
 import type { PlayerRow } from "@/interface";
 
 const extractPlayers = (
@@ -19,7 +20,7 @@ const extractPlayers = (
 
 const extractPlayerName = (puuid: string, matches: MatchDetailsResponse[]): { name: string; tag: string } | null => {
 	for (const match of matches) {
-		const player = match.players.find((player) => player.subject === puuid);
+		const player = findPlayerInMatch(match, puuid);
 		if (!player) continue;
 
 		if (player.subject !== "" && player.tagLine !== "") return { name: player.gameName, tag: player.tagLine };
