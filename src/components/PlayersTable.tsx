@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { ExternalLink, Users } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { PlayerRow } from "../interface";
-import * as utils from "../utils";
+import { isSmurf } from "../utils";
 
 export const PlayersTable = ({
 	table,
@@ -114,7 +114,7 @@ export const PlayersTable = ({
 					</div>
 				</td>
 				<td>
-					{utils.isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div>}
+					{isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div>}
 					{player.dodge && (
 						<div
 							className="tooltip badge badge-soft badge-warning"
