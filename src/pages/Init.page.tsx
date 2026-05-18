@@ -26,9 +26,6 @@ export const InitPage = ({ status, error }: { status: string; error: string | nu
 				</button>
 			</section>
 
-			{/* <section className="flex flex-row space-x-4">
-        <a className="btn btn-sm btn-soft" href="https://www.facebook.com/aiocean.io/" target='_blank'><Github size={16} />GitHub</a>
-      </section> */}
 		</div>
 	);
 };

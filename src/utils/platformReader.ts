@@ -1,9 +1,8 @@
 import { localDataDir } from "@tauri-apps/api/path";
-import { readDir, readTextFile, readTextFileLines } from "@tauri-apps/plugin-fs";
+import { readTextFile, readTextFileLines } from "@tauri-apps/plugin-fs";
 import base64 from "base-64";
 
 import lockfile from "@/../lockfile.json";
-import configs from "@/../tests/fixtures/local/configs.json";
 import ShooterGameLog from "@/../tests/fixtures/ShooterGame.json";
 
 import { isMac } from "./isMac";
@@ -15,16 +14,6 @@ const readLockfile = async (): Promise<string> => {
 		const path = await localDataDir();
 		const file = await readTextFile(`${path}\\Riot Games\\Riot Client\\Config\\lockfile`);
 		return file.toString();
-	}
-};
-
-const readConfigs = async (): Promise<string[]> => {
-	if (isMac()) {
-		return configs;
-	} else {
-		const path = await localDataDir();
-		const files = await readDir(`${path}\\Valorant\\Saved\\Config`);
-		return files.map((file) => file.name).filter((name) => name.match(/(.*)-(.*)-(.*)-(.*)-(.*)/));
 	}
 };
 
@@ -62,4 +51,4 @@ const parseLockFile = (content: string): { port: string; password: string } => {
 	return { port, password: base64.encode(`riot:${password}`) };
 };
 
-export { parseLockFile, parseShardFromLogline, readConfigs, readLockfile, readLog };
+export { parseLockFile, parseShardFromLogline, readLockfile, readLog };
