@@ -13,6 +13,7 @@ import type {
 } from "./schemas/shared";
 import type { GameSettingsResponse } from "./schemas/riot";
 import { BaseAPI } from "./base";
+import { API_CONFIG, URLS } from "../utils/constants";
 
 export class SharedAPI extends BaseAPI {
 	async getCurrentPreGamePlayer(puuid: string): Promise<CurrentPreGamePlayerResponse | null> {
@@ -49,24 +50,24 @@ export class SharedAPI extends BaseAPI {
 
 	async getPlayerMatchHistory(puuid: string): Promise<PlayerMatchHistoryResponse> {
 		const startIndex = 0;
-		const endIndex = 20;
+		const endIndex = API_CONFIG.MATCH_HISTORY_COUNT;
 		const queue = "competitive";
 		return this.fetch(
 			`https://pd.${this.SHARD}.a.pvp.net`,
 			`/match-history/v1/history/${puuid}?startIndex=${startIndex}&endIndex=${endIndex}&queue=${queue}`,
-			{ ttl: 5 * 60 * 1000 },
+			{ ttl: API_CONFIG.MATCH_HISTORY_TTL_MS },
 		);
 	}
 
 	async getMatchDetails(matchId: string): Promise<MatchDetailsResponse> {
 		return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, `/match-details/v1/matches/${matchId}`, {
-			ttl: 7 * 24 * 60 * 60 * 1000,
+			ttl: API_CONFIG.MATCH_DETAILS_TTL_MS,
 		});
 	}
 
 	async getCompetitiveUpdates(puuid: string): Promise<CompetitiveUpdatesResponse> {
 		const startIndex = 0;
-		const endIndex = 20;
+		const endIndex = API_CONFIG.COMPETITIVE_UPDATES_COUNT;
 		const queue = "competitive";
 		return this.fetch(
 			`https://pd.${this.SHARD}.a.pvp.net`,
@@ -80,14 +81,14 @@ export class SharedAPI extends BaseAPI {
 
 	async getGameSettings(): Promise<GameSettingsResponse> {
 		return this.fetch(
-			"https://player-preferences-usw2.pp.sgp.pvp.net",
+			URLS.PLAYER_PREFERENCES_BASE_URL,
 			"/playerPref/v3/getPreference/Ares.PlayerSettings",
 			{ noCache: true },
 		);
 	}
 
 	async setGameSettings(data: GameSettingsResponse): Promise<GameSettingsResponse> {
-		return this.fetch("https://player-preferences-usw2.pp.sgp.pvp.net", "/playerPref/v3/savePreference", {
+		return this.fetch(URLS.PLAYER_PREFERENCES_BASE_URL, "/playerPref/v3/savePreference", {
 			noCache: true,
 			body: JSON.stringify(data),
 			method: "PUT",

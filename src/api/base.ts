@@ -2,6 +2,7 @@ import { z } from "zod";
 import { Fetcher } from "./fetcher";
 import { SQLiteCache } from "./cache";
 import { Auth, RefreshAuthCallback } from "./auth";
+import { HEADERS } from "../utils/constants";
 
 type RateLimitCallback = (retryAfter: number) => void;
 
@@ -20,9 +21,9 @@ export class BaseAPI {
     region,
     shard,
   }: { entToken: string; accessToken: string; region: string; shard: string }) {
-    const headers = {
-      "X-Riot-ClientPlatform": "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9",
-      "X-Riot-ClientVersion": "release-12.05-shipping-22-4360629",
+   	const headers = {
+      "X-Riot-ClientPlatform": HEADERS.RIOT_CLIENT_PLATFORM_B64,
+      "X-Riot-ClientVersion": HEADERS.RIOT_CLIENT_VERSION,
       "X-Riot-Entitlements-JWT": entToken,
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
