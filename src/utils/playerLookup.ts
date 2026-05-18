@@ -10,7 +10,7 @@ export function getPlayerInMatch(
 ): MatchDetailsResponse["players"][0] {
 	const player = match.players.find((p) => p.subject === puuid);
 	if (!player) {
-		throw new Error(`Player ${puuid} not found in match ${match.metadata.matchId}`);
+		throw new Error(`Player ${puuid} not found in match ${match.matchInfo.matchId}`);
 	}
 	return player;
 }
