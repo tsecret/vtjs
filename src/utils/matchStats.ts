@@ -1,12 +1,12 @@
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
-import { getPlayerInMatch } from "./playerLookup";
+import { findPlayerInMatch } from "./playerLookup";
 import type { Result } from "@/interface";
 import type { MatchResult, PlayerMatchStats, Streak } from "@/interface/utils.interface";
 
 const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult => {
 	if (!match?.teams) return { result: "N/A", score: "", accountLevel: 0 };
 
-	const player = getPlayerInMatch(match, puuid);
+	const player = findPlayerInMatch(match, puuid);
 	const team = match.teams.find((team) => team.teamId === player?.teamId);
 
 	if (match.teams[0].roundsWon === match.teams[1].roundsWon)
@@ -65,7 +65,7 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 	};
 
 	for (const match of matches) {
-		const player = getPlayerInMatch(match, puuid);
+		const player = findPlayerInMatch(match, puuid);
 
 		if (!player?.stats) continue;
 

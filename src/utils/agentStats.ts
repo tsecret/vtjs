@@ -1,5 +1,5 @@
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
-import { getPlayerInMatch } from "./playerLookup";
+import { findPlayerInMatch } from "./playerLookup";
 import type { AgentStats } from "@/interface/common.interface";
 import type { BestAgent, BestMaps } from "@/interface/utils.interface";
 
@@ -14,7 +14,7 @@ const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[], mapU
 	} = {};
 
 	for (const match of filtered) {
-		const player = getPlayerInMatch(match, puuid);
+		const player = findPlayerInMatch(match, puuid);
 
 		if (!player?.stats) continue;
 
@@ -54,7 +54,7 @@ const calculateBestAgents = (puuid: string, matches: MatchDetailsResponse[]): Be
 	const agentsByMatch: { [key: string]: MatchDetailsResponse[] } = {};
 
 	for (const match of matches) {
-		const player = getPlayerInMatch(match, puuid);
+		const player = findPlayerInMatch(match, puuid);
 
 		if (!player?.characterId) continue;
 

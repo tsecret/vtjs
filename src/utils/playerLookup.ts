@@ -2,15 +2,11 @@ import type { MatchDetailsResponse } from "@/api/schemas/shared";
 
 /**
  * Find a player in match details by their PUUID.
- * Throws if player not found — caller guarantees player exists in match.
+ * Returns undefined if player not found in this match.
  */
-export function getPlayerInMatch(
+export function findPlayerInMatch(
 	match: MatchDetailsResponse,
 	puuid: string,
-): MatchDetailsResponse["players"][0] {
-	const player = match.players.find((p) => p.subject === puuid);
-	if (!player) {
-		throw new Error(`Player ${puuid} not found in match ${match.matchInfo.matchId}`);
-	}
-	return player;
+): MatchDetailsResponse["players"][0] | undefined {
+	return match.players.find((p) => p.subject === puuid);
 }
