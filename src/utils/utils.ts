@@ -2,8 +2,6 @@ import base64 from "base-64";
 import { Buffer } from "buffer";
 import pako from "pako";
 
-const sleep = (ms: number = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const base64Decode = (input: string): string => {
 	return base64.decode(input);
 };
@@ -22,4 +20,4 @@ const randomInt = (min: number, max: number): number => {
 	return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
 };
 
-export { base64Decode, randomInt, sleep, zdecode, zencode };
+export { base64Decode, randomInt, zdecode, zencode };
