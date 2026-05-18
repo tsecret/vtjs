@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useLongPress } from "use-long-press";
 import atoms from "../utils/atoms";
+import { URLS } from "../utils/constants";
 
 export const Header = () => {
 	const [update, setUpdate] = useState<Update | null>();
@@ -86,7 +87,7 @@ export const Header = () => {
 							{party.map((p) => (
 								<div key={p.puuid} className="avatar">
 									<div className="w-8 rounded-full">
-										<img src={`https://media.valorant-api.com/playercards/${p.playerCardId}/displayicon.png`} />
+										<img src={`${URLS.VALORANT_API_BASE_URL}/playercards/${p.playerCardId}/displayicon.png`} />
 									</div>
 								</div>
 							))}
