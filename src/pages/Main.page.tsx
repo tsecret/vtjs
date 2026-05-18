@@ -1,10 +1,9 @@
 import { useAptabase } from "@aptabase/react";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 import { PenaltyAlert } from "@/components/PenaltyAlert";
 import { useServices } from "@/lib/services";
 import { PlayersTable } from "../components/PlayersTable";
-import { gameStateModule } from "../lib/game-state";
 import * as utils from "../utils";
 import atoms from "../utils/atoms";
 
@@ -20,7 +19,8 @@ export const Main = () => {
 	const matchProcessing = useAtomValue(atoms.matchProcessing);
 	const currentMatch = useAtomValue(atoms.currentMatch);
 	const penalty = useAtomValue(atoms.penalty);
-	const gameState = gameStateModule.getState();
+	const gameState = useAtomValue(atoms.gameState);
+	const setGameState = useSetAtom(atoms.gameState);
 
 	const { trackEvent } = useAptabase();
 
@@ -44,9 +44,9 @@ export const Main = () => {
 				await trackEvent("manual_check");
 			}
 
-			if (currentPreGamePlayer) gameStateModule.setState("PREGAME", currentPreGamePlayer.MatchID);
+			if (currentPreGamePlayer) setGameState({ state: "PREGAME", matchId: currentPreGamePlayer.MatchID });
 
-			if (currentGamePlayer) gameStateModule.setState("INGAME", currentGamePlayer.MatchID);
+			if (currentGamePlayer) setGameState({ state: "INGAME", matchId: currentGamePlayer.MatchID });
 		} catch (err) {
 			console.error("Manual check failed:", err);
 			setError("Failed to check for current game");

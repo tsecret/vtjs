@@ -4,13 +4,13 @@ import { useEffect } from "react";
 import { useServices } from "@/lib/services";
 import { base64Decode } from "@/utils";
 import type { Payload, PresenceJSON } from "../interface";
-import { gameStateModule } from "../lib/game-state";
 import atoms from "../utils/atoms";
 
 export const SocketListener = () => {
 	const services = useServices();
 	const sharedapi = services?.sharedapi;
 	const setParty = useSetAtom(atoms.party);
+	const setGameState = useSetAtom(atoms.gameState);
 	const [puuid] = useAtom(atoms.puuid);
 	const [party] = useAtom(atoms.party);
 
@@ -40,17 +40,18 @@ export const SocketListener = () => {
 				}
 
 				const newState = decoded.matchPresenceData.sessionLoopState;
-				const currentState = gameStateModule.getState();
-				if (newState !== currentState.state) {
-					gameStateModule.setState(newState);
-				}
+				setGameState(prev => {
+					if (newState !== prev.state) {
+						return { state: newState, matchId: prev.matchId };
+					}
+					return prev;
+				});
 			} catch (err) {
 				console.log("err", err);
 			}
 		});
 
-		return gameStateModule.unsubscribe;
-	}, [puuid, setParty, party.length, sharedapi]);
+	}, [puuid, setParty, setGameState, party.length, sharedapi]);
 
 	return null;
 };
