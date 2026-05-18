@@ -127,6 +127,8 @@ export const ProfilePage = () => {
 					const mmrUpdate = mmrUpdates.find((update) => update.MatchID === match.matchInfo.matchId);
 
 					const player = findPlayerInMatch(match, puuid);
+					if (!player) continue;
+
 					const {
 						uuid: agentId,
 						displayName: agentName,
