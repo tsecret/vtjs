@@ -1,7 +1,6 @@
 import { fetch as httpfetch } from "@tauri-apps/plugin-http";
 import type {
   EntitlementsTokenResponse,
-  FriendsResponse,
   Lockfile,
   PlayerAccount,
   PresenceResponse,
@@ -37,10 +36,6 @@ export class LocalAPI {
 
   async getPlayerAccount(): Promise<PlayerAccount> {
     return this.fetch("/player-account/aliases/v1/active");
-  }
-
-   async getFriends(): Promise<FriendsResponse> {
-    return this.fetch("/chat/v4/friends");
   }
 
   async getPresences(): Promise<PresenceResponse> {

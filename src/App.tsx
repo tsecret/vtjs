@@ -10,7 +10,6 @@ import { Route, Routes, useNavigate } from "react-router";
 import { LocalAPI, SharedAPI } from "./api";
 import { TestLocalAPI } from "./api/local.dev";
 import { TestSharedAPI } from "./api/shared.dev";
-import { StoreAPI } from "./api/store";
 import { MatchHandler } from "./components";
 import { Announcement } from "./components/Announcement";
 import { Header } from "./components/Header";
@@ -20,13 +19,11 @@ import { Sync } from "./components/Sync";
 import { TestDial } from "./components/TestDial";
 import { type AppServices, ServicesProvider } from "./lib/services";
 import { AvoidListPage } from "./pages/AvoidList.page";
-import { FriendsPage } from "./pages/Friends.page";
 import { InitPage } from "./pages/Init.page";
 import { Main } from "./pages/Main.page";
 import { MatchPage } from "./pages/Match.page";
 import { ProfilePage } from "./pages/Profile.page";
 import { Settings } from "./pages/Settings.page";
-import { StorePage } from "./pages/Store.page";
 import { TestPage } from "./pages/Test.page";
 import { WelcomePage } from "./pages/Welcome.page";
 import { parseLockFile, readLockfile, readLog, extractPenalties } from "./utils";
@@ -101,7 +98,6 @@ function App() {
 					import.meta.env.VITE_FROM_JSON === "true"
 						? new TestSharedAPI({ entToken, accessToken, region, shard })
 						: new SharedAPI({ entToken, accessToken, region, shard });
-				const storeapi = new StoreAPI({ entToken, accessToken, region, shard });
 
 				const penalties = await sharedapi.getPenalties();
 				if (penalties?.Infractions.length) {
@@ -118,7 +114,7 @@ function App() {
 				setFirstTimeUser(firstTimeUser);
 				setPlayer(player);
 				setpuuid(puuid);
-				setServices({ cache: db, localapi, sharedapi, storeapi, store });
+				setServices({ cache: db, localapi, sharedapi, store });
 
 				console.log("localapi", localapi);
 				console.log("player", player);
@@ -157,8 +153,6 @@ function App() {
 					<Route path="/dashboard" element={<Main />} />
 					<Route path="/test" element={<TestPage />} />
 					<Route path="/settings" element={<Settings />} />
-					<Route path="/store" element={<StorePage />} />
-					<Route path="/friends" element={<FriendsPage />} />
 					<Route path="/player/:puuid" element={<ProfilePage />} />
 					<Route path="/match/:matchId" element={<MatchPage />} />
 					<Route path="/avoid-list" element={<AvoidListPage />} />

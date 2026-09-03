@@ -3,13 +3,11 @@ import type { Store } from "@tauri-apps/plugin-store";
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 import type { LocalAPI, SharedAPI } from "@/api";
-import type { StoreAPI } from "@/api/store";
 
 export type AppServices = {
 	cache: Database;
 	localapi: LocalAPI;
 	sharedapi: SharedAPI;
-	storeapi: StoreAPI;
 	store: Store;
 };
 

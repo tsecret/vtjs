@@ -10,5 +10,4 @@ export * from "./playerLookup";
 export * from "./platformReader";
 export * from "./ranking";
 export * from "./smurfDetection";
-export * from "./store";
 export * from "./utils";
