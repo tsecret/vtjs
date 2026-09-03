@@ -1,17 +1,17 @@
 import base64 from "base-64";
 import { Buffer } from "buffer";
-import pako from "pako";
+import { inflateRaw, deflateRaw } from "pako";
 
 const base64Decode = (input: string): string => {
 	return base64.decode(input);
 };
 
 const zdecode = (input: string): any => {
-	return JSON.parse(pako.inflateRaw(Buffer.from(input, "base64"), { to: "string" }));
+	return JSON.parse(inflateRaw(Buffer.from(input, "base64"), { toText: true }));
 };
 
 const zencode = (input: any): string => {
-	return Buffer.from(pako.deflateRaw(Buffer.from(JSON.stringify(input), "utf-8"))).toString("base64");
+	return Buffer.from(deflateRaw(Buffer.from(JSON.stringify(input), "utf-8"))).toString("base64");
 };
 
 const randomInt = (min: number, max: number): number => {
