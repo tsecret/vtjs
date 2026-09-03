@@ -4,18 +4,6 @@ const riotClientHost = import.meta.env.VITE_RIOT_CLIENT_HOST || import.meta.env.
 
 export const RIOT_CLIENT_HOST = riotClientHost.replace(/^https?:\/\//, "").replace(/\/+$/, "");
 
-/** Game item type UUIDs used to classify store offers */
-export const GAME_IDS = {
-  /** Weapon skin item type */
-  WEAPON_SKIN_TYPE_ID: "e7c63390-eda7-46e0-bb7a-a6abdacd2433",
-  /** Spray item type */
-  SPRAY_TYPE_ID: "d5f120f8-ff8c-4aac-92ea-f2b5acbe9475",
-  /** Player card item type */
-  PLAYERCARD_TYPE_ID: "3f296c07-64c3-494c-923b-fe692a4fa1bd",
-  /** The Range map ID */
-  RANGE_MAP_ID: "/Game/Maps/PovegliaV2/RangeV2",
-} as const;
-
 /** Thresholds for smurf detection and rank progress */
 export const THRESHOLDS = {
   /** Account level below which a player may be a smurf */

@@ -46,7 +46,7 @@ export const TestDial = () => {
 				Trigger Match End
 			</button>
 			<button className="btn btn-sm" onClick={onPartyJoin}>
-				Trigger Trigger Friend Join
+				Trigger Party Join
 			</button>
 		</div>
 	);
