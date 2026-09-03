@@ -139,18 +139,7 @@ function App() {
 				navigate("/");
 			}
 		})();
-	}, [
-		trackEvent,
-		setpuuid,
-		setPenalty,
-		setRateLimitNotification,
-		setFirstTimeUser,
-		setAllowAnalytics,
-		setPlayer,
-		setAppInfo,
-		setAnnouncement,
-		navigate,
-	]);
+	}, []);
 
 	return (
 		<ServicesProvider value={services}>
