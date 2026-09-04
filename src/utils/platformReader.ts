@@ -1,10 +1,7 @@
+import lockfile from "@/../lockfile.json";
 import { localDataDir } from "@tauri-apps/api/path";
 import { readTextFile, readTextFileLines } from "@tauri-apps/plugin-fs";
 import base64 from "base-64";
-
-import lockfile from "@/../lockfile.json";
-import ShooterGameLog from "@/../tests/fixtures/ShooterGame.json";
-
 import { isMac } from "./isMac";
 
 const readLockfile = async (): Promise<string> => {
@@ -19,10 +16,7 @@ const readLockfile = async (): Promise<string> => {
 
 const readLog = async () => {
 	if (isMac()) {
-		for (const line of ShooterGameLog) {
-			const res = parseShardFromLogline(line);
-			if (res) return res;
-		}
+		return ['eu', 'eu']
 	} else {
 		const path = await localDataDir();
 		const lines = await readTextFileLines(`${path}\\Valorant\\Saved\\Logs\\ShooterGame.log`);

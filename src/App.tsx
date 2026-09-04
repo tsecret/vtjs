@@ -86,6 +86,7 @@ function App() {
 				setInitStatus("Reading logs");
 				const [region, shard] = await readLog();
 
+				setInitStatus("Connecting to Riot Client");
 				const localapi =
 					import.meta.env.VITE_FROM_JSON === "true"
 						? new TestLocalAPI({ port: "", password: "" })
