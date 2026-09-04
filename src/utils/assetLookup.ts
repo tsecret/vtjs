@@ -1,9 +1,12 @@
+import { LoadoutResponse } from "@/api";
+import { Loadout } from "@/api/schemas/shared";
 import agents from "@/assets/agents.json";
 import maps from "@/assets/maps.json";
 import ranks from "@/assets/ranks.json";
 import seasons from "@/assets/seasons.json";
 
 import type { Agent, Map as MapType, Rank } from "@/interface";
+import { RIOT_GBUDDY_UUID } from "./constants";
 
 const getAgent = (uuid: string): Agent => {
 	if (!uuid) return { uuid: "", displayName: "", killfeedPortrait: "", displayIcon: "" };
@@ -40,4 +43,9 @@ const getSeasonDateById = (seasonId: string): Date | null => {
 	return new Date(season.endTime);
 };
 
-export { getAgent, getMap, getRank, getSeasonDateById };
+// TODO proper json logic
+const hasGunBuddy = (loadout: Loadout): boolean => {
+  return JSON.stringify(loadout).includes(RIOT_GBUDDY_UUID)
+}
+
+export { getAgent, getMap, getRank, getSeasonDateById, hasGunBuddy };

@@ -671,3 +671,26 @@ export type PartyResponse = {
 	XPBonuses: unknown[];
 	InviteCode: string;
 };
+
+export type Loadout = {
+	Subject: string;
+	Items: {
+    [x: string]: {
+      Sockets: {
+        [x: string]: {
+          ID: string;
+        };
+      };
+    };
+  }[];
+};
+
+export type PreGameLoadoutResponse = {
+  Loadouts: Loadout[]
+};
+
+export type CoreGameLoadoutResponse = {
+  Loadouts: {
+    Loadout: Loadout
+  }[]
+};

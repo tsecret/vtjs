@@ -1,5 +1,6 @@
 import type {
 	CompetitiveUpdatesResponse,
+	CoreGameLoadoutResponse,
 	CurrentGameMatchResponse,
 	CurrentGamePlayerResponse,
 	CurrentPreGameMatchResponse,
@@ -10,6 +11,7 @@ import type {
 	PlayerMatchHistoryResponse,
 	PlayerMMRResponse,
 	PlayerNamesReponse,
+  PreGameLoadoutResponse,
 } from "./schemas/shared";
 import type { GameSettingsResponse } from "./schemas/riot";
 import { BaseAPI } from "./base";
@@ -101,6 +103,18 @@ export class SharedAPI extends BaseAPI {
 
 	async getParty(partyId: string): Promise<PartyResponse> {
 		return this.fetch(`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`, `/parties/v1/parties/${partyId}`, {
+			noCache: true,
+		});
+	}
+
+	async getCurrentPreGameLoadouts(matchId: string): Promise<PreGameLoadoutResponse> {
+		return this.fetch(`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`, `/pregame/v1/matches/${matchId}/loadouts`, {
+			noCache: true,
+		});
+	}
+
+	async getCurrentGameLoadouts(matchId: string): Promise<CoreGameLoadoutResponse> {
+		return this.fetch(`https://glz-${this.REGION}-1.${this.SHARD}.a.pvp.net`, `/core-game/v1/matches/${matchId}/loadouts`, {
 			noCache: true,
 		});
 	}

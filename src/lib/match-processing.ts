@@ -5,9 +5,23 @@ import type {
 	MatchDetailsResponse,
 	PlayerNamesReponse,
 } from "@/api/schemas/shared";
+import type { LoadoutResponse } from "@/api/shared";
 import type { PlayerRow } from "@/interface/common.interface";
 import type { SharedAPI } from "@/api/shared";
-import { extractPlayers, calculateRanking, getRank, getAgent, getSeasonDateById, calculateStatsForPlayer, getMatchResult, getPlayerBestAgent, calculateStreak, extractPlayerName, extractParties } from "@/utils";
+import { extractPlayers, calculateRanking, getRank, getAgent, getSeasonDateById, calculateStatsForPlayer, getMatchResult, getPlayerBestAgent, calculateStreak, extractPlayerName, extractParties, hasGunBuddy } from "@/utils";
+import { RIOT_GBUDDY_UUID } from "@/utils/constants";
+
+function playerHasGunBuddy(loadout: LoadoutResponse["Loadouts"][0]): boolean {
+	if (!loadout.Items) return false;
+	for (const item of Object.values(loadout.Items)) {
+		const sockets = (item as any)?.Sockets;
+		if (!sockets) continue;
+		for (const socket of Object.values(sockets)) {
+			if ((socket as any)?.Item?.ID === RIOT_GBUDDY_UUID) return true;
+		}
+	}
+	return false;
+}
 
 export interface MatchProcessingConfig {
 	api: SharedAPI;
@@ -88,7 +102,11 @@ export class MatchProcessing {
 			? (match as CurrentPreGameMatchResponse).AllyTeam?.Players || []
 			: (match as CurrentGameMatchResponse).Players;
 
-		// Parallelize MMR fetch
+
+    const loadouts = isPreGame ?
+      await this.api.getCurrentPreGameLoadouts(matchId).then(res => res.Loadouts) :
+      await this.api.getCurrentGameLoadouts(matchId).then(res => res.Loadouts.map(l => l.Loadout));
+
 		const playerMMRs = await Promise.all(
 			playersToProcess.map(async (player) => {
 				return {
@@ -141,6 +159,7 @@ export class MatchProcessing {
 				enemy: isEnemy,
 				accountLevel: player.PlayerIdentity?.AccountLevel ?? null,
 				dodge: !!dodgeFlag?.dodge,
+				hasGunBuddy: hasGunBuddy(loadouts.find(l => l.Subject === player.Subject)!),
 				inParty: false,
 				partyId: null,
 			};

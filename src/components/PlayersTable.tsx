@@ -123,6 +123,7 @@ export const PlayersTable = ({
 							Avoid
 						</div>
 					)}
+					{player.hasGunBuddy && <div className="badge badge-soft badge-info">Riot Buddy</div>}
 				</td>
 				<td>
 					{player.inParty ? (
