@@ -1,4 +1,3 @@
-import { LoadoutResponse } from "@/api";
 import { Loadout } from "@/api/schemas/shared";
 import agents from "@/assets/agents.json";
 import maps from "@/assets/maps.json";
