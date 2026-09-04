@@ -1,34 +1,22 @@
-import { z } from "zod";
+export type SkinResponse = {
+	status: number;
+	data: {
+		uuid: string;
+		displayName: string;
+		displayIcon: string;
+		fullTransparentIcon: string;
+		wideArt: string;
+		largeArt: string;
+	};
+};
 
-// ── SkinResponse ──────────────────────────────────────────────────────────────
+export type WalletResponse = {
+	Balances: {
+		[x: string]: number;
+	};
+};
 
-export const SkinResponseSchema = z.object({
-	status: z.number(),
-	data: z.object({
-		uuid: z.string(),
-		displayName: z.string(),
-		displayIcon: z.string(),
-		fullTransparentIcon: z.string(),
-		wideArt: z.string(),
-		largeArt: z.string(),
-	}),
-});
-
-// ── WalletResponse ────────────────────────────────────────────────────────────
-
-export const WalletResponseSchema = z.object({
-	Balances: z.record(z.string(), z.number()),
-});
-
-// ── GameSettingsResponse ──────────────────────────────────────────────────────
-
-export const GameSettingsResponseSchema = z.object({
-	type: z.literal("Ares.PlayerSettings"),
-	data: z.string(),
-});
-
-// ── Derived types ─────────────────────────────────────────────────────────────
-
-export type SkinResponse = z.infer<typeof SkinResponseSchema>;
-export type WalletResponse = z.infer<typeof WalletResponseSchema>;
-export type GameSettingsResponse = z.infer<typeof GameSettingsResponseSchema>;
+export type GameSettingsResponse = {
+	type: "Ares.PlayerSettings";
+	data: string;
+};
