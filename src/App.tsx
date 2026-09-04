@@ -110,6 +110,11 @@ function App() {
 					setRateLimitNotification({ isActive: true, retryAfter });
 				});
 
+				sharedapi.setRefreshAuthCallback(async () => {
+					const { accessToken, token: entToken } = await localapi.getEntitlementToken();
+					return { accessToken, entToken };
+				});
+
 				setAppInfo(appInfo);
 				setAllowAnalytics(allowAnalytics);
 				setFirstTimeUser(firstTimeUser);

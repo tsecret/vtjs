@@ -3,6 +3,7 @@ export const CACHE_NAME = "sqlite:cache.db";
 const riotClientHost = import.meta.env.VITE_RIOT_CLIENT_HOST || import.meta.env.VITE_REMOTE_PC_IP || "localhost";
 
 export const RIOT_CLIENT_HOST = riotClientHost.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+export const RIOT_GBUDDY_UUID = 'ad508aeb-44b7-46bf-f923-959267483e78'
 
 /** Thresholds for smurf detection and rank progress */
 export const THRESHOLDS = {
