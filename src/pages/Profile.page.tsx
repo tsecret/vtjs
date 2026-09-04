@@ -9,7 +9,7 @@ import { useServices } from "@/lib/services";
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import { findPlayerInMatch } from "@/utils/playerLookup";
 import type { Result } from "../interface";
-import { calculateStatsForPlayer, getAgent, getMatchResult, getRank, getMap, calculateBestAgents, calculateBestMaps } from "../utils";
+import { calculateStatsForPlayer, getAgent, getMatchResult, getRank, getMap, calculateBestAgents, calculateBestMaps, calculateRanking } from "../utils";
 import atoms from "../utils/atoms";
 import { THRESHOLDS } from "@/utils/constants";
 
@@ -209,15 +209,8 @@ export const ProfilePage = () => {
 		(async () => {
 			const [{ GameName, TagLine }] = await sharedapi.getPlayerNames([puuid]);
 
-			const competitiveUpdates = await sharedapi.getCompetitiveUpdates(puuid);
-			const { TierAfterUpdate: currentRank, RankedRatingAfterUpdate: currentRR } =
-				competitiveUpdates.Matches.length > 0
-					? competitiveUpdates.Matches[0]
-					: { TierAfterUpdate: 1, RankedRatingAfterUpdate: 1 };
-			const peakRank = 1;
-
-			// const mmr = await sharedapi?.getPlayerMMR(puuid)
-			// const { currentRank, currentRR, peakRank } = utils.calculateRanking(mmr)
+			const mmr = await sharedapi?.getPlayerMMR(puuid)
+			const { currentRank, currentRR, peakRank } = calculateRanking(mmr)
 
 			const player = await cache
 				?.select<any[]>("SELECT * from players WHERE puuid = ?", [puuid])
