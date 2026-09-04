@@ -1,27 +1,13 @@
-import type Database from "@tauri-apps/plugin-sql";
 import type {
-	CurrentGameMatchResponse,
-	CurrentPreGameMatchResponse,
-	MatchDetailsResponse,
-	PlayerNamesReponse,
+    CurrentGameMatchResponse,
+    CurrentPreGameMatchResponse,
+    MatchDetailsResponse,
+    PlayerNamesReponse,
 } from "@/api/schemas/shared";
-import type { LoadoutResponse } from "@/api/shared";
-import type { PlayerRow } from "@/interface/common.interface";
 import type { SharedAPI } from "@/api/shared";
-import { extractPlayers, calculateRanking, getRank, getAgent, getSeasonDateById, calculateStatsForPlayer, getMatchResult, getPlayerBestAgent, calculateStreak, extractPlayerName, extractParties, hasGunBuddy } from "@/utils";
-import { RIOT_GBUDDY_UUID } from "@/utils/constants";
-
-function playerHasGunBuddy(loadout: LoadoutResponse["Loadouts"][0]): boolean {
-	if (!loadout.Items) return false;
-	for (const item of Object.values(loadout.Items)) {
-		const sockets = (item as any)?.Sockets;
-		if (!sockets) continue;
-		for (const socket of Object.values(sockets)) {
-			if ((socket as any)?.Item?.ID === RIOT_GBUDDY_UUID) return true;
-		}
-	}
-	return false;
-}
+import type { PlayerRow } from "@/interface/common.interface";
+import { calculateRanking, calculateStatsForPlayer, calculateStreak, extractParties, extractPlayerName, extractPlayers, getAgent, getMatchResult, getPlayerBestAgent, getRank, getSeasonDateById, hasGunBuddy } from "@/utils";
+import type Database from "@tauri-apps/plugin-sql";
 
 export interface MatchProcessingConfig {
 	api: SharedAPI;
