@@ -25,7 +25,7 @@ export class Fetcher {
       danger: { acceptInvalidCerts: true, acceptInvalidHostnames: true },
     });
 
-    const data = res.status === 200 ? await res.json() : null;
+    const data = await res.json().catch(() => null);
     return { status: res.status, data, headers: res.headers };
   }
 }

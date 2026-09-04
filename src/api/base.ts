@@ -83,15 +83,8 @@ export class BaseAPI {
       });
     }
 
-    if (res.status === 200) {
-      if (!options.noCache && options.ttl !== undefined) {
-        await this.cache.set(endpoint, res.data, options.ttl);
-      }
-      return res.data;
-    }
-
-    // Auth retry
-    if (res.status === 401 || res.status === 403) {
+    // Check for expired token (Riot returns 400 with BAD_CLAIMS)
+    if (res.status === 400 && res.data?.errorCode === "BAD_CLAIMS") {
       if (options._authRetried) return null;
       const refreshed = await this.auth.refreshIfNeeded();
       if (!refreshed) return null;
@@ -100,6 +93,13 @@ export class BaseAPI {
         headers: null,
         _authRetried: true,
       });
+    }
+
+    if (res.status === 200) {
+      if (!options.noCache && options.ttl !== undefined) {
+        await this.cache.set(endpoint, res.data, options.ttl);
+      }
+      return res.data;
     }
 
     // Rate limit
