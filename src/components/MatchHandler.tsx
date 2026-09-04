@@ -1,5 +1,5 @@
 import { useAptabase } from "@aptabase/react";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useEffect, useRef } from "react";
 import { useServices } from "@/lib/services";
 import { MatchProcessing } from "@/lib/match-processing";
@@ -11,7 +11,7 @@ export const MatchHandler = () => {
 	const sharedapi = services?.sharedapi;
 	const cache = services?.cache;
 
-	const [table, setTable] = useAtom(atoms.table);
+	const setTable = useSetAtom(atoms.table);
 	const puuid = useAtomValue(atoms.puuid);
 	const allowAnalytics = useAtomValue(atoms.allowAnalytics);
 	const gameState = useAtomValue(atoms.gameState);
@@ -51,15 +51,14 @@ export const MatchHandler = () => {
 			});
 
 			try {
-				if (allowAnalytics) await trackEvent(isPreGame ? "check_pregame" : "check_game");
+				const currentAllowAnalytics = allowAnalytics;
+				const currentPuuid = puuid;
 
-				const newTable = { ...table };
-				Object.keys(newTable).forEach((key) => {
-					delete newTable[key];
-				});
-				setTable(newTable);
+				if (currentAllowAnalytics) await trackEvent(isPreGame ? "check_pregame" : "check_game");
 
-				const result = await processing.handleMatch(matchId, isPreGame, puuid);
+				setTable({});
+
+				const result = await processing.handleMatch(matchId, isPreGame, currentPuuid);
 
 				setTable(result.table as Record<string, PlayerRow>);
 				setCurrentMatch(result.match);
@@ -70,10 +69,10 @@ export const MatchHandler = () => {
 				setTable((prevTable) => {
 					const nextTable = { ...prevTable };
 
-					for (const puuid of Object.keys(stats)) {
-						nextTable[puuid] = {
-							...nextTable[puuid],
-							...stats[puuid],
+					for (const playerPuuid of Object.keys(stats)) {
+						nextTable[playerPuuid] = {
+							...nextTable[playerPuuid],
+							...stats[playerPuuid],
 						} as PlayerRow;
 					}
 
@@ -88,7 +87,7 @@ export const MatchHandler = () => {
 					return nextTable;
 				});
 
-				if (allowAnalytics) await trackEvent("check_finish");
+				if (currentAllowAnalytics) await trackEvent("check_finish");
 			} catch (error) {
 				console.error("Error processing match:", error);
 			} finally {
@@ -100,7 +99,7 @@ export const MatchHandler = () => {
 				});
 			}
 		},
-		[sharedapi, puuid, table, setTable, setCurrentMatch, setMatchProcessing, allowAnalytics, trackEvent],
+		[sharedapi, puuid, allowAnalytics, trackEvent],
 	);
 
 	const handleGameEnd = useCallback(async () => {

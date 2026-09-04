@@ -43,5 +43,5 @@ export const HEADERS = {
   /** Base64-encoded platform identifier */
   RIOT_CLIENT_PLATFORM_B64: "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9",
   /** Riot client version string */
-  RIOT_CLIENT_VERSION: "release-12.05-shipping-22-4360629",
+  RIOT_CLIENT_VERSION: "release-13.05-shipping-11-5350494",
 } as const;
