@@ -46,8 +46,7 @@
 		"recharts": "3.10.1",
 		"tailwind-merge": "^3.6.0",
 		"tailwindcss": "^4.3.3",
-		"use-long-press": "^3.3.0",
-		"zod": "^4.5.4"
+		"use-long-press": "^3.3.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.12",

@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { Fetcher } from "./fetcher";
 import { SQLiteCache } from "./cache";
 import { Auth, RefreshAuthCallback } from "./auth";
@@ -58,7 +57,6 @@ export class BaseAPI {
       noCache?: boolean;
       ttl?: number;
       _authRetried?: boolean;
-      schema?: z.ZodObject<any, any>;
     } = { body: null, headers: null, method: "GET", ttl: this.cacheTTL },
   ): Promise<any> {
     if (!options.ttl) options.ttl = this.cacheTTL;
@@ -86,13 +84,6 @@ export class BaseAPI {
     }
 
     if (res.status === 200) {
-      if (options.schema) {
-        const result = options.schema.safeParse(res.data);
-        if (!result.success) {
-          console.error(`Schema validation failed for ${hostname}${endpoint}:`, result.error);
-          throw new Error(`Riot API response validation failed for ${endpoint}: ${result.error.message}`);
-        }
-      }
       if (!options.noCache && options.ttl !== undefined) {
         await this.cache.set(endpoint, res.data, options.ttl);
       }
