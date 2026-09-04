@@ -57,6 +57,7 @@ export interface PlayerRow {
 	inParty: boolean;
 	partyId?: number | null;
 	encounters?: Encounters[];
+	hasGunBuddy?: boolean;
 }
 
 export type Payload = {
