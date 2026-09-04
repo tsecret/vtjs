@@ -112,7 +112,7 @@ export const Main = () => {
 			{/* Waiting State */}
 			{player && Object.keys(table).length === 0 && gameState.state === "MENUS" && (
 				<section className="m-auto text-center mt-20">
-					<span className="loading loading-ring loading-lg my-4" />
+					<span className="loading loading-spiner loading-lg my-4" />
 					<h2 className="font-bold">Waiting for match</h2>
 					<p className="text-xs text-slate-400">
 						The check should start automatically when a match is found.
