@@ -1,7 +1,6 @@
 import { useAptabase } from "@aptabase/react";
 import { getIdentifier, getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
-import { fetch as httpfetch } from "@tauri-apps/plugin-http";
 import Database from "@tauri-apps/plugin-sql";
 import { load } from "@tauri-apps/plugin-store";
 import { useSetAtom } from "jotai";
@@ -11,7 +10,6 @@ import { LocalAPI, SharedAPI } from "./api";
 import { TestLocalAPI } from "./api/local.dev";
 import { TestSharedAPI } from "./api/shared.dev";
 import { MatchHandler } from "./components";
-import { Announcement } from "./components/Announcement";
 import { Header } from "./components/Header";
 import { RateLimitNotification } from "./components/RateLimitAlert";
 import { SocketListener } from "./components/SocketListener";
@@ -28,7 +26,7 @@ import { TestPage } from "./pages/Test.page";
 import { WelcomePage } from "./pages/Welcome.page";
 import { parseLockFile, readLockfile, readLog } from "./utils";
 import atoms from "./utils/atoms";
-import { CACHE_NAME, RIOT_CLIENT_HOST, URLS } from "./utils/constants";
+import { CACHE_NAME, RIOT_CLIENT_HOST } from "./utils/constants";
 
 function App() {
 	const setAppInfo = useSetAtom(atoms.appInfo);
@@ -36,7 +34,6 @@ function App() {
 	const setpuuid = useSetAtom(atoms.puuid);
 	const setAllowAnalytics = useSetAtom(atoms.allowAnalytics);
 	const setFirstTimeUser = useSetAtom(atoms.firstTimeUser);
-	const setAnnouncement = useSetAtom(atoms.announcement);
 	const setRateLimitNotification = useSetAtom(atoms.rateLimitNotification);
 
 	const [initStatus, setInitStatus] = useState<string>("Preparing app");
@@ -70,13 +67,6 @@ function App() {
 
 			setInitStatus("Cleaning cache");
 			await db.execute("DELETE FROM requests WHERE ttl <= $1", [Date.now()]);
-
-			try {
-				const announcement = await httpfetch(URLS.ANNOUNCEMENT_URL).then((res) => res.text());
-				if (announcement) setAnnouncement(announcement);
-			} catch (err) {
-				console.error("Failed to fetch announcement: ", err);
-			}
 
 			try {
 				setInitStatus("Reading lockfile");
@@ -139,7 +129,6 @@ function App() {
 	return (
 		<ServicesProvider value={services}>
 			<main className="relative select-none cursor-default">
-				<Announcement />
 				<Header />
 				<SocketListener />
 				<RateLimitNotification />

@@ -6,8 +6,6 @@ const appInfo = atom<{
 	tauriVersion: string;
 	identifier: string;
 }>();
-const announcement = atom<string | null>();
-
 const puuid = atom<string>();
 const player = atom<PlayerAccount>();
 const table = atom<Record<PlayerRow["puuid"], PlayerRow>>({});
@@ -39,7 +37,6 @@ const firstTimeUser = atom<boolean>(true);
 
 export default {
 	appInfo,
-	announcement,
 	puuid,
 	player,
 	table,
