@@ -4,17 +4,14 @@ import type {
 	CurrentGameMatchResponse,
 	CurrentPreGameMatchResponse,
 	MatchDetailsResponse,
-	PenaltiesResponse,
 	PlayerMMRResponse,
 	PlayerNamesReponse,
 	PlayerRow,
 } from "../src/interface";
-import type { Penalties } from "../src/interface/utils.interface";
 import * as utils from "../src/utils";
 import currentGameMatch from "./fixtures/shared/current-game-match.json";
 import currentPreGameMatch from "./fixtures/shared/current-pregame-match.json";
 import matchDetails from "./fixtures/shared/match-details.json";
-import penalties from "./fixtures/shared/penalties.json";
 import playerMMR from "./fixtures/shared/player-mmr.json";
 import playerNames from "./fixtures/shared/player-names.json";
 import storefront from "./fixtures/shared/storefront.json";
@@ -409,29 +406,6 @@ describe("utils", () => {
 				},
 			];
 			expect(utils.getStoreItemInfo(storefront.SkinsPanelLayout.SingleItemStoreOffers)).toStrictEqual(expected);
-		});
-	});
-
-	describe("extractPenalties", () => {
-		it("with penalties", () => {
-			const expected = {
-				freeTimestamp: 1757204835300,
-				type: ["TEXT_CHAT_MUTED", "VOICE_CHAT_MUTED", "PBE_LOGIN_TIME_BAN"],
-				reason: ["INAPPROPRIATE_TEXT", "INAPPROPRIATE_VOICE"],
-				matchId: "test-match-id-1",
-			} as Penalties;
-			expect(utils.extractPenalties(penalties as PenaltiesResponse)).toEqual(expected);
-		});
-
-		it("with no penalties", async () => {
-			expect(
-				utils.extractPenalties({
-					Infractions: [],
-					Penalties: [],
-					Subject: "",
-					Version: 1,
-				} as PenaltiesResponse),
-			).toEqual(null);
 		});
 	});
 

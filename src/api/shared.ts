@@ -7,7 +7,6 @@ import type {
 	CurrentPreGamePlayerResponse,
 	MatchDetailsResponse,
 	PartyResponse,
-	PenaltiesResponse,
 	PlayerMatchHistoryResponse,
 	PlayerMMRResponse,
 	PlayerNamesReponse,
@@ -95,10 +94,6 @@ export class SharedAPI extends BaseAPI {
 			body: JSON.stringify(data),
 			method: "PUT",
 		});
-	}
-
-	async getPenalties(): Promise<PenaltiesResponse> {
-		return this.fetch(`https://pd.${this.SHARD}.a.pvp.net`, "/restrictions/v3/penalties", { noCache: true });
 	}
 
 	async getParty(partyId: string): Promise<PartyResponse> {

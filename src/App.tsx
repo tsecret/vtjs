@@ -26,7 +26,7 @@ import { ProfilePage } from "./pages/Profile.page";
 import { Settings } from "./pages/Settings.page";
 import { TestPage } from "./pages/Test.page";
 import { WelcomePage } from "./pages/Welcome.page";
-import { parseLockFile, readLockfile, readLog, extractPenalties } from "./utils";
+import { parseLockFile, readLockfile, readLog } from "./utils";
 import atoms from "./utils/atoms";
 import { CACHE_NAME, RIOT_CLIENT_HOST, URLS } from "./utils/constants";
 
@@ -37,7 +37,6 @@ function App() {
 	const setAllowAnalytics = useSetAtom(atoms.allowAnalytics);
 	const setFirstTimeUser = useSetAtom(atoms.firstTimeUser);
 	const setAnnouncement = useSetAtom(atoms.announcement);
-	const setPenalty = useSetAtom(atoms.penalty);
 	const setRateLimitNotification = useSetAtom(atoms.rateLimitNotification);
 
 	const [initStatus, setInitStatus] = useState<string>("Preparing app");
@@ -99,12 +98,6 @@ function App() {
 					import.meta.env.VITE_FROM_JSON === "true"
 						? new TestSharedAPI({ entToken, accessToken, region, shard })
 						: new SharedAPI({ entToken, accessToken, region, shard });
-
-				const penalties = await sharedapi.getPenalties();
-				if (penalties?.Infractions.length) {
-					const penalty = extractPenalties(penalties);
-					if (penalty) setPenalty(penalty);
-				}
 
 				sharedapi.setRateLimitCallback((retryAfter: number) => {
 					setRateLimitNotification({ isActive: true, retryAfter });

@@ -1,5 +1,4 @@
 import { atom } from "jotai";
-import type { Penalties } from "@/interface/utils.interface";
 import type { GameState, PlayerAccount, PlayerRow } from "../interface";
 
 const appInfo = atom<{
@@ -29,7 +28,6 @@ const matchProcessing = atom<{
 	progress: { step: 0, total: 0 },
 });
 const currentMatch = atom<any>(null);
-const penalty = atom<Penalties>();
 const rateLimitNotification = atom<{ isActive: boolean; retryAfter: number }>({
 	isActive: false,
 	retryAfter: 0,
@@ -45,7 +43,6 @@ export default {
 	puuid,
 	player,
 	table,
-	penalty,
 	rateLimitNotification,
 	party,
 

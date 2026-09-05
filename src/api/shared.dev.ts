@@ -5,7 +5,6 @@ import currentPreGameMatch from "../../tests/fixtures/shared/current-pregame-mat
 import matchDetails from "../../tests/fixtures/shared/match-details.json";
 import matchHistory from "../../tests/fixtures/shared/match-history.json";
 import party from "../../tests/fixtures/shared/parties.json";
-import penaltiesClear from "../../tests/fixtures/shared/penalties-clear.json";
 import playerMMR from "../../tests/fixtures/shared/player-mmr.json";
 import playerNames from "../../tests/fixtures/shared/player-names.json";
 import agents from "../assets/agents.json";
@@ -18,7 +17,6 @@ import type {
 	CurrentPreGamePlayerResponse,
 	MatchDetailsResponse,
 	PartyResponse,
-	PenaltiesResponse,
 	PlayerMatchHistoryResponse,
 	PlayerMMRResponse,
 	PlayerNamesReponse,
@@ -93,11 +91,6 @@ export class TestSharedAPI extends SharedAPI {
 
 		// @ts-ignore
 		return mmr;
-	}
-
-	async getPenalties(): Promise<PenaltiesResponse> {
-		// @ts-ignore
-		return penaltiesClear;
 	}
 
 	async getParty(_partyId: string): Promise<PartyResponse> {

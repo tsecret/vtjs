@@ -5,7 +5,6 @@ export * from "./isMac";
 export * from "./match";
 export * from "./matchStats";
 export * from "./partyDetection";
-export * from "./penalties";
 export * from "./playerLookup";
 export * from "./platformReader";
 export * from "./ranking";

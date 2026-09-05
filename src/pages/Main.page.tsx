@@ -1,7 +1,6 @@
 import { useAptabase } from "@aptabase/react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
-import { PenaltyAlert } from "@/components/PenaltyAlert";
 import { useServices } from "@/lib/services";
 import { PlayersTable } from "../components/PlayersTable";
 import { getMap } from "../utils";
@@ -18,7 +17,6 @@ export const Main = () => {
 	const allowAnalytics = useAtomValue(atoms.allowAnalytics);
 	const matchProcessing = useAtomValue(atoms.matchProcessing);
 	const currentMatch = useAtomValue(atoms.currentMatch);
-	const penalty = useAtomValue(atoms.penalty);
 	const gameState = useAtomValue(atoms.gameState);
 	const setGameState = useSetAtom(atoms.gameState);
 
@@ -73,8 +71,6 @@ export const Main = () => {
 	return (
 		<div className="p-2 flex flex-col">
 			{error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div>}
-
-			<PenaltyAlert penalty={penalty} />
 
 			{/* Progress Indicator */}
 			{matchProcessing.isProcessing && matchProcessing.progress.total > 0 && (
