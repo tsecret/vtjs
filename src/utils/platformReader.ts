@@ -1,31 +1,28 @@
-import lockfile from "@/../lockfile.json";
 import { localDataDir } from "@tauri-apps/api/path";
 import { readTextFile, readTextFileLines } from "@tauri-apps/plugin-fs";
 import base64 from "base-64";
 import { isMac } from "./isMac";
+import { DEV_PORT, DEV_REGION, DEV_SHARD, DEV_TOKEN } from "./constants";
 
 const readLockfile = async (): Promise<string> => {
 	if (isMac()) {
-		return lockfile;
-	} else {
-		const path = await localDataDir();
-		const file = await readTextFile(`${path}\\Riot Games\\Riot Client\\Config\\lockfile`);
-		return file.toString();
+		return `Riot Client:1:${DEV_PORT}:${DEV_TOKEN}:https`;
 	}
+	const path = await localDataDir();
+	const file = await readTextFile(`${path}\\Riot Games\\Riot Client\\Config\\lockfile`);
+	return file.toString();
 };
 
 const readLog = async () => {
 	if (isMac()) {
-		return ['eu', 'eu']
-	} else {
-		const path = await localDataDir();
-		const lines = await readTextFileLines(`${path}\\Valorant\\Saved\\Logs\\ShooterGame.log`);
-		for await (const line of lines) {
-			const res = parseShardFromLogline(line);
-			if (res) return res;
-		}
+		return [DEV_REGION, DEV_SHARD];
 	}
-
+	const path = await localDataDir();
+	const lines = await readTextFileLines(`${path}\\Valorant\\Saved\\Logs\\ShooterGame.log`);
+	for await (const line of lines) {
+		const res = parseShardFromLogline(line);
+		if (res) return res;
+	}
 	return ["", ""];
 };
 

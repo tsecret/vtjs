@@ -23,7 +23,7 @@ describe("utils", () => {
 		const lockfile = await utils.readLockfile();
 		const { port, password } = utils.parseLockFile(lockfile);
 		expect(port).toEqual("12345");
-		expect(password).toEqual("cmlvdDp0ZXN0LXBhc3N3b3Jk");
+		expect(password).toEqual("cmlvdDpkZXZlbG9wZXI=");
 	});
 
 	describe("zlib", () => {
