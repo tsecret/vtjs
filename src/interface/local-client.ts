@@ -1,4 +1,4 @@
-import type { GameState, ProvisioningFlow, QueueId } from "./common.interface";
+import type { GameState } from "./common.interface";
 
 export interface PlayerAccount {
 	game_name: string;
@@ -17,71 +17,17 @@ export interface HelpResponse {
 
 export type PresenceResponse = {
 	presences: {
-		actor?: unknown | null;
-		basic: string;
-		details?: unknown | null;
-		game_name: string;
-		game_tag: string;
-		location?: unknown | null;
-		msg?: unknown | null;
-		name: string;
-		patchline?: unknown | null;
-		pid: string;
-		platform?: unknown | null;
-		private: string | null;
-		privateJwt?: string | null;
-		presence: PresenceJSON | null;
-		product: "valorant" | "league_of_legends";
-		/** Player UUID */
 		puuid: string;
-		region: string;
-		resource: string;
-		state: "mobile" | "dnd" | "away" | "chat";
-		summary: string;
-		/** Milliseconds since epoch */
-		time: number;
+		private: string | null;
 	}[];
 };
 
 export type PresenceJSON = {
-	isValid: boolean;
-	isIdle: boolean;
-	queueId: QueueId;
-	provisioningFlow: ProvisioningFlow;
-	partyId: string;
-	partySize: number;
-	maxPartySize: number;
-	partyOwnerMatchScoreAllyTeam: number;
-	partyOwnerMatchScoreEnemyTeam: number;
-	matchPresenceData: {
-		sessionLoopState: GameState;
-		matchMap: string | ""; // "/Game/Maps/Juliett/Juliett"
-		provisioningFlow: ProvisioningFlow;
-		queueId: QueueId;
-	};
 	partyPresenceData: {
 		partyId: string;
-		isPartyOwner: boolean;
-		partyState: "DEFAULT" | "MATCHMAKING";
-		partyAccessibility: "CLOSED";
-		partyLFM: boolean;
-		partyClientVersion: string;
-		partyVersion: number;
 		partySize: number;
-		queueEntryTime: string;
-		customGameName: string;
-		customGameTeam: string;
-		maxPartySize: number;
-		partyOwnerMatchMap: string; // "/Game/Maps/Juliett/Juliett"
-		partyOwnerMatchCurrentTeam: string;
-		partyOwnerProvisioningFlow: ProvisioningFlow;
-		partyOwnerSessionLoopState: GameState;
 	};
-	playerPresenceData: {
-		playerCardId: string;
-		playerTitleId: string;
-		preferredLevelBorderId: string;
-		accountLevel: number;
-		competitiveTier: number;
+	matchPresenceData: {
+		sessionLoopState: GameState;
 	};
 };

@@ -90,7 +90,7 @@ export type QueueId =
 	| "swiftplay"
 	| "unrated"
 	| "spikerush"
-	| "ggteam" // Escalation
-	| "hurm"; // Team Deathmatch
+	| "ggteam"
+	| "hurm";
 
 export type ProvisioningFlow = "Matchmaking" | "Invalid";

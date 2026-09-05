@@ -69,5 +69,4 @@ export type Parties = {
 	puuids: string[];
 }[];
 
-// Re-export from common.interface for backwards compatibility
 export type { Encounters, MostPlayedServer, Streak };
