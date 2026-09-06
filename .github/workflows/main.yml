@@ -30,12 +30,5 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: false
           prerelease: false
-          args: ${{ matrix.args }}
 
-      - name: Update Gist
-        uses: exuanbo/actions-deploy-gist@v1
-        with:
-          token: ${{ secrets.TOKEN }}
-          gist_id: 0b5f7094000f4063d72276c5e05824aa
-          file_path: ./latest.json
-          gist_file_name: 'prod.json'
+

@@ -1,5 +1,4 @@
 import type { Encounters, MostPlayedServer, Result, Streak } from "./common.interface";
-import type { PenaltiesResponse } from "../api/schemas/shared";
 
 export type BestAgent = {
 	agentId: string;
@@ -59,13 +58,6 @@ export type Rank = {
 	rankImg: string;
 };
 
-export type Penalties = {
-	freeTimestamp: number;
-	type: PenaltiesResponse["Penalties"][0]["RiotRestrictionEffect"]["RestrictionType"][];
-	reason: PenaltiesResponse["Penalties"][0]["RiotRestrictionEffect"]["RestrictionReason"][];
-	matchId: string;
-};
-
 export type MatchResult = {
 	result: Result;
 	score: string;
@@ -77,5 +69,4 @@ export type Parties = {
 	puuids: string[];
 }[];
 
-// Re-export from common.interface for backwards compatibility
 export type { Encounters, MostPlayedServer, Streak };

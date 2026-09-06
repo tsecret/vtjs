@@ -1,5 +1,4 @@
 import { atom } from "jotai";
-import type { Penalties } from "@/interface/utils.interface";
 import type { GameState, PlayerAccount, PlayerRow } from "../interface";
 
 const appInfo = atom<{
@@ -7,8 +6,6 @@ const appInfo = atom<{
 	tauriVersion: string;
 	identifier: string;
 }>();
-const announcement = atom<string | null>();
-
 const puuid = atom<string>();
 const player = atom<PlayerAccount>();
 const table = atom<Record<PlayerRow["puuid"], PlayerRow>>({});
@@ -29,7 +26,6 @@ const matchProcessing = atom<{
 	progress: { step: 0, total: 0 },
 });
 const currentMatch = atom<any>(null);
-const penalty = atom<Penalties>();
 const rateLimitNotification = atom<{ isActive: boolean; retryAfter: number }>({
 	isActive: false,
 	retryAfter: 0,
@@ -41,11 +37,9 @@ const firstTimeUser = atom<boolean>(true);
 
 export default {
 	appInfo,
-	announcement,
 	puuid,
 	player,
 	table,
-	penalty,
 	rateLimitNotification,
 	party,
 

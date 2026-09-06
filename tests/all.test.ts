@@ -4,20 +4,16 @@ import type {
 	CurrentGameMatchResponse,
 	CurrentPreGameMatchResponse,
 	MatchDetailsResponse,
-	PenaltiesResponse,
 	PlayerMMRResponse,
 	PlayerNamesReponse,
 	PlayerRow,
 } from "../src/interface";
-import type { Penalties } from "../src/interface/utils.interface";
 import * as utils from "../src/utils";
 import currentGameMatch from "./fixtures/shared/current-game-match.json";
 import currentPreGameMatch from "./fixtures/shared/current-pregame-match.json";
 import matchDetails from "./fixtures/shared/match-details.json";
-import penalties from "./fixtures/shared/penalties.json";
 import playerMMR from "./fixtures/shared/player-mmr.json";
 import playerNames from "./fixtures/shared/player-names.json";
-import storefront from "./fixtures/shared/storefront.json";
 import agents from "../src/assets/agents.json";
 import maps from "../src/assets/maps.json";
 
@@ -27,19 +23,6 @@ describe("utils", () => {
 		const { port, password } = utils.parseLockFile(lockfile);
 		expect(port).toEqual("12345");
 		expect(password).toEqual("cmlvdDp0ZXN0LXBhc3N3b3Jk");
-	});
-
-	describe("zlib", () => {
-		const d = { text: "test" };
-		const t = "q1YqSa0oUbICUsUlSrUA";
-
-		it("encode", async () => {
-			expect(utils.zencode(d)).toBe(t);
-		});
-
-		it("decodd", async () => {
-			expect(utils.zdecode(t)).toStrictEqual(d);
-		});
 	});
 
 	describe("extractPlayers", () => {
@@ -355,83 +338,6 @@ describe("utils", () => {
 			expect(
 				utils.getPlayerBestAgent(puuid, [matchDetails, matchDetails] as MatchDetailsResponse[], mapUrl),
 			).toStrictEqual([{ ...expected[0], games: 2 }]);
-		});
-	});
-
-	describe("getStoreItemInfo", () => {
-		it("gets accessories info", () => {
-			const expected = [
-				{
-					price: 4000,
-					type: "spray",
-					uuid: "d80c7de5-4625-7ed6-f2b6-4eb4ec963717",
-				},
-				{
-					price: 4500,
-					type: "playercard",
-					uuid: "82b5cd0d-4b81-c336-2332-61a753849355",
-				},
-				{
-					price: 6000,
-					type: "spray",
-					uuid: "eb1455b9-4b48-8a79-c16b-8592043285d4",
-				},
-				{
-					price: 6000,
-					type: "spray",
-					uuid: "a0a399da-4322-83f0-e734-49a81ab6e820",
-				},
-			];
-			expect(utils.getStoreItemInfo(storefront.AccessoryStore.AccessoryStoreOffers)).toStrictEqual(expected);
-		});
-
-		it("gets item info", () => {
-			const expected = [
-				{
-					price: 1775,
-					type: "weaponskin",
-					uuid: "e16ea577-4d7f-e686-456a-54b4b1d9cba2",
-				},
-				{
-					price: 2550,
-					type: "weaponskin",
-					uuid: "155ba654-4afa-1029-9e71-e0b6962d5410",
-				},
-				{
-					price: 875,
-					type: "weaponskin",
-					uuid: "b8bc5d1b-44aa-aa83-0246-b1a6bb496177",
-				},
-				{
-					price: 1775,
-					type: "weaponskin",
-					uuid: "46048768-4499-72f7-820b-7cbe1d4ad844",
-				},
-			];
-			expect(utils.getStoreItemInfo(storefront.SkinsPanelLayout.SingleItemStoreOffers)).toStrictEqual(expected);
-		});
-	});
-
-	describe("extractPenalties", () => {
-		it("with penalties", () => {
-			const expected = {
-				freeTimestamp: 1757204835300,
-				type: ["TEXT_CHAT_MUTED", "VOICE_CHAT_MUTED", "PBE_LOGIN_TIME_BAN"],
-				reason: ["INAPPROPRIATE_TEXT", "INAPPROPRIATE_VOICE"],
-				matchId: "test-match-id-1",
-			} as Penalties;
-			expect(utils.extractPenalties(penalties as PenaltiesResponse)).toEqual(expected);
-		});
-
-		it("with no penalties", async () => {
-			expect(
-				utils.extractPenalties({
-					Infractions: [],
-					Penalties: [],
-					Subject: "",
-					Version: 1,
-				} as PenaltiesResponse),
-			).toEqual(null);
 		});
 	});
 

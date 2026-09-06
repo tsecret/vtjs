@@ -1,17 +1,7 @@
 import base64 from "base-64";
-import { Buffer } from "buffer";
-import { inflateRaw, deflateRaw } from "pako";
 
 const base64Decode = (input: string): string => {
 	return base64.decode(input);
-};
-
-const zdecode = (input: string): any => {
-	return JSON.parse(inflateRaw(Buffer.from(input, "base64"), { toText: true }));
-};
-
-const zencode = (input: any): string => {
-	return Buffer.from(deflateRaw(Buffer.from(JSON.stringify(input), "utf-8"))).toString("base64");
 };
 
 const randomInt = (min: number, max: number): number => {
@@ -20,4 +10,4 @@ const randomInt = (min: number, max: number): number => {
 	return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
 };
 
-export { base64Decode, randomInt, zdecode, zencode };
+export { base64Decode, randomInt };

@@ -12,10 +12,6 @@ runs:
     - name: Setup Bun
       uses: oven-sh/setup-bun@v2
 
-    - name: Create lockfile
-      shell: bash
-      run: echo '"Riot Client:1888:12345:6VCDFORUm1nbDfZ4EReVqw:https"' > lockfile.json
-
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
 
