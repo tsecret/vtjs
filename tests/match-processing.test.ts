@@ -14,9 +14,12 @@ describe("MatchProcessing", () => {
 	let processing: MatchProcessing;
 
 	beforeEach(() => {
+		const mockLoadouts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => ({ Subject: `test-player-${n}-puuid`, Items: [] }));
 		mockApi = {
 			getCurrentPreGameMatch: vi.fn(),
 			getCurrentGameMatch: vi.fn(),
+			getCurrentPreGameLoadouts: vi.fn().mockResolvedValue({ Loadouts: mockLoadouts }),
+			getCurrentGameLoadouts: vi.fn().mockResolvedValue({ Loadouts: mockLoadouts.map(l => ({ Loadout: l })) }),
 			getPlayerNames: vi.fn(),
 			getPlayerMMR: vi.fn(),
 			getPlayerMatchHistory: vi.fn(),
