@@ -343,6 +343,59 @@ describe("utils", () => {
 
 	// calculateMostPlayedServer removed as dead code — no callers in the codebase
 
+	describe("extractServerName", () => {
+		it("extracts frankfurt from eu-gp-frankfurt-1", () => {
+			expect(utils.extractServerName("aresriot.aws-euc1-prod.eu-gp-frankfurt-1")).toBe("frankfurt");
+		});
+
+		it("extracts paris from eu-gp-paris-1", () => {
+			expect(utils.extractServerName("aresriot.aws-euw3-prod.eu-gp-paris-1")).toBe("paris");
+		});
+
+		it("handles short gamePodId", () => {
+			expect(utils.extractServerName("abc-def")).toBe("abc");
+		});
+
+		it("returns full id when single part", () => {
+			expect(utils.extractServerName("single")).toBe("single");
+		});
+	});
+
+	describe("calculateBestServers", () => {
+		const puuid = matchDetails.players[0].subject;
+
+		it("returns server stats from single match", () => {
+			const result = utils.calculateBestServers(puuid, [matchDetails] as MatchDetailsResponse[]);
+			expect(result).toHaveLength(1);
+			expect(result[0].serverName).toBe("frankfurt");
+			expect(result[0].matches).toBe(1);
+		});
+
+		it("aggregates matches across servers", () => {
+			const frankfurtMatch = matchDetails as MatchDetailsResponse;
+			const parisMatch = {
+				...matchDetails,
+				matchInfo: {
+					...matchDetails.matchInfo,
+					gamePodId: "aresriot.aws-euw3-prod.eu-gp-paris-1",
+				},
+			} as MatchDetailsResponse;
+
+			const result = utils.calculateBestServers(puuid, [frankfurtMatch, parisMatch, parisMatch]);
+			expect(result).toHaveLength(2);
+			expect(result[0].serverName).toBe("paris");
+			expect(result[0].matches).toBe(2);
+			expect(result[1].serverName).toBe("frankfurt");
+			expect(result[1].matches).toBe(1);
+		});
+
+		it("sorts by most matches first", () => {
+			const matches = [matchDetails, matchDetails, matchDetails] as MatchDetailsResponse[];
+			const result = utils.calculateBestServers(puuid, matches);
+			expect(result[0].matches).toBe(3);
+		});
+	});
+
 	describe("sortPlayersForProcessing", () => {
 		it("sorts players by level", () => {
 			const table: Record<string, Partial<PlayerRow>> = {

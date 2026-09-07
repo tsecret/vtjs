@@ -30,6 +30,21 @@ export type BestMaps = {
 	adr: number;
 };
 
+export type BestServer = {
+	serverName: string;
+	matches: number;
+	wins: number;
+	losses: number;
+	ties: number;
+	winrate: number;
+	kills: number;
+	deaths: number;
+	assists: number;
+	kd: number;
+	hs: number;
+	adr: number;
+};
+
 export type PlayerMatchStats = {
 	kills: number;
 	deaths: number;
