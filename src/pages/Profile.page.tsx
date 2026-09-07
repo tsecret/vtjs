@@ -385,7 +385,7 @@ export const ProfilePage = () => {
                     className={clsx(
 											match.result === "won" ? "bg-success/5" : match.result === "loss" ? "bg-error/5" : "bg-white/5",
                       "text-center",
-                      refMatchId === match.matchId && "bg-primary/20",
+                      refMatchId === match.matchId && "outline-2 outline-primary",
 										)}
 									>
 										<td className="text-left">
@@ -468,7 +468,7 @@ export const ProfilePage = () => {
 										{bestAgents?.map((agent) => (
 											<tr
 												key={agent.agentId}
-												className={clsx(refAgentId === agent.agentId && "bg-primary/20")}
+												className={clsx(refAgentId === agent.agentId && "outline-2 outline-primary")}
 											>
 												<th className="flex flex-row items-center space-x-2">
 													<img src={agent.agentUrl} className="max-h-6" draggable={false} />
@@ -511,7 +511,7 @@ export const ProfilePage = () => {
 									</thead>
 									<tbody>
 										{bestMaps?.map((map) => (
-											<tr key={map.mapId} className={clsx(refMapId === map.mapId && "bg-primary/20")}>
+											<tr key={map.mapId} className={clsx(refMapId === map.mapId && "outline-2 outline-primary")}>
 												<th className="flex flex-row items-center space-x-2">
 													<img src={map.mapUrl} className="max-h-6 blur-[1px] brightness-50" draggable={false} />
 													<span className="z-10 absolute left-4">{map.mapName}</span>
