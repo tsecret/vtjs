@@ -4,12 +4,12 @@ import { ChevronsDown, ChevronsUp, ExternalLink } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
-import type { BestAgent, BestMaps, Rank } from "@/interface/utils.interface";
+import type { BestAgent, BestMaps, BestServer, Rank } from "@/interface/utils.interface";
 import { useServices } from "@/lib/services";
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import { findPlayerInMatch } from "@/utils/playerLookup";
 import type { Result } from "../interface";
-import { calculateStatsForPlayer, getAgent, getMatchResult, getRank, getMap, calculateBestAgents, calculateBestMaps, calculateRanking } from "../utils";
+import { calculateStatsForPlayer, getAgent, getMatchResult, getRank, getMap, calculateBestAgents, calculateBestMaps, calculateBestServers, calculateRanking } from "../utils";
 import atoms from "../utils/atoms";
 import { THRESHOLDS } from "@/utils/constants";
 
@@ -75,6 +75,7 @@ export const ProfilePage = () => {
 	const [accountLevel, setAccountLevel] = useState<number>();
 	const [bestAgents, setBestAgents] = useState<(BestAgent & { agentName: string; agentUrl: string })[]>();
 	const [bestMaps, setBestMaps] = useState<(BestMaps & { mapName: string; mapUrl: string })[]>();
+	const [bestServers, setBestServers] = useState<BestServer[]>();
 
 	const [chartData, setChartData] = useState<ChartData>();
 	// const [, setChartType] = useState<ChartType>('kills/deaths')
@@ -185,8 +186,12 @@ export const ProfilePage = () => {
 					return { ...map, mapName, mapUrl };
 				});
 
+				// Top Servers
+				const bestServers = calculateBestServers(puuid, matches);
+
 				setBestAgents(bestAgents);
 				setBestMaps(bestMaps);
+				setBestServers(bestServers);
 				setTable(table);
 				setLoading(false);
 				setAccountLevel(accountLevel);
@@ -382,10 +387,10 @@ export const ProfilePage = () => {
 								{table.map((match) => (
 									<tr
 										key={match.matchId}
-										className={clsx(
+                    className={clsx(
 											match.result === "won" ? "bg-success/5" : match.result === "loss" ? "bg-error/5" : "bg-white/5",
-											"text-center",
-											refMatchId === match.matchId && "border-2 border-primary",
+                      "text-center",
+                      refMatchId === match.matchId && "outline-2 outline-primary",
 										)}
 									>
 										<td className="text-left">
@@ -468,7 +473,7 @@ export const ProfilePage = () => {
 										{bestAgents?.map((agent) => (
 											<tr
 												key={agent.agentId}
-												className={clsx(refAgentId === agent.agentId && "border-2 border-primary")}
+												className={clsx(refAgentId === agent.agentId && "outline-2 outline-primary")}
 											>
 												<th className="flex flex-row items-center space-x-2">
 													<img src={agent.agentUrl} className="max-h-6" draggable={false} />
@@ -511,7 +516,7 @@ export const ProfilePage = () => {
 									</thead>
 									<tbody>
 										{bestMaps?.map((map) => (
-											<tr key={map.mapId} className={clsx(refMapId === map.mapId && "border-2 border-primary")}>
+											<tr key={map.mapId} className={clsx(refMapId === map.mapId && "outline-2 outline-primary")}>
 												<th className="flex flex-row items-center space-x-2">
 													<img src={map.mapUrl} className="max-h-6 blur-[1px] brightness-50" draggable={false} />
 													<span className="z-10 absolute left-4">{map.mapName}</span>
@@ -528,6 +533,52 @@ export const ProfilePage = () => {
 													<span className="text-error">{map.losses}</span>
 												</td>
 												<td className={clsx(map.winrate > 50 ? "text-success" : "text-error")}>{map.winrate}%</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</section>
+
+					<div className="divider px-32" />
+
+					{/* Server Performance Table */}
+					<section>
+						<div className="flex flex-col space-y-4">
+							<label className="font-bold my-4">Server Performance</label>
+
+							<div className="overflow-x-auto">
+								<table className="table table-xs text-center">
+									<thead>
+										<tr>
+											<th>Server</th>
+											<th>Matches</th>
+											<th>KD</th>
+											<th>HS%</th>
+											<th>ADR</th>
+											<th>W / T / L</th>
+											<th>WR%</th>
+										</tr>
+									</thead>
+									<tbody>
+										{bestServers?.map((server) => (
+											<tr key={server.serverName}>
+												<th className="flex flex-row items-center space-x-2">
+													<span className="capitalize">{server.serverName}</span>
+												</th>
+												<td>{server.matches}</td>
+												<td className={clsx(server.kd >= 1 ? "text-success" : "text-error")}>{server.kd}</td>
+												<td>{server.hs}%</td>
+												<td className={clsx(server.adr >= 150 ? "text-success" : "text-error")}>{server.adr}</td>
+												<td className="space-x-0.5">
+													<span className="text-success">{server.wins}</span>
+													<span className="opacity-50">-</span>
+													<span>{server.ties}</span>
+													<span className="opacity-50">-</span>
+													<span className="text-error">{server.losses}</span>
+												</td>
+												<td className={clsx(server.winrate > 50 ? "text-success" : "text-error")}>{server.winrate}%</td>
 											</tr>
 										))}
 									</tbody>

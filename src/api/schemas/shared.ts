@@ -95,6 +95,7 @@ export type MatchDetailsResponse = {
 	matchInfo: {
 		matchId: string;
 		mapId: string;
+		gamePodId: string;
 		gameStartMillis: number;
 		queueID: string;
 		partyRRPenalties?:

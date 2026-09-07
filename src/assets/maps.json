@@ -159,5 +159,12 @@
 		"displayIcon": "https://media.valorant-api.com/maps/2bee0dc9-4ffe-519b-1cbd-7fbe763a6047/displayicon.png",
 		"listViewIcon": "https://media.valorant-api.com/maps/2bee0dc9-4ffe-519b-1cbd-7fbe763a6047/listviewicon.png",
 		"mapUrl": "/Game/Maps/Triad/Triad"
+	},
+	{
+		"uuid": "756da597-416b-c0f2-f47b-afbdf28670bc",
+		"displayName": "Summit",
+		"displayIcon": "https://media.valorant-api.com/maps/756da597-416b-c0f2-f47b-afbdf28670bc/displayicon.png",
+		"listViewIcon": "https://media.valorant-api.com/maps/756da597-416b-c0f2-f47b-afbdf28670bc/listviewicon.png",
+		"mapUrl": "/Game/Maps/Plummet/Plummet"
 	}
 ]

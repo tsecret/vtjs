@@ -62,6 +62,10 @@ export const MatchPage = () => {
 				return;
 			}
 
+			const puuids = match.players.map((player) => player.subject);
+			const names = await sharedapi?.getPlayerNames(puuids);
+			const nameMap = new Map(names?.map((n) => [n.Subject, n]));
+
 			const teamRed = match.teams?.find((team) => team.teamId === "Red")!;
 			const teamBlue = match.teams?.find((team) => team.teamId === "Blue")!;
 
@@ -76,11 +80,12 @@ export const MatchPage = () => {
 						const { kd, hs } = calculateStatsForPlayer(player.subject, [match]);
 						const { displayIcon: agentImg, displayName: agentName } = getAgent(player.characterId);
 						const { rankName, rankColor } = getRank(player.competitiveTier);
+						const playerName = nameMap.get(player.subject);
 
 						return {
 							puuid: player.subject,
-							name: player.gameName,
-							tag: player.tagLine,
+							name: playerName?.GameName || player.gameName || "",
+							tag: playerName?.TagLine || player.tagLine || "",
 							kills: player.stats?.kills,
 							deaths: player.stats?.deaths,
 							assists: player.stats?.assists,

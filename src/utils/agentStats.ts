@@ -1,7 +1,7 @@
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import { findPlayerInMatch } from "./playerLookup";
 import type { AgentStats } from "@/interface/common.interface";
-import type { BestAgent, BestMaps } from "@/interface/utils.interface";
+import type { BestAgent, BestMaps, BestServer } from "@/interface/utils.interface";
 
 import { getAgent } from "./assetLookup";
 import { calculateStatsForPlayer } from "./matchStats";
@@ -102,4 +102,39 @@ const calculateBestMaps = (puuid: string, matches: MatchDetailsResponse[]): Best
 	return bestMaps.sort((a, b) => (b.matches || 1) - (a.matches || 0));
 };
 
-export { calculateBestAgents, calculateBestMaps, getPlayerBestAgent };
+const extractServerName = (gamePodId: string): string => {
+	const parts = gamePodId.split("-");
+	if (parts.length >= 2) {
+		return parts[parts.length - 2];
+	}
+	return gamePodId;
+};
+
+const calculateBestServers = (puuid: string, matches: MatchDetailsResponse[]): BestServer[] => {
+	const bestServers: BestServer[] = [];
+
+	const serversByMatch: { [key: string]: MatchDetailsResponse[] } = {};
+
+	for (const match of matches) {
+		const serverName = extractServerName(match.matchInfo.gamePodId);
+
+		if (!(serverName in serversByMatch)) {
+			serversByMatch[serverName] = [match];
+		} else {
+			serversByMatch[serverName].push(match);
+		}
+	}
+
+	for (const serverName in serversByMatch) {
+		const stats = calculateStatsForPlayer(puuid, serversByMatch[serverName]);
+		bestServers.push({
+			serverName,
+			matches: serversByMatch[serverName].length,
+			...stats,
+		});
+	}
+
+	return bestServers.sort((a, b) => (b.matches || 1) - (a.matches || 0));
+};
+
+export { calculateBestAgents, calculateBestMaps, calculateBestServers, extractServerName, getPlayerBestAgent };
