@@ -18,9 +18,11 @@ const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult
 			accountLevel: player.accountLevel || 0,
 		};
 
+	const opponentTeam = match.teams.find((t) => t.teamId !== player.teamId);
+
 	return {
 		result: team?.won ? ("won" as Result) : ("loss" as Result),
-		score: `${team?.roundsWon ?? 0}:${team?.roundsPlayed ?? 0 - (team?.roundsWon ?? 0)}`,
+		score: `${team?.roundsWon ?? 0}:${opponentTeam?.roundsWon ?? 0}`,
 		accountLevel: player.accountLevel || 0,
 	};
 };
