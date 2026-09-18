@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import { Heart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import type { GameSettingsResponse } from "@/api/schemas/riot";
 import { useServices } from "@/lib/services";
@@ -98,20 +98,25 @@ export const Settings = () => {
 		setGameSettingsState({ ...gameSettingsState, modifying: false });
 	}
 
+	const cacheRef = useRef(cache);
+	cacheRef.current = cache;
+	const storeRef = useRef(store);
+	storeRef.current = store;
+
 	useEffect(() => {
 		(async () => {
-			const requests: any = await cache?.select("SELECT COUNT(*) from requests");
+			const requests: any = await cacheRef.current?.select("SELECT COUNT(*) from requests");
 			setSavedRequests(requests[0]["COUNT(*)"]);
 
-			const retards: any = await cache?.select('SELECT COUNT(*) from players WHERE dodge = "true"');
-			setDodgedPlayers(retards[0]["COUNT(*)"]);
+			const dodged: any = await cacheRef.current?.select('SELECT COUNT(*) from players WHERE dodge = "true"');
+			setDodgedPlayers(dodged[0]["COUNT(*)"]);
 		})();
 
 		(async () => {
-			const settings: { name: string; data: GameSettingsResponse } | undefined = await store?.get("gamesettings");
+			const settings: { name: string; data: GameSettingsResponse } | undefined = await storeRef.current?.get("gamesettings");
 			if (settings) setGameSettings(settings);
 		})();
-	}, [store?.get, cache?.select]);
+	}, []);
 
 	return (
 		<div className="flex flex-col space-y-4 p-4 max-w-md m-auto">
@@ -213,7 +218,7 @@ export const Settings = () => {
 						name="allowAnalytics"
 						type="checkbox"
 						className="toggle"
-						defaultChecked={allowAnalytics}
+						checked={allowAnalytics}
 						onChange={onChange}
 					/>
 					<span>Enable analytics</span>

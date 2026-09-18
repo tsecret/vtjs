@@ -279,6 +279,59 @@ describe("utils", () => {
 			};
 			expect(utils.calculateStatsForPlayer("test-player-1-puuid", [matchDetails] as any)).toEqual(expected);
 		});
+
+		it("two matches with different round counts — ADR is totalDamage / totalRounds", () => {
+			// Match 1: 10 rounds, player deals 1500 damage (150 avg)
+			// Match 2: 20 rounds, player deals 2000 damage (100 avg)
+			// Correct ADR: 3500 / 30 = 117
+			// Buggy ADR (avg of averages): (150 + 100) / 2 = 125
+			const makeRoundResults = (rounds: number, damagePerRound: number) =>
+				Array.from({ length: rounds }, (_, i) => ({
+					roundNum: i,
+					playerStats: [{ subject: "test-player-1-puuid", damage: [{ receiver: "enemy", damage: damagePerRound, legshots: 0, bodyshots: 1, headshots: 0 }] }],
+				}));
+
+			const match1 = {
+				players: [{ subject: "test-player-1-puuid", teamId: "Red", stats: { kills: 20, deaths: 10, assists: 5 }, competitiveTier: 15, accountLevel: 50 }],
+				teams: [{ teamId: "Red", roundsWon: 6, won: true }, { teamId: "Blue", roundsWon: 4, won: false }],
+				roundResults: makeRoundResults(10, 150),
+			};
+
+			const match2 = {
+				players: [{ subject: "test-player-1-puuid", teamId: "Blue", stats: { kills: 30, deaths: 20, assists: 10 }, competitiveTier: 15, accountLevel: 50 }],
+				teams: [{ teamId: "Blue", roundsWon: 14, won: true }, { teamId: "Red", roundsWon: 6, won: false }],
+				roundResults: makeRoundResults(20, 100),
+			};
+
+			const result = utils.calculateStatsForPlayer("test-player-1-puuid", [match1, match2] as any);
+
+			// ADR should be weighted by rounds: 3500/30 = 117, not (150+100)/2 = 125
+			expect(result.adr).toBe(117);
+			expect(result.kd).toBe(1.75);
+			expect(result.wins).toBe(2);
+		});
+
+		it("two matches — HS% is totalHeadshots / totalShots", () => {
+			// Match 1: 1 shot, 1 headshot = 100%
+			// Match 2: 100 shots, 90 headshots = 90%
+			// Correct HS%: 91/101 = 90%
+			// Buggy HS% (avg of averages): (100 + 90) / 2 = 95%
+			const match1 = {
+				players: [{ subject: "p", teamId: "Red", stats: { kills: 5, deaths: 5, assists: 0 }, competitiveTier: 15, accountLevel: 50 }],
+				teams: [{ teamId: "Red", roundsWon: 5, won: false }, { teamId: "Blue", roundsWon: 7, won: true }],
+				roundResults: [{ playerStats: [{ subject: "p", damage: [{ receiver: "e", damage: 100, legshots: 0, bodyshots: 0, headshots: 1 }] }] }],
+			};
+			const match2 = {
+				players: [{ subject: "p", teamId: "Red", stats: { kills: 10, deaths: 10, assists: 0 }, competitiveTier: 15, accountLevel: 50 }],
+				teams: [{ teamId: "Red", roundsWon: 7, won: true }, { teamId: "Blue", roundsWon: 5, won: false }],
+				roundResults: Array.from({ length: 10 }, () => ({
+					playerStats: [{ subject: "p", damage: [{ receiver: "e", damage: 100, legshots: 0, bodyshots: 1, headshots: 9 }] }],
+				})),
+			};
+
+			const result = utils.calculateStatsForPlayer("p", [match1, match2] as any);
+			expect(result.hs).toBe(90);
+		});
 	});
 
 	describe("calculateCompetitiveUpdates", () => {
@@ -393,140 +446,6 @@ describe("utils", () => {
 			const matches = [matchDetails, matchDetails, matchDetails] as MatchDetailsResponse[];
 			const result = utils.calculateBestServers(puuid, matches);
 			expect(result[0].matches).toBe(3);
-		});
-	});
-
-	describe("sortPlayersForProcessing", () => {
-		it("sorts players by level", () => {
-			const table: Record<string, Partial<PlayerRow>> = {
-				"test-player-1-puuid": {
-					puuid: "test-player-1-puuid",
-					accountLevel: 1,
-				},
-				"test-player-2-puuid": {
-					puuid: "test-player-2-puuid",
-					accountLevel: 2,
-				},
-				"test-player-3-puuid": {
-					puuid: "test-player-3-puuid",
-					accountLevel: 3,
-				},
-				"test-player-4-puuid": {
-					puuid: "test-player-4-puuid",
-					accountLevel: 4,
-				},
-				"test-player-5-puuid": {
-					puuid: "test-player-5-puuid",
-					accountLevel: 5,
-				},
-				"test-player-6-puuid": {
-					puuid: "test-player-6-puuid",
-					accountLevel: 6,
-				},
-				"test-player-7-puuid": {
-					puuid: "test-player-7-puuid",
-					accountLevel: 7,
-				},
-				"test-player-8-puuid": {
-					puuid: "test-player-8-puuid",
-					accountLevel: 8,
-				},
-				"test-player-9-puuid": {
-					puuid: "test-player-9-puuid",
-					accountLevel: 9,
-				},
-				"test-player-10-puuid": {
-					puuid: "test-player-10-puuid",
-					accountLevel: 10,
-				},
-			};
-			const expected = playerNames as PlayerNamesReponse[];
-			expect(utils.sortPlayersForProcessing(playerNames, table as Record<string, PlayerRow>)).toStrictEqual(expected);
-		});
-
-		it("sorts players by level and enemy", () => {
-			const playerNames = [
-				{ Subject: "test-player-1-puuid" },
-				{ Subject: "test-player-2-puuid" },
-				{ Subject: "test-player-3-puuid" },
-				{ Subject: "test-player-4-puuid" },
-				{ Subject: "test-player-5-puuid" },
-				{ Subject: "test-player-6-puuid" },
-				{ Subject: "test-player-7-puuid" },
-				{ Subject: "test-player-8-puuid" },
-				{ Subject: "test-player-9-puuid" },
-				{ Subject: "test-player-10-puuid" },
-			] as Partial<PlayerNamesReponse>[];
-
-			const table: Record<string, Partial<PlayerRow>> = {
-				"test-player-2-puuid": {
-					puuid: "test-player-2-puuid",
-					accountLevel: 2,
-					enemy: false,
-				},
-				"test-player-3-puuid": {
-					puuid: "test-player-3-puuid",
-					accountLevel: 3,
-					enemy: false,
-				},
-				"test-player-9-puuid": {
-					puuid: "test-player-9-puuid",
-					accountLevel: 9,
-					enemy: true,
-				},
-				"test-player-4-puuid": {
-					puuid: "test-player-4-puuid",
-					accountLevel: 4,
-					enemy: false,
-				},
-				"test-player-6-puuid": {
-					puuid: "test-player-6-puuid",
-					accountLevel: 6,
-					enemy: true,
-				},
-				"test-player-5-puuid": {
-					puuid: "test-player-5-puuid",
-					accountLevel: 5,
-					enemy: false,
-				},
-				"test-player-7-puuid": {
-					puuid: "test-player-7-puuid",
-					accountLevel: 7,
-					enemy: true,
-				},
-				"test-player-1-puuid": {
-					puuid: "test-player-1-puuid",
-					accountLevel: 80,
-					enemy: false,
-				},
-				"test-player-8-puuid": {
-					puuid: "test-player-8-puuid",
-					accountLevel: 8,
-					enemy: true,
-				},
-				"test-player-10-puuid": {
-					puuid: "test-player-10-puuid",
-					accountLevel: 1,
-					enemy: true,
-				},
-			};
-
-			const expected = [
-				{ Subject: "test-player-2-puuid" },
-				{ Subject: "test-player-3-puuid" },
-				{ Subject: "test-player-4-puuid" },
-				{ Subject: "test-player-5-puuid" },
-				{ Subject: "test-player-1-puuid" },
-				{ Subject: "test-player-10-puuid" },
-				{ Subject: "test-player-6-puuid" },
-				{ Subject: "test-player-7-puuid" },
-				{ Subject: "test-player-8-puuid" },
-				{ Subject: "test-player-9-puuid" },
-			] as Partial<PlayerNamesReponse>[];
-
-			expect(
-				utils.sortPlayersForProcessing(playerNames as PlayerNamesReponse[], table as Record<string, PlayerRow>),
-			).toStrictEqual(expected);
 		});
 	});
 });

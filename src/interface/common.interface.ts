@@ -33,6 +33,7 @@ export interface PlayerRow {
 	tag: string;
 	puuid: string;
 	kd?: number;
+	winrate?: number;
 	hs?: number;
 	adr?: number;
 	agentName: string | null;

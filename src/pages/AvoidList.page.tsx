@@ -1,6 +1,6 @@
 import { SquareArrowOutUpRight } from "lucide-react";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import type { AvoidedPlayer } from "@/interface";
 import { useServices } from "@/lib/services";
@@ -11,10 +11,15 @@ export const AvoidListPage = () => {
 	const sharedapi = services?.sharedapi;
 	const [players, setPlayers] = useState<(AvoidedPlayer & { name: string; tag: string })[]>();
 
+	const cacheRef = useRef(cache);
+	cacheRef.current = cache;
+	const sharedapiRef = useRef(sharedapi);
+	sharedapiRef.current = sharedapi;
+
 	useEffect(() => {
 		(async () => {
-			const list = (await cache?.select<AvoidedPlayer[]>("SELECT * FROM players")) || [];
-			const names = await sharedapi?.getPlayerNames(list.map((p) => p.puuid));
+			const list = (await cacheRef.current?.select<AvoidedPlayer[]>("SELECT * FROM players")) || [];
+			const names = await sharedapiRef.current?.getPlayerNames(list.map((p) => p.puuid));
 
 			setPlayers(
 				list.map((p) => {
@@ -28,7 +33,7 @@ export const AvoidListPage = () => {
 				}),
 			);
 		})();
-	}, [sharedapi?.getPlayerNames, cache?.select]);
+	}, []);
 
 	return (
 		<div>

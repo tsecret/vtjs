@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { ExternalLink, Users } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { PlayerRow } from "../interface";
-import { isSmurf } from "../utils";
+import { getWinrateColorClass, isSmurf } from "../utils";
 
 export const PlayersTable = ({
 	table,
@@ -17,7 +17,7 @@ export const PlayersTable = ({
 	const navigate = useNavigate();
 
 	const onCopyName = async (event: any) => {
-		await writeText(event.target.textContent);
+		await writeText(event.currentTarget.textContent);
 	};
 
 	const Row = ({ player }: { player: PlayerRow }) => {
@@ -90,6 +90,11 @@ export const PlayersTable = ({
 				<td>
 					<span className={clsx(player.streak?.type === "won" ? "text-success" : "text-error")}>
 						{player.streak ? player.streak.number : null}
+					</span>
+				</td>
+				<td>
+					<span className={clsx(player.winrate !== undefined && getWinrateColorClass(player.winrate))}>
+						{player.winrate !== undefined ? `${player.winrate}%` : null}
 					</span>
 				</td>
 				<td>
@@ -170,6 +175,7 @@ export const PlayersTable = ({
 						<th>ADR</th>
 						<th>Last Game</th>
 						<th>Streak</th>
+						<th>Winrate</th>
 						<th>Top Agents on Current Map</th>
 						<th>Note</th>
 						<th></th>
