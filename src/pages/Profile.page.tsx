@@ -9,7 +9,7 @@ import { useServices } from "@/lib/services";
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import { findPlayerInMatch } from "@/utils/playerLookup";
 import type { Result } from "../interface";
-import { calculateStatsForPlayer, getAgent, getMatchResult, getRank, getMap, calculateBestAgents, calculateBestMaps, calculateBestServers, calculateRanking } from "../utils";
+import { calculateStatsForPlayer, getAgent, getMatchResult, getRank, getMap, calculateBestAgents, calculateBestMaps, calculateBestServers, calculateRanking, getWinrateColorClass } from "../utils";
 import atoms from "../utils/atoms";
 import { THRESHOLDS } from "@/utils/constants";
 
@@ -206,7 +206,7 @@ export const ProfilePage = () => {
 				setError(`Faled to load matches:${err}`);
 			}
 		})();
-	}, []);
+	}, [puuid, sharedapi, cache]);
 
 	useEffect(() => {
 		if (!sharedapi || !puuid) return;
@@ -234,7 +234,7 @@ export const ProfilePage = () => {
 				dodgeTimestamp: player?.dodgeTimestamp,
 			});
 		})();
-	}, []);
+	}, [puuid, sharedapi, cache]);
 
 	if (error)
 		return (
@@ -490,7 +490,7 @@ export const ProfilePage = () => {
 													<span className="opacity-50">-</span>
 													<span className="text-error">{agent.losses}</span>
 												</td>
-												<td className={clsx(agent.winrate > 50 ? "text-success" : "text-error")}>{agent.winrate}%</td>
+												<td className={clsx(getWinrateColorClass(agent.winrate))}>{agent.winrate}%</td>
 											</tr>
 										))}
 									</tbody>
@@ -532,7 +532,7 @@ export const ProfilePage = () => {
 													<span className="opacity-50">-</span>
 													<span className="text-error">{map.losses}</span>
 												</td>
-												<td className={clsx(map.winrate > 50 ? "text-success" : "text-error")}>{map.winrate}%</td>
+												<td className={clsx(getWinrateColorClass(map.winrate))}>{map.winrate}%</td>
 											</tr>
 										))}
 									</tbody>
@@ -578,7 +578,7 @@ export const ProfilePage = () => {
 													<span className="opacity-50">-</span>
 													<span className="text-error">{server.losses}</span>
 												</td>
-												<td className={clsx(server.winrate > 50 ? "text-success" : "text-error")}>{server.winrate}%</td>
+												<td className={clsx(getWinrateColorClass(server.winrate))}>{server.winrate}%</td>
 											</tr>
 										))}
 									</tbody>

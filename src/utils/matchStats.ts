@@ -55,18 +55,17 @@ const calculateStreak = (puuid: string, matches: MatchDetailsResponse[]): Streak
 
 const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]): PlayerMatchStats => {
 	let validMatches = 0;
-	const stats = {
-		kills: 0,
-		deaths: 0,
-		assists: 0,
-		kd: 0,
-		hs: 0,
-		adr: 0,
-		wins: 0,
-		losses: 0,
-		ties: 0,
-		winrate: 0,
-	};
+	let totalKills = 0;
+	let totalDeaths = 0;
+	let totalAssists = 0;
+	let totalKd = 0;
+	let wins = 0;
+	let losses = 0;
+	let ties = 0;
+	let totalDamage = 0;
+	let totalRounds = 0;
+	let totalHeadshots = 0;
+	let totalShots = 0;
 
 	for (const match of matches) {
 		const player = findPlayerInMatch(match, puuid);
@@ -74,49 +73,49 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 		if (!player?.stats) continue;
 
 		validMatches += 1;
-		stats.kills += player.stats.kills;
-		stats.deaths += player.stats.deaths;
-		stats.assists += player.stats.assists;
-		stats.kd += player.stats.kills / (player.stats.deaths || 1);
+		totalKills += player.stats.kills;
+		totalDeaths += player.stats.deaths;
+		totalAssists += player.stats.assists;
+		totalKd += player.stats.kills / (player.stats.deaths || 1);
 
 		const { result } = getMatchResult(puuid, match);
-		if (result === "won") stats.wins += 1;
-		else if (result === "loss") stats.losses += 1;
-		else if (result === "tie") stats.ties += 1;
+		if (result === "won") wins += 1;
+		else if (result === "loss") losses += 1;
+		else if (result === "tie") ties += 1;
 
 		if (match.roundResults) {
-			const shots = { legshots: 0, bodyshots: 0, headshots: 0 };
-			let damagePerRound = 0;
+			let matchDamage = 0;
 
 			for (const roundResult of match.roundResults) {
-				const playerDamage = roundResult.playerStats.find((result) => result.subject === puuid);
+				const playerDamage = roundResult.playerStats.find((r) => r.subject === puuid);
 				if (!playerDamage) continue;
 				for (const damage of playerDamage.damage) {
-					shots.legshots += damage.legshots;
-					shots.bodyshots += damage.bodyshots;
-					shots.headshots += damage.headshots;
-					damagePerRound += damage.damage;
+					totalHeadshots += damage.headshots;
+					totalShots += damage.headshots + damage.bodyshots + damage.legshots;
+					matchDamage += damage.damage;
 				}
 			}
 
-			stats.adr += damagePerRound / match.roundResults.length;
-			stats.hs += shots.headshots / (shots.headshots + shots.bodyshots + shots.legshots);
+			totalDamage += matchDamage;
+			totalRounds += match.roundResults.length;
 		}
 	}
 
-	if (validMatches === 0) return stats;
+	if (validMatches === 0) return {
+		kills: 0, deaths: 0, assists: 0, kd: 0, hs: 0, adr: 0, wins: 0, losses: 0, ties: 0, winrate: 0,
+	};
 
 	return {
-		kills: Math.round(stats.kills / validMatches),
-		deaths: Math.round(stats.deaths / validMatches),
-		assists: Math.round(stats.assists / validMatches),
-		kd: Number((stats.kd / validMatches).toFixed(2)),
-		hs: Math.round((stats.hs / validMatches) * 100),
-		adr: Math.round(stats.adr / validMatches),
-		wins: stats.wins,
-		losses: stats.losses,
-		ties: stats.ties,
-		winrate: Math.round((stats.wins / validMatches) * 100),
+		kills: Math.round(totalKills / validMatches),
+		deaths: Math.round(totalDeaths / validMatches),
+		assists: Math.round(totalAssists / validMatches),
+		kd: Number((totalKd / validMatches).toFixed(2)),
+		hs: totalShots ? Math.round((totalHeadshots / totalShots) * 100) : 0,
+		adr: totalRounds ? Math.round(totalDamage / totalRounds) : 0,
+		wins,
+		losses,
+		ties,
+		winrate: Math.round((wins / validMatches) * 100),
 	};
 };
 

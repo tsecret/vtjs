@@ -2,10 +2,8 @@ import type {
 	CurrentGameMatchResponse,
 	CurrentPreGameMatchResponse,
 	MatchDetailsResponse,
-	PlayerNamesReponse,
 } from "@/api/schemas/shared";
 import { findPlayerInMatch } from "./playerLookup";
-import type { PlayerRow } from "@/interface";
 
 const extractPlayers = (
 	match: CurrentPreGameMatchResponse | CurrentGameMatchResponse | MatchDetailsResponse,
@@ -28,27 +26,4 @@ const extractPlayerName = (puuid: string, matches: MatchDetailsResponse[]): { na
 	return null;
 };
 
-const sortPlayersForProcessing = (
-	players: PlayerNamesReponse[],
-	table: Record<string, PlayerRow>,
-): PlayerNamesReponse[] => {
-	const playersObj: Record<string, PlayerNamesReponse> = {};
-	for (const player of players) {
-		playersObj[player.Subject] = player;
-	}
-
-	const tableAsArray = Object.values(table).sort((a, b) => {
-		if (a.enemy !== b.enemy) {
-			return +a.enemy - +b.enemy;
-		}
-
-		if (a.accountLevel && b.accountLevel) return a.accountLevel - b.accountLevel;
-		if (a.accountLevel) return -1;
-		if (b.accountLevel) return 1;
-		return 0;
-	});
-
-	return tableAsArray.map((p) => playersObj[p.puuid]);
-};
-
-export { extractPlayerName, extractPlayers, sortPlayersForProcessing };
+export { extractPlayerName, extractPlayers };

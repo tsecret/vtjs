@@ -42,9 +42,8 @@ const getSeasonDateById = (seasonId: string): Date | null => {
 	return new Date(season.endTime);
 };
 
-// TODO proper json logic
 const hasGunBuddy = (loadout: Loadout): boolean => {
-  return JSON.stringify(loadout).includes(RIOT_GBUDDY_UUID)
+  return JSON.stringify(loadout ?? {}).includes(RIOT_GBUDDY_UUID);
 }
 
 export { getAgent, getMap, getRank, getSeasonDateById, hasGunBuddy };

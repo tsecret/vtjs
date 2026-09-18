@@ -10,4 +10,10 @@ const randomInt = (min: number, max: number): number => {
 	return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
 };
 
-export { base64Decode, randomInt };
+const getWinrateColorClass = (winrate: number): string => {
+	if (winrate <= 40) return "text-error";
+	if (winrate < 60) return "text-warning";
+	return "text-success";
+};
+
+export { base64Decode, randomInt, getWinrateColorClass };

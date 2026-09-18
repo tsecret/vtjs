@@ -101,7 +101,7 @@ export const MatchPage = () => {
 							accountLevel: player.accountLevel,
 						} as Match["players"][0];
 					})
-					.sort((a, b) => b.kd - a.kd),
+					.sort((a, b) => a.team.localeCompare(b.team) || b.kd - a.kd),
 				roundResults: match.roundResults,
 				teams: {
 					red: {

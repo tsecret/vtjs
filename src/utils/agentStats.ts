@@ -31,9 +31,12 @@ const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[], mapU
 	}
 
 	for (const characterId in agents) {
-		agents[characterId].k = Math.round(agents[characterId].k / agents[characterId].games);
-		agents[characterId].d = Math.round(agents[characterId].d / agents[characterId].games);
-		agents[characterId].kd = parseFloat((agents[characterId].k / agents[characterId].d).toFixed(2));
+		const a = agents[characterId];
+		const rawAvgK = a.k / a.games;
+		const rawAvgD = a.d / a.games;
+		agents[characterId].kd = rawAvgD !== 0 ? parseFloat((rawAvgK / rawAvgD).toFixed(2)) : rawAvgK > 0 ? Infinity : 0;
+		agents[characterId].k = Math.round(rawAvgK);
+		agents[characterId].d = Math.round(rawAvgD);
 	}
 
 	return Object.keys(agents)

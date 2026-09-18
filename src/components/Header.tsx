@@ -2,7 +2,7 @@ import { relaunch } from "@tauri-apps/plugin-process";
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { useAtom } from "jotai";
 import { ChevronLeft, Download, RefreshCw, Settings, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useLongPress } from "use-long-press";
 import atoms from "../utils/atoms";
@@ -17,10 +17,17 @@ export const Header = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	async function checkForUpdate() {
-		const update = await check();
-		if (update) setUpdate(update);
-	}
+	const checkForUpdate = useCallback(async () => {
+		try {
+      const update = await check();
+			console.log('update', update)
+			if (update) {
+				setUpdate(update);
+			}
+		} catch (err) {
+			console.error("Update check failed:", err);
+		}
+	}, []);
 
 	async function onUpdate() {
 		let downloaded = 0;

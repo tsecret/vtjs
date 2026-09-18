@@ -26,6 +26,7 @@ export interface MatchProcessingResult {
 export interface PlayerStatsResult {
 	stats: Record<string, {
 		kd: number;
+		winrate: number;
 		hs: number;
 		adr: number;
 		lastGameResult: string;
@@ -162,6 +163,7 @@ export class MatchProcessing {
 
 		const stats: Record<string, {
 			kd: number;
+			winrate: number;
 			hs: number;
 			adr: number;
 			lastGameResult: string;
@@ -180,7 +182,7 @@ export class MatchProcessing {
 			);
 			partyInput.push({ puuid: player.Subject, matches });
 
-			const { kd, hs, adr } = calculateStatsForPlayer(player.Subject, matches);
+			const { kd, winrate, hs, adr } = calculateStatsForPlayer(player.Subject, matches);
 			const {
 				result: lastGameResult,
 				score: lastGameScore,
@@ -192,6 +194,7 @@ export class MatchProcessing {
 
 			const playerStats: typeof stats[string] = {
 				kd,
+				winrate,
 				hs,
 				adr,
 				lastGameResult,

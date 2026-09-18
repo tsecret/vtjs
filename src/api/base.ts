@@ -104,7 +104,7 @@ export class BaseAPI {
 
     // Rate limit
     if (res.status === 429) {
-      const retrySeconds = parseInt(res.headers.get("retry-after") || "60", 10);
+      const retrySeconds = parseInt(res.headers.get("retry-after") || "60", 10) || 60;
       if (this.rateLimitCallback) {
         this.rateLimitCallback(retrySeconds);
       }

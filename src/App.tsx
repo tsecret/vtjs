@@ -105,9 +105,6 @@ function App() {
 				setpuuid(puuid);
 				setServices({ cache: db, localapi, sharedapi, store });
 
-				console.log("localapi", localapi);
-				console.log("player", player);
-
 				invoke("start_ws", {
 					wsUrl: `wss://${RIOT_CLIENT_HOST}:${port}`,
 					headers: {
