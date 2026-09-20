@@ -58,7 +58,6 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 	let totalKills = 0;
 	let totalDeaths = 0;
 	let totalAssists = 0;
-	let totalKd = 0;
 	let wins = 0;
 	let losses = 0;
 	let ties = 0;
@@ -76,7 +75,6 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 		totalKills += player.stats.kills;
 		totalDeaths += player.stats.deaths;
 		totalAssists += player.stats.assists;
-		totalKd += player.stats.kills / (player.stats.deaths || 1);
 
 		const { result } = getMatchResult(puuid, match);
 		if (result === "won") wins += 1;
@@ -109,7 +107,7 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 		kills: Math.round(totalKills / validMatches),
 		deaths: Math.round(totalDeaths / validMatches),
 		assists: Math.round(totalAssists / validMatches),
-		kd: Number((totalKd / validMatches).toFixed(2)),
+		kd: Number((totalKills / (totalDeaths || 1)).toFixed(2)),
 		hs: totalShots ? Math.round((totalHeadshots / totalShots) * 100) : 0,
 		adr: totalRounds ? Math.round(totalDamage / totalRounds) : 0,
 		wins,

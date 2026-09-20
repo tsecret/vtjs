@@ -9,45 +9,33 @@ import { calculateStatsForPlayer } from "./matchStats";
 const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[], mapUrl: string): AgentStats[] => {
 	const filtered = matches.filter((match) => match.matchInfo.mapId === mapUrl);
 
-	const agents: {
-		[key: string]: { k: number; d: number; kd: number; games: number };
-	} = {};
+	const matchesByAgent: { [key: string]: MatchDetailsResponse[] } = {};
 
 	for (const match of filtered) {
 		const player = findPlayerInMatch(match, puuid);
 
-		if (!player?.stats) continue;
+		if (!player?.characterId) continue;
 
-		const { kills, deaths } = player.stats;
-
-		if (!(player.characterId in agents)) {
-			agents[player.characterId] = { k: kills, d: deaths, kd: 0, games: 1 };
-			continue;
+		if (!(player.characterId in matchesByAgent)) {
+			matchesByAgent[player.characterId] = [match];
+		} else {
+			matchesByAgent[player.characterId].push(match);
 		}
-
-		agents[player.characterId].k += kills;
-		agents[player.characterId].d += deaths;
-		agents[player.characterId].games += 1;
 	}
 
-	for (const characterId in agents) {
-		const a = agents[characterId];
-		const rawAvgK = a.k / a.games;
-		const rawAvgD = a.d / a.games;
-		agents[characterId].kd = rawAvgD !== 0 ? parseFloat((rawAvgK / rawAvgD).toFixed(2)) : rawAvgK > 0 ? Infinity : 0;
-		agents[characterId].k = Math.round(rawAvgK);
-		agents[characterId].d = Math.round(rawAvgD);
-	}
+	return Object.entries(matchesByAgent)
+		.map(([characterId, agentMatches]) => {
+			const stats = calculateStatsForPlayer(puuid, agentMatches);
 
-	return Object.keys(agents)
-		.map((characterId) => ({
-			agentId: characterId,
-			agentUrl: getAgent(characterId).displayIcon!,
-			avgKills: agents[characterId].k,
-			avgDeaths: agents[characterId].d,
-			avgKd: agents[characterId].kd,
-			games: agents[characterId].games,
-		}))
+			return {
+				agentId: characterId,
+				agentUrl: getAgent(characterId).displayIcon!,
+				avgKills: stats.kills,
+				avgDeaths: stats.deaths,
+				avgKd: stats.kd,
+				games: agentMatches.length,
+			};
+		})
 		.sort((a, b) => b.avgKd - a.avgKd);
 };
 

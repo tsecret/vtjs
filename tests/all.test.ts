@@ -306,8 +306,9 @@ describe("utils", () => {
 			const result = utils.calculateStatsForPlayer("test-player-1-puuid", [match1, match2] as any);
 
 			// ADR should be weighted by rounds: 3500/30 = 117, not (150+100)/2 = 125
+			// KD should be totalKills / totalDeaths: 50/30 = 1.67, not (2 + 1.5)/2 = 1.75
 			expect(result.adr).toBe(117);
-			expect(result.kd).toBe(1.75);
+			expect(result.kd).toBe(1.67);
 			expect(result.wins).toBe(2);
 		});
 
