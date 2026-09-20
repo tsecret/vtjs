@@ -221,7 +221,6 @@ describe("utils", () => {
 				kills: 0,
 				wins: 0,
 				losses: 0,
-				ties: 0,
 				winrate: 0,
 			};
 			expect(utils.calculateStatsForPlayer("test-player-1-puuid", [] as any)).toEqual(expected);
@@ -258,7 +257,6 @@ describe("utils", () => {
 				kills: 5,
 				wins: 0,
 				losses: 1,
-				ties: 0,
 				winrate: 0,
 			};
 			expect(utils.calculateStatsForPlayer("test-player-1-puuid", [input] as any)).toEqual(expected);
@@ -274,7 +272,6 @@ describe("utils", () => {
 				kills: 25,
 				wins: 0,
 				losses: 1,
-				ties: 0,
 				winrate: 0,
 			};
 			expect(utils.calculateStatsForPlayer("test-player-1-puuid", [matchDetails] as any)).toEqual(expected);

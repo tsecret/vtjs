@@ -60,7 +60,6 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 	let totalAssists = 0;
 	let wins = 0;
 	let losses = 0;
-	let ties = 0;
 	let totalDamage = 0;
 	let totalRounds = 0;
 	let totalHeadshots = 0;
@@ -78,8 +77,7 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 
 		const { result } = getMatchResult(puuid, match);
 		if (result === "won") wins += 1;
-		else if (result === "loss") losses += 1;
-		else if (result === "tie") ties += 1;
+		else if (result === "loss" || result === "tie") losses += 1;
 
 		if (match.roundResults) {
 			let matchDamage = 0;
@@ -100,7 +98,7 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 	}
 
 	if (validMatches === 0) return {
-		kills: 0, deaths: 0, assists: 0, kd: 0, hs: 0, adr: 0, wins: 0, losses: 0, ties: 0, winrate: 0,
+		kills: 0, deaths: 0, assists: 0, kd: 0, hs: 0, adr: 0, wins: 0, losses: 0, winrate: 0,
 	};
 
 	return {
@@ -112,7 +110,6 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 		adr: totalRounds ? Math.round(totalDamage / totalRounds) : 0,
 		wins,
 		losses,
-		ties,
 		winrate: Math.round((wins / validMatches) * 100),
 	};
 };

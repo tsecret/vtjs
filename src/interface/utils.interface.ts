@@ -5,7 +5,6 @@ export type BestAgent = {
 	matches: number;
 	wins: number;
 	losses: number;
-	ties: number;
 	winrate: number;
 	kills: number;
 	deaths: number;
@@ -20,7 +19,6 @@ export type BestMaps = {
 	matches: number;
 	wins: number;
 	losses: number;
-	ties: number;
 	winrate: number;
 	kills: number;
 	deaths: number;
@@ -35,7 +33,6 @@ export type BestServer = {
 	matches: number;
 	wins: number;
 	losses: number;
-	ties: number;
 	winrate: number;
 	kills: number;
 	deaths: number;
@@ -54,7 +51,6 @@ export type PlayerMatchStats = {
 	adr: number;
 	wins: number;
 	losses: number;
-	ties: number;
 	winrate: number;
 };
 
