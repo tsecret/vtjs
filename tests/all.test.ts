@@ -341,14 +341,24 @@ describe("utils", () => {
 			],
 		});
 
+		it("returns positive number for win streaks", () => {
+			const result = utils.calculateStreak("p", [makeMatch(true), makeMatch(true), makeMatch(false)] as any);
+			expect(result).toBe(2);
+		});
+
+		it("returns negative number for loss streaks", () => {
+			const result = utils.calculateStreak("p", [makeMatch(false), makeMatch(false), makeMatch(false)] as any);
+			expect(result).toBe(-3);
+		});
+
 		it("skips N/A matches when counting streak", () => {
 			const noTeams = { players: [{ subject: "p" }] };
 			const result = utils.calculateStreak("p", [noTeams, makeMatch(true), makeMatch(true)] as any);
-			expect(result).toEqual({ type: "won", number: 2 });
+			expect(result).toBe(2);
 		});
 
-		it("returns null when no match has a valid result", () => {
-			expect(utils.calculateStreak("p", [{ players: [{ subject: "p" }] }] as any)).toBeNull();
+		it("returns 0 when no match has a valid result", () => {
+			expect(utils.calculateStreak("p", [{ players: [{ subject: "p" }] }] as any)).toBe(0);
 		});
 	});
 

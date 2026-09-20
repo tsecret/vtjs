@@ -1,7 +1,7 @@
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import { findPlayerInMatch } from "./playerLookup";
 import type { Result } from "@/interface";
-import type { MatchResult, PlayerMatchStats, Streak } from "@/interface/utils.interface";
+import type { MatchResult, PlayerMatchStats } from "@/interface/utils.interface";
 
 const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult => {
 	if (!match?.teams) return { result: "N/A", score: "", accountLevel: 0 };
@@ -27,9 +27,7 @@ const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult
 	};
 };
 
-const calculateStreak = (puuid: string, matches: MatchDetailsResponse[]): Streak | null => {
-	if (!matches.length) return null;
-
+const calculateStreak = (puuid: string, matches: MatchDetailsResponse[]): number => {
 	const results: Result[] = [];
 
 	for (const match of matches) {
@@ -38,22 +36,19 @@ const calculateStreak = (puuid: string, matches: MatchDetailsResponse[]): Streak
 		results.push(result);
 	}
 
-	if (!results.length) return null;
+	if (!results.length) return 0;
 
-	const streak: Streak = {
-		type: results[0],
-		number: 0,
-	};
+	let number = 0;
 
 	for (const result of results) {
-		if (result === streak.type) {
-			streak.number += 1;
+		if (result === results[0]) {
+			number += 1;
 		} else {
 			break;
 		}
 	}
 
-	return streak;
+	return results[0] === "won" ? number : -number;
 };
 
 const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]): PlayerMatchStats => {

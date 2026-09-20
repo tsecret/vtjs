@@ -88,9 +88,15 @@ export const PlayersTable = ({
 					</span>
 				</td>
 				<td>
-					<span className={clsx(player.streak?.type === "won" ? "text-success" : "text-error")}>
-						{player.streak ? player.streak.number : null}
-					</span>
+					{(() => {
+						const streak = player.streak || 0;
+
+						return (
+							<span className={clsx(streak > 0 ? "text-success" : streak < 0 ? "text-error" : undefined)}>
+								{streak ? `${Math.abs(streak)}${streak > 0 ? "W" : "L"}` : null}
+							</span>
+						);
+					})()}
 				</td>
 				<td>
 					<span className={clsx(player.winrate !== undefined && getWinrateColorClass(player.winrate))}>
