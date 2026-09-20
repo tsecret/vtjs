@@ -93,7 +93,7 @@ export const PlayersTable = ({
 
 						return (
 							<span className={clsx(streak > 0 ? "text-success" : streak < 0 ? "text-error" : undefined)}>
-								{streak ? `${Math.abs(streak)}${streak > 0 ? "W" : "L"}` : null}
+								{streak != null ? streak : null}
 							</span>
 						);
 					})()}
