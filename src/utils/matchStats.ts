@@ -34,8 +34,11 @@ const calculateStreak = (puuid: string, matches: MatchDetailsResponse[]): Streak
 
 	for (const match of matches) {
 		const { result } = getMatchResult(puuid, match);
+		if (result === "N/A") continue;
 		results.push(result);
 	}
+
+	if (!results.length) return null;
 
 	const streak: Streak = {
 		type: results[0],

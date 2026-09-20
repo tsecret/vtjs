@@ -332,6 +332,26 @@ describe("utils", () => {
 		});
 	});
 
+	describe("calculateStreak", () => {
+		const makeMatch = (won: boolean) => ({
+			players: [{ subject: "p", teamId: "Red", stats: { kills: 1, deaths: 1, assists: 0 } }],
+			teams: [
+				{ teamId: "Red", roundsWon: 13, won },
+				{ teamId: "Blue", roundsWon: 10, won: !won },
+			],
+		});
+
+		it("skips N/A matches when counting streak", () => {
+			const noTeams = { players: [{ subject: "p" }] };
+			const result = utils.calculateStreak("p", [noTeams, makeMatch(true), makeMatch(true)] as any);
+			expect(result).toEqual({ type: "won", number: 2 });
+		});
+
+		it("returns null when no match has a valid result", () => {
+			expect(utils.calculateStreak("p", [{ players: [{ subject: "p" }] }] as any)).toBeNull();
+		});
+	});
+
 	describe("calculateCompetitiveUpdates", () => {
 		it("SeasonalInfoBySeasonID is null", () => {
 			const input = {
