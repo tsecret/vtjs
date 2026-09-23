@@ -465,7 +465,7 @@ export const ProfilePage = () => {
 											<th>KD</th>
 											<th>HS%</th>
 											<th>ADR</th>
-											<th>W / T / L</th>
+											<th>W / L</th>
 											<th>WR%</th>
 										</tr>
 									</thead>
@@ -485,8 +485,6 @@ export const ProfilePage = () => {
 												<td className={clsx(agent.adr >= 150 ? "text-success" : "text-error")}>{agent.adr}</td>
 												<td className="space-x-0.5">
 													<span className="text-success">{agent.wins}</span>
-													<span className="opacity-50">-</span>
-													<span>{agent.ties}</span>
 													<span className="opacity-50">-</span>
 													<span className="text-error">{agent.losses}</span>
 												</td>
@@ -510,7 +508,7 @@ export const ProfilePage = () => {
 											<th>KD</th>
 											<th>HS%</th>
 											<th>ADR</th>
-											<th>W / T / L</th>
+											<th>W / L</th>
 											<th>WR%</th>
 										</tr>
 									</thead>
@@ -527,8 +525,6 @@ export const ProfilePage = () => {
 												<td className={clsx(map.adr >= 150 ? "text-success" : "text-error")}>{map.adr}</td>
 												<td className="space-x-0.5">
 													<span className="text-success">{map.wins}</span>
-													<span className="opacity-50">-</span>
-													<span>{map.ties}</span>
 													<span className="opacity-50">-</span>
 													<span className="text-error">{map.losses}</span>
 												</td>
@@ -557,7 +553,7 @@ export const ProfilePage = () => {
 											<th>KD</th>
 											<th>HS%</th>
 											<th>ADR</th>
-											<th>W / T / L</th>
+											<th>W / L</th>
 											<th>WR%</th>
 										</tr>
 									</thead>
@@ -573,8 +569,6 @@ export const ProfilePage = () => {
 												<td className={clsx(server.adr >= 150 ? "text-success" : "text-error")}>{server.adr}</td>
 												<td className="space-x-0.5">
 													<span className="text-success">{server.wins}</span>
-													<span className="opacity-50">-</span>
-													<span>{server.ties}</span>
 													<span className="opacity-50">-</span>
 													<span className="text-error">{server.losses}</span>
 												</td>

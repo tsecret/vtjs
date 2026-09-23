@@ -33,7 +33,7 @@ export interface PlayerStatsResult {
 		lastGameScore: string;
 		accountLevel: number;
 		bestAgents: Array<{ agentId: string; agentUrl: string; avgKills: number; avgDeaths: number; avgKd: number; games: number }>;
-		streak: { type: string; number: number } | null;
+		streak: number;
 		name?: string;
 		tag?: string;
 	}>;
@@ -170,7 +170,7 @@ export class MatchProcessing {
 			lastGameScore: string;
 			accountLevel: number;
 			bestAgents: Array<{ agentId: string; agentUrl: string; avgKills: number; avgDeaths: number; avgKd: number; games: number }>;
-			streak: { type: string; number: number } | null;
+			streak: number;
 			name?: string;
 			tag?: string;
 		}> = {};

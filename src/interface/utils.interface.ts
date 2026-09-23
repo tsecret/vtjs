@@ -1,11 +1,10 @@
-import type { Encounters, MostPlayedServer, Result, Streak } from "./common.interface";
+import type { Encounters, MostPlayedServer, Result } from "./common.interface";
 
 export type BestAgent = {
 	agentId: string;
 	matches: number;
 	wins: number;
 	losses: number;
-	ties: number;
 	winrate: number;
 	kills: number;
 	deaths: number;
@@ -20,7 +19,6 @@ export type BestMaps = {
 	matches: number;
 	wins: number;
 	losses: number;
-	ties: number;
 	winrate: number;
 	kills: number;
 	deaths: number;
@@ -35,7 +33,6 @@ export type BestServer = {
 	matches: number;
 	wins: number;
 	losses: number;
-	ties: number;
 	winrate: number;
 	kills: number;
 	deaths: number;
@@ -54,7 +51,6 @@ export type PlayerMatchStats = {
 	adr: number;
 	wins: number;
 	losses: number;
-	ties: number;
 	winrate: number;
 };
 
@@ -84,4 +80,4 @@ export type Parties = {
 	puuids: string[];
 }[];
 
-export type { Encounters, MostPlayedServer, Streak };
+export type { Encounters, MostPlayedServer };

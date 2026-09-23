@@ -1,7 +1,7 @@
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import { findPlayerInMatch } from "./playerLookup";
 import type { Result } from "@/interface";
-import type { MatchResult, PlayerMatchStats, Streak } from "@/interface/utils.interface";
+import type { MatchResult, PlayerMatchStats } from "@/interface/utils.interface";
 
 const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult => {
 	if (!match?.teams) return { result: "N/A", score: "", accountLevel: 0 };
@@ -27,30 +27,28 @@ const getMatchResult = (puuid: string, match: MatchDetailsResponse): MatchResult
 	};
 };
 
-const calculateStreak = (puuid: string, matches: MatchDetailsResponse[]): Streak | null => {
-	if (!matches.length) return null;
-
+const calculateStreak = (puuid: string, matches: MatchDetailsResponse[]): number => {
 	const results: Result[] = [];
 
 	for (const match of matches) {
 		const { result } = getMatchResult(puuid, match);
+		if (result === "N/A") continue;
 		results.push(result);
 	}
 
-	const streak: Streak = {
-		type: results[0],
-		number: 0,
-	};
+	if (!results.length) return 0;
+
+	let number = 0;
 
 	for (const result of results) {
-		if (result === streak.type) {
-			streak.number += 1;
+		if (result === results[0]) {
+			number += 1;
 		} else {
 			break;
 		}
 	}
 
-	return streak;
+	return results[0] === "won" ? number : -number;
 };
 
 const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[]): PlayerMatchStats => {
@@ -58,10 +56,8 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 	let totalKills = 0;
 	let totalDeaths = 0;
 	let totalAssists = 0;
-	let totalKd = 0;
 	let wins = 0;
 	let losses = 0;
-	let ties = 0;
 	let totalDamage = 0;
 	let totalRounds = 0;
 	let totalHeadshots = 0;
@@ -76,12 +72,10 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 		totalKills += player.stats.kills;
 		totalDeaths += player.stats.deaths;
 		totalAssists += player.stats.assists;
-		totalKd += player.stats.kills / (player.stats.deaths || 1);
 
 		const { result } = getMatchResult(puuid, match);
 		if (result === "won") wins += 1;
-		else if (result === "loss") losses += 1;
-		else if (result === "tie") ties += 1;
+		else if (result === "loss" || result === "tie") losses += 1;
 
 		if (match.roundResults) {
 			let matchDamage = 0;
@@ -102,19 +96,18 @@ const calculateStatsForPlayer = (puuid: string, matches: MatchDetailsResponse[])
 	}
 
 	if (validMatches === 0) return {
-		kills: 0, deaths: 0, assists: 0, kd: 0, hs: 0, adr: 0, wins: 0, losses: 0, ties: 0, winrate: 0,
+		kills: 0, deaths: 0, assists: 0, kd: 0, hs: 0, adr: 0, wins: 0, losses: 0, winrate: 0,
 	};
 
 	return {
 		kills: Math.round(totalKills / validMatches),
 		deaths: Math.round(totalDeaths / validMatches),
 		assists: Math.round(totalAssists / validMatches),
-		kd: Number((totalKd / validMatches).toFixed(2)),
+		kd: Number((totalKills / (totalDeaths || 1)).toFixed(2)),
 		hs: totalShots ? Math.round((totalHeadshots / totalShots) * 100) : 0,
 		adr: totalRounds ? Math.round(totalDamage / totalRounds) : 0,
 		wins,
 		losses,
-		ties,
 		winrate: Math.round((wins / validMatches) * 100),
 	};
 };

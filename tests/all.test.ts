@@ -221,7 +221,6 @@ describe("utils", () => {
 				kills: 0,
 				wins: 0,
 				losses: 0,
-				ties: 0,
 				winrate: 0,
 			};
 			expect(utils.calculateStatsForPlayer("test-player-1-puuid", [] as any)).toEqual(expected);
@@ -258,7 +257,6 @@ describe("utils", () => {
 				kills: 5,
 				wins: 0,
 				losses: 1,
-				ties: 0,
 				winrate: 0,
 			};
 			expect(utils.calculateStatsForPlayer("test-player-1-puuid", [input] as any)).toEqual(expected);
@@ -274,7 +272,6 @@ describe("utils", () => {
 				kills: 25,
 				wins: 0,
 				losses: 1,
-				ties: 0,
 				winrate: 0,
 			};
 			expect(utils.calculateStatsForPlayer("test-player-1-puuid", [matchDetails] as any)).toEqual(expected);
@@ -306,8 +303,9 @@ describe("utils", () => {
 			const result = utils.calculateStatsForPlayer("test-player-1-puuid", [match1, match2] as any);
 
 			// ADR should be weighted by rounds: 3500/30 = 117, not (150+100)/2 = 125
+			// KD should be totalKills / totalDeaths: 50/30 = 1.67, not (2 + 1.5)/2 = 1.75
 			expect(result.adr).toBe(117);
-			expect(result.kd).toBe(1.75);
+			expect(result.kd).toBe(1.67);
 			expect(result.wins).toBe(2);
 		});
 
@@ -331,6 +329,36 @@ describe("utils", () => {
 
 			const result = utils.calculateStatsForPlayer("p", [match1, match2] as any);
 			expect(result.hs).toBe(90);
+		});
+	});
+
+	describe("calculateStreak", () => {
+		const makeMatch = (won: boolean) => ({
+			players: [{ subject: "p", teamId: "Red", stats: { kills: 1, deaths: 1, assists: 0 } }],
+			teams: [
+				{ teamId: "Red", roundsWon: 13, won },
+				{ teamId: "Blue", roundsWon: 10, won: !won },
+			],
+		});
+
+		it("returns positive number for win streaks", () => {
+			const result = utils.calculateStreak("p", [makeMatch(true), makeMatch(true), makeMatch(false)] as any);
+			expect(result).toBe(2);
+		});
+
+		it("returns negative number for loss streaks", () => {
+			const result = utils.calculateStreak("p", [makeMatch(false), makeMatch(false), makeMatch(false)] as any);
+			expect(result).toBe(-3);
+		});
+
+		it("skips N/A matches when counting streak", () => {
+			const noTeams = { players: [{ subject: "p" }] };
+			const result = utils.calculateStreak("p", [noTeams, makeMatch(true), makeMatch(true)] as any);
+			expect(result).toBe(2);
+		});
+
+		it("returns 0 when no match has a valid result", () => {
+			expect(utils.calculateStreak("p", [{ players: [{ subject: "p" }] }] as any)).toBe(0);
 		});
 	});
 

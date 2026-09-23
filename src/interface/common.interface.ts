@@ -2,11 +2,6 @@ export type MostPlayedServer = {
 	[key: string]: number;
 };
 
-export type Streak = {
-	type: Result;
-	number: number;
-};
-
 export type Encounters = {
 	puuid: string;
 	name: string;
@@ -54,7 +49,7 @@ export interface PlayerRow {
 	bestAgents?: AgentStats[];
 	dodge?: boolean;
 	mostPlayedServers?: MostPlayedServer;
-	streak?: Streak | null;
+	streak?: number;
 	inParty: boolean;
 	partyId?: number | null;
 	encounters?: Encounters[];
