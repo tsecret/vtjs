@@ -14,7 +14,6 @@ import { Header } from "./components/Header";
 import { RateLimitNotification } from "./components/RateLimitAlert";
 import { SocketListener } from "./components/SocketListener";
 import { Sync } from "./components/Sync";
-import { TestDial } from "./components/TestDial";
 import { type AppServices, ServicesProvider } from "./lib/services";
 import { AvoidListPage } from "./pages/AvoidList.page";
 import { InitPage } from "./pages/Init.page";
@@ -131,7 +130,6 @@ function App() {
 				<RateLimitNotification />
 				<MatchHandler />
 				<Sync />
-				<TestDial />
 				<Routes>
 					<Route path="/" element={<InitPage status={initStatus} error={error} />} />
 					<Route path="/welcome" element={<WelcomePage />} />
