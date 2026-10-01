@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import type { AvoidedPlayer } from "@/interface";
 import { useServices } from "@/lib/services";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export const AvoidListPage = () => {
 	const services = useServices();
@@ -38,29 +40,31 @@ export const AvoidListPage = () => {
 	return (
 		<div>
 			<section className="max-w-1/2 m-auto">
-				<ul className="list bg-base-100 rounded-box shadow-md">
-					<li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Avoid List</li>
+				<Card className="bg-background rounded-lg shadow-sm">
+					<div className="p-4 pb-2 text-xs opacity-60 tracking-wide border-b">Avoid List</div>
 
 					{players?.map((p) => (
-						<li className="list-row flex flex-row items-center justify-between">
-							<div className="space-x-4">
-								<span>{moment(p.dodgeTimeStamp).format("HH:mm DD/MM/YY")}</span>
+						<div className="flex items-center justify-between p-4 border-b last:border-0" key={p.puuid}>
+							<div className="flex items-center gap-4">
+								<span className="text-sm">{moment(p.dodgeTimeStamp).format("HH:mm DD/MM/YY")}</span>
 								{p.name && p.tag ? (
 									<span>
 										{p.name}
 										<span className="opacity-50 text-xs"> #{p.tag}</span>
 									</span>
 								) : (
-									<span>Name is missing</span>
+									<span className="text-muted-foreground">Name is missing</span>
 								)}
 							</div>
 
-							<Link to={`/player/${p.puuid}`} className="btn btn-ghost btn-square">
-								<SquareArrowOutUpRight />
+							<Link to={`/player/${p.puuid}`}>
+								<Button variant="ghost" size="icon" className="h-8 w-8">
+									<SquareArrowOutUpRight size={14} />
+								</Button>
 							</Link>
-						</li>
+						</div>
 					))}
-				</ul>
+				</Card>
 			</section>
 		</div>
 	);

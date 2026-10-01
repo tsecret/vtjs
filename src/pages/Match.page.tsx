@@ -6,6 +6,9 @@ import { useNavigate, useParams } from "react-router";
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
 import { useServices } from "@/lib/services";
 import { getMap, calculateStatsForPlayer, getAgent, getRank } from "../utils";
+import { Alert } from "@/components/ui/alert";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 type Match = {
 	mapName: string;
@@ -117,100 +120,101 @@ export const MatchPage = () => {
 		})();
 	}, [matchId, sharedapi]);
 
-	if (!match) return <div></div>;
+if (!match) return <div></div>;
 
 	return (
-		<div className="flex flex-col items-center space-y-8 p-8">
-			{error && <p className="alert alert-error">{error}</p>}
+		<div className="flex flex-col items-center gap-8 p-8">
+			{error && <Alert variant="destructive">{error}</Alert>}
 
 			{/* Match Info */}
-			<section>
-				<div className="stats stats-vertical lg:stats-horizontal shadow">
-					<div className="stat">
-						<div className="stat-title">Map</div>
-						<div className="stat-value">{match.mapName}</div>
+			<section className="w-full">
+				<div className="grid gap-4 lg:grid-cols-3">
+					<div className="p-4 border rounded-lg shadow-sm">
+						<div className="text-sm text-muted-foreground">Map</div>
+						<div className="font-medium">{match.mapName}</div>
 					</div>
 
-					<div className="stat">
-						<div className="stat-title">Mode</div>
-						<div className="stat-value">{match.type.toUpperCase()}</div>
+					<div className="p-4 border rounded-lg shadow-sm">
+						<div className="text-sm text-muted-foreground">Mode</div>
+						<div className="font-medium">{match.type.toUpperCase()}</div>
 					</div>
 
-					<div className="stat">
-						<div className="stat-title">Date</div>
-						<div className="stat-value">{moment(match.date).format("DD/MM/YY")}</div>
+					<div className="p-4 border rounded-lg shadow-sm">
+						<div className="text-sm text-muted-foreground">Date</div>
+						<div className="font-medium">{moment(match.date).format("DD/MM/YY")}</div>
 					</div>
 				</div>
 			</section>
 
 			{/* Score */}
-			<section className="flex flex-row">
-				<div className="stat">
-					<div className="stat-title">Team Red</div>
-					<div className="stat-value text-error">{match.teams.red.score}</div>
+			<section className="w-full flex gap-8">
+				<div className="p-4 border rounded-lg shadow-sm">
+					<div className="text-sm text-muted-foreground">Team Red</div>
+					<div className="font-medium text-destructive">{match.teams.red.score}</div>
 				</div>
-				<div className="stat">
-					<div className="stat-title">Team Blue</div>
-					<div className="stat-value text-info">{match.teams.blue.score}</div>
+				<div className="p-4 border rounded-lg shadow-sm">
+					<div className="text-sm text-muted-foreground">Team Blue</div>
+					<div className="font-medium text-primary">{match.teams.blue.score}</div>
 				</div>
 			</section>
 
 			{/* Player Table */}
-			<section>
-				<table className="table table-xs sm:table-sm">
-					<thead>
-						<tr className="text-center">
-							<th></th>
-							<th>Agent</th>
-							<th>Name</th>
-							<th>Rank</th>
-							<th>LVL</th>
-							<th>K/D/A</th>
-							<th>KD Ratio</th>
-							<th>HS%</th>
-							<th></th>
-						</tr>
-					</thead>
+			<section className="w-full">
+				<Table>
+					<TableHeader>
+						<TableRow className="text-center">
+							<TableHead></TableHead>
+							<TableHead>Agent</TableHead>
+							<TableHead>Name</TableHead>
+							<TableHead>Rank</TableHead>
+							<TableHead>LVL</TableHead>
+							<TableHead>K/D/A</TableHead>
+							<TableHead>KD Ratio</TableHead>
+							<TableHead>HS%</TableHead>
+							<TableHead></TableHead>
+						</TableRow>
+					</TableHeader>
 
-					<tbody>
+					<TableBody>
 						{match.players.map((player) => (
-							<tr
+							<TableRow
 								key={player.puuid}
-								className={clsx(player.team === "Blue" ? "bg-info/10" : "bg-error/5", "text-center")}
+								className={clsx(player.team === "Blue" ? "bg-primary/10" : "bg-destructive/10", "text-center")}
 							>
-								<td>{player.partyNumber}</td>
-								<td className="flex flex-row items-center">
+								<TableCell>{player.partyNumber}</TableCell>
+								<TableCell className="flex items-center">
 									<img src={player.agentImg} className="max-h-8" />
-								</td>
-								<td className="text-left">
+								</TableCell>
+								<TableCell className="text-left">
 									<span>{player.name}</span>
 									<span className="text-xs opacity-50">#{player.tag}</span>
-								</td>
-								<td>
+								</TableCell>
+								<TableCell>
 									<span className="text-xs font-bold" style={{ color: `#${player.rankColor}` }}>
 										{player.rankName}
 									</span>
-								</td>
-								<td>{player.accountLevel}</td>
-								<td>
+								</TableCell>
+								<TableCell>{player.accountLevel}</TableCell>
+								<TableCell>
 									{player.kills} / {player.deaths} / {player.assists}
-								</td>
-								<td>
-									<span className={player.kd >= 1 ? "text-success" : "text-error"}>{player.kd}</span>
-								</td>
-								<td>{player.hs}%</td>
-								<td>
-									<button
-										className="btn btn-ghost btn-sm"
+								</TableCell>
+								<TableCell>
+									<span className={player.kd >= 1 ? "text-green-600" : "text-red-600"}>{player.kd}</span>
+								</TableCell>
+								<TableCell>{player.hs}%</TableCell>
+								<TableCell>
+									<Button
+										variant="ghost"
+										size="sm"
 										onClick={() => navigate(`/player/${player.puuid}?refMatchId=${matchId}`)}
 									>
-										<ExternalLink size={16} />
-									</button>
-								</td>
-							</tr>
+										<ExternalLink data-icon="inline-start" size={16} />
+									</Button>
+								</TableCell>
+							</TableRow>
 						))}
-					</tbody>
-				</table>
+					</TableBody>
+				</Table>
 			</section>
 
 		</div>

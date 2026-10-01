@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import { Heart } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -6,6 +5,12 @@ import { Link } from "react-router";
 import type { GameSettingsResponse } from "@/api/schemas/riot";
 import { useServices } from "@/lib/services";
 import atoms from "../utils/atoms";
+import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 export const Settings = () => {
 	const services = useServices();
@@ -30,15 +35,6 @@ export const Settings = () => {
 		pasted: boolean;
 		modifying: boolean;
 	}>({ copied: false, pasted: false, modifying: false });
-
-	async function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-		switch (event.target.name) {
-			case "allowAnalytics":
-				setAllowAnalytics(event.target.checked);
-				await store?.set("allowAnalytics", event.target.checked);
-				break;
-		}
-	}
 
 	async function clearCache() {
 		setClearingCache(true);
@@ -119,116 +115,114 @@ export const Settings = () => {
 	}, []);
 
 	return (
-		<div className="flex flex-col space-y-4 p-4 max-w-md m-auto">
-			<section className="flex flex-row items-center space-x-2 text-xs">
+		<div className="flex flex-col gap-4 p-4 max-w-md m-auto">
+			<section className="flex flex-row items-center gap-2 text-xs">
 				<div className="border-2 rounded-md p-2">App version {appInfo?.appVersion}</div>
 				<div className="border-2 rounded-md p-2">Tauri version {appInfo?.tauriVersion}</div>
 				<div className="border-2 rounded-md p-2">Identifier {appInfo?.identifier}</div>
 			</section>
 
-			<div className="divider" />
+			<Separator />
 
-			<Link to="/avoid-list" className="btn">
-				View Avoid List
+			<Link to="/avoid-list">
+				<Button variant="outline" className="w-full">View Avoid List</Button>
 			</Link>
 
-			<div className="divider" />
+			<Separator />
 
 			{/* Game Settings */}
-			<section id="cache" className="flex flex-col space-y-4">
-				<h2>Game Settings</h2>
+			<section id="cache" className="flex flex-col gap-4">
+				<h2 className="text-lg font-semibold">Game Settings</h2>
 
-				<p className="">
+				<p className="text-sm text-muted-foreground">
 					VTJS allows you to easily copy and paste game settings like Mouse and ADS sensitivity, minimap config and
 					keybinds from one account to another
 				</p>
 
-				<div className="alert alert-dash">
-					<ol className="text-sm">
-						<li>1. Log into account you want to copy the settings from</li>
-						<li>
-							2. Press <span className="badge badge-sm">Save Current Settings</span> button
-						</li>
-						<li>3. Log into account you want to paste the settings to</li>
-						<li>
-							4. Press <span className="badge badge-sm">Load Saved Settings</span>
-						</li>
-						<li>5. Launch Valorant and check</li>
+				<Alert className="text-sm">
+					<ol className="list-decimal list-inside space-y-1">
+						<li>Log into account you want to copy the settings from</li>
+						<li>Press <Badge variant="secondary" className="text-xs">Save Current Settings</Badge> button</li>
+						<li>Log into account you want to paste the settings to</li>
+						<li>Press <Badge variant="secondary" className="text-xs">Load Saved Settings</Badge></li>
+						<li>Launch Valorant and check</li>
 					</ol>
-				</div>
+				</Alert>
 
-				{savedGameSettings && <p>Settings saved for account: {savedGameSettings.name}</p>}
+				{savedGameSettings && <p className="text-sm text-muted-foreground">Settings saved for account: {savedGameSettings.name}</p>}
 
-				<div className="flex flex-row items-center space-x-2">
-					<button
-						className={clsx("btn flex-1 btn-sm", gameSettingsState.copied && "btn-success")}
+				<div className="flex gap-2">
+					<Button
+						variant={gameSettingsState.copied ? "default" : "outline"}
+						size="sm"
+						className="flex-1"
 						disabled={gameSettingsState.modifying}
 						onClick={copyGameSettings}
 					>
 						{gameSettingsState.copied ? "Saved" : "Save Current Settings"}
-					</button>
-					<button
-						className={clsx("btn flex-1 btn-sm", gameSettingsState.pasted && "btn-success")}
+					</Button>
+					<Button
+						variant={gameSettingsState.pasted ? "default" : "outline"}
+						size="sm"
+						className="flex-1"
 						disabled={gameSettingsState.modifying || !savedGameSettings}
 						onClick={pasteGameSettings}
 					>
 						{gameSettingsState.pasted ? "Loaded" : "Load Saved Settings"}
-					</button>
+					</Button>
 				</div>
 			</section>
 
-			<div className="divider" />
+			<Separator />
 
 			{/* Cache */}
-			<section id="cache" className="flex flex-col space-y-4">
-				<h2>Cache</h2>
+			<section id="cache" className="flex flex-col gap-4">
+				<h2 className="text-lg font-semibold">Cache</h2>
 
-				<div>
-					<div className="flex flex-row items-center space-x-2">
+				<div className="space-y-1 text-sm">
+					<div className="flex items-center gap-2">
 						<span>Saved requests: {savedRequests}</span>
 					</div>
-					<div className="flex flex-row items-center space-x-2">
+					<div className="flex items-center gap-2">
 						<span>Avoid list: {dodgedPlayers}</span>
 					</div>
 				</div>
 
-				<p>
+				<p className="text-sm text-muted-foreground">
 					Its okay to have lots of requests cached, especially if you play daily. But if you feel like the app is
 					lagging, try clearing the cache
 				</p>
 
-				<div className="flex flex-row items-center space-x-2">
-					<button className="btn flex-1 btn-sm btn-warning" disabled={clearingCache} onClick={clearCache}>
+				<div className="flex gap-2">
+					<Button variant="secondary" size="sm" className="flex-1" disabled={clearingCache} onClick={clearCache}>
 						Clear Old Cache
-					</button>
-					<button className="btn flex-1 btn-sm btn-error" disabled={clearingCache} onClick={clearAllCache}>
+					</Button>
+					<Button variant="destructive" size="sm" className="flex-1" disabled={clearingCache} onClick={clearAllCache}>
 						Clear All Cache
-					</button>
+					</Button>
 				</div>
 			</section>
 
-			<div className="divider" />
+			<Separator />
 
 			{/* Privacy */}
 			<section id="analytics" className="space-y-4">
-				<h2>Privacy</h2>
+				<h2 className="text-lg font-semibold">Privacy</h2>
 
-				<label className="label space-x-4">
-					<input
+				<Label className="flex items-center gap-4 cursor-pointer">
+					<Switch
 						name="allowAnalytics"
-						type="checkbox"
-						className="toggle"
 						checked={allowAnalytics}
-						onChange={onChange}
+						onCheckedChange={setAllowAnalytics}
 					/>
 					<span>Enable analytics</span>
-				</label>
+				</Label>
 
-				<div className="alert alert-dash text-sm">
-					<Heart />
+				<Alert className="text-sm">
+					<Heart className="mr-2 size-4" />
 					Enabling analytics allows us to better understand how you use the app and helps us make the app better for
 					everyone. We are NOT interested in your personal information, cookies, etc. Only app usage is tracked
-				</div>
+				</Alert>
 			</section>
 		</div>
 	);

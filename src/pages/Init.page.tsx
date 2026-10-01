@@ -1,4 +1,7 @@
 import { useNavigate } from "react-router";
+import { Alert } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 
 export const InitPage = ({ status, error }: { status: string; error: string | null }) => {
 	const navigate = useNavigate();
@@ -13,17 +16,17 @@ export const InitPage = ({ status, error }: { status: string; error: string | nu
 				</p>
 
 				{error ? (
-					<div className="alert alert-error">{error}</div>
+					<Alert variant="destructive">{error}</Alert>
 				) : (
-					<p className="text-xl">
-						<span className="loading loading-spinner mr-4"></span>
+					<p className="text-xl flex items-center justify-center gap-4">
+						<Spinner className="size-6" />
 						{status || "Loading"}
 					</p>
 				)}
 
-				<button className="btn btn-sm btn-primary" onClick={() => navigate(0)}>
+				<Button variant="default" size="sm" onClick={() => navigate(0)}>
 					Reload
-				</button>
+				</Button>
 			</section>
 
 		</div>

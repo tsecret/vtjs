@@ -5,6 +5,11 @@ import { useServices } from "@/lib/services";
 import { PlayersTable } from "../components/PlayersTable";
 import { getMap } from "../utils";
 import atoms from "../utils/atoms";
+import { Alert } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
+import { Spinner } from "@/components/ui/spinner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export const Main = () => {
 	const services = useServices();
@@ -68,20 +73,20 @@ export const Main = () => {
 
 	const matchDisplayInfo = getMatchDisplayInfo();
 
-	return (
+return (
 		<div className="p-2 flex flex-col">
-			{error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div>}
+			{error && <Alert variant="destructive" className="my-4 w-1/2 m-auto">{error}</Alert>}
 
 			{/* Progress Indicator */}
 			{matchProcessing.isProcessing && matchProcessing.progress.total > 0 && (
-				<div className="flex flex-col m-auto my-4 space-y-4">
-					<progress
-						className="progress progress-primary w-56"
+				<div className="flex flex-col m-auto my-4 gap-4">
+					<Progress
 						value={matchProcessing.progress.step}
 						max={matchProcessing.progress.total}
+						className="w-56"
 					/>
-					<div className="flex flex-row items-center space-x-4">
-						<span className="loading loading-spinner loading-xs"></span>
+					<div className="flex items-center gap-4">
+						<Spinner className="size-4" />
 						<span className="w-full">
 							{matchProcessing.currentPlayer ? `Checking ${matchProcessing.currentPlayer}` : "Processing match data..."}
 						</span>
@@ -91,13 +96,13 @@ export const Main = () => {
 
 			{/* Match Info */}
 			{matchDisplayInfo && Object.keys(table).length > 0 && (
-				<section id="match-info" className="flex flex-row items-center my-10 space-x-4 m-auto">
-					<div className="badge badge-soft badge-primary badge-lg">Server: {matchDisplayInfo.gameServer}</div>
-					<div className="badge badge-soft badge-primary badge-lg">Map: {matchDisplayInfo.mapName}</div>
+				<section id="match-info" className="flex items-center my-10 gap-4 m-auto">
+					<Badge variant="secondary" className="text-base">Server: {matchDisplayInfo.gameServer}</Badge>
+					<Badge variant="secondary" className="text-base">Map: {matchDisplayInfo.mapName}</Badge>
 					{matchDisplayInfo.state !== "MENUS" && (
-						<div className="badge badge-soft badge-secondary badge-lg">
+						<Badge variant="outline" className="text-base">
 							{matchDisplayInfo.state === "PREGAME" ? "Agent Select" : "In Game"}
-						</div>
+						</Badge>
 					)}
 				</section>
 			)}
@@ -108,9 +113,9 @@ export const Main = () => {
 			{/* Waiting State */}
 			{player && Object.keys(table).length === 0 && gameState.state === "MENUS" && (
 				<section className="m-auto text-center mt-20">
-					<span className="loading loading-spiner loading-lg my-4" />
+					<Spinner className="size-8 mx-auto my-4" />
 					<h2 className="font-bold">Waiting for match</h2>
-					<p className="text-xs text-slate-400">
+					<p className="text-xs text-muted-foreground">
 						The check should start automatically when a match is found.
 						<br />
 						If it didn't work, click{" "}
@@ -124,9 +129,9 @@ export const Main = () => {
 
 			{/* Manual Recheck Button */}
 			{Object.keys(table).length > 1 && (
-				<button type="button" className="btn btn-primary m-auto btn-sm" onClick={manualCheck}>
+				<Button variant="default" size="sm" className="m-auto" onClick={manualCheck}>
 					Recheck
-				</button>
+				</Button>
 			)}
 		</div>
 	);

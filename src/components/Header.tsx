@@ -7,6 +7,9 @@ import { useLocation, useNavigate } from "react-router";
 import { useLongPress } from "use-long-press";
 import atoms from "../utils/atoms";
 import { URLS } from "../utils/constants";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 export const Header = () => {
 	const [update, setUpdate] = useState<Update | null>();
@@ -60,90 +63,88 @@ export const Header = () => {
 		checkForUpdate();
 	}, [checkForUpdate]);
 
-	if (location.pathname === "/")
+if (location.pathname === "/")
 		return update ? (
-			<button className="btn btn-soft btn-primary absolute bottom-8 right-8 z-10" onClick={onUpdate}>
-				<Download size={16} /> Update available
-			</button>
+			<Button variant="secondary" className="absolute bottom-8 right-8 z-10" onClick={onUpdate}>
+				<Download data-icon="inline-start" size={16} /> Update available
+			</Button>
 		) : null;
 
 	return (
-		<header className="w-full p-2 flex flex-row items-center space-x-4 px-4">
+		<header className="w-full p-2 flex flex-row items-center gap-4 px-4">
 			{location.pathname === "/dashboard" ? (
 				<>
 					<a className="font-bold" href="/">
 						VTJS
 					</a>
-					<div className="badge badge-dash badge-primary" {...handlers()}>
+					<Badge variant="secondary" className="cursor-pointer" {...handlers()}>
 						Beta
-					</div>
+					</Badge>
 
-					<div className="ml-auto flex flex-row items-center space-x-2">
+					<div className="ml-auto flex flex-row items-center gap-2">
 						{update && (
-							<button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}>
-								<Download size={16} /> Update available
-							</button>
+							<Button variant="secondary" size="sm" onClick={onUpdate}>
+								<Download data-icon="inline-start" size={16} /> Update available
+							</Button>
 						)}
 						{prefetching && (
-							<div className="btn btn-soft btn-info btn-sm">
-								<RefreshCw size={16} className="animate-spin" /> Fetching player data
-							</div>
+							<Button variant="secondary" size="sm" disabled>
+								<RefreshCw data-icon="inline-start" size={16} className="animate-spin" /> Fetching player data
+							</Button>
 						)}
 
-						<div className="avatar-group -space-x-6">
+						<div className="flex -space-x-6">
 							{party.map((p) => (
-								<div key={p.puuid} className="avatar">
-									<div className="w-8 rounded-full">
-										<img src={`${URLS.VALORANT_API_BASE_URL}/playercards/${p.playerCardId}/displayicon.png`} />
-									</div>
-								</div>
+								<Avatar key={p.puuid} className="size-8">
+									<AvatarImage src={`${URLS.VALORANT_API_BASE_URL}/playercards/${p.playerCardId}/displayicon.png`} />
+								</Avatar>
 							))}
 						</div>
 
-						<button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate(`/player/${puuid}`)}>
-							<User size={20} /> My Profile
-						</button>
-						<button className="btn btn-soft btn-sm btn-primary btn-circle" onClick={() => navigate("/settings")}>
+						<Button variant="secondary" size="sm" onClick={() => navigate(`/player/${puuid}`)}>
+							<User data-icon="inline-start" size={20} /> My Profile
+						</Button>
+						<Button variant="secondary" size="icon" onClick={() => navigate("/settings")}>
 							<Settings size={20} />
-						</button>
+						</Button>
 					</div>
 				</>
 			) : location.pathname === "/settings" ? (
 				<>
-					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
-						<ChevronLeft />
-					</button>
+					<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+						<ChevronLeft data-icon="inline-start" size={16} />
+					</Button>
 
 					<span className="font-bold">Settings</span>
 				</>
 			) : location.pathname.startsWith("/player/") ? (
 				<>
-					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
-						<ChevronLeft />
-					</button>
+					<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+						<ChevronLeft data-icon="inline-start" size={16} />
+					</Button>
 
 					<span className="font-bold">Player Details</span>
 				</>
 			) : location.pathname.startsWith("/match/") ? (
 				<>
-					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
-						<ChevronLeft />
-					</button>
+					<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+						<ChevronLeft data-icon="inline-start" size={16} />
+					</Button>
 
 					<span className="font-bold">Match Details</span>
 				</>
 			) : location.pathname.startsWith("/test") ? (
 				<>
-					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
-						<ChevronLeft />
-					</button>
+					<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+						<ChevronLeft data-icon="inline-start" size={16} />
+					</Button>
 
 					<span className="font-bold">Test</span>
 				</>
 			) : location.pathname.startsWith("/avoid-list") ? (
-				<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
-					<ChevronLeft />
-				</button>
+				<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+					<ChevronLeft data-icon="inline-start" size={16} />
+				</Button>
 			) : null}
 		</header>
 	);
