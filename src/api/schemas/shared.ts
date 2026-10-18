@@ -87,7 +87,7 @@ export interface PlayerMatchHistoryResponse {
 	History: {
 		MatchID: string;
 		QueueID: string;
-		gameStartTime: number;
+		GameStartTime: number;
 	}[];
 }
 

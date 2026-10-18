@@ -1,0 +1,4 @@
+{
+	"type": "Ares.PlayerSettings",
+	"data": "{\"Ares.PlayerSettings\":{\"MouseSensitivity\":0.35,\"ADSZoomMultiplier\":1.0,\"Minimap\":{\"Rotate\":true,\"FixedOrientation\":false},\"Keybindings\":{\"MoveForward\":[{\"Key\":\"W\"}],\"MoveBackward\":[{\"Key\":\"S\"}]}}}"
+}

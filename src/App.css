@@ -5,20 +5,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@layer components {
-	h2 {
-		@apply font-bold text-xl
-	}
-
-	.text-mini {
-		@apply text-[0.5rem]
-	}
-
-	.text-tiny {
-		@apply text-[0.25rem]
-	}
-}
-
 @layer base {
 	:root {
 		--chart-1: oklch(0.646 0.222 41.116);

@@ -54,6 +54,49 @@ VTJS is a desktop application built with Tauri and React that connects to your V
 3. Launch VTJS (Ensure you are logged into your account)
 4. The app will automatically connect and start providing match insights
 
+## 🧪 Development
+
+Requires the Rust toolchain and Bun.
+
+```bash
+bun install
+bun run tauri dev      # real mode: connects to your Riot client
+bun run test           # vitest
+bun run build          # tsc + vite build
+```
+
+### Mock mode (no Riot client needed)
+
+Set `VITE_FROM_JSON=true` (in `.env` or inline) and restart the dev server:
+
+```bash
+VITE_FROM_JSON=true bun run tauri dev
+```
+
+In mock mode:
+
+- `LocalAPI` and `SharedAPI` are the real classes, but every HTTP request is answered from `src/mocks/fixtures/` through `src/mocks/router.ts`. Caching, auth and rate-limit code paths still run.
+- Match detection is driven by synthetic `ws_message` events instead of the Riot websocket.
+- The mock WS driver is exposed as `window.vtjsMock` (plus buttons on the `/test` page):
+
+```js
+vtjsMock.menus();
+vtjsMock.pregame();
+vtjsMock.ingame();
+vtjsMock.presence({ sessionLoopState: "INGAME", partyId: "test-party-id", partySize: 3 });
+```
+
+- Mocks are dev-only: they are loaded via `import.meta.env` + a Vite alias and never end up in a production build.
+- Mock mode bypasses the response cache (`noCache`), so fixture edits apply immediately and stale cached responses can never shadow them. Restart the dev server after editing fixtures — Vite caches JSON modules.
+
+### Adding a fixture
+
+1. Add the JSON to `src/mocks/fixtures/` (scrub real data: use `test-player-N-puuid`, `test-match-id-N`, `test-party-id`).
+2. Add a handler in `src/mocks/router.ts`.
+3. `tests/mocks.test.ts` exercises every endpoint through the router in strict mode — an endpoint without a fixture fails the test run.
+
+Mock mode and the test suite share the same router and fixtures, so they stay in sync.
+
 ## 🔒 Privacy & Security
 
 ### Data Handling

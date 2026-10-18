@@ -1,11 +1,11 @@
 import type Database from "@tauri-apps/plugin-sql";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import currentGameMatch from "../tests/fixtures/shared/current-game-match.json";
-import currentPreGameMatch from "../tests/fixtures/shared/current-pregame-match.json";
-import matchDetails from "../tests/fixtures/shared/match-details.json";
-import playerMMR from "../tests/fixtures/shared/player-mmr.json";
-import playerNames from "../tests/fixtures/shared/player-names.json";
-import matchHistory from "../tests/fixtures/shared/match-history.json";
+import currentGameMatch from "../src/mocks/fixtures/shared/current-game-match.json";
+import currentPreGameMatch from "../src/mocks/fixtures/shared/current-pregame-match.json";
+import matchDetails from "../src/mocks/fixtures/shared/match-details.json";
+import playerMMR from "../src/mocks/fixtures/shared/player-mmr.json";
+import playerNames from "../src/mocks/fixtures/shared/player-names.json";
+import matchHistory from "../src/mocks/fixtures/shared/match-history.json";
 import { MatchProcessing, type MatchProcessingConfig } from "../src/lib/match-processing";
 
 describe("MatchProcessing", () => {
@@ -145,7 +145,7 @@ describe("MatchProcessing", () => {
 			mockApi.getMatchDetails.mockResolvedValue(matchDetails);
 
 			// test-player-1-puuid and test-player-5-puuid are on the same team (Red)
-			// with the same partyId "bd307977-a9af-4680-8ee4-06007178e2ef"
+			// with the same partyId "test-party-1"
 			const player1 = { Subject: "test-player-1-puuid", GameName: "Player1", TagLine: "TST" };
 			const player5 = { Subject: "test-player-5-puuid", GameName: "Player5", TagLine: "TST" };
 

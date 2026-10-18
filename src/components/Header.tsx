@@ -9,7 +9,7 @@ import atoms from "../utils/atoms";
 import { URLS } from "../utils/constants";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const Header = () => {
 	const [update, setUpdate] = useState<Update | null>();
@@ -74,7 +74,7 @@ if (location.pathname === "/")
 		<header className="w-full p-2 flex flex-row items-center gap-4 px-4">
 			{location.pathname === "/dashboard" ? (
 				<>
-					<a className="font-bold" href="/">
+					<a className="text-lg font-bold tracking-tight" href="/">
 						VTJS
 					</a>
 					<Badge variant="secondary" className="cursor-pointer" {...handlers()}>
@@ -93,10 +93,11 @@ if (location.pathname === "/")
 							</Button>
 						)}
 
-						<div className="flex -space-x-6">
+						<div className="flex -space-x-2">
 							{party.map((p) => (
 								<Avatar key={p.puuid} className="size-8">
 									<AvatarImage src={`${URLS.VALORANT_API_BASE_URL}/playercards/${p.playerCardId}/displayicon.png`} />
+									<AvatarFallback className="text-xs">?</AvatarFallback>
 								</Avatar>
 							))}
 						</div>

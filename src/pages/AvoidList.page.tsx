@@ -5,7 +5,8 @@ import { Link } from "react-router";
 import type { AvoidedPlayer } from "@/interface";
 import { useServices } from "@/lib/services";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item";
 
 export const AvoidListPage = () => {
 	const services = useServices();
@@ -40,31 +41,36 @@ export const AvoidListPage = () => {
 	return (
 		<div>
 			<section className="max-w-1/2 m-auto">
-				<Card className="bg-background rounded-lg shadow-sm">
-					<div className="p-4 pb-2 text-xs opacity-60 tracking-wide border-b">Avoid List</div>
+			<Card>
+				<CardHeader className="border-b pb-2">
+					<CardTitle className="text-xs font-normal tracking-wide opacity-60">Avoid List</CardTitle>
+				</CardHeader>
 
-					{players?.map((p) => (
-						<div className="flex items-center justify-between p-4 border-b last:border-0" key={p.puuid}>
-							<div className="flex items-center gap-4">
-								<span className="text-sm">{moment(p.dodgeTimeStamp).format("HH:mm DD/MM/YY")}</span>
+				{players?.map((p) => (
+					<Item key={p.puuid} className="border-b last:border-0">
+						<ItemContent>
+							<ItemTitle>
 								{p.name && p.tag ? (
-									<span>
+									<>
 										{p.name}
-										<span className="opacity-50 text-xs"> #{p.tag}</span>
-									</span>
+										<span className="text-xs opacity-50"> #{p.tag}</span>
+									</>
 								) : (
 									<span className="text-muted-foreground">Name is missing</span>
 								)}
-							</div>
-
+							</ItemTitle>
+							<ItemDescription className="text-xs">{moment(p.dodgeTimeStamp).format("HH:mm DD/MM/YY")}</ItemDescription>
+						</ItemContent>
+						<ItemActions>
 							<Link to={`/player/${p.puuid}`}>
 								<Button variant="ghost" size="icon" className="h-8 w-8">
 									<SquareArrowOutUpRight size={14} />
 								</Button>
 							</Link>
-						</div>
-					))}
-				</Card>
+						</ItemActions>
+					</Item>
+				))}
+			</Card>
 			</section>
 		</div>
 	);

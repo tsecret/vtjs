@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 
 export const Main = () => {
 	const services = useServices();
@@ -74,7 +75,7 @@ export const Main = () => {
 	const matchDisplayInfo = getMatchDisplayInfo();
 
 return (
-		<div className="p-2 flex flex-col">
+		<div className="p-8 flex flex-col">
 			{error && <Alert variant="destructive" className="my-4 w-1/2 m-auto">{error}</Alert>}
 
 			{/* Progress Indicator */}
@@ -96,11 +97,11 @@ return (
 
 			{/* Match Info */}
 			{matchDisplayInfo && Object.keys(table).length > 0 && (
-				<section id="match-info" className="flex items-center my-10 gap-4 m-auto">
-					<Badge variant="secondary" className="text-base">Server: {matchDisplayInfo.gameServer}</Badge>
-					<Badge variant="secondary" className="text-base">Map: {matchDisplayInfo.mapName}</Badge>
+				<section id="match-info" className="flex items-center my-6 gap-4 m-auto">
+					<Badge variant="secondary">Server: {matchDisplayInfo.gameServer}</Badge>
+					<Badge variant="secondary">Map: {matchDisplayInfo.mapName}</Badge>
 					{matchDisplayInfo.state !== "MENUS" && (
-						<Badge variant="outline" className="text-base">
+						<Badge variant="outline">
 							{matchDisplayInfo.state === "PREGAME" ? "Agent Select" : "In Game"}
 						</Badge>
 					)}
@@ -112,10 +113,12 @@ return (
 
 			{/* Waiting State */}
 			{player && Object.keys(table).length === 0 && gameState.state === "MENUS" && (
-				<section className="m-auto text-center mt-20">
-					<Spinner className="size-8 mx-auto my-4" />
-					<h2 className="font-bold">Waiting for match</h2>
-					<p className="text-xs text-muted-foreground">
+				<Empty className="m-auto mt-20 w-full max-w-sm">
+					<EmptyMedia className="size-10">
+						<Spinner className="size-8" />
+					</EmptyMedia>
+					<EmptyTitle>Waiting for match</EmptyTitle>
+					<EmptyDescription className="text-xs">
 						The check should start automatically when a match is found.
 						<br />
 						If it didn't work, click{" "}
@@ -123,8 +126,8 @@ return (
 							here
 						</button>{" "}
 						to check manually.
-					</p>
-				</section>
+					</EmptyDescription>
+				</Empty>
 			)}
 
 			{/* Manual Recheck Button */}

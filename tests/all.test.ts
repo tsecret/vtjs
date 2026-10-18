@@ -9,11 +9,11 @@ import type {
 	PlayerRow,
 } from "../src/interface";
 import * as utils from "../src/utils";
-import currentGameMatch from "./fixtures/shared/current-game-match.json";
-import currentPreGameMatch from "./fixtures/shared/current-pregame-match.json";
-import matchDetails from "./fixtures/shared/match-details.json";
-import playerMMR from "./fixtures/shared/player-mmr.json";
-import playerNames from "./fixtures/shared/player-names.json";
+import currentGameMatch from "../src/mocks/fixtures/shared/current-game-match.json";
+import currentPreGameMatch from "../src/mocks/fixtures/shared/current-pregame-match.json";
+import matchDetails from "../src/mocks/fixtures/shared/match-details.json";
+import playerMMR from "../src/mocks/fixtures/shared/player-mmr.json";
+import playerNames from "../src/mocks/fixtures/shared/player-names.json";
 import agents from "../src/assets/agents.json";
 import maps from "../src/assets/maps.json";
 
@@ -203,6 +203,83 @@ describe("utils", () => {
 			];
 
 			expect(utils.extractParties(input)).toStrictEqual(output);
+		});
+	});
+
+	describe("assignPartyColors", () => {
+		it("returns null for solo players and empty partyId", () => {
+			const result = utils.assignPartyColors([
+				{ partyId: "solo-a", name: "A" },
+				{ partyId: "", name: "B" },
+				{ partyId: "solo-c", name: "C" },
+			]);
+
+			expect(result.map((p) => p.partyNumber)).toEqual([null, null, null]);
+			expect(result.map((p) => p.partyColor)).toEqual([null, null, null]);
+		});
+
+		it("gives every member of a party the same number and color", () => {
+			const result = utils.assignPartyColors([
+				{ partyId: "duo", name: "A" },
+				{ partyId: "duo", name: "B" },
+			]);
+
+			expect(result[0].partyNumber).toBe(1);
+			expect(result[1].partyNumber).toBe(1);
+			expect(result[0].partyColor).toBe(utils.PARTY_COLORS[0]);
+			expect(result[1].partyColor).toBe(utils.PARTY_COLORS[0]);
+		});
+
+		it("numbers parties in order of first appearance", () => {
+			const result = utils.assignPartyColors([
+				{ partyId: "second", name: "A" },
+				{ partyId: "first", name: "B" },
+				{ partyId: "first", name: "C" },
+				{ partyId: "second", name: "D" },
+			]);
+
+			expect(result.map((p) => p.partyNumber)).toEqual([1, 2, 2, 1]);
+		});
+
+		it("handles a full 5v5 with the maximum of 4 parties", () => {
+			const players = [
+				...Array.from({ length: 2 }, (_, i) => ({ partyId: "r1", name: `R1-${i}` })),
+				...Array.from({ length: 2 }, (_, i) => ({ partyId: "r2", name: `R2-${i}` })),
+				{ partyId: "red-solo", name: "R5" },
+				...Array.from({ length: 2 }, (_, i) => ({ partyId: "b1", name: `B1-${i}` })),
+				...Array.from({ length: 2 }, (_, i) => ({ partyId: "b2", name: `B2-${i}` })),
+				{ partyId: "blue-solo", name: "B5" },
+			];
+
+			const result = utils.assignPartyColors(players);
+			const numbered = result.filter((p) => p.partyNumber !== null);
+
+			expect(numbered).toHaveLength(8);
+			expect(new Set(numbered.map((p) => p.partyNumber))).toEqual(new Set([1, 2, 3, 4]));
+			// Every party has a distinct color.
+			expect(new Set(numbered.map((p) => p.partyColor)).size).toBe(4);
+		});
+
+		it("wraps colors when there are more parties than colors", () => {
+			const players = Array.from({ length: utils.PARTY_COLORS.length + 2 }, (_, i) => ({
+				partyId: `party-${i}`,
+			})).flatMap((p) => [p, { ...p }]);
+
+			const result = utils.assignPartyColors(players);
+
+			expect(result[0].partyNumber).toBe(1);
+			expect(result[0].partyColor).toBe(utils.PARTY_COLORS[0]);
+			// The party after the last color reuses the first color.
+			const wrapped = result[utils.PARTY_COLORS.length * 2];
+			expect(wrapped.partyNumber).toBe(utils.PARTY_COLORS.length + 1);
+			expect(wrapped.partyColor).toBe(utils.PARTY_COLORS[0]);
+		});
+
+		it("does not mutate the input players", () => {
+			const players = [{ partyId: "duo", name: "A" }];
+			utils.assignPartyColors(players);
+
+			expect(players[0]).toEqual({ partyId: "duo", name: "A" });
 		});
 	});
 

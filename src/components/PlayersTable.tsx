@@ -1,5 +1,6 @@
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import clsx from "clsx";
+import { toast } from "sonner";
 import { ExternalLink, Users } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { PlayerRow } from "../interface";
@@ -22,6 +23,7 @@ export const PlayersTable = ({
 
 	const onCopyName = async (event: any) => {
 		await writeText(event.currentTarget.textContent);
+		toast.success("Copied to clipboard");
 	};
 
 	const Row = ({ player }: { player: PlayerRow }) => {
@@ -30,7 +32,7 @@ export const PlayersTable = ({
 			: [];
 
 		return (
-			<TableRow key={player.puuid} className={clsx(player.enemy ? "bg-red-500/10" : "bg-green-500/10", "text-center")}>
+			<TableRow key={player.puuid} className={clsx(player.enemy ? "bg-red-500/5" : "bg-emerald-500/5", "text-center")}>
 				<TableCell>
 					<div className="flex items-center gap-2">
 						<img src={player.agentImage || undefined} className="h-6" draggable={false} />
@@ -67,14 +69,14 @@ export const PlayersTable = ({
 				</TableCell>
 				<TableCell><span>{player.accountLevel}</span></TableCell>
 				<TableCell>
-					<span className={clsx(!player.kd ? null : player.kd >= 1 ? "text-green-600" : "text-red-600")}>{player.kd}</span>
+					<span className={clsx(!player.kd ? null : player.kd >= 1 ? "text-emerald-500" : "text-red-500")}>{player.kd}</span>
 				</TableCell>
 				<TableCell>
 					<span>{player.hs}{player.hs ? "%" : null}</span>
 				</TableCell>
 				<TableCell><span>{player.adr}</span></TableCell>
 				<TableCell>
-					<span className={clsx(player.lastGameResult === "won" ? "text-green-600" : player.lastGameResult === "loss" ? "text-red-600" : null)}>
+						<span className={clsx(player.lastGameResult === "won" ? "text-emerald-500" : player.lastGameResult === "loss" ? "text-red-500" : null)}>
 						{player.lastGameScore}
 						{player.lastGameMMRDiff && player.lastGameScore ? ` (${player.lastGameMMRDiff > 0 ? `+${player.lastGameMMRDiff}` : player.lastGameMMRDiff})` : null}
 					</span>
@@ -83,7 +85,7 @@ export const PlayersTable = ({
 					{(() => {
 						const streak = player.streak || 0;
 						return (
-							<span className={clsx(streak > 0 ? "text-green-600" : streak < 0 ? "text-red-600" : undefined)}>
+								<span className={clsx(streak > 0 ? "text-emerald-500" : streak < 0 ? "text-red-500" : undefined)}>
 								{streak != null ? streak : null}
 							</span>
 						);
@@ -100,7 +102,7 @@ export const PlayersTable = ({
 							<TooltipProvider key={agent.agentId}>
 								<Tooltip>
 									<TooltipTrigger>
-										<div className={clsx("rounded-md p-1", agent.avgKd >= 1 ? "bg-green-500/25" : "bg-red-500/25")}>
+										<div className={clsx("rounded-md p-1", agent.avgKd >= 1 ? "bg-emerald-500/25" : "bg-red-500/25")}>
 											<img className="w-6 rounded-md" src={agent.agentUrl} />
 										</div>
 									</TooltipTrigger>
@@ -163,48 +165,40 @@ export const PlayersTable = ({
 	if (!Object.keys(table).length) return null;
 
 	return (
-		<section className="mx-auto my-4 w-full">
-			<Table>
-				<TableHeader>
-					<TableRow className="text-center">
-						<TableHead>Agent</TableHead>
-						<TableHead>Player</TableHead>
-						<TableHead>Rank</TableHead>
-						<TableHead>Peak Rank</TableHead>
-						<TableHead>LVL</TableHead>
-						<TableHead>K/D</TableHead>
-						<TableHead>HS%</TableHead>
-						<TableHead>ADR</TableHead>
-						<TableHead>Last Game</TableHead>
-						<TableHead>Streak</TableHead>
-						<TableHead>Winrate</TableHead>
-						<TableHead>Top Agents on Current Map</TableHead>
-						<TableHead>Note</TableHead>
-						<TableHead></TableHead>
-						<TableHead></TableHead>
-					</TableRow>
-				</TableHeader>
+		<Table className="text-xs">
+			<TableHeader>
+				<TableRow className="text-center">
+					<TableHead>Agent</TableHead>
+					<TableHead>Player</TableHead>
+					<TableHead>Rank</TableHead>
+					<TableHead>Peak Rank</TableHead>
+					<TableHead>LVL</TableHead>
+					<TableHead>K/D</TableHead>
+					<TableHead>HS%</TableHead>
+					<TableHead>ADR</TableHead>
+					<TableHead>Last Game</TableHead>
+					<TableHead>Streak</TableHead>
+					<TableHead>Winrate</TableHead>
+					<TableHead>Top Agents on Current Map</TableHead>
+					<TableHead>Note</TableHead>
+					<TableHead></TableHead>
+					<TableHead></TableHead>
+				</TableRow>
+			</TableHeader>
 
-				<TableBody>
-					{Object.values(table)
-						.filter((player) => !player.enemy)
-						.sort((a, b) => (b.kd || 1) - (a.kd || 0))
-						.map((player) => <Row player={player} key={player.puuid} />)}
-				</TableBody>
+			<TableBody>
+				{Object.values(table)
+					.filter((player) => !player.enemy)
+					.sort((a, b) => (b.kd || 1) - (a.kd || 0))
+					.map((player) => <Row player={player} key={player.puuid} />)}
+      </TableBody>
 
-				<TableBody>
-					<TableRow>
-						<TableCell></TableCell>
-					</TableRow>
-				</TableBody>
-
-				<TableBody>
-					{Object.values(table)
-						.filter((player) => player.enemy)
-						.sort((a, b) => (b.kd || 1) - (a.kd || 0))
-						.map((player) => <Row player={player} key={player.puuid} />)}
-				</TableBody>
-			</Table>
-		</section>
+			<TableBody>
+				{Object.values(table)
+					.filter((player) => player.enemy)
+					.sort((a, b) => (b.kd || 1) - (a.kd || 0))
+					.map((player) => <Row player={player} key={player.puuid} />)}
+			</TableBody>
+		</Table>
 	);
 };

@@ -1,10 +1,10 @@
 import { useAtom, useSetAtom } from "jotai";
-import { Heart } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useServices } from "@/lib/services";
 import atoms from "../utils/atoms";
 import { Button } from "@/components/ui/button";
-import { Alert } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 
 export const WelcomePage = () => {
 	const services = useServices();
@@ -36,22 +36,18 @@ export const WelcomePage = () => {
 						Get Started
 					</Button>
 
-					<div id="analytics-prompt" className="my-10">
-						<Alert>
-							<span>
-								<span className="text-primary font-bold">Enable analytics?</span> This helps us improve the app and
-								provide better experience
-							</span>
-							{allowAnalytics ? (
-								<Button variant="secondary" size="sm" className="gap-2">
-									<Heart size={16} /> Enabled
-								</Button>
-							) : (
-								<Button variant="default" size="sm" onClick={() => onAnalyticsChange(true)}>
-									Enable
-								</Button>
-							)}
-						</Alert>
+					<div id="analytics-prompt" className="my-10 w-full">
+						<Card>
+							<CardContent className="flex items-center justify-between gap-4">
+								<div>
+									<p className="font-bold">Enable analytics?</p>
+									<p className="text-sm text-muted-foreground">
+										This helps us improve the app and provide better experience
+									</p>
+								</div>
+								<Switch checked={allowAnalytics} onCheckedChange={onAnalyticsChange} />
+							</CardContent>
+						</Card>
 					</div>
 				</div>
 			</div>

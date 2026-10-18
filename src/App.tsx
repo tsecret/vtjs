@@ -7,8 +7,6 @@ import { useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router";
 import { LocalAPI, SharedAPI } from "./api";
-import { TestLocalAPI } from "./api/local.dev";
-import { TestSharedAPI } from "./api/shared.dev";
 import { MatchHandler } from "./components";
 import { Header } from "./components/Header";
 import { RateLimitNotification } from "./components/RateLimitAlert";
@@ -23,9 +21,13 @@ import { ProfilePage } from "./pages/Profile.page";
 import { Settings } from "./pages/Settings.page";
 import { TestPage } from "./pages/Test.page";
 import { WelcomePage } from "./pages/Welcome.page";
+import { Toaster } from "./components/ui/sonner";
 import { parseLockFile, readLockfile, readLog } from "./utils";
 import atoms from "./utils/atoms";
-import { CACHE_NAME, RIOT_CLIENT_HOST } from "./utils/constants";
+import { CACHE_NAME, DEV_PORT, DEV_REGION, DEV_SHARD, DEV_TOKEN, RIOT_CLIENT_HOST } from "./utils/constants";
+
+/** VITE_FROM_JSON=true serves every request from src/mocks instead of the Riot client. */
+const IS_MOCK_MODE = import.meta.env.VITE_FROM_JSON === "true";
 
 function App() {
 	const setAppInfo = useSetAtom(atoms.appInfo);
@@ -66,27 +68,27 @@ function App() {
 
 			setInitStatus("Cleaning cache");
 			await db.execute("DELETE FROM requests WHERE ttl <= $1", [Date.now()]);
+			if (IS_MOCK_MODE) {
+				// Fixtures reuse the same cache keys as real responses; never let stale real data shadow them.
+				await db.execute("DELETE FROM requests");
+			}
 
 			try {
-				setInitStatus("Reading lockfile");
-				const { port, password } = parseLockFile(await readLockfile());
+				setInitStatus(IS_MOCK_MODE ? "Loading fixtures" : "Reading lockfile");
+				const { port, password } = IS_MOCK_MODE
+					? parseLockFile(`Riot Client:1:${DEV_PORT || 12345}:${DEV_TOKEN || "developer"}:https`)
+					: parseLockFile(await readLockfile());
 
 				setInitStatus("Reading logs");
-				const [region, shard] = await readLog();
+				const [region, shard] = IS_MOCK_MODE ? [DEV_REGION || "eu", DEV_SHARD || "eu"] : await readLog();
 
 				setInitStatus("Connecting to Riot Client");
-				const localapi =
-					import.meta.env.VITE_FROM_JSON === "true"
-						? new TestLocalAPI({ port: "", password: "" })
-						: new LocalAPI({ port, password });
+				const localapi = new LocalAPI({ port, password });
 				const player = await localapi.getPlayerAccount();
 
 				setInitStatus("Loading Player");
 				const { accessToken, token: entToken, subject: puuid } = await localapi.getEntitlementToken();
-				const sharedapi =
-					import.meta.env.VITE_FROM_JSON === "true"
-						? new TestSharedAPI({ entToken, accessToken, region, shard })
-						: new SharedAPI({ entToken, accessToken, region, shard });
+				const sharedapi = new SharedAPI({ entToken, accessToken, region, shard, noCache: IS_MOCK_MODE });
 
 				sharedapi.setRateLimitCallback((retryAfter: number) => {
 					setRateLimitNotification({ isActive: true, retryAfter });
@@ -104,12 +106,18 @@ function App() {
 				setpuuid(puuid);
 				setServices({ cache: db, localapi, sharedapi, store });
 
-				invoke("start_ws", {
-					wsUrl: `wss://${RIOT_CLIENT_HOST}:${port}`,
-					headers: {
-						Authorization: `Basic ${password}`,
-					},
-				});
+				if (IS_MOCK_MODE) {
+					// No Riot client to connect to: drive SocketListener from fixtures instead.
+					const { startMockEvents } = await import("./mocks/events");
+					startMockEvents();
+				} else {
+					invoke("start_ws", {
+						wsUrl: `wss://${RIOT_CLIENT_HOST}:${port}`,
+						headers: {
+							Authorization: `Basic ${password}`,
+						},
+					});
+				}
 
 				if (allowAnalytics) await trackEvent("app_load");
 
@@ -125,6 +133,7 @@ function App() {
 	return (
 		<ServicesProvider value={services}>
 			<main className="relative select-none cursor-default">
+				<Toaster />
 				<Header />
 				<SocketListener />
 				<RateLimitNotification />

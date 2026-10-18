@@ -115,11 +115,11 @@ export const Settings = () => {
 	}, []);
 
 	return (
-		<div className="flex flex-col gap-4 p-4 max-w-md m-auto">
+		<div className="flex w-full flex-col gap-4 p-4 max-w-lg m-auto">
 			<section className="flex flex-row items-center gap-2 text-xs">
-				<div className="border-2 rounded-md p-2">App version {appInfo?.appVersion}</div>
-				<div className="border-2 rounded-md p-2">Tauri version {appInfo?.tauriVersion}</div>
-				<div className="border-2 rounded-md p-2">Identifier {appInfo?.identifier}</div>
+				<div className="border rounded-md p-2">App version {appInfo?.appVersion}</div>
+				<div className="border rounded-md p-2">Tauri version {appInfo?.tauriVersion}</div>
+				<div className="border rounded-md p-2">Identifier {appInfo?.identifier}</div>
 			</section>
 
 			<Separator />
@@ -132,7 +132,7 @@ export const Settings = () => {
 
 			{/* Game Settings */}
 			<section id="cache" className="flex flex-col gap-4">
-				<h2 className="text-lg font-semibold">Game Settings</h2>
+				<h2 className="text-xl font-bold">Game Settings</h2>
 
 				<p className="text-sm text-muted-foreground">
 					VTJS allows you to easily copy and paste game settings like Mouse and ADS sensitivity, minimap config and
@@ -177,7 +177,7 @@ export const Settings = () => {
 
 			{/* Cache */}
 			<section id="cache" className="flex flex-col gap-4">
-				<h2 className="text-lg font-semibold">Cache</h2>
+				<h2 className="text-xl font-bold">Cache</h2>
 
 				<div className="space-y-1 text-sm">
 					<div className="flex items-center gap-2">
@@ -207,7 +207,7 @@ export const Settings = () => {
 
 			{/* Privacy */}
 			<section id="analytics" className="space-y-4">
-				<h2 className="text-lg font-semibold">Privacy</h2>
+				<h2 className="text-xl font-bold">Privacy</h2>
 
 				<Label className="flex items-center gap-4 cursor-pointer">
 					<Switch
