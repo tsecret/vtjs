@@ -519,7 +519,7 @@
 	"EnemyTeamLockCount": 1,
 	"PregameState": "character_select_active",
 	"LastUpdated": "0001-01-01T00:00:00Z",
-	"MapID": "/Game/Maps/Foxtrot/Foxtrot",
+	"MapID": "/Game/Maps/Jam/Jam",
 	"MapSelectPool": [],
 	"BannedMapIDs": [],
 	"CastedVotes": {},

@@ -480,6 +480,7 @@ describe("utils", () => {
 		const expected = [
 			{
 				agentId: "cc8b64c8-4b25-4ff9-6e7f-37b4da43d235",
+				agentName: "Deadlock",
 				avgDeaths: 16,
 				avgKills: 25,
 				avgKd: 1.56,

@@ -103,20 +103,16 @@ export const MatchHandler = () => {
 	);
 
 	const handleGameEnd = useCallback(async () => {
-		if (!currentMatchRef.current.matchId) return;
-
-		try {
-			console.log("Match ended, data cleared");
-		} finally {
-			setTable({});
-			setCurrentMatch(null);
-			setMatchProcessing({
-				isProcessing: false,
-				currentPlayer: null,
-				progress: { step: 0, total: 0 },
-			});
-			currentMatchRef.current = { matchId: null, isProcessing: false };
-		}
+		// No guard here: currentMatchRef.matchId is already null once handleMatch
+		// finishes in its finally block, so any guard on it stops state ever being
+		// cleared and the finished match stays on screen.
+		setTable({});
+		setCurrentMatch(null);
+		setMatchProcessing({
+			isProcessing: false,
+			currentPlayer: null,
+			progress: { step: 0, total: 0 },
+		});
 	}, [setTable, setCurrentMatch, setMatchProcessing]);
 
 	useEffect(() => {
