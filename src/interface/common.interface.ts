@@ -16,6 +16,7 @@ export interface Lockfile {
 
 export type AgentStats = {
 	agentId: string;
+	agentName: string;
 	agentUrl: string;
 	avgKills: number;
 	avgDeaths: number;

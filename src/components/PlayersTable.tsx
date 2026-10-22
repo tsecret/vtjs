@@ -1,14 +1,14 @@
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import clsx from "clsx";
-import { toast } from "sonner";
 import { ExternalLink, Users } from "lucide-react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { PlayerRow } from "../interface";
 import { getWinrateColorClass, isSmurf } from "../utils";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const PlayersTable = ({
 	table,
@@ -35,7 +35,7 @@ export const PlayersTable = ({
 			<TableRow key={player.puuid} className={clsx(player.enemy ? "bg-red-500/5" : "bg-emerald-500/5", "text-center")}>
 				<TableCell>
 					<div className="flex items-center gap-2">
-						<img src={player.agentImage || undefined} className="h-6" draggable={false} />
+						<img src={player.agentImage || undefined} alt={player.agentName ?? ""} className="h-6" draggable={false} />
 						<span>{player.agentName}</span>
 					</div>
 				</TableCell>
@@ -46,10 +46,12 @@ export const PlayersTable = ({
 						<TooltipProvider>
 							<Tooltip>
 								<TooltipTrigger>
-									<div className="cursor-pointer rounded-md px-1 hover:bg-muted" onClick={onCopyName}>
+									<Button variant="ghost" size="sm" className="h-auto px-1" onClick={onCopyName}>
 										<span>{player.name}</span>
-										<span className="text-muted-foreground">#<span>{player.tag}</span></span>
-									</div>
+										<span className="text-muted-foreground">
+											#<span>{player.tag}</span>
+										</span>
+									</Button>
 								</TooltipTrigger>
 								<TooltipContent>Click to copy</TooltipContent>
 							</Tooltip>
@@ -67,25 +69,44 @@ export const PlayersTable = ({
 						<span className="text-xs text-muted-foreground">({player.rankPeakDate.toLocaleDateString()})</span>
 					) : null}
 				</TableCell>
-				<TableCell><span>{player.accountLevel}</span></TableCell>
 				<TableCell>
-					<span className={clsx(!player.kd ? null : player.kd >= 1 ? "text-emerald-500" : "text-red-500")}>{player.kd}</span>
+					<span>{player.accountLevel}</span>
 				</TableCell>
 				<TableCell>
-					<span>{player.hs}{player.hs ? "%" : null}</span>
+					<span className={clsx(!player.kd ? null : player.kd >= 1 ? "text-emerald-500" : "text-red-500")}>
+						{player.kd}
+					</span>
 				</TableCell>
-				<TableCell><span>{player.adr}</span></TableCell>
 				<TableCell>
-						<span className={clsx(player.lastGameResult === "won" ? "text-emerald-500" : player.lastGameResult === "loss" ? "text-red-500" : null)}>
+					<span>
+						{player.hs}
+						{player.hs ? "%" : null}
+					</span>
+				</TableCell>
+				<TableCell>
+					<span>{player.adr}</span>
+				</TableCell>
+				<TableCell>
+					<span
+						className={clsx(
+							player.lastGameResult === "won"
+								? "text-emerald-500"
+								: player.lastGameResult === "loss"
+									? "text-red-500"
+									: null,
+						)}
+					>
 						{player.lastGameScore}
-						{player.lastGameMMRDiff && player.lastGameScore ? ` (${player.lastGameMMRDiff > 0 ? `+${player.lastGameMMRDiff}` : player.lastGameMMRDiff})` : null}
+						{player.lastGameMMRDiff && player.lastGameScore
+							? ` (${player.lastGameMMRDiff > 0 ? `+${player.lastGameMMRDiff}` : player.lastGameMMRDiff})`
+							: null}
 					</span>
 				</TableCell>
 				<TableCell>
 					{(() => {
 						const streak = player.streak || 0;
 						return (
-								<span className={clsx(streak > 0 ? "text-emerald-500" : streak < 0 ? "text-red-500" : undefined)}>
+							<span className={clsx(streak > 0 ? "text-emerald-500" : streak < 0 ? "text-red-500" : undefined)}>
 								{streak != null ? streak : null}
 							</span>
 						);
@@ -103,7 +124,7 @@ export const PlayersTable = ({
 								<Tooltip>
 									<TooltipTrigger>
 										<div className={clsx("rounded-md p-1", agent.avgKd >= 1 ? "bg-emerald-500/25" : "bg-red-500/25")}>
-											<img className="w-6 rounded-md" src={agent.agentUrl} />
+											<img className="w-6 rounded-md" src={agent.agentUrl} alt={agent.agentName} />
 										</div>
 									</TooltipTrigger>
 									<TooltipContent className="flex flex-col items-start gap-1">
@@ -119,18 +140,28 @@ export const PlayersTable = ({
 				</TableCell>
 				<TableCell>
 					<div className="flex flex-wrap gap-1 justify-center">
-						{isSmurf(player) && <Badge variant="secondary" className="text-xs">Possible Smurf</Badge>}
+						{isSmurf(player) && (
+							<Badge variant="secondary" className="text-xs">
+								Possible Smurf
+							</Badge>
+						)}
 						{player.dodge && (
 							<TooltipProvider>
 								<Tooltip>
 									<TooltipTrigger>
-										<Badge variant="secondary" className="text-xs">Avoid</Badge>
+										<Badge variant="secondary" className="text-xs">
+											Avoid
+										</Badge>
 									</TooltipTrigger>
 									<TooltipContent>This player is in your avoid list. Check player profile to learn more</TooltipContent>
 								</Tooltip>
 							</TooltipProvider>
 						)}
-						{player.hasGunBuddy && <Badge variant="secondary" className="text-xs">Riot Buddy</Badge>}
+						{player.hasGunBuddy && (
+							<Badge variant="secondary" className="text-xs">
+								Riot Buddy
+							</Badge>
+						)}
 					</div>
 				</TableCell>
 				<TableCell>
@@ -154,8 +185,13 @@ export const PlayersTable = ({
 					) : null}
 				</TableCell>
 				<TableCell>
-					<Button variant="ghost" size="sm" onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}>
-						<ExternalLink data-icon="inline-start" size={14} />
+					<Button
+						variant="ghost"
+						size="icon-sm"
+						aria-label={`Open ${player.name}`}
+						onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}
+					>
+						<ExternalLink />
 					</Button>
 				</TableCell>
 			</TableRow>
@@ -190,14 +226,18 @@ export const PlayersTable = ({
 				{Object.values(table)
 					.filter((player) => !player.enemy)
 					.sort((a, b) => (b.kd || 1) - (a.kd || 0))
-					.map((player) => <Row player={player} key={player.puuid} />)}
-      </TableBody>
+					.map((player) => (
+						<Row player={player} key={player.puuid} />
+					))}
+			</TableBody>
 
 			<TableBody>
 				{Object.values(table)
 					.filter((player) => player.enemy)
 					.sort((a, b) => (b.kd || 1) - (a.kd || 0))
-					.map((player) => <Row player={player} key={player.puuid} />)}
+					.map((player) => (
+						<Row player={player} key={player.puuid} />
+					))}
 			</TableBody>
 		</Table>
 	);

@@ -4,12 +4,13 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import type { MatchDetailsResponse } from "@/api/schemas/shared";
-import { useServices } from "@/lib/services";
-import { getMap, calculateStatsForPlayer, getAgent, getRank, assignPartyColors } from "../utils";
 import { Alert } from "@/components/ui/alert";
-import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useServices } from "@/lib/services";
+import { assignPartyColors, calculateStatsForPlayer, getAgent, getMap, getRank } from "../utils";
 
 type Match = {
 	mapName: string;
@@ -125,7 +126,7 @@ export const MatchPage = () => {
 		})();
 	}, [matchId, sharedapi]);
 
-if (!match) return <div></div>;
+	if (!match) return <div></div>;
 
 	return (
 		<div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 p-4">
@@ -208,7 +209,10 @@ if (!match) return <div></div>;
 									) : null}
 								</TableCell>
 								<TableCell className="flex items-center justify-center">
-									<img src={player.agentImg} alt={player.agentName} className="size-6 shrink-0 rounded-full object-cover" />
+									<Avatar className="size-6">
+										<AvatarImage src={player.agentImg} alt={player.agentName} />
+										<AvatarFallback className="text-[0.6rem]">{player.agentName?.slice(0, 1)}</AvatarFallback>
+									</Avatar>
 								</TableCell>
 								<TableCell className="text-left">
 									<span>{player.name}</span>
@@ -230,10 +234,11 @@ if (!match) return <div></div>;
 								<TableCell>
 									<Button
 										variant="ghost"
-										size="sm"
+										size="icon-sm"
+										aria-label={`Open ${player.name}`}
 										onClick={() => navigate(`/player/${player.puuid}?refMatchId=${matchId}`)}
 									>
-										<ExternalLink data-icon="inline-start" size={16} />
+										<ExternalLink />
 									</Button>
 								</TableCell>
 							</TableRow>
@@ -241,7 +246,6 @@ if (!match) return <div></div>;
 					</TableBody>
 				</Table>
 			</section>
-
 		</div>
 	);
 };

@@ -67,7 +67,7 @@ export const Header = () => {
 	if (location.pathname === "/")
 		return update ? (
 			<Button variant="secondary" className="absolute right-8 bottom-8 z-10" onClick={onUpdate}>
-				<Download data-icon="inline-start" /> Update available
+				<Download /> Update available
 			</Button>
 		) : null;
 
@@ -85,12 +85,12 @@ export const Header = () => {
 					<div className="ml-auto flex flex-row items-center gap-2">
 						{update && (
 							<Button variant="secondary" onClick={onUpdate}>
-								<Download data-icon="inline-start" /> Update available
+								<Download /> Update available
 							</Button>
 						)}
 						{prefetching && (
 							<Button variant="secondary" disabled>
-								<RefreshCw data-icon="inline-start" className="animate-spin" /> Fetching player data
+								<RefreshCw className="animate-spin" /> Fetching player data
 							</Button>
 						)}
 
@@ -105,7 +105,7 @@ export const Header = () => {
 						</AvatarGroup>
 
 						<Button variant="secondary" onClick={() => navigate(`/player/${puuid}`)}>
-							<User data-icon="inline-start" /> My Profile
+							<User /> My Profile
 						</Button>
 						<Button variant="secondary" size="icon" aria-label="Settings" onClick={() => navigate("/settings")}>
 							<Settings />

@@ -4,24 +4,36 @@ import { ChevronsDown, ChevronsUp, ExternalLink } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
+import type { MatchDetailsResponse } from "@/api/schemas/shared";
+import { Alert } from "@/components/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Empty, EmptyTitle } from "@/components/ui/empty";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { BestAgent, BestMaps, BestServer, Rank } from "@/interface/utils.interface";
 import { useServices } from "@/lib/services";
-import type { MatchDetailsResponse } from "@/api/schemas/shared";
+import { THRESHOLDS } from "@/utils/constants";
 import { findPlayerInMatch } from "@/utils/playerLookup";
 import type { Result } from "../interface";
-import { calculateStatsForPlayer, getAgent, getMatchResult, getRank, getMap, calculateBestAgents, calculateBestMaps, calculateBestServers, calculateRanking, getWinrateColorClass } from "../utils";
+import {
+	calculateBestAgents,
+	calculateBestMaps,
+	calculateBestServers,
+	calculateRanking,
+	calculateStatsForPlayer,
+	getAgent,
+	getMap,
+	getMatchResult,
+	getRank,
+	getWinrateColorClass,
+} from "../utils";
 import atoms from "../utils/atoms";
-import { THRESHOLDS } from "@/utils/constants";
-import { Alert } from "@/components/ui/alert";
-import { Spinner } from "@/components/ui/spinner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Empty, EmptyTitle } from "@/components/ui/empty";
 
 interface Row {
 	matchId: string;
@@ -141,11 +153,7 @@ export const ProfilePage = () => {
 					const player = findPlayerInMatch(match, puuid);
 					if (!player) continue;
 
-					const {
-						uuid: agentId,
-						displayName: agentName,
-						killfeedPortrait: agentImage,
-					} = getAgent(player.characterId);
+					const { uuid: agentId, displayName: agentName, killfeedPortrait: agentImage } = getAgent(player.characterId);
 
 					const { result, score } = getMatchResult(player.subject, match);
 
@@ -224,8 +232,8 @@ export const ProfilePage = () => {
 		(async () => {
 			const [{ GameName, TagLine }] = await sharedapi.getPlayerNames([puuid]);
 
-			const mmr = await sharedapi?.getPlayerMMR(puuid)
-			const { currentRank, currentRR, peakRank } = calculateRanking(mmr)
+			const mmr = await sharedapi?.getPlayerMMR(puuid);
+			const { currentRank, currentRR, peakRank } = calculateRanking(mmr);
 
 			const player = await cache
 				?.select<any[]>("SELECT * from players WHERE puuid = ?", [puuid])
@@ -265,7 +273,7 @@ export const ProfilePage = () => {
 			</div>
 		);
 
-return (
+	return (
 		<div className="mx-auto flex w-full max-w-3xl flex-col items-center p-4">
 			{/* Player Data */}
 			<div className="flex flex-row gap-4 w-full">
@@ -292,63 +300,80 @@ return (
 							<p className="text-sm text-muted-foreground mb-1">Rank Progress</p>
 							<Progress
 								value={playerCard?.currentRR ?? 0}
-								max={playerCard?.currentTier && playerCard?.currentTier >= 24 ? THRESHOLDS.IMMORTAL_RR_CAP : THRESHOLDS.DIAMOND_AND_BELOW_RR_CAP}
+								max={
+									playerCard?.currentTier && playerCard?.currentTier >= 24
+										? THRESHOLDS.IMMORTAL_RR_CAP
+										: THRESHOLDS.DIAMOND_AND_BELOW_RR_CAP
+								}
 								className="w-full"
 							/>
 							<p className="text-xs text-muted-foreground mt-1">
-								{playerCard?.currentRR} / {playerCard?.currentTier && playerCard?.currentTier >= 24 ? THRESHOLDS.IMMORTAL_RR_CAP : THRESHOLDS.DIAMOND_AND_BELOW_RR_CAP}
+								{playerCard?.currentRR} /{" "}
+								{playerCard?.currentTier && playerCard?.currentTier >= 24
+									? THRESHOLDS.IMMORTAL_RR_CAP
+									: THRESHOLDS.DIAMOND_AND_BELOW_RR_CAP}
 							</p>
 						</div>
 
 						<Card size="sm">
 							<CardContent className="grid gap-4 sm:grid-cols-3">
-							<div>
-								<div className="text-sm text-muted-foreground">Total Matches</div>
-								<div className="font-medium text-xl">{table.length}</div>
-							</div>
-
-							<div>
-								<div className="text-sm text-muted-foreground">Wins / Loss</div>
-								<div className="font-medium">
-									{table.filter((match) => match.result === "won").length} /{" "}
-									{table.filter((match) => match.result === "loss").length}
+								<div>
+									<div className="text-sm text-muted-foreground">Total Matches</div>
+									<div className="font-medium text-xl">{table.length}</div>
 								</div>
-							</div>
 
-							<div>
-								<div className="text-sm text-muted-foreground">Winrate %</div>
-								<div className="font-medium">
-								{table.length
-									? ((table.filter((match) => match.result === "won").length / table.length) * 100).toFixed(0)
-									: 0}
-								%
+								<div>
+									<div className="text-sm text-muted-foreground">Wins / Loss</div>
+									<div className="font-medium">
+										{table.filter((match) => match.result === "won").length} /{" "}
+										{table.filter((match) => match.result === "loss").length}
+									</div>
 								</div>
-							</div>
-						</CardContent>
-					</Card>
+
+								<div>
+									<div className="text-sm text-muted-foreground">Winrate %</div>
+									<div className="font-medium">
+										{table.length
+											? ((table.filter((match) => match.result === "won").length / table.length) * 100).toFixed(0)
+											: 0}
+										%
+									</div>
+								</div>
+							</CardContent>
+						</Card>
 
 						<Card size="sm">
 							<CardContent className="grid gap-4 sm:grid-cols-3">
-							<div>
-								<div className="text-sm text-muted-foreground">K/D</div>
-								<div className={clsx("font-medium text-xl", playerStats && playerStats?.kd >= 1 ? "text-emerald-500" : "text-red-500")}>
-									{playerStats?.kd}
+								<div>
+									<div className="text-sm text-muted-foreground">K/D</div>
+									<div
+										className={clsx(
+											"font-medium text-xl",
+											playerStats && playerStats?.kd >= 1 ? "text-emerald-500" : "text-red-500",
+										)}
+									>
+										{playerStats?.kd}
+									</div>
 								</div>
-							</div>
 
-							<div>
-								<div className="text-sm text-muted-foreground">Average Damage / Round</div>
-								<div className={clsx("font-medium text-xl", playerStats && playerStats?.adr >= 150 ? "text-emerald-500" : "text-red-500")}>
-									{playerStats?.adr}
+								<div>
+									<div className="text-sm text-muted-foreground">Average Damage / Round</div>
+									<div
+										className={clsx(
+											"font-medium text-xl",
+											playerStats && playerStats?.adr >= 150 ? "text-emerald-500" : "text-red-500",
+										)}
+									>
+										{playerStats?.adr}
+									</div>
 								</div>
-							</div>
 
-							<div>
-								<div className="text-sm text-muted-foreground">Headshot %</div>
-								<div className="font-medium text-xl">{playerStats?.hs}%</div>
-							</div>
-						</CardContent>
-					</Card>
+								<div>
+									<div className="text-sm text-muted-foreground">Headshot %</div>
+									<div className="font-medium text-xl">{playerStats?.hs}%</div>
+								</div>
+							</CardContent>
+						</Card>
 					</CardContent>
 				</Card>
 
@@ -403,7 +428,11 @@ return (
 									<TableRow
 										key={match.matchId}
 										className={clsx(
-											match.result === "won" ? "bg-emerald-500/10" : match.result === "loss" ? "bg-red-500/10" : "bg-white/5",
+											match.result === "won"
+												? "bg-emerald-500/10"
+												: match.result === "loss"
+													? "bg-red-500/10"
+													: "bg-white/5",
 											"text-center",
 											refMatchId === match.matchId && "ring-2 ring-primary",
 										)}
@@ -413,7 +442,7 @@ return (
 											<span className="opacity-25">({moment(match.date).fromNow()})</span>
 										</TableCell>
 										<TableCell>
-											<img src={match.agentImage || undefined} className="max-h-6" />
+											<img src={match.agentImage || undefined} alt={match.agentName ?? ""} className="max-h-6" />
 										</TableCell>
 										<TableCell>{match.mapName}</TableCell>
 										<TableCell>
@@ -421,9 +450,17 @@ return (
 												<Tooltip>
 													<TooltipTrigger>
 														<div className="flex items-center gap-2">
-															<img className="w-6 mr-2" src={match.rankBefore?.rankImg} />
-															<span className={clsx(match.mmrUpdate ? (match.mmrUpdate > 0 ? "text-emerald-500" : "text-red-500") : null)}>
-																{match.mmrUpdate ? (match.mmrUpdate > 0 ? `+${match.mmrUpdate}` : match.mmrUpdate) : null}
+															<img className="w-6 mr-2" src={match.rankBefore?.rankImg} alt={match.rankBefore?.rankName} />
+															<span
+																className={clsx(
+																	match.mmrUpdate ? (match.mmrUpdate > 0 ? "text-emerald-500" : "text-red-500") : null,
+																)}
+															>
+																{match.mmrUpdate
+																	? match.mmrUpdate > 0
+																		? `+${match.mmrUpdate}`
+																		: match.mmrUpdate
+																	: null}
 															</span>
 															{match.rankBefore &&
 																match.rankAfter &&
@@ -441,16 +478,29 @@ return (
 										<TableCell>
 											{match.kills} / {match.deaths} / {match.assists}
 										</TableCell>
-										<TableCell className={clsx(match.result === "won" ? "text-emerald-500" : match.result === "loss" ? "text-red-500" : null)}>
+										<TableCell
+											className={clsx(
+												match.result === "won" ? "text-emerald-500" : match.result === "loss" ? "text-red-500" : null,
+											)}
+										>
 											{match.result === "won" ? "Win" : match.result === "loss" ? "Loss" : "Draw"}
 										</TableCell>
-										<TableCell className={clsx(match.result === "won" ? "text-emerald-500" : match.result === "loss" ? "text-red-500" : null)}>
+										<TableCell
+											className={clsx(
+												match.result === "won" ? "text-emerald-500" : match.result === "loss" ? "text-red-500" : null,
+											)}
+										>
 											{match.score}
 										</TableCell>
 										<TableCell>{match.hs ? `${match.hs}%` : null}</TableCell>
 										<TableCell>
-											<Button variant="ghost" size="sm" onClick={() => navigate(`/match/${match.matchId}`)}>
-												<ExternalLink data-icon="inline-start" size={14} />
+											<Button
+												variant="ghost"
+												size="icon-sm"
+												aria-label="Open match"
+												onClick={() => navigate(`/match/${match.matchId}`)}
+											>
+												<ExternalLink />
 											</Button>
 										</TableCell>
 									</TableRow>
@@ -485,19 +535,28 @@ return (
 											className={clsx(refAgentId === agent.agentId && "ring-2 ring-primary")}
 										>
 											<TableCell className="flex items-center gap-2">
-												<img src={agent.agentUrl} alt={agent.agentName} className="size-6 shrink-0 rounded-full object-cover" draggable={false} />
+												<Avatar className="size-6">
+													<AvatarImage src={agent.agentUrl} alt={agent.agentName} />
+													<AvatarFallback className="text-[0.6rem]">{agent.agentName?.slice(0, 1)}</AvatarFallback>
+												</Avatar>
 												<span className="whitespace-nowrap">{agent.agentName}</span>
 											</TableCell>
 											<TableCell className="text-center">{agent.matches}</TableCell>
-											<TableCell className={clsx("text-right", agent.kd >= 1 ? "text-green-600" : "text-red-600")}>{agent.kd}</TableCell>
+											<TableCell className={clsx("text-right", agent.kd >= 1 ? "text-green-600" : "text-red-600")}>
+												{agent.kd}
+											</TableCell>
 											<TableCell className="text-right">{agent.hs}%</TableCell>
-											<TableCell className={clsx("text-right", agent.adr >= 150 ? "text-green-600" : "text-red-600")}>{agent.adr}</TableCell>
+											<TableCell className={clsx("text-right", agent.adr >= 150 ? "text-green-600" : "text-red-600")}>
+												{agent.adr}
+											</TableCell>
 											<TableCell className="flex justify-end gap-1">
 												<span className="text-green-600">{agent.wins}</span>
 												<span className="opacity-50">-</span>
 												<span className="text-red-600">{agent.losses}</span>
 											</TableCell>
-											<TableCell className={clsx("text-right", getWinrateColorClass(agent.winrate))}>{agent.winrate}%</TableCell>
+											<TableCell className={clsx("text-right", getWinrateColorClass(agent.winrate))}>
+												{agent.winrate}%
+											</TableCell>
 										</TableRow>
 									))}
 								</TableBody>
@@ -524,20 +583,33 @@ return (
 										<TableRow key={map.mapId} className={clsx(refMapId === map.mapId && "ring-2 ring-primary")}>
 											<TableCell>
 												<div className="relative h-6 w-20">
-													<img src={map.mapUrl} alt={map.mapName} className="h-full w-full rounded object-cover blur-[1px] brightness-50" draggable={false} />
-													<span className="absolute inset-0 flex items-center justify-center text-xs font-medium">{map.mapName}</span>
+													<img
+														src={map.mapUrl}
+														alt={map.mapName}
+														className="h-full w-full rounded object-cover blur-[1px] brightness-50"
+														draggable={false}
+													/>
+													<span className="absolute inset-0 flex items-center justify-center text-xs font-medium">
+														{map.mapName}
+													</span>
 												</div>
 											</TableCell>
 											<TableCell className="text-center">{map.matches}</TableCell>
-											<TableCell className={clsx("text-right", map.kd >= 1 ? "text-green-600" : "text-red-600")}>{map.kd}</TableCell>
+											<TableCell className={clsx("text-right", map.kd >= 1 ? "text-green-600" : "text-red-600")}>
+												{map.kd}
+											</TableCell>
 											<TableCell className="text-right">{map.hs}%</TableCell>
-											<TableCell className={clsx("text-right", map.adr >= 150 ? "text-green-600" : "text-red-600")}>{map.adr}</TableCell>
+											<TableCell className={clsx("text-right", map.adr >= 150 ? "text-green-600" : "text-red-600")}>
+												{map.adr}
+											</TableCell>
 											<TableCell className="flex justify-end gap-1">
 												<span className="text-green-600">{map.wins}</span>
 												<span className="opacity-50">-</span>
 												<span className="text-red-600">{map.losses}</span>
 											</TableCell>
-											<TableCell className={clsx("text-right", getWinrateColorClass(map.winrate))}>{map.winrate}%</TableCell>
+											<TableCell className={clsx("text-right", getWinrateColorClass(map.winrate))}>
+												{map.winrate}%
+											</TableCell>
 										</TableRow>
 									))}
 								</TableBody>
@@ -570,15 +642,21 @@ return (
 											<span className="capitalize">{server.serverName}</span>
 										</TableCell>
 										<TableCell className="text-center">{server.matches}</TableCell>
-										<TableCell className={clsx("text-right", server.kd >= 1 ? "text-green-600" : "text-red-600")}>{server.kd}</TableCell>
+										<TableCell className={clsx("text-right", server.kd >= 1 ? "text-green-600" : "text-red-600")}>
+											{server.kd}
+										</TableCell>
 										<TableCell className="text-right">{server.hs}%</TableCell>
-										<TableCell className={clsx("text-right", server.adr >= 150 ? "text-green-600" : "text-red-600")}>{server.adr}</TableCell>
+										<TableCell className={clsx("text-right", server.adr >= 150 ? "text-green-600" : "text-red-600")}>
+											{server.adr}
+										</TableCell>
 										<TableCell className="flex justify-end gap-1">
 											<span className="text-green-600">{server.wins}</span>
 											<span className="opacity-50">-</span>
 											<span className="text-red-600">{server.losses}</span>
 										</TableCell>
-										<TableCell className={clsx("text-right", getWinrateColorClass(server.winrate))}>{server.winrate}%</TableCell>
+										<TableCell className={clsx("text-right", getWinrateColorClass(server.winrate))}>
+											{server.winrate}%
+										</TableCell>
 									</TableRow>
 								))}
 							</TableBody>
