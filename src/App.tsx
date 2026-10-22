@@ -12,6 +12,7 @@ import { Header } from "./components/Header";
 import { RateLimitNotification } from "./components/RateLimitAlert";
 import { SocketListener } from "./components/SocketListener";
 import { Sync } from "./components/Sync";
+import { Toaster } from "./components/ui/sonner";
 import { type AppServices, ServicesProvider } from "./lib/services";
 import { AvoidListPage } from "./pages/AvoidList.page";
 import { InitPage } from "./pages/Init.page";
@@ -19,9 +20,7 @@ import { Main } from "./pages/Main.page";
 import { MatchPage } from "./pages/Match.page";
 import { ProfilePage } from "./pages/Profile.page";
 import { Settings } from "./pages/Settings.page";
-import { TestPage } from "./pages/Test.page";
 import { WelcomePage } from "./pages/Welcome.page";
-import { Toaster } from "./components/ui/sonner";
 import { parseLockFile, readLockfile, readLog } from "./utils";
 import atoms from "./utils/atoms";
 import { CACHE_NAME, DEV_PORT, DEV_REGION, DEV_SHARD, DEV_TOKEN, RIOT_CLIENT_HOST } from "./utils/constants";
@@ -143,7 +142,6 @@ function App() {
 					<Route path="/" element={<InitPage status={initStatus} error={error} />} />
 					<Route path="/welcome" element={<WelcomePage />} />
 					<Route path="/dashboard" element={<Main />} />
-					<Route path="/test" element={<TestPage />} />
 					<Route path="/settings" element={<Settings />} />
 					<Route path="/player/:puuid" element={<ProfilePage />} />
 					<Route path="/match/:matchId" element={<MatchPage />} />

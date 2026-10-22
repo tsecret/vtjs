@@ -4,12 +4,17 @@ import { useAtom } from "jotai";
 import { ChevronLeft, Download, RefreshCw, Settings, User } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { useLongPress } from "use-long-press";
+import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import atoms from "../utils/atoms";
 import { URLS } from "../utils/constants";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+const SUBPAGES = [
+	{ path: "/settings", title: "Settings" },
+	{ path: "/player/", title: "Player Details" },
+	{ path: "/match/", title: "Match Details" },
+	{ path: "/avoid-list", title: "Avoid List" },
+];
 
 export const Header = () => {
 	const [update, setUpdate] = useState<Update | null>();
@@ -22,8 +27,8 @@ export const Header = () => {
 
 	const checkForUpdate = useCallback(async () => {
 		try {
-      const update = await check();
-			console.log('update', update)
+			const update = await check();
+			console.log("update", update);
 			if (update) {
 				setUpdate(update);
 			}
@@ -55,97 +60,65 @@ export const Header = () => {
 		await relaunch();
 	}
 
-	const handlers = useLongPress(() => {
-		navigate("/test");
-	});
-
 	useEffect(() => {
 		checkForUpdate();
 	}, [checkForUpdate]);
 
-if (location.pathname === "/")
+	if (location.pathname === "/")
 		return update ? (
-			<Button variant="secondary" className="absolute bottom-8 right-8 z-10" onClick={onUpdate}>
-				<Download data-icon="inline-start" size={16} /> Update available
+			<Button variant="secondary" className="absolute right-8 bottom-8 z-10" onClick={onUpdate}>
+				<Download data-icon="inline-start" /> Update available
 			</Button>
 		) : null;
 
+	const isDashboard = location.pathname === "/dashboard";
+	const subPage = SUBPAGES.find((page) => location.pathname.startsWith(page.path));
+
 	return (
-		<header className="w-full p-2 flex flex-row items-center gap-4 px-4">
-			{location.pathname === "/dashboard" ? (
+		<header className="flex w-full flex-row items-center gap-3 px-4 py-2">
+			{isDashboard ? (
 				<>
 					<a className="text-lg font-bold tracking-tight" href="/">
 						VTJS
 					</a>
-					<Badge variant="secondary" className="cursor-pointer" {...handlers()}>
-						Beta
-					</Badge>
 
 					<div className="ml-auto flex flex-row items-center gap-2">
 						{update && (
-							<Button variant="secondary" size="sm" onClick={onUpdate}>
-								<Download data-icon="inline-start" size={16} /> Update available
+							<Button variant="secondary" onClick={onUpdate}>
+								<Download data-icon="inline-start" /> Update available
 							</Button>
 						)}
 						{prefetching && (
-							<Button variant="secondary" size="sm" disabled>
-								<RefreshCw data-icon="inline-start" size={16} className="animate-spin" /> Fetching player data
+							<Button variant="secondary" disabled>
+								<RefreshCw data-icon="inline-start" className="animate-spin" /> Fetching player data
 							</Button>
 						)}
 
-						<div className="flex -space-x-2">
-							{party.map((p) => (
-								<Avatar key={p.puuid} className="size-8">
+						<AvatarGroup>
+							{party.slice(0, 4).map((p) => (
+								<Avatar key={p.puuid}>
 									<AvatarImage src={`${URLS.VALORANT_API_BASE_URL}/playercards/${p.playerCardId}/displayicon.png`} />
 									<AvatarFallback className="text-xs">?</AvatarFallback>
 								</Avatar>
 							))}
-						</div>
+							{party.length > 4 && <AvatarGroupCount>+{party.length - 4}</AvatarGroupCount>}
+						</AvatarGroup>
 
-						<Button variant="secondary" size="sm" onClick={() => navigate(`/player/${puuid}`)}>
-							<User data-icon="inline-start" size={20} /> My Profile
+						<Button variant="secondary" onClick={() => navigate(`/player/${puuid}`)}>
+							<User data-icon="inline-start" /> My Profile
 						</Button>
-						<Button variant="secondary" size="icon" onClick={() => navigate("/settings")}>
-							<Settings size={20} />
+						<Button variant="secondary" size="icon" aria-label="Settings" onClick={() => navigate("/settings")}>
+							<Settings />
 						</Button>
 					</div>
 				</>
-			) : location.pathname === "/settings" ? (
+			) : subPage ? (
 				<>
-					<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-						<ChevronLeft data-icon="inline-start" size={16} />
+					<Button variant="ghost" size="icon" aria-label="Back" onClick={() => navigate(-1)}>
+						<ChevronLeft />
 					</Button>
-
-					<span className="font-bold">Settings</span>
+					<span className="font-bold">{subPage.title}</span>
 				</>
-			) : location.pathname.startsWith("/player/") ? (
-				<>
-					<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-						<ChevronLeft data-icon="inline-start" size={16} />
-					</Button>
-
-					<span className="font-bold">Player Details</span>
-				</>
-			) : location.pathname.startsWith("/match/") ? (
-				<>
-					<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-						<ChevronLeft data-icon="inline-start" size={16} />
-					</Button>
-
-					<span className="font-bold">Match Details</span>
-				</>
-			) : location.pathname.startsWith("/test") ? (
-				<>
-					<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-						<ChevronLeft data-icon="inline-start" size={16} />
-					</Button>
-
-					<span className="font-bold">Test</span>
-				</>
-			) : location.pathname.startsWith("/avoid-list") ? (
-				<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-					<ChevronLeft data-icon="inline-start" size={16} />
-				</Button>
 			) : null}
 		</header>
 	);
