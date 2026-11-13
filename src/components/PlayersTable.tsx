@@ -124,7 +124,7 @@ export const PlayersTable = ({
 							const streak = player.streak || 0;
 							return (
 								<span className={clsx(streak > 0 ? "text-emerald-500" : streak < 0 ? "text-red-500" : undefined)}>
-									{streak != null ? streak : null}
+									{Math.abs(streak)}
 								</span>
 							);
 						})()
