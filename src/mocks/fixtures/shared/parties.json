@@ -1,7 +1,7 @@
 {
-	"ID": "eadb444c-87e9-471f-953d-da15fccb7110",
-	"MUCName": "eadb444c-87e9-471f-953d-da15fccb7110@ares-parties.eu2.pvp.net",
-	"VoiceRoomID": "eadb444c-87e9-471f-953d-da15fccb7110-pty",
+	"ID": "test-party-id",
+	"MUCName": "test-party-id@ares-parties.eu2.pvp.net",
+	"VoiceRoomID": "test-party-id-pty",
 	"Version": 1761394592669,
 	"ClientVersion": "release-11.08-shipping-18-3918089",
 	"Members": [

@@ -3,7 +3,7 @@
 	"isIdle": false,
 	"queueId": "competitive",
 	"provisioningFlow": "Invalid",
-	"partyId": "0812afdd-2b14-4684-9500-68e3a7414460",
+	"partyId": "test-party-id",
 	"partySize": 1,
 	"maxPartySize": 5,
 	"partyOwnerMatchScoreAllyTeam": 0,
@@ -27,7 +27,7 @@
 		"queueId": "competitive"
 	},
 	"partyPresenceData": {
-		"partyId": "0812afdd-2b14-4684-9500-68e3a7414460",
+		"partyId": "test-party-id",
 		"isPartyOwner": true,
 		"partyState": "DEFAULT",
 		"partyAccessibility": "CLOSED",

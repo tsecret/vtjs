@@ -120,7 +120,15 @@ export class MatchProcessing {
 				displayName: agentName,
 				killfeedPortrait: agentImage,
 			} = getAgent(player.CharacterID as string);
-			const isEnemy = isPreGame ? false : (player as any).TeamID !== playerTeamId;
+			const role: PlayerRow["role"] = isPreGame
+				? "player"
+				: (player as any).IsCoach === true
+					? "coach"
+					: (player as any).TeamID === "Neutral"
+						? "observer"
+						: "player";
+			const isStaff = role !== "player";
+			const isEnemy = isPreGame ? false : !isStaff && (player as any).TeamID !== playerTeamId;
 
 			const dodgeFlag = await this.cache
 				.select<{ dodge: boolean }[]>(
@@ -146,9 +154,10 @@ export class MatchProcessing {
 				enemy: isEnemy,
 				accountLevel: player.PlayerIdentity?.AccountLevel ?? null,
 				dodge: !!dodgeFlag?.dodge,
-				hasGunBuddy: hasGunBuddy(loadouts.find(l => l.Subject === player.Subject)!),
+				hasGunBuddy: hasGunBuddy(loadouts.find((l) => l.Subject === player.Subject)),
 				inParty: false,
 				partyId: null,
+				role,
 			};
 		}
 

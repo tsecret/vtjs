@@ -2,6 +2,8 @@ import { useAtom } from "jotai";
 import { Clock, X } from "lucide-react";
 import { useEffect } from "react";
 import atoms from "@/utils/atoms";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 export const RateLimitNotification = () => {
 	const [rateLimitNotification, setRateLimitNotification] = useAtom(atoms.rateLimitNotification);
@@ -23,9 +25,9 @@ export const RateLimitNotification = () => {
 	if (!rateLimitNotification.isActive) return null;
 
 	return (
-		<div className="toast toast-end z-20">
-			<div className="alert alert-warning max-w-sm text-xs">
-				<Clock size={20} />
+		<div className="fixed bottom-4 right-4 z-20">
+			<Alert variant="default" className="max-w-sm text-xs flex items-start gap-2 border-yellow-500/50 bg-yellow-500/10">
+				<Clock size={20} className="shrink-0 mt-0.5 text-yellow-500" />
 				<div className="flex flex-col">
 					<span className="font-semibold">Rate Limit Hit</span>
 					<span>
@@ -33,13 +35,15 @@ export const RateLimitNotification = () => {
 						seconds.
 					</span>
 				</div>
-				<button
-					className="btn btn-sm btn-ghost btn-circle"
+				<Button
+					variant="ghost"
+					size="icon"
+					className="shrink-0"
 					onClick={() => setRateLimitNotification({ isActive: false, retryAfter: 0 })}
 				>
 					<X size={16} />
-				</button>
-			</div>
+				</Button>
+			</Alert>
 		</div>
 	);
 };

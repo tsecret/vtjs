@@ -63,8 +63,11 @@ export const MatchHandler = () => {
 				setTable(result.table as Record<string, PlayerRow>);
 				setCurrentMatch(result.match);
 
+				// Coaches and observers have no combat stats; skip their match-history lookups.
+				const combatants = result.players.filter((p) => result.table[p.Subject]?.role === "player");
+
 				// Process player stats using the same players array from handleMatch
-				const { stats, partyLookup } = await processing.processPlayers(result.players, result.match);
+				const { stats, partyLookup } = await processing.processPlayers(combatants, result.match);
 
 				setTable((prevTable) => {
 					const nextTable = { ...prevTable };
@@ -76,7 +79,7 @@ export const MatchHandler = () => {
 						} as PlayerRow;
 					}
 
-					for (const player of result.players) {
+					for (const player of combatants) {
 						nextTable[player.Subject] = {
 							...nextTable[player.Subject],
 							inParty: player.Subject in partyLookup,
@@ -103,20 +106,16 @@ export const MatchHandler = () => {
 	);
 
 	const handleGameEnd = useCallback(async () => {
-		if (!currentMatchRef.current.matchId) return;
-
-		try {
-			console.log("Match ended, data cleared");
-		} finally {
-			setTable({});
-			setCurrentMatch(null);
-			setMatchProcessing({
-				isProcessing: false,
-				currentPlayer: null,
-				progress: { step: 0, total: 0 },
-			});
-			currentMatchRef.current = { matchId: null, isProcessing: false };
-		}
+		// No guard here: currentMatchRef.matchId is already null once handleMatch
+		// finishes in its finally block, so any guard on it stops state ever being
+		// cleared and the finished match stays on screen.
+		setTable({});
+		setCurrentMatch(null);
+		setMatchProcessing({
+			isProcessing: false,
+			currentPlayer: null,
+			progress: { step: 0, total: 0 },
+		});
 	}, [setTable, setCurrentMatch, setMatchProcessing]);
 
 	useEffect(() => {

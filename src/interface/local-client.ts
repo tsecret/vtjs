@@ -11,10 +11,6 @@ export interface EntitlementsTokenResponse {
 	subject: string;
 }
 
-export interface HelpResponse {
-	events: { [key: string]: string };
-}
-
 export type PresenceResponse = {
 	presences: {
 		puuid: string;

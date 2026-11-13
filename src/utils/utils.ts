@@ -11,9 +11,9 @@ const randomInt = (min: number, max: number): number => {
 };
 
 const getWinrateColorClass = (winrate: number): string => {
-	if (winrate <= 40) return "text-error";
-	if (winrate < 60) return "text-warning";
-	return "text-success";
+	if (winrate <= 40) return "text-red-500";
+	if (winrate < 60) return "text-amber-500";
+	return "text-emerald-500";
 };
 
 export { base64Decode, randomInt, getWinrateColorClass };

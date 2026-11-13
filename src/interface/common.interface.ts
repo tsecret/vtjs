@@ -16,6 +16,7 @@ export interface Lockfile {
 
 export type AgentStats = {
 	agentId: string;
+	agentName: string;
 	agentUrl: string;
 	avgKills: number;
 	avgDeaths: number;
@@ -54,6 +55,7 @@ export interface PlayerRow {
 	partyId?: number | null;
 	encounters?: Encounters[];
 	hasGunBuddy?: boolean;
+	role?: "player" | "coach" | "observer";
 }
 
 export type Payload = {

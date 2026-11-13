@@ -2,8 +2,13 @@ import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import clsx from "clsx";
 import { ExternalLink, Users } from "lucide-react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { PlayerRow } from "../interface";
-import { getWinrateColorClass, isSmurf } from "../utils";
+import { getPartyIconClass, getWinrateColorClass, isSmurf } from "../utils";
 
 export const PlayersTable = ({
 	table,
@@ -18,201 +23,262 @@ export const PlayersTable = ({
 
 	const onCopyName = async (event: any) => {
 		await writeText(event.currentTarget.textContent);
+		toast.success("Copied to clipboard");
 	};
 
 	const Row = ({ player }: { player: PlayerRow }) => {
+		const isStaff = player.role === "coach" || player.role === "observer";
+		const roleLabel = player.role === "coach" ? "Coach" : "Observer";
 		const partyMembers = player.partyId
 			? Object.values(table).filter((member) => member.partyId === player.partyId)
 			: [];
 
 		return (
-			<tr key={player.puuid} className={clsx(player.enemy ? "bg-error/5" : "bg-success/5", "text-center")}>
-				<td>
-					<div className="flex flex-row items-center">
-						<img src={player.agentImage || undefined} className="h-6 mr-4" draggable={false} />
-						<span>{player.agentName}</span>
-					</div>
-				</td>
-				<th className="text-start">
+			<TableRow key={player.puuid} className={clsx(isStaff ? "" : player.enemy ? "bg-red-500/5" : "bg-emerald-500/5", "text-center")}>
+				<TableCell>
+					{isStaff ? (
+						<span className="text-muted-foreground">{roleLabel}</span>
+					) : (
+						<div className="flex items-center gap-2">
+							<img src={player.agentImage || undefined} alt={player.agentName ?? ""} className="h-6" draggable={false} />
+							<span>{player.agentName}</span>
+						</div>
+					)}
+				</TableCell>
+				<TableCell className="text-start">
 					{player.name === "" ? null : player.puuid === puuid ? (
 						<span>You</span>
 					) : (
-						<div
-							className="tooltip cursor-pointer px-1 rounded-md hover:bg-neutral-700/75"
-							onClick={onCopyName}
-							data-tip="Click to copy"
-						>
-							<span>{player.name}</span>
-							<span className="text-gray-500">
-								#<span>{player.tag}</span>
-							</span>
-						</div>
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger>
+									<Button variant="ghost" size="sm" className="h-auto px-1" onClick={onCopyName}>
+										<span>{player.name}</span>
+										<span className="text-muted-foreground">
+											#<span>{player.tag}</span>
+										</span>
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>Click to copy</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
 					)}
-				</th>
-				<th>
+				</TableCell>
+				<TableCell>
 					<span style={{ color: `#${player.currentRankColor}` }}>
 						{player.currentRank} (RR {player.currentRR})
 					</span>
-				</th>
-				<th className="flex flex-col">
+				</TableCell>
+				<TableCell className="flex flex-col">
 					<span style={{ color: `#${player.rankPeakColor}` }}>{player.rankPeak}</span>
 					{player.rankPeakDate ? (
-						<span className="text-mini text-slate-400">({player.rankPeakDate.toLocaleDateString()})</span>
+						<span className="text-xs text-muted-foreground">({player.rankPeakDate.toLocaleDateString()})</span>
 					) : null}
-				</th>
-				<th>
+				</TableCell>
+				<TableCell>
 					<span>{player.accountLevel}</span>
-				</th>
-				<td>
-					<span className={clsx(!player.kd ? null : player.kd >= 1 ? "text-success" : "text-error")}>{player.kd}</span>
-				</td>
-				<td>
-					<span>
-						{player.hs}
-						{player.hs ? "%" : null}
+				</TableCell>
+				<TableCell>
+					<span className={clsx(isStaff ? null : !player.kd ? null : player.kd >= 1 ? "text-emerald-500" : "text-red-500")}>
+						{isStaff ? "—" : player.kd}
 					</span>
-				</td>
-				<td>
-					<span>{player.adr}</span>
-				</td>
-				<td>
-					<span
-						className={clsx(
-							player.lastGameResult === "won" ? "text-success" : player.lastGameResult === "loss" ? "text-error" : null,
-						)}
-					>
-						{player.lastGameScore}
-						{player.lastGameMMRDiff && player.lastGameScore
-							? ` (${player.lastGameMMRDiff > 0 ? `+${player.lastGameMMRDiff}` : player.lastGameMMRDiff})`
-							: null}
-					</span>
-				</td>
-				<td>
-					{(() => {
-						const streak = player.streak || 0;
-
-						return (
-							<span className={clsx(streak > 0 ? "text-success" : streak < 0 ? "text-error" : undefined)}>
-								{streak != null ? streak : null}
-							</span>
-						);
-					})()}
-				</td>
-				<td>
-					<span className={clsx(player.winrate !== undefined && getWinrateColorClass(player.winrate))}>
-						{player.winrate !== undefined ? `${player.winrate}%` : null}
-					</span>
-				</td>
-				<td>
-					<div className="flex flex-row space-x-2">
-						{player.bestAgents?.map((agent) => (
-							<div
-								key={agent.agentId}
-								className={clsx(
-									"tooltip tooltip-left p-0.5 rounded-md",
-									agent.avgKd >= 1 ? "bg-success/25" : "bg-error/25",
-								)}
-							>
-								<div className="tooltip-content flex flex-col items-start">
-									<span>Avg Kills: {agent.avgKills}</span>
-									<span>Avg Deaths: {agent.avgDeaths}</span>
-									<span>Avg K/D: {agent.avgKd}</span>
-									<span>Games Played: {agent.games}</span>
-								</div>
-								<img className="w-6 rounded-md" src={agent.agentUrl} />
-							</div>
-						))}
-					</div>
-				</td>
-				<td>
-					{isSmurf(player) && <div className="badge badge-soft badge-warning">Possible Smurf</div>}
-					{player.dodge && (
-						<div
-							className="tooltip badge badge-soft badge-warning"
-							data-tip="This player is in your avoid list. Check player profile to learn more"
+				</TableCell>
+				<TableCell>
+					{isStaff ? (
+						<span>—</span>
+					) : (
+						<span>
+							{player.hs}
+							{player.hs ? "%" : null}
+						</span>
+					)}
+				</TableCell>
+				<TableCell>
+					<span>{isStaff ? "—" : player.adr}</span>
+				</TableCell>
+				<TableCell>
+					{isStaff ? (
+						<span>—</span>
+					) : (
+						<span
+							className={clsx(
+								player.lastGameResult === "won"
+									? "text-emerald-500"
+									: player.lastGameResult === "loss"
+										? "text-red-500"
+										: null,
+							)}
 						>
-							Avoid
+							{player.lastGameScore}
+							{player.lastGameMMRDiff && player.lastGameScore
+								? ` (${player.lastGameMMRDiff > 0 ? `+${player.lastGameMMRDiff}` : player.lastGameMMRDiff})`
+								: null}
+						</span>
+					)}
+				</TableCell>
+				<TableCell>
+					{isStaff ? (
+						<span>—</span>
+					) : (
+						(() => {
+							const streak = player.streak || 0;
+							return (
+								<span className={clsx(streak > 0 ? "text-emerald-500" : streak < 0 ? "text-red-500" : undefined)}>
+									{Math.abs(streak)}
+								</span>
+							);
+						})()
+					)}
+				</TableCell>
+				<TableCell>
+					{isStaff ? (
+						<span>—</span>
+					) : (
+						<span className={clsx(player.winrate !== undefined && getWinrateColorClass(player.winrate))}>
+							{player.winrate !== undefined ? `${player.winrate}%` : null}
+						</span>
+					)}
+				</TableCell>
+				<TableCell>
+					{isStaff ? (
+						<span>—</span>
+					) : (
+						<div className="flex gap-2">
+							{player.bestAgents?.map((agent) => (
+								<TooltipProvider key={agent.agentId}>
+									<Tooltip>
+										<TooltipTrigger>
+											<div className={clsx("rounded-md p-1", agent.avgKd >= 1 ? "bg-emerald-500/25" : "bg-red-500/25")}>
+												<img className="w-6 rounded-md" src={agent.agentUrl} alt={agent.agentName} />
+											</div>
+										</TooltipTrigger>
+										<TooltipContent className="flex flex-col items-start gap-1">
+											<span>Avg Kills: {agent.avgKills}</span>
+											<span>Avg Deaths: {agent.avgDeaths}</span>
+											<span>Avg K/D: {agent.avgKd}</span>
+											<span>Games Played: {agent.games}</span>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
+							))}
 						</div>
 					)}
-					{player.hasGunBuddy && <div className="badge badge-soft badge-info">Riot Buddy</div>}
-				</td>
-				<td>
-					{player.inParty ? (
-						<div className="tooltip tooltip-left">
-							<div className="tooltip-content flex flex-col items-start">
-								<p className="mb-2">Party #{player.partyId}</p>
-								{partyMembers.map((member) => (
-									<p key={member.puuid}>
-										{member.name || "Unknown"}
-										{member.tag ? `#${member.tag}` : ""}
-									</p>
-								))}
-							</div>
-							<Users size={14} />
+				</TableCell>
+				<TableCell>
+					{isStaff ? null : (
+						<div className="flex flex-wrap gap-1 justify-center">
+							{isSmurf(player) && (
+								<Badge variant="secondary" className="text-xs">
+									Possible Smurf
+								</Badge>
+							)}
+							{player.dodge && (
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger>
+											<Badge variant="secondary" className="text-xs">
+												Avoid
+											</Badge>
+										</TooltipTrigger>
+										<TooltipContent>This player is in your avoid list. Check player profile to learn more</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
+							)}
+							{player.hasGunBuddy && (
+								<Badge variant="secondary" className="text-xs">
+									Riot Buddy
+								</Badge>
+							)}
 						</div>
+					)}
+				</TableCell>
+				<TableCell>
+					{player.inParty ? (
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger>
+									<Users size={14} className={clsx(getPartyIconClass(player.partyId) ?? "text-muted-foreground", "hover:text-foreground cursor-pointer")} />
+								</TooltipTrigger>
+								<TooltipContent className="flex flex-col items-start gap-1">
+									<p className="mb-2">Party #{player.partyId}</p>
+									{partyMembers.map((member) => (
+										<p key={member.puuid}>
+											{member.name || "Unknown"}
+											{member.tag ? `#${member.tag}` : ""}
+										</p>
+									))}
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
 					) : null}
-				</td>
-				<td>
-					<button
-						className="btn btn-xs btn-ghost"
+				</TableCell>
+				<TableCell>
+					<Button
+						variant="ghost"
+						size="icon-sm"
+						aria-label={`Open ${player.name}`}
 						onClick={() => navigate(`/player/${player.puuid}?mapId=${mapId}&agentId=${player.agentId}`)}
 					>
-						<ExternalLink size={14} />
-					</button>
-				</td>
-			</tr>
+						<ExternalLink />
+					</Button>
+				</TableCell>
+			</TableRow>
 		);
 	};
 
 	if (!Object.keys(table).length) return null;
 
+	const players = Object.values(table);
+	const combatants = players.filter((player) => player.role !== "coach" && player.role !== "observer");
+	const staff = players.filter((player) => player.role === "coach" || player.role === "observer");
+
 	return (
-		<section className="mx-auto my-4">
-			<table className="table table-xs">
-				<thead>
-					<tr className="text-center">
-						<th>Agent</th>
-						<th>Player</th>
-						<th>Rank</th>
-						<th>Peak Rank</th>
-						<th>LVL</th>
-						<th>K/D</th>
-						<th>HS%</th>
-						<th>ADR</th>
-						<th>Last Game</th>
-						<th>Streak</th>
-						<th>Winrate</th>
-						<th>Top Agents on Current Map</th>
-						<th>Note</th>
-						<th></th>
-						<th></th>
-					</tr>
-				</thead>
+		<Table className="text-xs">
+			<TableHeader>
+				<TableRow className="text-center">
+					<TableHead>Agent</TableHead>
+					<TableHead>Player</TableHead>
+					<TableHead>Rank</TableHead>
+					<TableHead>Peak Rank</TableHead>
+					<TableHead>LVL</TableHead>
+					<TableHead>K/D</TableHead>
+					<TableHead>HS%</TableHead>
+					<TableHead>ADR</TableHead>
+					<TableHead>Last Game</TableHead>
+					<TableHead>Streak</TableHead>
+					<TableHead>Winrate</TableHead>
+					<TableHead>Top Agents on Current Map</TableHead>
+					<TableHead>Note</TableHead>
+					<TableHead></TableHead>
+					<TableHead></TableHead>
+				</TableRow>
+			</TableHeader>
 
-				<tbody>
-					{Object.values(table)
-						.filter((player) => !player.enemy)
-						.sort((a, b) => (b.kd || 1) - (a.kd || 0))
-						.map((player) => (
-							<Row player={player} key={player.puuid} />
-						))}
-				</tbody>
+			<TableBody>
+				{combatants
+					.filter((player) => !player.enemy)
+					.sort((a, b) => (b.kd || 1) - (a.kd || 0))
+					.map((player) => (
+						<Row player={player} key={player.puuid} />
+					))}
+			</TableBody>
 
-				<tbody>
-					<tr>
-						<td></td>
-					</tr>
-				</tbody>
+			<TableBody>
+				{combatants
+					.filter((player) => player.enemy)
+					.sort((a, b) => (b.kd || 1) - (a.kd || 0))
+					.map((player) => (
+						<Row player={player} key={player.puuid} />
+					))}
+			</TableBody>
 
-				<tbody>
-					{Object.values(table)
-						.filter((player) => player.enemy)
-						.sort((a, b) => (b.kd || 1) - (a.kd || 0))
-						.map((player) => (
-							<Row player={player} key={player.puuid} />
-						))}
-				</tbody>
-			</table>
-		</section>
+			{staff.length > 0 && (
+				<TableBody>
+					{staff.map((player) => (
+						<Row player={player} key={player.puuid} />
+					))}
+				</TableBody>
+			)}
+		</Table>
 	);
 };

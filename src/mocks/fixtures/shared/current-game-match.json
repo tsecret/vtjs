@@ -9,7 +9,7 @@
 	"AllMUCName": "test-match-id-0-all@ares-coregame.eu2.pvp.net",
 	"TeamMUCName": "test-match-id-0-red@ares-coregame.eu2.pvp.net",
 	"TeamVoiceID": "test-match-id-0-tm2",
-	"TeamMatchToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImFyZXNxYS1yZXBvcnQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3BkLmV1LmEucHZwLm5ldC9yZXN0cmljdGlvbnMiLCJzdWIiOiI5YjA5YmQ1Yi01MjFjLTQwNzctYjE0OS00YzQ4NTIxODQ2YmMiLCJleHAiOjE3NTAxNjcyMTQsImlhdCI6MTc1MDE2MDAxNCwianRpIjoiNDA2YTA3NmUtYjIyYy00NmEwLWFlZjQtNjRmZDNjMTY3MGU1IiwicHJvZHVjdCI6ImFyZXMiLCJyZWdpb24iOiJldS1nbHotZXUtMSIsInBhcnRpY2lwYW50UHV1aWRzIjpbImQ4N2QzOGE5LTViYTYtNTM4YS04YmI5LWUxODgyM2RlNmI0YyIsIjA5MjkxOTQxLTg2ODctNWUzNy1iMmFhLWEwMzE2ZmJhNGQ5NSIsIjliZWFhNmNjLWFlMDYtNTFjYy1iMjRkLTEyMmFkZGUwOGUxNCIsIjdjZjg0ZTc2LWU0YTYtNTk2My05ZTEzLTdlNjI0ZWE5OWZjOSIsImRhOGJhYTZmLWY2N2MtNThhNS1iMjRmLTZkMGJiMGYzMTIxNiJdfQ.pIuXNtPPvjQxpbvI7WFRg9NtxNubu7ieetT6q6l2AHiXSmDk3_YsrW0E_6HKi3oozG3YMBHDgTh7RxG165ynXx-IWoZ5cdKgaQrDLodXiRW1jl3qUyAAecyXXee6n11paiyVM8mretipuBdlGrkvTyl4pkepRltEB_EgAcAalyGlFAi15hiDj82mxaq0uUSw_COXmjUUGxKo7vJEOqS2wLvqJ9DQW4g7w9hp8qcQatCCvXu_e1KWc0_f7xV2WxgOOXwjl2tbr-5U14ddQuKwDfExJCVlCkRg7_UFbnXOjUvuB9ywqT2dXcKqAoZv0GRdzzB3nIUURgXuRSQ0lZjZww",
+	"TeamMatchToken": "fake-team-match-token",
 	"IsReconnectable": true,
 	"ConnectionDetails": {
 		"GameServerHosts": ["185.40.64.1", "162.249.75.1", "162.249.72.1"],

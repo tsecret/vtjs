@@ -10,6 +10,7 @@ export class BaseAPI {
   private cache: SQLiteCache;
   private auth: Auth;
   private rateLimitCallback?: RateLimitCallback;
+  private noCache: boolean;
   public REGION: string;
   public SHARD: string;
   public cacheTTL = 30 * 60 * 1000;
@@ -19,7 +20,8 @@ export class BaseAPI {
     accessToken,
     region,
     shard,
-  }: { entToken: string; accessToken: string; region: string; shard: string }) {
+    noCache,
+  }: { entToken: string; accessToken: string; region: string; shard: string; noCache?: boolean }) {
    	const headers = {
       "X-Riot-ClientPlatform": HEADERS.RIOT_CLIENT_PLATFORM_B64,
       "X-Riot-ClientVersion": HEADERS.RIOT_CLIENT_VERSION,
@@ -33,6 +35,8 @@ export class BaseAPI {
     this.auth = new Auth(headers);
     this.REGION = region;
     this.SHARD = shard;
+    // Mock mode: never read or write the response cache, fixtures always win.
+    this.noCache = noCache ?? false;
   }
 
   setRateLimitCallback(callback: RateLimitCallback) {
@@ -62,8 +66,10 @@ export class BaseAPI {
     if (!options.ttl) options.ttl = this.cacheTTL;
     if (!options.noCache) options.noCache = false;
 
+    const cachingDisabled = this.noCache || options.noCache;
+
     // Check cache
-    if (!options.noCache) {
+    if (!cachingDisabled) {
       const cached = await this.cache.get(endpoint);
       if (cached !== null) return cached;
     }
@@ -96,7 +102,7 @@ export class BaseAPI {
     }
 
     if (res.status === 200) {
-      if (!options.noCache && options.ttl !== undefined) {
+      if (!cachingDisabled && options.ttl !== undefined) {
         await this.cache.set(endpoint, res.data, options.ttl);
       }
       return res.data;

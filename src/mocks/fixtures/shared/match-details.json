@@ -1,6 +1,6 @@
 {
     "matchInfo": {
-        "matchId": "44cb7e6b-5b27-454f-b832-3ebf45f22b78",
+        "matchId": "test-match-id-1",
         "mapId": "/Game/Maps/Jam/Jam",
         "gamePodId": "aresriot.aws-euc1-prod.eu-gp-frankfurt-1",
         "gameLoopZone": "aresriot.aws-euc1-prod.eu-glz-eu-1",
@@ -22,8 +22,8 @@
         "platformType": "pc",
         "premierMatchInfo": {},
         "partyRRPenalties": {
-            "162f3db1-bd14-4ace-bddb-a72d5149a34c": 0.25,
-            "bd307977-a9af-4680-8ee4-06007178e2ef": 0.25
+            "test-party-2": 0.25,
+            "test-party-1": 0.25
         },
         "shouldMatchDisablePenalties": false,
         "newMapLossReductionModifier": 0,
@@ -32,8 +32,8 @@
     "players": [
         {
             "subject": "test-player-1-puuid",
-            "gameName": "Player 1",
-            "tagLine": "tag",
+            "gameName": "Player1",
+            "tagLine": "test",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -42,7 +42,7 @@
                 "platformDevice": ""
             },
             "teamId": "Red",
-            "partyId": "bd307977-a9af-4680-8ee4-06007178e2ef",
+            "partyId": "test-party-1",
             "characterId": "cc8b64c8-4b25-4ff9-6e7f-37b4da43d235",
             "stats": {
                 "score": 7238,
@@ -300,8 +300,8 @@
         },
         {
             "subject": "test-player-2-puuid",
-            "gameName": "Player 2",
-            "tagLine": "tag",
+            "gameName": "Player2",
+            "tagLine": "test",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -310,7 +310,7 @@
                 "platformDevice": ""
             },
             "teamId": "Blue",
-            "partyId": "162f3db1-bd14-4ace-bddb-a72d5149a34c",
+            "partyId": "test-party-2",
             "characterId": "f94c3b30-42be-e959-889c-5aa313dba261",
             "stats": {
                 "score": 7642,
@@ -588,8 +588,8 @@
         },
         {
             "subject": "test-player-3-puuid",
-            "gameName": "Player 3",
-            "tagLine": "tag",
+            "gameName": "Player3",
+            "tagLine": "test",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -598,7 +598,7 @@
                 "platformDevice": ""
             },
             "teamId": "Blue",
-            "partyId": "162f3db1-bd14-4ace-bddb-a72d5149a34c",
+            "partyId": "test-party-2",
             "characterId": "a3bfb853-43b2-7238-a4f1-ad90e9e46bcc",
             "stats": {
                 "score": 4826,
@@ -810,8 +810,8 @@
         },
         {
             "subject": "test-player-4-puuid",
-            "gameName": "Player 4",
-            "tagLine": "tag",
+            "gameName": "Player4",
+            "tagLine": "test",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -820,7 +820,7 @@
                 "platformDevice": ""
             },
             "teamId": "Blue",
-            "partyId": "162f3db1-bd14-4ace-bddb-a72d5149a34c",
+            "partyId": "test-party-2",
             "characterId": "5f8d3a7f-467b-97f3-062c-13acf203c006",
             "stats": {
                 "score": 3490,
@@ -1033,8 +1033,8 @@
         },
         {
             "subject": "test-player-5-puuid",
-            "gameName": "Player 5",
-            "tagLine": "tag",
+            "gameName": "Player5",
+            "tagLine": "test",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -1043,7 +1043,7 @@
                 "platformDevice": ""
             },
             "teamId": "Red",
-            "partyId": "bd307977-a9af-4680-8ee4-06007178e2ef",
+            "partyId": "test-party-1",
             "characterId": "569fdd95-4d10-43ab-ca70-79becc718b46",
             "stats": {
                 "score": 3977,
@@ -1231,8 +1231,8 @@
         },
         {
             "subject": "test-player-6-puuid",
-            "gameName": "Player 6",
-            "tagLine": "tag",
+            "gameName": "Player6",
+            "tagLine": "test",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -1241,7 +1241,7 @@
                 "platformDevice": ""
             },
             "teamId": "Red",
-            "partyId": "bd307977-a9af-4680-8ee4-06007178e2ef",
+            "partyId": "test-party-1",
             "characterId": "add6443a-41bd-e414-f6ad-e58d267f4e95",
             "stats": {
                 "score": 3206,
@@ -1449,8 +1449,8 @@
         },
         {
             "subject": "test-player-7-puuid",
-            "gameName": "Player 7",
-            "tagLine": "tag",
+            "gameName": "Player7",
+            "tagLine": "test",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -1459,7 +1459,7 @@
                 "platformDevice": ""
             },
             "teamId": "Red",
-            "partyId": "bd307977-a9af-4680-8ee4-06007178e2ef",
+            "partyId": "test-party-1",
             "characterId": "9f0d8ba9-4140-b941-57d3-a7ad57c6b417",
             "stats": {
                 "score": 6375,
@@ -1711,8 +1711,8 @@
         },
         {
             "subject": "test-player-8-puuid",
-            "gameName": "Player 8",
-            "tagLine": "tag",
+            "gameName": "Player8",
+            "tagLine": "test",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -1721,7 +1721,7 @@
                 "platformDevice": ""
             },
             "teamId": "Red",
-            "partyId": "bd307977-a9af-4680-8ee4-06007178e2ef",
+            "partyId": "test-party-1",
             "characterId": "5f8d3a7f-467b-97f3-062c-13acf203c006",
             "stats": {
                 "score": 3037,
@@ -1914,8 +1914,8 @@
         },
         {
             "subject": "test-player-9-puuid",
-            "gameName": "Player 9",
-            "tagLine": "tag",
+            "gameName": "Player9",
+            "tagLine": "test",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -1924,7 +1924,7 @@
                 "platformDevice": ""
             },
             "teamId": "Blue",
-            "partyId": "162f3db1-bd14-4ace-bddb-a72d5149a34c",
+            "partyId": "test-party-2",
             "characterId": "1dbf2edd-4729-0984-3115-daa5eed44993",
             "stats": {
                 "score": 3787,
@@ -2142,8 +2142,8 @@
         },
         {
             "subject": "test-player-10-puuid",
-            "gameName": "Player 10",
-            "tagLine": "tag",
+            "gameName": "Player10",
+            "tagLine": "test",
             "platformInfo": {
                 "platformType": "pc",
                 "platformOS": "Windows",
@@ -2152,7 +2152,7 @@
                 "platformDevice": ""
             },
             "teamId": "Blue",
-            "partyId": "162f3db1-bd14-4ace-bddb-a72d5149a34c",
+            "partyId": "test-party-2",
             "characterId": "569fdd95-4d10-43ab-ca70-79becc718b46",
             "stats": {
                 "score": 4544,

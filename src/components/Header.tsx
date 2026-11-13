@@ -4,9 +4,17 @@ import { useAtom } from "jotai";
 import { ChevronLeft, Download, RefreshCw, Settings, User } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { useLongPress } from "use-long-press";
+import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import atoms from "../utils/atoms";
 import { URLS } from "../utils/constants";
+
+const SUBPAGES = [
+	{ path: "/settings", title: "Settings" },
+	{ path: "/player/", title: "Player Details" },
+	{ path: "/match/", title: "Match Details" },
+	{ path: "/avoid-list", title: "Avoid List" },
+];
 
 export const Header = () => {
 	const [update, setUpdate] = useState<Update | null>();
@@ -19,8 +27,8 @@ export const Header = () => {
 
 	const checkForUpdate = useCallback(async () => {
 		try {
-      const update = await check();
-			console.log('update', update)
+			const update = await check();
+			console.log("update", update);
 			if (update) {
 				setUpdate(update);
 			}
@@ -52,98 +60,65 @@ export const Header = () => {
 		await relaunch();
 	}
 
-	const handlers = useLongPress(() => {
-		navigate("/test");
-	});
-
 	useEffect(() => {
 		checkForUpdate();
 	}, [checkForUpdate]);
 
 	if (location.pathname === "/")
 		return update ? (
-			<button className="btn btn-soft btn-primary absolute bottom-8 right-8 z-10" onClick={onUpdate}>
-				<Download size={16} /> Update available
-			</button>
+			<Button variant="secondary" className="absolute right-8 bottom-8 z-10" onClick={onUpdate}>
+				<Download /> Update available
+			</Button>
 		) : null;
 
+	const isDashboard = location.pathname === "/dashboard";
+	const subPage = SUBPAGES.find((page) => location.pathname.startsWith(page.path));
+
 	return (
-		<header className="w-full p-2 flex flex-row items-center space-x-4 px-4">
-			{location.pathname === "/dashboard" ? (
+		<header className="flex w-full flex-row items-center gap-3 px-4 py-2">
+			{isDashboard ? (
 				<>
-					<a className="font-bold" href="/">
+					<a className="text-lg font-bold tracking-tight" href="/">
 						VTJS
 					</a>
-					<div className="badge badge-dash badge-primary" {...handlers()}>
-						Beta
-					</div>
 
-					<div className="ml-auto flex flex-row items-center space-x-2">
+					<div className="ml-auto flex flex-row items-center gap-2">
 						{update && (
-							<button className="btn btn-soft btn-primary btn-sm" onClick={onUpdate}>
-								<Download size={16} /> Update available
-							</button>
+							<Button variant="secondary" onClick={onUpdate}>
+								<Download /> Update available
+							</Button>
 						)}
 						{prefetching && (
-							<div className="btn btn-soft btn-info btn-sm">
-								<RefreshCw size={16} className="animate-spin" /> Fetching player data
-							</div>
+							<Button variant="secondary" disabled>
+								<RefreshCw className="animate-spin" /> Fetching player data
+							</Button>
 						)}
 
-						<div className="avatar-group -space-x-6">
-							{party.map((p) => (
-								<div key={p.puuid} className="avatar">
-									<div className="w-8 rounded-full">
-										<img src={`${URLS.VALORANT_API_BASE_URL}/playercards/${p.playerCardId}/displayicon.png`} />
-									</div>
-								</div>
+						<AvatarGroup>
+							{party.slice(0, 4).map((p) => (
+								<Avatar key={p.puuid}>
+									<AvatarImage src={`${URLS.VALORANT_API_BASE_URL}/playercards/${p.playerCardId}/displayicon.png`} />
+									<AvatarFallback className="text-xs">?</AvatarFallback>
+								</Avatar>
 							))}
-						</div>
+							{party.length > 4 && <AvatarGroupCount>+{party.length - 4}</AvatarGroupCount>}
+						</AvatarGroup>
 
-						<button className="btn btn-soft btn-sm btn-primary rounded-md" onClick={() => navigate(`/player/${puuid}`)}>
-							<User size={20} /> My Profile
-						</button>
-						<button className="btn btn-soft btn-sm btn-primary btn-circle" onClick={() => navigate("/settings")}>
-							<Settings size={20} />
-						</button>
+						<Button variant="secondary" onClick={() => navigate(`/player/${puuid}`)}>
+							<User /> My Profile
+						</Button>
+						<Button variant="secondary" size="icon" aria-label="Settings" onClick={() => navigate("/settings")}>
+							<Settings />
+						</Button>
 					</div>
 				</>
-			) : location.pathname === "/settings" ? (
+			) : subPage ? (
 				<>
-					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
+					<Button variant="ghost" size="icon" aria-label="Back" onClick={() => navigate(-1)}>
 						<ChevronLeft />
-					</button>
-
-					<span className="font-bold">Settings</span>
+					</Button>
+					<span className="font-bold">{subPage.title}</span>
 				</>
-			) : location.pathname.startsWith("/player/") ? (
-				<>
-					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
-						<ChevronLeft />
-					</button>
-
-					<span className="font-bold">Player Details</span>
-				</>
-			) : location.pathname.startsWith("/match/") ? (
-				<>
-					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
-						<ChevronLeft />
-					</button>
-
-					<span className="font-bold">Match Details</span>
-				</>
-			) : location.pathname.startsWith("/test") ? (
-				<>
-					<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
-						<ChevronLeft />
-					</button>
-
-					<span className="font-bold">Test</span>
-				</>
-			) : location.pathname.startsWith("/avoid-list") ? (
-				<button className="btn btn-primary btn-sm" onClick={() => navigate(-1)}>
-					<ChevronLeft />
-				</button>
 			) : null}
 		</header>
 	);

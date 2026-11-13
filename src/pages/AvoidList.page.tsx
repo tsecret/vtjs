@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import type { AvoidedPlayer } from "@/interface";
 import { useServices } from "@/lib/services";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item";
 
 export const AvoidListPage = () => {
 	const services = useServices();
@@ -38,29 +41,36 @@ export const AvoidListPage = () => {
 	return (
 		<div>
 			<section className="max-w-1/2 m-auto">
-				<ul className="list bg-base-100 rounded-box shadow-md">
-					<li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Avoid List</li>
+			<Card>
+				<CardHeader className="border-b pb-2">
+					<CardTitle className="text-xs font-normal tracking-wide opacity-60">Avoid List</CardTitle>
+				</CardHeader>
 
-					{players?.map((p) => (
-						<li className="list-row flex flex-row items-center justify-between">
-							<div className="space-x-4">
-								<span>{moment(p.dodgeTimeStamp).format("HH:mm DD/MM/YY")}</span>
+				{players?.map((p) => (
+					<Item key={p.puuid} className="border-b last:border-0">
+						<ItemContent>
+							<ItemTitle>
 								{p.name && p.tag ? (
-									<span>
+									<>
 										{p.name}
-										<span className="opacity-50 text-xs"> #{p.tag}</span>
-									</span>
+										<span className="text-xs opacity-50"> #{p.tag}</span>
+									</>
 								) : (
-									<span>Name is missing</span>
+									<span className="text-muted-foreground">Name is missing</span>
 								)}
-							</div>
-
-							<Link to={`/player/${p.puuid}`} className="btn btn-ghost btn-square">
-								<SquareArrowOutUpRight />
+							</ItemTitle>
+							<ItemDescription className="text-xs">{moment(p.dodgeTimeStamp).format("HH:mm DD/MM/YY")}</ItemDescription>
+						</ItemContent>
+						<ItemActions>
+							<Link to={`/player/${p.puuid}`}>
+								<Button variant="ghost" size="icon" className="h-8 w-8">
+									<SquareArrowOutUpRight size={14} />
+								</Button>
 							</Link>
-						</li>
-					))}
-				</ul>
+						</ItemActions>
+					</Item>
+				))}
+			</Card>
 			</section>
 		</div>
 	);

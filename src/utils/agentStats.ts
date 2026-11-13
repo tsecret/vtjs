@@ -29,6 +29,7 @@ const getPlayerBestAgent = (puuid: string, matches: MatchDetailsResponse[], mapU
 
 			return {
 				agentId: characterId,
+				agentName: getAgent(characterId).displayName,
 				agentUrl: getAgent(characterId).displayIcon!,
 				avgKills: stats.kills,
 				avgDeaths: stats.deaths,

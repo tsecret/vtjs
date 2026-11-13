@@ -1,9 +1,16 @@
 import { useAptabase } from "@aptabase/react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { useServices } from "@/lib/services";
 import { PlayersTable } from "../components/PlayersTable";
-import { getMap } from "../utils";
+import { extractServerName, getMap } from "../utils";
 import atoms from "../utils/atoms";
 
 export const Main = () => {
@@ -55,33 +62,32 @@ export const Main = () => {
 	const getMatchDisplayInfo = () => {
 		if (!currentMatch) return null;
 
+		const map = getMap(currentMatch.MapID);
+
 		return {
-			matchId: gameState.matchId,
-			state: gameState.state,
-			mapName: getMap(currentMatch.MapID).displayName,
+			mapName: map.displayName,
+			mapPreview: map.listViewIcon,
 			mapId: currentMatch.MapID,
-			gameServer: currentMatch.GamePodID
-				? currentMatch.GamePodID.split(".")[currentMatch.GamePodID.split(".").length - 1]
-				: "Unknown",
+			gameServer: extractServerName(currentMatch.GamePodID),
 		};
 	};
 
 	const matchDisplayInfo = getMatchDisplayInfo();
 
 	return (
-		<div className="p-2 flex flex-col">
-			{error && <div className="alert alert-error my-4 w-1/2 m-auto">{error}</div>}
+		<div className="p-8 flex flex-col">
+			{error && (
+				<Alert variant="destructive" className="my-4 w-1/2 m-auto">
+					{error}
+				</Alert>
+			)}
 
 			{/* Progress Indicator */}
 			{matchProcessing.isProcessing && matchProcessing.progress.total > 0 && (
-				<div className="flex flex-col m-auto my-4 space-y-4">
-					<progress
-						className="progress progress-primary w-56"
-						value={matchProcessing.progress.step}
-						max={matchProcessing.progress.total}
-					/>
-					<div className="flex flex-row items-center space-x-4">
-						<span className="loading loading-spinner loading-xs"></span>
+				<div className="flex flex-col m-auto my-4 gap-4">
+					<Progress value={matchProcessing.progress.step} max={matchProcessing.progress.total} className="w-56" />
+					<div className="flex items-center gap-4">
+						<Spinner className="size-4" />
 						<span className="w-full">
 							{matchProcessing.currentPlayer ? `Checking ${matchProcessing.currentPlayer}` : "Processing match data..."}
 						</span>
@@ -91,15 +97,34 @@ export const Main = () => {
 
 			{/* Match Info */}
 			{matchDisplayInfo && Object.keys(table).length > 0 && (
-				<section id="match-info" className="flex flex-row items-center my-10 space-x-4 m-auto">
-					<div className="badge badge-soft badge-primary badge-lg">Server: {matchDisplayInfo.gameServer}</div>
-					<div className="badge badge-soft badge-primary badge-lg">Map: {matchDisplayInfo.mapName}</div>
-					{matchDisplayInfo.state !== "MENUS" && (
-						<div className="badge badge-soft badge-secondary badge-lg">
-							{matchDisplayInfo.state === "PREGAME" ? "Agent Select" : "In Game"}
-						</div>
-					)}
-				</section>
+				<Card size="sm" className="mx-auto my-6 w-full max-w-xl">
+					<CardHeader>
+						<CardTitle className="flex items-center gap-3">
+							{matchDisplayInfo.mapPreview ? (
+								<div className="relative h-6 w-20 shrink-0">
+									<img
+										src={matchDisplayInfo.mapPreview}
+										alt={matchDisplayInfo.mapName}
+										className="h-full w-full rounded object-cover blur-[1px] brightness-50"
+										draggable={false}
+									/>
+									<span className="absolute inset-0 flex items-center justify-center text-xs font-medium">
+										{matchDisplayInfo.mapName}
+									</span>
+								</div>
+							) : (
+								<span>{matchDisplayInfo.mapName}</span>
+							)}
+
+							<Separator orientation="vertical" className="h-4 self-center" />
+
+							<span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">Server</span>
+							<span className="text-sm font-normal text-muted-foreground capitalize">
+								{matchDisplayInfo.gameServer}
+							</span>
+						</CardTitle>
+					</CardHeader>
+				</Card>
 			)}
 
 			{/* Players Table */}
@@ -107,10 +132,12 @@ export const Main = () => {
 
 			{/* Waiting State */}
 			{player && Object.keys(table).length === 0 && gameState.state === "MENUS" && (
-				<section className="m-auto text-center mt-20">
-					<span className="loading loading-spiner loading-lg my-4" />
-					<h2 className="font-bold">Waiting for match</h2>
-					<p className="text-xs text-slate-400">
+				<Empty className="m-auto mt-20 w-full max-w-sm">
+					<EmptyMedia className="size-10">
+						<Spinner className="size-8" />
+					</EmptyMedia>
+					<EmptyTitle>Waiting for match</EmptyTitle>
+					<EmptyDescription className="text-xs">
 						The check should start automatically when a match is found.
 						<br />
 						If it didn't work, click{" "}
@@ -118,15 +145,15 @@ export const Main = () => {
 							here
 						</button>{" "}
 						to check manually.
-					</p>
-				</section>
+					</EmptyDescription>
+				</Empty>
 			)}
 
 			{/* Manual Recheck Button */}
 			{Object.keys(table).length > 1 && (
-				<button type="button" className="btn btn-primary m-auto btn-sm" onClick={manualCheck}>
+				<Button variant="default" size="sm" className="m-auto" onClick={manualCheck}>
 					Recheck
-				</button>
+				</Button>
 			)}
 		</div>
 	);

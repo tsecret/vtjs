@@ -71,6 +71,8 @@ export type CurrentGameMatchResponse = {
 			SeasonID: string | "";
 			Rank: number;
 		};
+		IsCoach?: boolean;
+		TeamNumber?: number;
 	}[];
 };
 
@@ -87,7 +89,7 @@ export interface PlayerMatchHistoryResponse {
 	History: {
 		MatchID: string;
 		QueueID: string;
-		gameStartTime: number;
+		GameStartTime: number;
 	}[];
 }
 

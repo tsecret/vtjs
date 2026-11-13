@@ -1,9 +1,15 @@
-import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import { Heart } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import type { GameSettingsResponse } from "@/api/schemas/riot";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Item, ItemActions, ItemContent, ItemGroup, ItemTitle } from "@/components/ui/item";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useServices } from "@/lib/services";
 import atoms from "../utils/atoms";
 
@@ -30,15 +36,6 @@ export const Settings = () => {
 		pasted: boolean;
 		modifying: boolean;
 	}>({ copied: false, pasted: false, modifying: false });
-
-	async function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-		switch (event.target.name) {
-			case "allowAnalytics":
-				setAllowAnalytics(event.target.checked);
-				await store?.set("allowAnalytics", event.target.checked);
-				break;
-		}
-	}
 
 	async function clearCache() {
 		setClearingCache(true);
@@ -113,123 +110,169 @@ export const Settings = () => {
 		})();
 
 		(async () => {
-			const settings: { name: string; data: GameSettingsResponse } | undefined = await storeRef.current?.get("gamesettings");
+			const settings: { name: string; data: GameSettingsResponse } | undefined =
+				await storeRef.current?.get("gamesettings");
 			if (settings) setGameSettings(settings);
 		})();
 	}, []);
 
 	return (
-		<div className="flex flex-col space-y-4 p-4 max-w-md m-auto">
-			<section className="flex flex-row items-center space-x-2 text-xs">
-				<div className="border-2 rounded-md p-2">App version {appInfo?.appVersion}</div>
-				<div className="border-2 rounded-md p-2">Tauri version {appInfo?.tauriVersion}</div>
-				<div className="border-2 rounded-md p-2">Identifier {appInfo?.identifier}</div>
-			</section>
-
-			<div className="divider" />
-
-			<Link to="/avoid-list" className="btn">
-				View Avoid List
-			</Link>
-
-			<div className="divider" />
-
+		<div className="mx-auto flex w-full max-w-2xl flex-col gap-4 p-4">
 			{/* Game Settings */}
-			<section id="cache" className="flex flex-col space-y-4">
-				<h2>Game Settings</h2>
+			<Card>
+				<CardHeader>
+					<CardTitle>Game Settings</CardTitle>
+					<CardDescription>
+						Copy and paste game settings like mouse and ADS sensitivity, minimap config and keybinds from one account to
+						another.
+					</CardDescription>
+				</CardHeader>
 
-				<p className="">
-					VTJS allows you to easily copy and paste game settings like Mouse and ADS sensitivity, minimap config and
-					keybinds from one account to another
-				</p>
+				<CardContent className="flex flex-col gap-4">
+					<Alert className="text-sm">
+						<ol className="list-decimal list-inside space-y-1">
+							<li>Log into the account you want to copy the settings from</li>
+							<li>
+								Press <Badge variant="secondary">Save Current Settings</Badge>
+							</li>
+							<li>Log into the account you want to paste the settings to</li>
+							<li>
+								Press <Badge variant="secondary">Load Saved Settings</Badge>
+							</li>
+							<li>Launch Valorant and check</li>
+						</ol>
+					</Alert>
 
-				<div className="alert alert-dash">
-					<ol className="text-sm">
-						<li>1. Log into account you want to copy the settings from</li>
-						<li>
-							2. Press <span className="badge badge-sm">Save Current Settings</span> button
-						</li>
-						<li>3. Log into account you want to paste the settings to</li>
-						<li>
-							4. Press <span className="badge badge-sm">Load Saved Settings</span>
-						</li>
-						<li>5. Launch Valorant and check</li>
-					</ol>
-				</div>
+					{savedGameSettings && (
+						<p className="text-sm text-muted-foreground">Settings saved for account: {savedGameSettings.name}</p>
+					)}
+				</CardContent>
 
-				{savedGameSettings && <p>Settings saved for account: {savedGameSettings.name}</p>}
-
-				<div className="flex flex-row items-center space-x-2">
-					<button
-						className={clsx("btn flex-1 btn-sm", gameSettingsState.copied && "btn-success")}
+				<CardFooter className="gap-2">
+					<Button
+						variant={gameSettingsState.copied ? "default" : "outline"}
+						className="flex-1"
 						disabled={gameSettingsState.modifying}
 						onClick={copyGameSettings}
 					>
 						{gameSettingsState.copied ? "Saved" : "Save Current Settings"}
-					</button>
-					<button
-						className={clsx("btn flex-1 btn-sm", gameSettingsState.pasted && "btn-success")}
+					</Button>
+					<Button
+						variant={gameSettingsState.pasted ? "default" : "outline"}
+						className="flex-1"
 						disabled={gameSettingsState.modifying || !savedGameSettings}
 						onClick={pasteGameSettings}
 					>
 						{gameSettingsState.pasted ? "Loaded" : "Load Saved Settings"}
-					</button>
-				</div>
-			</section>
-
-			<div className="divider" />
+					</Button>
+				</CardFooter>
+			</Card>
 
 			{/* Cache */}
-			<section id="cache" className="flex flex-col space-y-4">
-				<h2>Cache</h2>
+			<Card>
+				<CardHeader>
+					<CardTitle>Cache</CardTitle>
+					<CardDescription>
+						Plenty of cached requests is fine if you play daily. Clear them if the app starts to feel sluggish.
+					</CardDescription>
+				</CardHeader>
 
-				<div>
-					<div className="flex flex-row items-center space-x-2">
-						<span>Saved requests: {savedRequests}</span>
-					</div>
-					<div className="flex flex-row items-center space-x-2">
-						<span>Avoid list: {dodgedPlayers}</span>
-					</div>
-				</div>
+				<CardContent>
+					<ItemGroup className="gap-2">
+						<Item variant="muted" size="sm">
+							<ItemContent>
+								<ItemTitle>Saved requests</ItemTitle>
+							</ItemContent>
+							<ItemActions>{savedRequests ?? 0}</ItemActions>
+						</Item>
+						<Item variant="muted" size="sm">
+							<ItemContent>
+								<ItemTitle>Avoid list</ItemTitle>
+							</ItemContent>
+							<ItemActions>{dodgedPlayers ?? 0}</ItemActions>
+						</Item>
+					</ItemGroup>
+				</CardContent>
 
-				<p>
-					Its okay to have lots of requests cached, especially if you play daily. But if you feel like the app is
-					lagging, try clearing the cache
-				</p>
-
-				<div className="flex flex-row items-center space-x-2">
-					<button className="btn flex-1 btn-sm btn-warning" disabled={clearingCache} onClick={clearCache}>
+				<CardFooter className="gap-2">
+					<Button variant="secondary" className="flex-1" disabled={clearingCache} onClick={clearCache}>
 						Clear Old Cache
-					</button>
-					<button className="btn flex-1 btn-sm btn-error" disabled={clearingCache} onClick={clearAllCache}>
+					</Button>
+					<Button variant="destructive" className="flex-1" disabled={clearingCache} onClick={clearAllCache}>
 						Clear All Cache
-					</button>
-				</div>
-			</section>
+					</Button>
+				</CardFooter>
+			</Card>
 
-			<div className="divider" />
+			{/* Avoid List */}
+			<Card>
+				<CardHeader>
+					<CardTitle>Avoid List</CardTitle>
+					<CardDescription>Players VTJS steers you away from when you party up.</CardDescription>
+				</CardHeader>
+
+				<CardFooter>
+					<Button variant="outline" className="w-full" render={<Link to="/avoid-list" />}>
+						View Avoid List
+					</Button>
+				</CardFooter>
+			</Card>
 
 			{/* Privacy */}
-			<section id="analytics" className="space-y-4">
-				<h2>Privacy</h2>
+			<Card>
+				<CardHeader>
+					<CardTitle>Privacy</CardTitle>
+					<CardDescription>Usage analytics only. No personal information, no cookies.</CardDescription>
+				</CardHeader>
 
-				<label className="label space-x-4">
-					<input
-						name="allowAnalytics"
-						type="checkbox"
-						className="toggle"
-						checked={allowAnalytics}
-						onChange={onChange}
-					/>
-					<span>Enable analytics</span>
-				</label>
+				<CardContent className="flex flex-col gap-4">
+					<div className="flex items-center justify-between gap-4">
+						<Label htmlFor="allow-analytics">Enable analytics</Label>
+						<Switch
+							id="allow-analytics"
+							name="allowAnalytics"
+							checked={allowAnalytics}
+							onCheckedChange={setAllowAnalytics}
+						/>
+					</div>
 
-				<div className="alert alert-dash text-sm">
-					<Heart />
-					Enabling analytics allows us to better understand how you use the app and helps us make the app better for
-					everyone. We are NOT interested in your personal information, cookies, etc. Only app usage is tracked
-				</div>
-			</section>
+					<Alert className="text-sm">
+						<Heart className="size-4" />
+						Enabling analytics allows us to better understand how you use the app and helps us make the app better for
+						everyone. We are NOT interested in your personal information, cookies, etc. Only app usage is tracked.
+					</Alert>
+				</CardContent>
+			</Card>
+
+			{/* About */}
+			<Card size="sm">
+				<CardHeader>
+					<CardTitle>About</CardTitle>
+				</CardHeader>
+
+				<CardContent>
+					<ItemGroup className="gap-2">
+						<Item variant="muted" size="sm">
+							<ItemContent>
+								<ItemTitle>App version</ItemTitle>
+							</ItemContent>
+							<ItemActions>{appInfo?.appVersion}</ItemActions>
+						</Item>
+						<Item variant="muted" size="sm">
+							<ItemContent>
+								<ItemTitle>Tauri version</ItemTitle>
+							</ItemContent>
+							<ItemActions>{appInfo?.tauriVersion}</ItemActions>
+						</Item>
+						<Item variant="muted" size="sm">
+							<ItemContent>
+								<ItemTitle>Identifier</ItemTitle>
+							</ItemContent>
+							<ItemActions className="font-mono text-xs">{appInfo?.identifier}</ItemActions>
+						</Item>
+					</ItemGroup>
+				</CardContent>
+			</Card>
 		</div>
 	);
 };
