@@ -55,10 +55,10 @@
 			"identifier": "http:default",
 			"allow": [
 				{
-					"url": "http://172.20.10.2:*"
+					"url": "http://100.93.198.59:*"
 				},
 				{
-					"url": "https://172.20.10.2:*"
+					"url": "https://100.93.198.59:*"
 				},
 				{
 					"url": "https://localhost:*"

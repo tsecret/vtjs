@@ -1,12 +1,48 @@
 /**
- * Distinct colors used to tell parties apart in the match table.
- * A 5v5 game fits at most 4 parties (2+2+1 per team), so 4 colors is enough.
+ * Seven colors to tell parties apart. A 5v5 game holds at most 4 real parties
+ * (2+2+1 split per team), so the last three are spare for other modes.
+ *
+ * Each entry has both forms of the same color:
+ * - `hex`: party pill background in the match table.
+ * - `cls`: party icon class in the players table.
+ * Keep the two lists in sync, one entry per color.
  */
-export const PARTY_COLORS = ["#8b5cf6", "#f59e0b", "#10b981", "#ec4899"];
+const PALETTE = [
+	{ hex: "#ef4444", cls: "text-red-500" },
+	{ hex: "#3b82f6", cls: "text-blue-500" },
+	{ hex: "#22c55e", cls: "text-green-500" },
+	{ hex: "#ca8a04", cls: "text-yellow-600" },
+	{ hex: "#a855f7", cls: "text-purple-500" },
+	{ hex: "#f97316", cls: "text-orange-500" },
+	{ hex: "#ec4899", cls: "text-pink-500" },
+];
+
+export const PARTY_COLORS = PALETTE.map((entry) => entry.hex);
+export const PARTY_ICON_CLASSES = PALETTE.map((entry) => entry.cls);
 
 export type PartyAssignment = {
 	partyNumber: number | null;
 	partyColor: string | null;
+};
+
+/** FNV-1a 32-bit: the same string always hashes to the same value. */
+const hashString = (value: string): number => {
+	let hash = 0x811c9dc5;
+	for (let i = 0; i < value.length; i += 1) {
+		hash ^= value.charCodeAt(i);
+		hash = Math.imul(hash, 0x01000193);
+	}
+	return hash >>> 0;
+};
+
+/**
+ * Stable color class for a party: the same `partyId` always maps to the same
+ * class, no matter which table it shows up in. Returns `null` when the player
+ * has no party so the icon can fall back to the muted color.
+ */
+export const getPartyIconClass = (partyId: string | number | null | undefined): string | null => {
+	if (partyId === null || partyId === undefined || partyId === "") return null;
+	return PARTY_ICON_CLASSES[hashString(String(partyId)) % PARTY_ICON_CLASSES.length];
 };
 
 /**

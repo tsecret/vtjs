@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { PlayerRow } from "../interface";
-import { getWinrateColorClass, isSmurf } from "../utils";
+import { getPartyIconClass, getWinrateColorClass, isSmurf } from "../utils";
 
 export const PlayersTable = ({
 	table,
@@ -169,7 +169,7 @@ export const PlayersTable = ({
 						<TooltipProvider>
 							<Tooltip>
 								<TooltipTrigger>
-									<Users size={14} className="text-muted-foreground hover:text-foreground cursor-pointer" />
+									<Users size={14} className={clsx(getPartyIconClass(player.partyId) ?? "text-muted-foreground", "hover:text-foreground cursor-pointer")} />
 								</TooltipTrigger>
 								<TooltipContent className="flex flex-col items-start gap-1">
 									<p className="mb-2">Party #{player.partyId}</p>
