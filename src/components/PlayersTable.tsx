@@ -27,17 +27,23 @@ export const PlayersTable = ({
 	};
 
 	const Row = ({ player }: { player: PlayerRow }) => {
+		const isStaff = player.role === "coach" || player.role === "observer";
+		const roleLabel = player.role === "coach" ? "Coach" : "Observer";
 		const partyMembers = player.partyId
 			? Object.values(table).filter((member) => member.partyId === player.partyId)
 			: [];
 
 		return (
-			<TableRow key={player.puuid} className={clsx(player.enemy ? "bg-red-500/5" : "bg-emerald-500/5", "text-center")}>
+			<TableRow key={player.puuid} className={clsx(isStaff ? "" : player.enemy ? "bg-red-500/5" : "bg-emerald-500/5", "text-center")}>
 				<TableCell>
-					<div className="flex items-center gap-2">
-						<img src={player.agentImage || undefined} alt={player.agentName ?? ""} className="h-6" draggable={false} />
-						<span>{player.agentName}</span>
-					</div>
+					{isStaff ? (
+						<span className="text-muted-foreground">{roleLabel}</span>
+					) : (
+						<div className="flex items-center gap-2">
+							<img src={player.agentImage || undefined} alt={player.agentName ?? ""} className="h-6" draggable={false} />
+							<span>{player.agentName}</span>
+						</div>
+					)}
 				</TableCell>
 				<TableCell className="text-start">
 					{player.name === "" ? null : player.puuid === puuid ? (
@@ -73,96 +79,118 @@ export const PlayersTable = ({
 					<span>{player.accountLevel}</span>
 				</TableCell>
 				<TableCell>
-					<span className={clsx(!player.kd ? null : player.kd >= 1 ? "text-emerald-500" : "text-red-500")}>
-						{player.kd}
+					<span className={clsx(isStaff ? null : !player.kd ? null : player.kd >= 1 ? "text-emerald-500" : "text-red-500")}>
+						{isStaff ? "—" : player.kd}
 					</span>
 				</TableCell>
 				<TableCell>
-					<span>
-						{player.hs}
-						{player.hs ? "%" : null}
-					</span>
+					{isStaff ? (
+						<span>—</span>
+					) : (
+						<span>
+							{player.hs}
+							{player.hs ? "%" : null}
+						</span>
+					)}
 				</TableCell>
 				<TableCell>
-					<span>{player.adr}</span>
+					<span>{isStaff ? "—" : player.adr}</span>
 				</TableCell>
 				<TableCell>
-					<span
-						className={clsx(
-							player.lastGameResult === "won"
-								? "text-emerald-500"
-								: player.lastGameResult === "loss"
-									? "text-red-500"
-									: null,
-						)}
-					>
-						{player.lastGameScore}
-						{player.lastGameMMRDiff && player.lastGameScore
-							? ` (${player.lastGameMMRDiff > 0 ? `+${player.lastGameMMRDiff}` : player.lastGameMMRDiff})`
-							: null}
-					</span>
+					{isStaff ? (
+						<span>—</span>
+					) : (
+						<span
+							className={clsx(
+								player.lastGameResult === "won"
+									? "text-emerald-500"
+									: player.lastGameResult === "loss"
+										? "text-red-500"
+										: null,
+							)}
+						>
+							{player.lastGameScore}
+							{player.lastGameMMRDiff && player.lastGameScore
+								? ` (${player.lastGameMMRDiff > 0 ? `+${player.lastGameMMRDiff}` : player.lastGameMMRDiff})`
+								: null}
+						</span>
+					)}
 				</TableCell>
 				<TableCell>
-					{(() => {
-						const streak = player.streak || 0;
-						return (
-							<span className={clsx(streak > 0 ? "text-emerald-500" : streak < 0 ? "text-red-500" : undefined)}>
-								{streak != null ? streak : null}
-							</span>
-						);
-					})()}
+					{isStaff ? (
+						<span>—</span>
+					) : (
+						(() => {
+							const streak = player.streak || 0;
+							return (
+								<span className={clsx(streak > 0 ? "text-emerald-500" : streak < 0 ? "text-red-500" : undefined)}>
+									{streak != null ? streak : null}
+								</span>
+							);
+						})()
+					)}
 				</TableCell>
 				<TableCell>
-					<span className={clsx(player.winrate !== undefined && getWinrateColorClass(player.winrate))}>
-						{player.winrate !== undefined ? `${player.winrate}%` : null}
-					</span>
+					{isStaff ? (
+						<span>—</span>
+					) : (
+						<span className={clsx(player.winrate !== undefined && getWinrateColorClass(player.winrate))}>
+							{player.winrate !== undefined ? `${player.winrate}%` : null}
+						</span>
+					)}
 				</TableCell>
 				<TableCell>
-					<div className="flex gap-2">
-						{player.bestAgents?.map((agent) => (
-							<TooltipProvider key={agent.agentId}>
-								<Tooltip>
-									<TooltipTrigger>
-										<div className={clsx("rounded-md p-1", agent.avgKd >= 1 ? "bg-emerald-500/25" : "bg-red-500/25")}>
-											<img className="w-6 rounded-md" src={agent.agentUrl} alt={agent.agentName} />
-										</div>
-									</TooltipTrigger>
-									<TooltipContent className="flex flex-col items-start gap-1">
-										<span>Avg Kills: {agent.avgKills}</span>
-										<span>Avg Deaths: {agent.avgDeaths}</span>
-										<span>Avg K/D: {agent.avgKd}</span>
-										<span>Games Played: {agent.games}</span>
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
-						))}
-					</div>
+					{isStaff ? (
+						<span>—</span>
+					) : (
+						<div className="flex gap-2">
+							{player.bestAgents?.map((agent) => (
+								<TooltipProvider key={agent.agentId}>
+									<Tooltip>
+										<TooltipTrigger>
+											<div className={clsx("rounded-md p-1", agent.avgKd >= 1 ? "bg-emerald-500/25" : "bg-red-500/25")}>
+												<img className="w-6 rounded-md" src={agent.agentUrl} alt={agent.agentName} />
+											</div>
+										</TooltipTrigger>
+										<TooltipContent className="flex flex-col items-start gap-1">
+											<span>Avg Kills: {agent.avgKills}</span>
+											<span>Avg Deaths: {agent.avgDeaths}</span>
+											<span>Avg K/D: {agent.avgKd}</span>
+											<span>Games Played: {agent.games}</span>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
+							))}
+						</div>
+					)}
 				</TableCell>
 				<TableCell>
-					<div className="flex flex-wrap gap-1 justify-center">
-						{isSmurf(player) && (
-							<Badge variant="secondary" className="text-xs">
-								Possible Smurf
-							</Badge>
-						)}
-						{player.dodge && (
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger>
-										<Badge variant="secondary" className="text-xs">
-											Avoid
-										</Badge>
-									</TooltipTrigger>
-									<TooltipContent>This player is in your avoid list. Check player profile to learn more</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
-						)}
-						{player.hasGunBuddy && (
-							<Badge variant="secondary" className="text-xs">
-								Riot Buddy
-							</Badge>
-						)}
-					</div>
+					{isStaff ? null : (
+						<div className="flex flex-wrap gap-1 justify-center">
+							{isSmurf(player) && (
+								<Badge variant="secondary" className="text-xs">
+									Possible Smurf
+								</Badge>
+							)}
+							{player.dodge && (
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger>
+											<Badge variant="secondary" className="text-xs">
+												Avoid
+											</Badge>
+										</TooltipTrigger>
+										<TooltipContent>This player is in your avoid list. Check player profile to learn more</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
+							)}
+							{player.hasGunBuddy && (
+								<Badge variant="secondary" className="text-xs">
+									Riot Buddy
+								</Badge>
+							)}
+						</div>
+					)}
 				</TableCell>
 				<TableCell>
 					{player.inParty ? (
@@ -200,6 +228,10 @@ export const PlayersTable = ({
 
 	if (!Object.keys(table).length) return null;
 
+	const players = Object.values(table);
+	const combatants = players.filter((player) => player.role !== "coach" && player.role !== "observer");
+	const staff = players.filter((player) => player.role === "coach" || player.role === "observer");
+
 	return (
 		<Table className="text-xs">
 			<TableHeader>
@@ -223,7 +255,7 @@ export const PlayersTable = ({
 			</TableHeader>
 
 			<TableBody>
-				{Object.values(table)
+				{combatants
 					.filter((player) => !player.enemy)
 					.sort((a, b) => (b.kd || 1) - (a.kd || 0))
 					.map((player) => (
@@ -232,13 +264,21 @@ export const PlayersTable = ({
 			</TableBody>
 
 			<TableBody>
-				{Object.values(table)
+				{combatants
 					.filter((player) => player.enemy)
 					.sort((a, b) => (b.kd || 1) - (a.kd || 0))
 					.map((player) => (
 						<Row player={player} key={player.puuid} />
 					))}
 			</TableBody>
+
+			{staff.length > 0 && (
+				<TableBody>
+					{staff.map((player) => (
+						<Row player={player} key={player.puuid} />
+					))}
+				</TableBody>
+			)}
 		</Table>
 	);
 };

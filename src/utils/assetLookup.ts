@@ -42,7 +42,7 @@ const getSeasonDateById = (seasonId: string): Date | null => {
 	return new Date(season.endTime);
 };
 
-const hasGunBuddy = (loadout: Loadout): boolean => {
+const hasGunBuddy = (loadout: Loadout | undefined): boolean => {
   return JSON.stringify(loadout ?? {}).includes(RIOT_GBUDDY_UUID);
 }
 

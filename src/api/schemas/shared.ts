@@ -71,6 +71,8 @@ export type CurrentGameMatchResponse = {
 			SeasonID: string | "";
 			Rank: number;
 		};
+		IsCoach?: boolean;
+		TeamNumber?: number;
 	}[];
 };
 
